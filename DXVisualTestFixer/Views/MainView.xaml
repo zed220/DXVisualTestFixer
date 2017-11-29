@@ -73,32 +73,17 @@
             <dxdo:LayoutGroup AllowDrag="False">
                 <dxdo:LayoutPanel ShowCaption="False" ItemWidth="300">
                     <dxg:GridControl ItemsSource="{Binding Tests}" CurrentItem="{Binding CurrentTest, Mode=TwoWay}" AutoExpandAllGroups="True" ShowBorder="False">
-                        <dxg:GridColumn FieldName="Version" GroupIndex="0"/>
-                        <dxg:GridColumn FieldName="Theme" GroupIndex="1"/>
-                        <dxg:GridColumn FieldName="Name" Width="*"/>
+                        <dxg:GridColumn FieldName="Version" GroupIndex="0" MergeWithPreviousGroup="True"/>
+                        <dxg:GridColumn FieldName="Team.Name" GroupIndex="1" MergeWithPreviousGroup="True"/>
+                        <dxg:GridColumn FieldName="Name" GroupIndex="2" MergeWithPreviousGroup="True"/>
+                        <dxg:GridColumn FieldName="Theme" Width="*"/>
                         <dxg:GridControl.TotalSummary>
                             <dxg:GridSummaryItem SummaryType="Count" Alignment="Left"/>
                         </dxg:GridControl.TotalSummary>
                         <dxg:GridControl.View>
-                            <dxg:TableView AllowEditing="False" ShowVerticalLines="False" ShowHorizontalLines="False" ShowColumnHeaders="False" ShowGroupPanel="False" ShowFixedTotalSummary="True"/>
+                            <dxg:TableView AllowEditing="False" ShowVerticalLines="False" ShowIndicator="False" ShowHorizontalLines="False" ShowColumnHeaders="False" ShowGroupPanel="False" ShowFixedTotalSummary="True"/>
                         </dxg:GridControl.View>
                     </dxg:GridControl>
-                    <!--<Grid>-->
-                        <!--<Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-                        <StackPanel>
-                            <dxe:ComboBoxEdit/>
-                            <dxe:ComboBoxEdit/>
-                            <dxe:ComboBoxEdit/>
-                        </StackPanel>
-                        <dxg:TreeListControl Grid.Row="1" ShowBorder="False">
-                            <dxg:TreeListControl.View>
-                                <dxg:TreeListView ShowColumnHeaders="False" ShowIndicator="False"/>
-                            </dxg:TreeListControl.View>
-                        </dxg:TreeListControl>-->
-                    <!--</Grid>-->
                 </dxdo:LayoutPanel>
                 <dxdo:LayoutPanel dxmvvm:UIRegion.Region="{x:Static mif:Regions.TestInfo}" ShowCaption="False"/>
             </dxdo:LayoutGroup>

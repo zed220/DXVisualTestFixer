@@ -196,6 +196,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -240,6 +241,7 @@
     <Compile Include="Config\ConfigSerializer.cs" />
     <Compile Include="Config\Serializer.cs" />
     <Compile Include="Config\VersionInfo.cs" />
+    <Compile Include="Converters\ArrayToImageConverter.cs" />
     <Compile Include="Core\Repository.cs" />
     <Compile Include="Config\Config.cs" />
     <Compile Include="Core\TestInfo.cs" />
@@ -317,9 +319,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controls\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="AppReadme\Compare-NET-Objects-Help.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -8,8 +8,12 @@
              xmlns:avalonedit="http://icsharpcode.net/sharpdevelop/avalonedit"
              xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
              xmlns:behaviors="clr-namespace:DXVisualTestFixer.Behaviors"
+             xmlns:converters="clr-namespace:DXVisualTestFixer.Converters"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <converters:ArrayToImageConverter x:Key="ArrayToImageConverter"/>
+    </UserControl.Resources>
     <dxdo:LayoutGroup Orientation="Vertical" ShowCaption="False">
         <dxdo:LayoutGroup DataContext="{Binding TestInfo}">
             <dxdo:LayoutGroup.Resources>
@@ -18,16 +22,16 @@
                         <Setter.Value>
                             <DataTemplate>
                                 <ScrollViewer HorizontalScrollBarVisibility="Auto">
-                                    <Image Source="{TemplateBinding Content}" Stretch="Uniform"/>
+                                    <Image Source="{Binding Path=Content, Converter={StaticResource ArrayToImageConverter}, RelativeSource={RelativeSource TemplatedParent}}" Stretch="None"/>
                                 </ScrollViewer>
                             </DataTemplate>
                         </Setter.Value>
                     </Setter>
                 </Style>
             </dxdo:LayoutGroup.Resources>
-            <dxdo:LayoutPanel ShowCaption="True" Caption="Before" ShowCloseButton="False" ShowPinButton="False" Content="{Binding ImageBefore}"/>
-            <dxdo:LayoutPanel ShowCaption="True" Caption="Current" ShowCloseButton="False" ShowPinButton="False"  Content="{Binding ImageCurrent}"/>
-            <dxdo:LayoutPanel ShowCaption="True" Caption="Diff" ShowCloseButton="False" ShowPinButton="False" Content="{Binding ImageDiff}"/>
+            <dxdo:LayoutPanel ShowCaption="True" Caption="Before" ShowCloseButton="False" ShowPinButton="False" Content="{Binding ImageBeforeArr}"/>
+            <dxdo:LayoutPanel ShowCaption="True" Caption="Current" ShowCloseButton="False" ShowPinButton="False"  Content="{Binding ImageCurrentArr}"/>
+            <dxdo:LayoutPanel ShowCaption="True" Caption="Diff" ShowCloseButton="False" ShowPinButton="False" Content="{Binding ImageDiffArr}"/>
         </dxdo:LayoutGroup>
         <dxdo:LayoutPanel ItemHeight="150" ShowCaption="False" DataContext="{Binding TestInfo}">
             <avalonedit:TextEditor FontFamily="Consolas" IsReadOnly="True">
