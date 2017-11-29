@@ -9,11 +9,13 @@ namespace DXVisualTestFixer.Mif {
         public static string Main => nameof(Main);
         public static string TestInfo => nameof(TestInfo);
         public static string Settings => nameof(Settings);
+        public static string ApplyChanges => nameof(ApplyChanges);
     }
 
     public static class Modules {
         public static string Main => nameof(Main);
         public static string TestInfo => nameof(TestInfo);
         public static string Settings => nameof(Settings);
+        public static string ApplyChanges => nameof(ApplyChanges);
     }
 }

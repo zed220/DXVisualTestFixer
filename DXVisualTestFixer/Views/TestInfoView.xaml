@@ -44,8 +44,8 @@
             <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button Content="Prev"/>
                 <Button Content="Next"/>
-                <Button Content="Ok"/>
-                <Button Content="Skip"/>
+                <Button Content="Valid" Click="{DXEvent Handler='Valid()'}"/>
+                <Button Content="Skip" Click="{DXEvent Handler='Invalid()'}"/>
             </StackPanel>
         </dxdo:LayoutPanel>
     </dxdo:LayoutGroup>

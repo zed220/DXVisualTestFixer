@@ -19,5 +19,12 @@ namespace DXVisualTestFixer.ViewModels {
             base.OnParameterChanged(parameter);
             TestInfo = parameter as TestInfo;
         }
+
+        public void Valid() {
+            TestInfo.CommitChange = true;
+        }
+        public void Invalid() {
+            TestInfo.CommitChange = false;
+        }
     }
 }

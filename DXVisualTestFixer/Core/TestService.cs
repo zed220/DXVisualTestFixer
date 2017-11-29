@@ -12,23 +12,16 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace DXVisualTestFixer.Core {
-    public class Team {
-        public string Name { get; set; }
-        public string TestResourcesPath { get; set; }
-        public string ServerFolderName { get; set; }
-    }
-
-    public static class TestLoader {
+    public static class TestsService {
         static readonly List<Team> Teams = new List<Team>() {
-            new Team(){ Name = "Grid", ServerFolderName = "4DXGridTeam", TestResourcesPath = "WpfGrid\\ThemesImages" },
-            new Team(){ Name = "TabControl", ServerFolderName = "4DXTabControl", TestResourcesPath = "WpfCore\\ThemesImages" },
-            new Team(){ Name = "Pivot", ServerFolderName = "4Pivot", TestResourcesPath = "..\\..\\DevExpress.Xpf.PivotGrid\\DevExpress.Xpf.PivotGrid.HeavyTests\\ThemesImages" },
-            new Team(){ Name = "Scheduler", ServerFolderName = "4WpfScheduler", TestResourcesPath = "WpfScheduler\\ThemesImages" },
-            new Team(){ Name = "Navigation", ServerFolderName = "4XPFNavigationTeam", TestResourcesPath = "Navigation\\ThemesImages" },
+            new Team(){ Name = "Grid", ServerFolderName = "4DXGridTeam", TestResourcesPath = "DevExpress.Xpf.VisualTests\\DevExpress.Xpf.VisualTests\\WpfGrid\\ThemesImages" },
+            new Team(){ Name = "TabControl", ServerFolderName = "4DXTabControl", TestResourcesPath = "DevExpress.Xpf.VisualTests\\DevExpress.Xpf.VisualTests\\WpfCore\\ThemesImages" },
+            new Team(){ Name = "Pivot", ServerFolderName = "4Pivot", TestResourcesPath = "DevExpress.Xpf.PivotGrid\\DevExpress.Xpf.PivotGrid.HeavyTests\\ThemesImages" },
+            new Team(){ Name = "Scheduler", ServerFolderName = "4WpfScheduler", TestResourcesPath = "DevExpress.Xpf.VisualTests\\DevExpress.Xpf.VisualTests\\WpfScheduler\\ThemesImages" },
+            new Team(){ Name = "Navigation", ServerFolderName = "4XPFNavigationTeam", TestResourcesPath = "DevExpress.Xpf.VisualTests\\DevExpress.Xpf.VisualTests\\Navigation\\ThemesImages" },
         };
 
         static string ServerPath = @"\\corp\builds\testbuilds\";
-
 
         public static List<TestInfo> Load() {
             List<TestInfo> result = new List<TestInfo>();
@@ -41,7 +34,7 @@ namespace DXVisualTestFixer.Core {
             string teamPath = Path.Combine(ServerPath, team.ServerFolderName);
             if(!Directory.Exists(teamPath))
                 return;
-            foreach(string verDir in Directory.GetDirectories(teamPath)) {
+            foreach(string verDir in Directory.GetDirectories(teamPath).Where(path => Repository.Versions.Contains(Path.GetFileName(path)))) {
                 string lastDate = Directory.GetDirectories(verDir).OrderBy(d => d).LastOrDefault();
                 if(String.IsNullOrEmpty(lastDate))
                     continue;
@@ -152,23 +145,10 @@ namespace DXVisualTestFixer.Core {
                     result.Add(test);
                     continue;
                 }
-                var repository = ConfigSerializer.GetConfig().Repositories.Where(r => r.Version == test.Version).FirstOrDefault();
-                if(repository == null) {
+                string actualTestResourceName = GetTestResourceName(test);
+                string xmlPath = GetXmlFilePath(actualTestResourceName, test);
+                if(xmlPath == null) {
                     //log
-                    Debug.WriteLine("fire GetActualFailedTests repository");
-                    continue;
-                }
-                string actualTestResourcesPath = Path.Combine(repository.Path, test.Team.TestResourcesPath, test.Name);
-                if(!Directory.Exists(actualTestResourcesPath)) {
-                    //log;
-                    Debug.WriteLine("fire GetActualFailedTests actualTestResourcesPath");
-                    continue;
-                }
-                string actualTestResourceName = Path.Combine(actualTestResourcesPath, test.Theme);
-                string xmlPath = Path.ChangeExtension(actualTestResourceName, "xml");
-                if(!File.Exists(xmlPath)) {
-                    //log
-                    Debug.WriteLine("fire GetActualFailedTests xmlPath");
                     continue;
                 }
                 if(!IsTextEquals(test.TextCurrent, File.ReadAllText(xmlPath), out _)) {
@@ -176,7 +156,12 @@ namespace DXVisualTestFixer.Core {
                     continue;
                 }
                 byte[] imageSource = null;
-                if(!LoadImage(Path.ChangeExtension(actualTestResourceName, "png"), img => imageSource = img)) {
+                string imagePath = GetImageFilePath(actualTestResourceName, test);
+                if(imagePath == null) {
+                    //log
+                    continue;
+                }
+                if(!LoadImage(imagePath, img => imageSource = img)) {
                     //log
                     Debug.WriteLine("fire GetActualFailedTests imageSource");
                     continue;
@@ -187,6 +172,55 @@ namespace DXVisualTestFixer.Core {
                 result.Add(test);
             }
             return result;
+        }
+
+        static string GetTestResourceName(TestInfo test) {
+            var repository = ConfigSerializer.GetConfig().Repositories.Where(r => r.Version == test.Version).FirstOrDefault();
+            if(repository == null) {
+                //log
+                Debug.WriteLine("fire GetActualFailedTests repository");
+                return null;
+            }
+            string actualTestResourcesPath = Path.Combine(repository.Path, test.Team.TestResourcesPath, test.Name);
+            if(!Directory.Exists(actualTestResourcesPath)) {
+                //log;
+                Debug.WriteLine("fire GetActualFailedTests actualTestResourcesPath");
+                return null;
+            }
+            return Path.Combine(actualTestResourcesPath, test.Theme);
+        }
+        static string GetXmlFilePath(string testResourceName, TestInfo test) {
+            string xmlPath = Path.ChangeExtension(testResourceName, "xml");
+            if(!File.Exists(xmlPath)) {
+                //log
+                Debug.WriteLine("fire GetActualFailedTests xmlPath");
+                return null;
+            }
+            return xmlPath;
+        }
+        static string GetImageFilePath(string testResourceName, TestInfo test) {
+            string imagePath = Path.ChangeExtension(testResourceName, "png");
+            if(!File.Exists(imagePath)) {
+                //log
+                Debug.WriteLine("fire GetActualFailedTests imagePath");
+                return null;
+            }
+            return imagePath;
+        }
+
+        public static void ApplyTest(TestInfo test) {
+            string actualTestResourceName = GetTestResourceName(test);
+            string xmlPath = GetXmlFilePath(actualTestResourceName, test);
+            string imagePath = GetImageFilePath(actualTestResourceName, test);
+            if(imagePath == null || xmlPath == null) {
+                //log
+                Debug.WriteLine("fire save test" + test.ToLog());
+                return;
+            }
+            File.Delete(xmlPath);
+            File.WriteAllText(xmlPath, test.TextCurrent);
+            File.Delete(imagePath);
+            File.WriteAllBytes(imagePath, test.ImageCurrentArr);
         }
     }
 }

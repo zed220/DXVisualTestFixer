@@ -28,8 +28,6 @@ namespace DXVisualTestFixer.ViewModels {
 
         public SettingsViewModel() {
             ModuleManager.DefaultManager.GetEvents(this).ViewModelRemoving += SettingsViewModel_ViewModelRemoving;
-            //ModuleManager.DefaultManager.GetEvents(this).Navigated += SettingsViewModel_Navigated;
-            //ModuleManager.DefaultManager.GetEvents(this).NavigatedAway += SettingsViewModel_NavigatedAway;
             CreateCommands();
             Config = ConfigSerializer.GetConfig();
         }
@@ -90,9 +88,10 @@ namespace DXVisualTestFixer.ViewModels {
                 string verPath = Path.Combine(service.ResultPath, verDir);
                 if(!Directory.Exists(verPath))
                     continue;
-                string visualTestsPathVar = Path.Combine(verPath, "XPF\\DevExpress.Xpf.VisualTests\\DevExpress.Xpf.VisualTests\\");
+
+                string visualTestsPathVar = Path.Combine(verPath, "XPF\\");
                 if(!Directory.Exists(visualTestsPathVar)) {
-                    visualTestsPathVar = Path.Combine(verPath, "common\\XPF\\DevExpress.Xpf.VisualTests\\DevExpress.Xpf.VisualTests\\");
+                    visualTestsPathVar = Path.Combine(verPath, "common\\XPF\\");
                     if(!Directory.Exists(visualTestsPathVar))
                         continue;
                 }

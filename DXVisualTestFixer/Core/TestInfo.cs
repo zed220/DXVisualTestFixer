@@ -19,5 +19,10 @@ namespace DXVisualTestFixer.Core {
         public string TextBefore { get; set; }
         public string TextCurrent { get; set; }
         public string TextDiff { get; set; }
+        public bool CommitChange { get; set; }
+
+        public string ToLog() {
+            return String.Format("Team: {0}, Version: {1}, Test: {2}, Theme: {3}", Team.Name, Version, Name, Theme);
+        }
     }
 }

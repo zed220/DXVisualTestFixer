@@ -244,13 +244,19 @@
     <Compile Include="Converters\ArrayToImageConverter.cs" />
     <Compile Include="Core\Repository.cs" />
     <Compile Include="Config\Config.cs" />
+    <Compile Include="Core\Team.cs" />
     <Compile Include="Core\TestInfo.cs" />
-    <Compile Include="Core\TestLoader.cs" />
+    <Compile Include="Core\TestService.cs" />
     <Compile Include="Native\DiffLineBackgroundRenderer.cs" />
+    <Compile Include="ViewModels\ApplyChangesViewModel.cs" />
+    <Compile Include="ViewModels\ChangedTestsModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\RepositoryModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModels\TestInfoViewModel.cs" />
+    <Compile Include="Views\ApplyChangesView.xaml.cs">
+      <DependentUpon>ApplyChangesView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
     </Compile>
@@ -274,6 +280,10 @@
       <DependentUpon>Shell.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\ApplyChangesView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\MainView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

@@ -40,7 +40,7 @@ namespace DXVisualTestFixer.ViewModels {
         }
 
         void UpdateContent() {
-            Tests = TestLoader.Load();
+            Tests = TestsService.Load();
         }
 
         void OnCurrentTestChanged() {
@@ -56,6 +56,20 @@ namespace DXVisualTestFixer.ViewModels {
             ModuleManager.DefaultWindowManager.Show(Regions.Settings, Modules.Settings);
             ModuleManager.DefaultWindowManager.Clear(Regions.Settings);
             UpdateConfig();
+        }
+        public void ApplyChanges() {
+            List<TestInfo> changedTests = Tests.Where(t => t.CommitChange).ToList();
+            if(changedTests.Count == 0) {
+                GetService<IMessageBoxService>()?.ShowMessage("Nothing to commit", "Nothing to commit", MessageButton.OK, MessageIcon.Information);
+                return;
+            }
+            ChangedTestsModel changedTestsModel = new ChangedTestsModel() { Tests = changedTests };
+            ModuleManager.DefaultWindowManager.Show(Regions.ApplyChanges, Modules.ApplyChanges, changedTestsModel);
+            ModuleManager.DefaultWindowManager.Clear(Regions.ApplyChanges);
+            if(!changedTestsModel.Apply)
+                return;
+            changedTests.ForEach(TestsService.ApplyTest);
+            UpdateContent();
         }
     }
 }
