@@ -238,6 +238,7 @@
     </ApplicationDefinition>
     <Compile Include="Behaviors\AvalonEditTextBindingBehavior.cs" />
     <Compile Include="Behaviors\BrowseDirBehavior.cs" />
+    <Compile Include="Behaviors\ImageScaleBehavior.cs" />
     <Compile Include="Behaviors\ScrollVIewerDragBehavior.cs" />
     <Compile Include="Config\ConfigSerializer.cs" />
     <Compile Include="Config\Serializer.cs" />
