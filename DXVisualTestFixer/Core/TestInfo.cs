@@ -1,12 +1,14 @@
-﻿using System;
+﻿using DevExpress.Mvvm;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
 
 namespace DXVisualTestFixer.Core {
-    public class TestInfo {
+    public class TestInfo : BindableBase {
         public string Name { get; set; }
         public Team Team { get; set; }
         public string Theme { get; set; }
@@ -19,7 +21,10 @@ namespace DXVisualTestFixer.Core {
         public string TextBefore { get; set; }
         public string TextCurrent { get; set; }
         public string TextDiff { get; set; }
-        public bool CommitChange { get; set; }
+        public bool CommitChange {
+            get { return GetProperty(() => CommitChange); }
+            set { SetProperty(() => CommitChange, value); }
+        }
 
         public string ToLog() {
             return String.Format("Team: {0}, Version: {1}, Test: {2}, Theme: {3}", Team.Name, Version, Name, Theme);

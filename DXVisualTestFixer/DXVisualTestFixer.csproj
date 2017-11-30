@@ -238,9 +238,11 @@
     </ApplicationDefinition>
     <Compile Include="Behaviors\AvalonEditTextBindingBehavior.cs" />
     <Compile Include="Behaviors\BrowseDirBehavior.cs" />
+    <Compile Include="Behaviors\ScrollVIewerDragBehavior.cs" />
     <Compile Include="Config\ConfigSerializer.cs" />
     <Compile Include="Config\Serializer.cs" />
     <Compile Include="Config\VersionInfo.cs" />
+    <Compile Include="Controls\DraggableScrollViewer.cs" />
     <Compile Include="Converters\ArrayToImageConverter.cs" />
     <Compile Include="Core\Repository.cs" />
     <Compile Include="Config\Config.cs" />
@@ -327,8 +329,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Controls\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

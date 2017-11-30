@@ -28,7 +28,8 @@ namespace DXVisualTestFixer.Core {
             if(!Directory.Exists(ServerPath))
                 return result;
             Teams.ForEach(team => FillTestsForTeam(team, result));
-            return GetActualFailedTests(result);
+            return result;
+            //return GetActualFailedTests(result);
         }
         static void FillTestsForTeam(Team team, List<TestInfo> result) {
             string teamPath = Path.Combine(ServerPath, team.ServerFolderName);
@@ -48,7 +49,8 @@ namespace DXVisualTestFixer.Core {
                     LoadImage(Path.Combine(testDir, "InstantBitmap.png"), s => { testInfo.ImageBeforeArr = s; });
                     LoadImage(Path.Combine(testDir, "CurrentBitmap.png"), s => { testInfo.ImageCurrentArr = s; });
                     LoadImage(Path.Combine(testDir, "BitmapDif.png"), s => { testInfo.ImageDiffArr = s; });
-                    result.Add(testInfo);
+                    if(TestValid(testInfo))
+                        result.Add(testInfo);
                 }
             }
         }
@@ -138,40 +140,33 @@ namespace DXVisualTestFixer.Core {
             return true;
         }
 
-        static List<TestInfo> GetActualFailedTests(List<TestInfo> allFailedTests) {
-            List<TestInfo> result = new List<TestInfo>();
-            foreach(var test in allFailedTests) {
-                if(!String.IsNullOrEmpty(test.TextDiff)) {
-                    result.Add(test);
-                    continue;
-                }
-                string actualTestResourceName = GetTestResourceName(test);
-                string xmlPath = GetXmlFilePath(actualTestResourceName, test);
-                if(xmlPath == null) {
-                    //log
-                    continue;
-                }
-                if(!IsTextEquals(test.TextCurrent, File.ReadAllText(xmlPath), out _)) {
-                    result.Add(test);
-                    continue;
-                }
-                byte[] imageSource = null;
-                string imagePath = GetImageFilePath(actualTestResourceName, test);
-                if(imagePath == null) {
-                    //log
-                    continue;
-                }
-                if(!LoadImage(imagePath, img => imageSource = img)) {
-                    //log
-                    Debug.WriteLine("fire GetActualFailedTests imageSource");
-                    continue;
-                }
-                if(IsImageEquals(test.ImageCurrentArr, imageSource)) {
-                    continue;
-                }
-                result.Add(test);
+        static bool TestValid(TestInfo test) {
+            string actualTestResourceName = GetTestResourceName(test);
+            string xmlPath = GetXmlFilePath(actualTestResourceName, test);
+            if(xmlPath == null) {
+                //log
+                return false;
             }
-            return result;
+            string imagePath = GetImageFilePath(actualTestResourceName, test);
+            if(imagePath == null) {
+                //log
+                return false;
+            }
+            if(!IsTextEquals(test.TextBefore, File.ReadAllText(xmlPath), out _)) {
+                //log -> outdated sources
+                return false;
+            }
+            if(!String.IsNullOrEmpty(test.TextDiff))
+                return true;
+            byte[] imageSource = null;
+            if(!LoadImage(imagePath, img => imageSource = img)) {
+                //log
+                Debug.WriteLine("fire GetActualFailedTests imageSource");
+                return false;
+            }
+            if(IsImageEquals(test.ImageCurrentArr, imageSource))
+                return false;
+            return true;
         }
 
         static string GetTestResourceName(TestInfo test) {

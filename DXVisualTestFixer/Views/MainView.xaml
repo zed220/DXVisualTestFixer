@@ -104,7 +104,16 @@
                             <dxg:GridSummaryItem SummaryType="Count" Alignment="Left"/>
                         </dxg:GridControl.TotalSummary>
                         <dxg:GridControl.View>
-                            <dxg:TableView AllowEditing="False" ShowVerticalLines="False" ShowIndicator="False" ShowHorizontalLines="False" ShowColumnHeaders="False" ShowGroupPanel="False" ShowFixedTotalSummary="True"/>
+                            <dxg:TableView AllowEditing="False" ShowVerticalLines="False" ShowIndicator="False" ShowHorizontalLines="False" ShowColumnHeaders="False" ShowGroupPanel="False" 
+                                           ShowFixedTotalSummary="True">
+                                <dxmvvm:Interaction.Behaviors>
+                                    <dxmvvm:EventToCommand EventName="MoveNext" Command="{DXCommand Execute='@s.AssociatedObject.MoveNextRow()'}" SourceObject="{Binding}"/>
+                                    <dxmvvm:EventToCommand EventName="MovePrev" Command="{DXCommand Execute='@s.AssociatedObject.MovePrevRow()'}" SourceObject="{Binding}"/>
+                                </dxmvvm:Interaction.Behaviors>
+                                <dxg:TableView.FormatConditions>
+                                    <dxg:FormatCondition FieldName="CommitChange" ValueRule="Equal" Value1="True" PredefinedFormatName="GreenFillWithDarkGreenText" ApplyToRow="True"/>
+                                </dxg:TableView.FormatConditions>
+                            </dxg:TableView>
                         </dxg:GridControl.View>
                     </dxg:GridControl>
                 </dxdo:LayoutPanel>

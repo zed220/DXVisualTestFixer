@@ -46,7 +46,8 @@ namespace DXVisualTestFixer.ViewModels {
         void OnCurrentTestChanged() {
             ModuleManager.DefaultManager.Clear(Regions.TestInfo);
             if(CurrentTest != null)
-                ModuleManager.DefaultManager.InjectOrNavigate(Regions.TestInfo, Modules.TestInfo, CurrentTest);
+                ModuleManager.DefaultManager.InjectOrNavigate(Regions.TestInfo, Modules.TestInfo, 
+                    new TestInfoModel() { TestInfo = CurrentTest, MoveNextRow = new Action(MoveNextCore), MovePrevRow = new Action(MovePrevCore) });
         }
         void OnTestsChanged() {
             CurrentTest = Tests.FirstOrDefault();
@@ -71,5 +72,15 @@ namespace DXVisualTestFixer.ViewModels {
             changedTests.ForEach(TestsService.ApplyTest);
             UpdateContent();
         }
+
+        void MoveNextCore() {
+            MoveNext?.Invoke(this, EventArgs.Empty);
+        }
+        void MovePrevCore() {
+            MovePrev?.Invoke(this, EventArgs.Empty);
+        }
+
+        public event EventHandler MoveNext;
+        public event EventHandler MovePrev;
     }
 }

@@ -9,22 +9,30 @@ using System.Threading.Tasks;
 namespace DXVisualTestFixer.ViewModels {
     public interface ITestInfoViewModel : ISupportParameter { }
 
+    public class TestInfoModel {
+        public TestInfo TestInfo { get; set; }
+        public Action MoveNextRow { get; set; }
+        public Action MovePrevRow { get; set; }
+    }
+
     public class TestInfoViewModel : ViewModelBase, ITestInfoViewModel {
-        public TestInfo TestInfo {
-            get { return GetProperty(() => TestInfo); }
-            private set { SetProperty(() => TestInfo, value); }
+        public TestInfoModel TestInfoModel {
+            get { return GetProperty(() => TestInfoModel); }
+            private set { SetProperty(() => TestInfoModel, value); }
         }
 
         protected override void OnParameterChanged(object parameter) {
             base.OnParameterChanged(parameter);
-            TestInfo = parameter as TestInfo;
+            TestInfoModel = parameter as TestInfoModel;
         }
 
         public void Valid() {
-            TestInfo.CommitChange = true;
+            TestInfoModel.TestInfo.CommitChange = true;
+            TestInfoModel.MoveNextRow();
         }
         public void Invalid() {
-            TestInfo.CommitChange = false;
+            TestInfoModel.TestInfo.CommitChange = false;
+            TestInfoModel.MoveNextRow();
         }
     }
 }

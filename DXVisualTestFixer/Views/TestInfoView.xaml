@@ -9,21 +9,25 @@
              xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
              xmlns:behaviors="clr-namespace:DXVisualTestFixer.Behaviors"
              xmlns:converters="clr-namespace:DXVisualTestFixer.Converters"
+             xmlns:controls="clr-namespace:DXVisualTestFixer.Controls"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
         <converters:ArrayToImageConverter x:Key="ArrayToImageConverter"/>
     </UserControl.Resources>
     <dxdo:LayoutGroup Orientation="Vertical" ShowCaption="False">
-        <dxdo:LayoutGroup DataContext="{Binding TestInfo}">
+        <dxdo:LayoutGroup DataContext="{Binding TestInfoModel.TestInfo}">
             <dxdo:LayoutGroup.Resources>
                 <Style TargetType="{x:Type dxdo:LayoutPanel}">
                     <Setter Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate>
-                                <ScrollViewer HorizontalScrollBarVisibility="Auto">
+                                <controls:DraggableScrollViewer HorizontalScrollBarVisibility="Auto">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <behaviors:ScrollVIewerDragBehavior/>
+                                    </dxmvvm:Interaction.Behaviors>
                                     <Image Source="{Binding Path=Content, Converter={StaticResource ArrayToImageConverter}, RelativeSource={RelativeSource TemplatedParent}}" Stretch="None"/>
-                                </ScrollViewer>
+                                </controls:DraggableScrollViewer>
                             </DataTemplate>
                         </Setter.Value>
                     </Setter>
@@ -33,7 +37,7 @@
             <dxdo:LayoutPanel ShowCaption="True" Caption="Current" ShowCloseButton="False" ShowPinButton="False"  Content="{Binding ImageCurrentArr}"/>
             <dxdo:LayoutPanel ShowCaption="True" Caption="Diff" ShowCloseButton="False" ShowPinButton="False" Content="{Binding ImageDiffArr}"/>
         </dxdo:LayoutGroup>
-        <dxdo:LayoutPanel ItemHeight="150" ShowCaption="False" DataContext="{Binding TestInfo}">
+        <dxdo:LayoutPanel ItemHeight="150" ShowCaption="False" DataContext="{Binding TestInfoModel.TestInfo}">
             <avalonedit:TextEditor FontFamily="Consolas" IsReadOnly="True">
                 <dxmvvm:Interaction.Behaviors>
                     <behaviors:AvalonEditTextBindingBehavior Text="{Binding Path=TextDiff}"/>
@@ -42,10 +46,10 @@
         </dxdo:LayoutPanel>
         <dxdo:LayoutPanel ItemHeight="Auto" ShowBorder="False" ShowCaption="False">
             <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Content="Prev"/>
-                <Button Content="Next"/>
-                <Button Content="Valid" Click="{DXEvent Handler='Valid()'}"/>
-                <Button Content="Skip" Click="{DXEvent Handler='Invalid()'}"/>
+                <Button Content="Prev" Click="{DXEvent Handler='TestInfoModel.MovePrevRow.Invoke()'}"/>
+                <Button Content="Next" Click="{DXEvent Handler='TestInfoModel.MoveNextRow.Invoke()'}"/>
+                <Button Content="Valid And Next" Click="{DXEvent Handler='Valid()'}"/>
+                <Button Content="Wrong And Next" Click="{DXEvent Handler='Invalid()'}"/>
             </StackPanel>
         </dxdo:LayoutPanel>
     </dxdo:LayoutGroup>
