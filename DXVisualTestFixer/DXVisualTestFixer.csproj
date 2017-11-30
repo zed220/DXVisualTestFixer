@@ -244,6 +244,7 @@
     <Compile Include="Config\Serializer.cs" />
     <Compile Include="Config\VersionInfo.cs" />
     <Compile Include="Controls\DraggableScrollViewer.cs" />
+    <Compile Include="Controls\TableViewAdvNavigation.cs" />
     <Compile Include="Converters\ArrayToImageConverter.cs" />
     <Compile Include="Core\Repository.cs" />
     <Compile Include="Config\Config.cs" />

@@ -13,6 +13,7 @@
              xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
              xmlns:avalonedit="http://icsharpcode.net/sharpdevelop/avalonedit"
              xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+             xmlns:controls="clr-namespace:DXVisualTestFixer.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
@@ -104,16 +105,16 @@
                             <dxg:GridSummaryItem SummaryType="Count" Alignment="Left"/>
                         </dxg:GridControl.TotalSummary>
                         <dxg:GridControl.View>
-                            <dxg:TableView AllowEditing="False" ShowVerticalLines="False" ShowIndicator="False" ShowHorizontalLines="False" ShowColumnHeaders="False" ShowGroupPanel="False" 
+                            <controls:TableViewAdvNavigation AllowEditing="False" ShowVerticalLines="False" ShowIndicator="False" ShowHorizontalLines="False" ShowColumnHeaders="False" ShowGroupPanel="False" 
                                            ShowFixedTotalSummary="True">
                                 <dxmvvm:Interaction.Behaviors>
-                                    <dxmvvm:EventToCommand EventName="MoveNext" Command="{DXCommand Execute='@s.AssociatedObject.MoveNextRow()'}" SourceObject="{Binding}"/>
-                                    <dxmvvm:EventToCommand EventName="MovePrev" Command="{DXCommand Execute='@s.AssociatedObject.MovePrevRow()'}" SourceObject="{Binding}"/>
+                                    <dxmvvm:EventToCommand EventName="MoveNext" Command="{DXCommand Execute='@s.AssociatedObject.MoveNextDataRow()'}" SourceObject="{Binding}"/>
+                                    <dxmvvm:EventToCommand EventName="MovePrev" Command="{DXCommand Execute='@s.AssociatedObject.MovePrevDataRow()'}" SourceObject="{Binding}"/>
                                 </dxmvvm:Interaction.Behaviors>
-                                <dxg:TableView.FormatConditions>
+                                <controls:TableViewAdvNavigation.FormatConditions>
                                     <dxg:FormatCondition FieldName="CommitChange" ValueRule="Equal" Value1="True" PredefinedFormatName="GreenFillWithDarkGreenText" ApplyToRow="True"/>
-                                </dxg:TableView.FormatConditions>
-                            </dxg:TableView>
+                                </controls:TableViewAdvNavigation.FormatConditions>
+                            </controls:TableViewAdvNavigation>
                         </dxg:GridControl.View>
                     </dxg:GridControl>
                 </dxdo:LayoutPanel>
