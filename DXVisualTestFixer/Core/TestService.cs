@@ -43,8 +43,9 @@ namespace DXVisualTestFixer.Core {
                 foreach(var testDir in Directory.GetDirectories(lastDate)) {
                     TestInfo testInfo = new TestInfo() { Version = version, Team = team };
                     UpdateTestInfo(testInfo, testDir.Split('\\').Last());
-                    LoadTextFile(Path.Combine(testDir, "InstantTextEdit.xml"), s => { testInfo.TextBefore = s; });
-                    LoadTextFile(Path.Combine(testDir, "CurrentTextEdit.xml"), s => { testInfo.TextCurrent = s; });
+                    //_optimized
+                    LoadTextFile(Path.Combine(testDir, "InstantTextEdit"), true, (s, optimized) => { testInfo.TextBefore = s; testInfo.Optimized = optimized; });
+                    LoadTextFile(Path.Combine(testDir, "CurrentTextEdit"), false, (s, optimized) => { testInfo.TextCurrent = s; });
                     BuildTextDiff(testInfo);
                     LoadImage(Path.Combine(testDir, "InstantBitmap.png"), s => { testInfo.ImageBeforeArr = s; });
                     LoadImage(Path.Combine(testDir, "CurrentBitmap.png"), s => { testInfo.ImageCurrentArr = s; });
@@ -67,13 +68,26 @@ namespace DXVisualTestFixer.Core {
             if(splitted.Length > 2)
                 testInfo.Theme += '.' + splitted[2];
         }
-        static void LoadTextFile(string path, Action<string> saveAction) {
-            if(!File.Exists(path)) {
-                //log
-                Debug.WriteLine("fire LoadTextFile");
-                return;
+        static void LoadTextFile(string path, bool detectOptimized, Action<string, bool> saveAction) {
+            string pathWithExtension = Path.ChangeExtension(path, ".xml");
+            bool optimized = false;
+            if(!File.Exists(pathWithExtension)) {
+                if(detectOptimized) {
+                    pathWithExtension = Path.ChangeExtension(path + "_optimized", ".xml");
+                    if(!File.Exists(pathWithExtension)) {
+                        //log
+                        Debug.WriteLine("fire LoadTextFile");
+                        return;
+                    }
+                    optimized = true;
+                }
+                else {
+                    //log
+                    Debug.WriteLine("fire LoadTextFile");
+                    return;
+                }
             }
-            saveAction(File.ReadAllText(path));
+            saveAction(File.ReadAllText(pathWithExtension), optimized);
         }
         static void BuildTextDiff(TestInfo testInfo) {
             if(String.IsNullOrEmpty(testInfo.TextBefore) && String.IsNullOrEmpty(testInfo.TextCurrent))
@@ -185,6 +199,8 @@ namespace DXVisualTestFixer.Core {
             return Path.Combine(actualTestResourcesPath, test.Theme);
         }
         static string GetXmlFilePath(string testResourceName, TestInfo test) {
+            if(test.Optimized)
+                testResourceName = testResourceName + "_optimized";
             string xmlPath = Path.ChangeExtension(testResourceName, "xml");
             if(!File.Exists(xmlPath)) {
                 //log

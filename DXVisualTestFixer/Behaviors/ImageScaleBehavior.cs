@@ -29,7 +29,11 @@ namespace DXVisualTestFixer.Behaviors {
                 if(scaleTransform == null)
                     return;
                 scaleTransform.ScaleX = Math.Round(scaleTransform.ScaleX + dScale, 1);
+                if(scaleTransform.ScaleX < 0.3)
+                    scaleTransform.ScaleX = 0.3;
                 scaleTransform.ScaleY = Math.Round(scaleTransform.ScaleY + dScale, 1);
+                if(scaleTransform.ScaleY < 0.3)
+                    scaleTransform.ScaleY = 0.3;
             }
         }
 

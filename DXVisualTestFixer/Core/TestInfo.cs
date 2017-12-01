@@ -20,6 +20,7 @@ namespace DXVisualTestFixer.Core {
         public byte[] ImageDiffArr { get; set; }
         public string TextBefore { get; set; }
         public string TextCurrent { get; set; }
+        public bool Optimized { get; set; }
         public string TextDiff { get; set; }
         public bool CommitChange {
             get { return GetProperty(() => CommitChange); }
