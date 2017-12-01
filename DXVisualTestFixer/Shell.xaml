@@ -1,19 +1,18 @@
-﻿<dxr:DXRibbonWindow x:Class="DXVisualTestFixer.Shell"
+﻿<dx:ThemedWindow x:Class="DXVisualTestFixer.Shell"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DXVisualTestFixer"
-        xmlns:dxr="http://schemas.devexpress.com/winfx/2008/xaml/ribbon"
         xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
         xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
         xmlns:mif="clr-namespace:DXVisualTestFixer.Mif"
         dx:ScrollBarExtensions.ScrollBarMode="TouchOverlap"
         ShowActivated="True"
         mc:Ignorable="d"
-        dx:ThemeManager.ThemeName="Office2013"
+        dx:ThemeManager.ThemeName="Office2016WhiteSE"
         Title="DevExpress Visual Tests Fixer" MinHeight="768" MinWidth="1024">
     <Grid>
         <ContentControl x:Name="content" dxmvvm:UIRegion.Region="{x:Static mif:Regions.Main}"/>
     </Grid>
-</dxr:DXRibbonWindow>
+</dx:ThemedWindow>

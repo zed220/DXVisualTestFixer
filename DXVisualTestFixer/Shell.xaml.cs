@@ -19,7 +19,7 @@ namespace DXVisualTestFixer {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class Shell : DXRibbonWindow {
+    public partial class Shell : ThemedWindow {
         public Shell() {
             InitializeComponent();
         }
