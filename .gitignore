@@ -2,3 +2,5 @@
 DXVisualTestFixer/bin/
 DXVisualTestFixer/obj/
 packages/
+DXVisualTestFixer.FarmIntegrator/obj/
+bin/

@@ -29,13 +29,13 @@ namespace DXVisualTestFixer.Core {
                 return result;
             Teams.ForEach(team => FillTestsForTeam(team, result));
             return result;
-            //return GetActualFailedTests(result);
         }
         static void FillTestsForTeam(Team team, List<TestInfo> result) {
             string teamPath = Path.Combine(ServerPath, team.ServerFolderName);
             if(!Directory.Exists(teamPath))
                 return;
-            foreach(string verDir in Directory.GetDirectories(teamPath).Where(path => Repository.Versions.Contains(Path.GetFileName(path)))) {
+            List<string> versions = ConfigSerializer.GetConfig().Repositories.Select(r => r.Version).ToList();
+            foreach(string verDir in Directory.GetDirectories(teamPath).Where(path => versions.Contains(Path.GetFileName(path)))) {
                 string lastDate = Directory.GetDirectories(verDir).OrderBy(d => d).LastOrDefault();
                 if(String.IsNullOrEmpty(lastDate))
                     continue;
