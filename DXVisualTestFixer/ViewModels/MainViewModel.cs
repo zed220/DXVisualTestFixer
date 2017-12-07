@@ -67,8 +67,11 @@ namespace DXVisualTestFixer.ViewModels {
 
         void UpdateAllTests() {
             Task.Factory.StartNew(() => {
-                Tests = TestsService.Load(GetAllTasks());
-                Status = ProgramStatus.Idle;
+                var tests = TestsService.Load(GetAllTasks());
+                App.Current.Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
+                    Tests = tests;
+                    Status = ProgramStatus.Idle;
+                }));
             });
         }
 
