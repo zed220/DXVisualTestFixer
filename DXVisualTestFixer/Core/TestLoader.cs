@@ -30,8 +30,15 @@ namespace DXVisualTestFixer.Core {
         }
 
         static void ParseMessage(string testName, string message, List<CorpDirTestInfo> resultList) {
-            List<string> resultPaths = message.Split(new[] { @"\\corp" }, StringSplitOptions.None).ToList();
-            resultPaths = PatchPaths(resultPaths);
+            //testName = testName.Split('.').Last();
+            List<string> themedResultPaths = message.Split(new[] { " - failed:" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+            foreach(var part in themedResultPaths) {
+                ParseMessagePart(testName, part, resultList);
+            }
+        }
+        static void ParseMessagePart(string testName, string message, List<CorpDirTestInfo> resultList) {
+            List<string> paths = message.Split(new[] { @"\\corp"}, StringSplitOptions.RemoveEmptyEntries).ToList();
+            List<string>  resultPaths = PatchPaths(paths);
             CorpDirTestInfo info = null;
             if(!CorpDirTestInfo.TryCreate(testName, resultPaths, out info))
                 return;
@@ -44,8 +51,16 @@ namespace DXVisualTestFixer.Core {
                 string cleanPath = @"\\corp" + pathCandidate.Replace("\r", String.Empty).Replace("\n", String.Empty).Replace(@"\\", @"\");
                 if(cleanPath.Contains(' '))
                     continue;
-                if(File.Exists(cleanPath))
+                if(File.Exists(cleanPath)) {
                     result.Add(cleanPath);
+                }
+                else {
+                    if(cleanPath.Contains("BitmapDif.png")) {
+                        cleanPath = cleanPath.Split(new[] { "BitmapDif.png" }, StringSplitOptions.RemoveEmptyEntries).First() + "BitmapDif.png";
+                        if(File.Exists(cleanPath))
+                            result.Add(cleanPath);
+                    }
+                }
             }
             return result;
         }
