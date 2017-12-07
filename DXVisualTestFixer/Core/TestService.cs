@@ -14,80 +14,46 @@ using System.Windows.Media.Imaging;
 namespace DXVisualTestFixer.Core {
     public static class TestsService {
         static readonly List<Team> Teams = new List<Team>() {
-            new Team(){ Name = "Grid", ServerFolderName = "4DXGridTeam", TestResourcesPath = "DevExpress.Xpf.VisualTests\\DevExpress.Xpf.VisualTests\\WpfGrid\\ThemesImages" },
-            new Team(){ Name = "TabControl", ServerFolderName = "4DXTabControl", TestResourcesPath = "DevExpress.Xpf.VisualTests\\DevExpress.Xpf.VisualTests\\WpfCore\\ThemesImages" },
-            new Team(){ Name = "Pivot", ServerFolderName = "4Pivot", TestResourcesPath = "DevExpress.Xpf.PivotGrid\\DevExpress.Xpf.PivotGrid.HeavyTests\\ThemesImages" },
-            new Team(){ Name = "Scheduler", ServerFolderName = "4WpfScheduler", TestResourcesPath = "DevExpress.Xpf.VisualTests\\DevExpress.Xpf.VisualTests\\WpfScheduler\\ThemesImages" },
-            new Team(){ Name = "Navigation", ServerFolderName = "4XPFNavigationTeam", TestResourcesPath = "DevExpress.Xpf.VisualTests\\DevExpress.Xpf.VisualTests\\Navigation\\ThemesImages" },
+            new Team() { Name = "Grid", ServerFolderName = "4DXGridTeam", TestResourcesPath = "DevExpress.Xpf.VisualTests\\DevExpress.Xpf.VisualTests\\WpfGrid\\ThemesImages", SupportOptimized = true },
+            new Team() { Name = "TabControl", ServerFolderName = "4DXTabControl", TestResourcesPath = "DevExpress.Xpf.VisualTests\\DevExpress.Xpf.VisualTests\\WpfCore\\ThemesImages" },
+            new Team() { Name = "Pivot", ServerFolderName = "4Pivot", TestResourcesPath = "DevExpress.Xpf.PivotGrid\\DevExpress.Xpf.PivotGrid.HeavyTests\\ThemesImages" },
+            new Team() { Name = "Scheduler", ServerFolderName = "4WpfScheduler", TestResourcesPath = "DevExpress.Xpf.VisualTests\\DevExpress.Xpf.VisualTests\\WpfScheduler\\ThemesImages" },
+            new Team() { Name = "Navigation", ServerFolderName = "4XPFNavigationTeam", TestResourcesPath = "DevExpress.Xpf.VisualTests\\DevExpress.Xpf.VisualTests\\Navigation\\ThemesImages" },
+            new Team() { Name = "Svg", ServerFolderName = "Svg2Images", TestResourcesPath = "DevExpress.Xpf.VisualTests\\DevExpress.Xpf.VisualTests\\WpfCore\\Svg2Images" },
         };
 
-        static string ServerPath = @"\\corp\builds\testbuilds\";
-
-        public static List<TestInfo> Load() {
+        public static List<TestInfo> Load(List<FarmTaskInfo> farmTasks) {
             List<TestInfo> result = new List<TestInfo>();
-            if(!Directory.Exists(ServerPath))
-                return result;
-            Teams.ForEach(team => FillTestsForTeam(team, result));
-            return result;
-        }
-        static void FillTestsForTeam(Team team, List<TestInfo> result) {
-            string teamPath = Path.Combine(ServerPath, team.ServerFolderName);
-            if(!Directory.Exists(teamPath))
-                return;
-            List<string> versions = ConfigSerializer.GetConfig().Repositories.Select(r => r.Version).ToList();
-            foreach(string verDir in Directory.GetDirectories(teamPath).Where(path => versions.Contains(Path.GetFileName(path)))) {
-                string lastDate = Directory.GetDirectories(verDir).OrderBy(d => d).LastOrDefault();
-                if(String.IsNullOrEmpty(lastDate))
-                    continue;
-                string version = verDir.Split('\\').Last();
-                foreach(var testDir in Directory.GetDirectories(lastDate)) {
-                    TestInfo testInfo = new TestInfo() { Version = version, Team = team };
-                    UpdateTestInfo(testInfo, testDir.Split('\\').Last());
-                    //_optimized
-                    LoadTextFile(Path.Combine(testDir, "InstantTextEdit"), true, (s, optimized) => { testInfo.TextBefore = s; testInfo.Optimized = optimized; });
-                    LoadTextFile(Path.Combine(testDir, "CurrentTextEdit"), false, (s, optimized) => { testInfo.TextCurrent = s; });
+            foreach(FarmTaskInfo farmTaskInfo in farmTasks) {
+                foreach(CorpDirTestInfo corpDirTestInfo in TestLoader.LoadFromInfo(farmTaskInfo)) {
+                    TestInfo testInfo = new TestInfo();
+                    testInfo.Name = corpDirTestInfo.TestName;
+                    testInfo.Team = Teams.First(t => t.ServerFolderName == corpDirTestInfo.TeamName);
+                    testInfo.Theme = corpDirTestInfo.ThemeName;
+                    if(testInfo.Team.SupportOptimized)
+                        testInfo.Optimized = !farmTaskInfo.Url.Contains("UnoptimizedMode");
+                    testInfo.Version = farmTaskInfo.Repository.Version;
+                    LoadTextFile(corpDirTestInfo.InstantTextEditPath, s => { testInfo.TextBefore = s; });
+                    LoadTextFile(corpDirTestInfo.CurrentTextEditPath, s => { testInfo.TextCurrent = s; });
                     BuildTextDiff(testInfo);
-                    LoadImage(Path.Combine(testDir, "InstantBitmap.png"), s => { testInfo.ImageBeforeArr = s; });
-                    LoadImage(Path.Combine(testDir, "CurrentBitmap.png"), s => { testInfo.ImageCurrentArr = s; });
-                    LoadImage(Path.Combine(testDir, "BitmapDif.png"), s => { testInfo.ImageDiffArr = s; });
+                    LoadImage(corpDirTestInfo.InstantImagePath, s => { testInfo.ImageBeforeArr = s; });
+                    LoadImage(corpDirTestInfo.CurrentImagePath, s => { testInfo.ImageCurrentArr = s; });
+                    LoadImage(corpDirTestInfo.ImageDiffPath, s => { testInfo.ImageDiffArr = s; });
                     if(TestValid(testInfo))
                         result.Add(testInfo);
                 }
             }
+            return result;
         }
-
-        static void UpdateTestInfo(TestInfo testInfo, string testDirName) {
-            string[] splitted = testDirName.Split('.');
-            testInfo.Name = splitted[0];
-            if(splitted.Length < 2) {
+        
+        static void LoadTextFile(string path, Action<string> saveAction) {
+            string pathWithExtension = Path.ChangeExtension(path, ".xml");
+            if(!File.Exists(pathWithExtension)) {
                 //log
-                Debug.WriteLine("fire UpdateTestInfo");
+                Debug.WriteLine("fire LoadTextFile");
                 return;
             }
-            testInfo.Theme = splitted[1];
-            if(splitted.Length > 2)
-                testInfo.Theme += '.' + splitted[2];
-        }
-        static void LoadTextFile(string path, bool detectOptimized, Action<string, bool> saveAction) {
-            string pathWithExtension = Path.ChangeExtension(path, ".xml");
-            bool optimized = false;
-            if(!File.Exists(pathWithExtension)) {
-                if(detectOptimized) {
-                    pathWithExtension = Path.ChangeExtension(path + "_optimized", ".xml");
-                    if(!File.Exists(pathWithExtension)) {
-                        //log
-                        Debug.WriteLine("fire LoadTextFile");
-                        return;
-                    }
-                    optimized = true;
-                }
-                else {
-                    //log
-                    Debug.WriteLine("fire LoadTextFile");
-                    return;
-                }
-            }
-            saveAction(File.ReadAllText(pathWithExtension), optimized);
+            saveAction(File.ReadAllText(pathWithExtension));
         }
         static void BuildTextDiff(TestInfo testInfo) {
             if(String.IsNullOrEmpty(testInfo.TextBefore) && String.IsNullOrEmpty(testInfo.TextCurrent))

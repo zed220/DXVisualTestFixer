@@ -2,6 +2,7 @@
 using DevExpress.Mvvm.ModuleInjection;
 using DXVisualTestFixer.Configuration;
 using DXVisualTestFixer.Core;
+using DXVisualTestFixer.Farm;
 using DXVisualTestFixer.Mif;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Threading;
+using ThoughtWorks.CruiseControl.Remote;
 
 namespace DXVisualTestFixer.ViewModels {
     public interface IMainViewModel {
@@ -29,8 +31,32 @@ namespace DXVisualTestFixer.ViewModels {
 
         public MainViewModel() {
             UpdateConfig();
-            Dispatcher.CurrentDispatcher.BeginInvoke(new Action(UpdateContent), DispatcherPriority.Background);
+            //Dispatcher.CurrentDispatcher.BeginInvoke(new Action(UpdateContent), DispatcherPriority.Background);
+            UpdateContent();
         }
+
+        void FarmRefreshed(FarmRefreshedEventArgs args) {
+            if(args == null) {
+                App.Current.Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
+                    Tests = TestsService.Load(GetAllTasks()); //TestLoader.Load(GetAllTasks());
+                    FarmIntegrator.Stop();
+                }));
+                return;
+            }
+        }
+        List<FarmTaskInfo> GetAllTasks() {
+            List<FarmTaskInfo> result = new List<FarmTaskInfo>();
+            foreach(var repository in Config.Repositories) {
+                if(FarmIntegrator.GetTaskStatus(repository.GetTaskName()).BuildStatus == IntegrationStatus.Failure) {
+                    result.Add(new FarmTaskInfo(repository, FarmIntegrator.GetTaskUrl(repository.GetTaskName())));
+                }
+                if(FarmIntegrator.GetTaskStatus(repository.GetTaskName_Optimized()).BuildStatus == IntegrationStatus.Failure) {
+                    result.Add(new FarmTaskInfo(repository, FarmIntegrator.GetTaskUrl(repository.GetTaskName_Optimized())));
+                }
+            }
+            return result;
+        }
+
 
         void UpdateConfig() {
             var config = ConfigSerializer.GetConfig();
@@ -40,7 +66,7 @@ namespace DXVisualTestFixer.ViewModels {
         }
 
         void UpdateContent() {
-            Tests = TestsService.Load();
+            RefreshTestList();
         }
 
         void OnCurrentTestChanged() {
@@ -71,6 +97,9 @@ namespace DXVisualTestFixer.ViewModels {
                 return;
             changedTests.ForEach(TestsService.ApplyTest);
             UpdateContent();
+        }
+        public void RefreshTestList() {
+            FarmIntegrator.Start(FarmRefreshed);
         }
 
         void MoveNextCore() {

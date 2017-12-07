@@ -11,5 +11,12 @@ namespace DXVisualTestFixer.Core {
 
         public string Version { get; set; }
         public string Path { get; set; }
+
+        public string GetTaskName() {
+            return String.Format("Test.v{0} WPF.Functional VisualTests UnoptimizedMode", Version);
+        }
+        public string GetTaskName_Optimized() {
+            return String.Format("Test.v{0} WPF.Functional VisualTests", Version);
+        }
     }
 }
