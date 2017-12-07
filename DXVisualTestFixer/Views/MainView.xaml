@@ -14,6 +14,7 @@
              xmlns:avalonedit="http://icsharpcode.net/sharpdevelop/avalonedit"
              xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
              xmlns:controls="clr-namespace:DXVisualTestFixer.Controls"
+             xmlns:viewModels="clr-namespace:DXVisualTestFixer.ViewModels"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
@@ -63,7 +64,8 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <dxr:RibbonControl RibbonStyle="Office2010" ToolbarShowMode="Hide" AllowCustomization="False" MinimizationButtonVisibility="Collapsed" RibbonHeaderVisibility="Collapsed">
+        <dxr:RibbonControl RibbonStyle="Office2010" ToolbarShowMode="Hide" AllowCustomization="False" MinimizationButtonVisibility="Collapsed" RibbonHeaderVisibility="Collapsed" 
+                           IsEnabled="{DXBinding Expr='Status == $viewModels:ProgramStatus.Idle'}">
             <dxr:RibbonDefaultPageCategory>
                 <dxr:RibbonPage Caption="Main">
                     <dxr:RibbonPageGroup Caption="Work">
@@ -97,7 +99,8 @@
         <dxdo:DockLayoutManager Grid.Row="1">
             <dxdo:LayoutGroup AllowDrag="False">
                 <dxdo:LayoutPanel ShowCaption="False" ItemWidth="300">
-                    <dxg:GridControl ItemsSource="{Binding Tests}" CurrentItem="{Binding CurrentTest, Mode=TwoWay}" AutoExpandAllGroups="True" ShowBorder="False">
+                    <dxg:GridControl ItemsSource="{Binding Tests}" CurrentItem="{Binding CurrentTest, Mode=TwoWay}" AutoExpandAllGroups="True" ShowBorder="False" 
+                                     ShowLoadingPanel="{DXBinding Expr='Status != $viewModels:ProgramStatus.Idle'}">
                         <dxg:GridColumn FieldName="Version" GroupIndex="0" MergeWithPreviousGroup="True"/>
                         <dxg:GridColumn FieldName="Team.Name" GroupIndex="1" MergeWithPreviousGroup="True"/>
                         <dxg:GridColumn FieldName="Name" GroupIndex="2" MergeWithPreviousGroup="True"/>
@@ -143,7 +146,7 @@
         </dxdo:DockLayoutManager>
         <dxr:RibbonStatusBarControl Grid.Row="2" IsSizeGripVisible="True">
             <dxr:RibbonStatusBarControl.RightItems>
-                <dxb:BarStaticItem Content="Status" AutoSizeMode="None"/>
+                <dxb:BarStaticItem Content="{Binding Status}" AutoSizeMode="None"/>
             </dxr:RibbonStatusBarControl.RightItems>
         </dxr:RibbonStatusBarControl>
     </Grid>

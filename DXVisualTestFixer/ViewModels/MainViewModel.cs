@@ -17,6 +17,11 @@ namespace DXVisualTestFixer.ViewModels {
 
     }
 
+    public enum ProgramStatus {
+        Idle,
+        Loading,
+    }
+
     public class MainViewModel : ViewModelBase, IMainViewModel {
         public Config Config { get; private set; }
 
@@ -28,18 +33,21 @@ namespace DXVisualTestFixer.ViewModels {
             get { return GetProperty(() => CurrentTest); }
             set { SetProperty(() => CurrentTest, value, OnCurrentTestChanged); }
         }
+        public ProgramStatus Status {
+            get { return GetProperty(() => Status); }
+            set { SetProperty(() => Status, value); }
+        }
 
         public MainViewModel() {
             UpdateConfig();
-            //Dispatcher.CurrentDispatcher.BeginInvoke(new Action(UpdateContent), DispatcherPriority.Background);
             UpdateContent();
         }
 
         void FarmRefreshed(FarmRefreshedEventArgs args) {
             if(args == null) {
                 App.Current.Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
-                    Tests = TestsService.Load(GetAllTasks()); //TestLoader.Load(GetAllTasks());
                     FarmIntegrator.Stop();
+                    UpdateAllTests();
                 }));
                 return;
             }
@@ -57,12 +65,20 @@ namespace DXVisualTestFixer.ViewModels {
             return result;
         }
 
+        void UpdateAllTests() {
+            Task.Factory.StartNew(() => {
+                Tests = TestsService.Load(GetAllTasks());
+                Status = ProgramStatus.Idle;
+            });
+        }
+
 
         void UpdateConfig() {
             var config = ConfigSerializer.GetConfig();
             if(Config != null && ConfigSerializer.IsConfigEquals(config, Config))
                 return;
             Config = config;
+            UpdateContent();
         }
 
         void UpdateContent() {
@@ -72,7 +88,7 @@ namespace DXVisualTestFixer.ViewModels {
         void OnCurrentTestChanged() {
             ModuleManager.DefaultManager.Clear(Regions.TestInfo);
             if(CurrentTest != null)
-                ModuleManager.DefaultManager.InjectOrNavigate(Regions.TestInfo, Modules.TestInfo, 
+                ModuleManager.DefaultManager.InjectOrNavigate(Regions.TestInfo, Modules.TestInfo,
                     new TestInfoModel() { TestInfo = CurrentTest, MoveNextRow = new Action(MoveNextCore), MovePrevRow = new Action(MovePrevCore) });
         }
         void OnTestsChanged() {
@@ -99,6 +115,7 @@ namespace DXVisualTestFixer.ViewModels {
             UpdateContent();
         }
         public void RefreshTestList() {
+            Status = ProgramStatus.Loading;
             FarmIntegrator.Start(FarmRefreshed);
         }
 
