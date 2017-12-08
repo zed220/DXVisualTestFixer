@@ -10,7 +10,7 @@ namespace DXVisualTestFixer.ViewModels {
     public interface ITestInfoViewModel : ISupportParameter { }
 
     public class TestInfoModel {
-        public TestInfo TestInfo { get; set; }
+        public TestInfoWrapper TestInfo { get; set; }
         public Action MoveNextRow { get; set; }
         public Action MovePrevRow { get; set; }
     }

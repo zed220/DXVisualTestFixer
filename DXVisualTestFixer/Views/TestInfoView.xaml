@@ -17,7 +17,7 @@
         <converters:ArrayToImageConverter x:Key="ArrayToImageConverter"/>
     </UserControl.Resources>
     <dxdo:LayoutGroup Orientation="Vertical" ShowCaption="False">
-        <dxdo:LayoutGroup DataContext="{Binding TestInfoModel.TestInfo}">
+        <dxdo:LayoutGroup DataContext="{Binding TestInfoModel.TestInfo.TestInfo}">
             <dxdo:LayoutGroup.Resources>
                 <Style TargetType="{x:Type dxdo:LayoutPanel}">
                     <Setter Property="ContentTemplate">
@@ -42,20 +42,25 @@
             <dxdo:LayoutPanel ShowCaption="True" Caption="Current" ShowCloseButton="False" ShowPinButton="False"  Content="{Binding ImageCurrentArr}" AllowSizing="False"/>
             <dxdo:LayoutPanel ShowCaption="True" Caption="Diff" ShowCloseButton="False" ShowPinButton="False" Content="{Binding ImageDiffArr}" AllowSizing="False"/>
         </dxdo:LayoutGroup>
-        <dxdo:LayoutPanel ItemHeight="150" ShowCaption="False" DataContext="{Binding TestInfoModel.TestInfo}">
+        <dxdo:LayoutPanel ItemHeight="150" ShowCaption="False" DataContext="{Binding TestInfoModel.TestInfo.TestInfo}">
             <avalonedit:TextEditor FontFamily="Consolas" IsReadOnly="True">
                 <dxmvvm:Interaction.Behaviors>
                     <behaviors:AvalonEditTextBindingBehavior Text="{Binding Path=TextDiff}"/>
                 </dxmvvm:Interaction.Behaviors>
             </avalonedit:TextEditor>
         </dxdo:LayoutPanel>
-        <dxdo:LayoutPanel ItemHeight="Auto" ShowBorder="False" ShowCaption="False">
-            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Content="Prev" Click="{DXEvent Handler='TestInfoModel.MovePrevRow.Invoke()'}"/>
-                <Button Content="Next" Click="{DXEvent Handler='TestInfoModel.MoveNextRow.Invoke()'}"/>
-                <Button Content="Valid And Next" Click="{DXEvent Handler='Valid()'}"/>
-                <Button Content="Wrong And Next" Click="{DXEvent Handler='Invalid()'}"/>
-            </StackPanel>
-        </dxdo:LayoutPanel>
+        <dxdo:LayoutGroup Orientation="Horizontal" ItemHeight="Auto">
+            <dxdo:LayoutPanel ItemWidth="*" ShowBorder="False" ShowCaption="False">
+                <TextBlock Margin="4" VerticalAlignment="Center" Text="{DXBinding Expr='TestInfoModel.TestInfo.ToLog()'}"/>
+            </dxdo:LayoutPanel>
+            <dxdo:LayoutPanel ShowBorder="False" ShowCaption="False" ItemWidth="Auto">
+                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="Prev" Click="{DXEvent Handler='TestInfoModel.MovePrevRow.Invoke()'}"/>
+                    <Button Content="Next" Click="{DXEvent Handler='TestInfoModel.MoveNextRow.Invoke()'}"/>
+                    <Button Content="Valid And Next" Click="{DXEvent Handler='Valid()'}"/>
+                    <Button Content="Wrong And Next" Click="{DXEvent Handler='Invalid()'}"/>
+                </StackPanel>
+            </dxdo:LayoutPanel>
+        </dxdo:LayoutGroup>
     </dxdo:LayoutGroup>
 </UserControl>

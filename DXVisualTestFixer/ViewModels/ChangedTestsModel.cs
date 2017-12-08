@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DXVisualTestFixer.ViewModels {
     public class ChangedTestsModel {
-        public List<TestInfo> Tests { get; set; }
+        public List<TestInfoWrapper> Tests { get; set; }
         public bool Apply { get; set; }
     }
 }

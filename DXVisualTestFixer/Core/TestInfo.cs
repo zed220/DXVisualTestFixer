@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Media;
 
 namespace DXVisualTestFixer.Core {
-    public class TestInfo : BindableBase {
+    public class TestInfo {
         public string Name { get; set; }
         public Team Team { get; set; }
         public string Theme { get; set; }
@@ -22,13 +22,5 @@ namespace DXVisualTestFixer.Core {
         public string TextCurrent { get; set; }
         public bool Optimized { get; set; }
         public string TextDiff { get; set; }
-        public bool CommitChange {
-            get { return GetProperty(() => CommitChange); }
-            set { SetProperty(() => CommitChange, value); }
-        }
-
-        public string ToLog() {
-            return String.Format("Team: {0}, Version: {1}, Test: {2}, Theme: {3}", Team.Name, Version, Name, Theme);
-        }
     }
 }

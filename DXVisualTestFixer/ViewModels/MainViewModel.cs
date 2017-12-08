@@ -25,11 +25,11 @@ namespace DXVisualTestFixer.ViewModels {
     public class MainViewModel : ViewModelBase, IMainViewModel {
         public Config Config { get; private set; }
 
-        public List<TestInfo> Tests {
+        public List<TestInfoWrapper> Tests {
             get { return GetProperty(() => Tests); }
             set { SetProperty(() => Tests, value, OnTestsChanged); }
         }
-        public TestInfo CurrentTest {
+        public TestInfoWrapper CurrentTest {
             get { return GetProperty(() => CurrentTest); }
             set { SetProperty(() => CurrentTest, value, OnCurrentTestChanged); }
         }
@@ -67,7 +67,7 @@ namespace DXVisualTestFixer.ViewModels {
 
         void UpdateAllTests() {
             Task.Factory.StartNew(() => {
-                var tests = TestsService.Load(GetAllTasks());
+                var tests = TestsService.Load(GetAllTasks()).Select(t => new TestInfoWrapper(t)).ToList();
                 App.Current.Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
                     Tests = tests;
                     Status = ProgramStatus.Idle;
@@ -104,7 +104,7 @@ namespace DXVisualTestFixer.ViewModels {
             UpdateConfig();
         }
         public void ApplyChanges() {
-            List<TestInfo> changedTests = Tests.Where(t => t.CommitChange).ToList();
+            List<TestInfoWrapper> changedTests = Tests.Where(t => t.CommitChange).ToList();
             if(changedTests.Count == 0) {
                 GetService<IMessageBoxService>()?.ShowMessage("Nothing to commit", "Nothing to commit", MessageButton.OK, MessageIcon.Information);
                 return;
@@ -114,8 +114,11 @@ namespace DXVisualTestFixer.ViewModels {
             ModuleManager.DefaultWindowManager.Clear(Regions.ApplyChanges);
             if(!changedTestsModel.Apply)
                 return;
-            changedTests.ForEach(TestsService.ApplyTest);
+            changedTests.ForEach(ApplyTest);
             UpdateContent();
+        }
+        void ApplyTest(TestInfoWrapper testWrapper) {
+            TestsService.ApplyTest(testWrapper.TestInfo);
         }
         public void RefreshTestList() {
             Status = ProgramStatus.Loading;

@@ -185,19 +185,20 @@ namespace DXVisualTestFixer.Core {
             return imagePath;
         }
 
-        public static void ApplyTest(TestInfo test) {
+        public static bool ApplyTest(TestInfo test) {
             string actualTestResourceName = GetTestResourceName(test);
             string xmlPath = GetXmlFilePath(actualTestResourceName, test);
             string imagePath = GetImageFilePath(actualTestResourceName, test);
             if(imagePath == null || xmlPath == null) {
                 //log
-                Debug.WriteLine("fire save test" + test.ToLog());
-                return;
+                //Debug.WriteLine("fire save test" + test.ToLog());
+                return false;
             }
             File.Delete(xmlPath);
             File.WriteAllText(xmlPath, test.TextCurrent);
             File.Delete(imagePath);
             File.WriteAllBytes(imagePath, test.ImageCurrentArr);
+            return true;
         }
     }
 }

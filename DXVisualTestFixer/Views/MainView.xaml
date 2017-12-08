@@ -101,17 +101,17 @@
                 <dxdo:LayoutPanel ShowCaption="False" ItemWidth="300">
                     <dxg:GridControl ItemsSource="{Binding Tests}" CurrentItem="{Binding CurrentTest, Mode=TwoWay}" AutoExpandAllGroups="True" ShowBorder="False" 
                                      ShowLoadingPanel="{DXBinding Expr='Status != $viewModels:ProgramStatus.Idle'}">
-                        <dxg:GridColumn FieldName="Version" GroupIndex="0" MergeWithPreviousGroup="True"/>
-                        <dxg:GridColumn FieldName="Team.Name" GroupIndex="1" MergeWithPreviousGroup="True"/>
-                        <dxg:GridColumn FieldName="Name" GroupIndex="2" MergeWithPreviousGroup="True"/>
-                        <dxg:GridColumn FieldName="Theme" Width="*">
+                        <dxg:GridColumn FieldName="TestInfo.Version" GroupIndex="0" MergeWithPreviousGroup="True"/>
+                        <dxg:GridColumn FieldName="TestInfo.Team.Name" GroupIndex="1" MergeWithPreviousGroup="True"/>
+                        <dxg:GridColumn FieldName="TestInfo.Name" GroupIndex="2" MergeWithPreviousGroup="True"/>
+                        <dxg:GridColumn FieldName="TestInfo.Theme" Width="*">
                             <dxg:GridColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
                                         <dxe:TextEdit x:Name="PART_Editor"/>
                                         <dxe:TextEdit EditMode="InplaceInactive" Margin="2,0,0,0">
                                             <dxe:TextEdit.EditValue>
-                                                <Binding Path="RowData.Row.Optimized">
+                                                <Binding Path="RowData.Row.TestInfo.Optimized">
                                                     <Binding.Converter>
                                                         <dxmvvm:ObjectToObjectConverter DefaultSource="False" DefaultTarget="{x:Null}">
                                                             <dxmvvm:MapItem Source="True" Target="(optimized)"/>
