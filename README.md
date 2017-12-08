@@ -1,1 +1,1 @@
-# DXVcs2Git
+# DXVisualTestsFixer

@@ -11,7 +11,7 @@
         ShowActivated="True"
         mc:Ignorable="d"
         dx:ThemeManager.ThemeName="Office2016WhiteSE"
-        Title="DevExpress Visual Tests Fixer" MinHeight="768" MinWidth="1024">
+        Title="Visual Tests Tool" MinHeight="768" MinWidth="1024">
     <Grid>
         <ContentControl x:Name="content" dxmvvm:UIRegion.Region="{x:Static mif:Regions.Main}"/>
     </Grid>
