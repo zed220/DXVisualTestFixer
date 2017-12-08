@@ -4,3 +4,5 @@ DXVisualTestFixer/obj/
 packages/
 DXVisualTestFixer.FarmIntegrator/obj/
 bin/
+DXVisualTestFixer/DXVisualTestFixer_TemporaryKey.pfx
+*.user
