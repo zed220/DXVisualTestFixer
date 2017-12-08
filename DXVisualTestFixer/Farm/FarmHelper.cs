@@ -39,13 +39,13 @@ namespace DXVisualTestFixer.Farm {
             return Instance.IsRunning;
         }
         public static FarmStatus GetTaskStatus(string task) {
-            if(task.Contains("18.1") && !task.Contains("unoptim"))
-                return new FarmStatus() { BuildStatus = IntegrationStatus.Failure };
+            //if(task.Contains("18.1") && !task.Contains("unoptim"))
+            //    return new FarmStatus() { BuildStatus = IntegrationStatus.Failure };
             return Instance.GetTaskStatus(task);
         }
         public static string GetTaskUrl(string task) {
-            if(task.Contains("18.1") && !task.Contains("unoptim"))
-                return "http://ccnet.devexpress.devx/ccnet/server/farm/project/Test.v18.1+WPF.Functional+VisualTests/build/log20171129115622.xml/ViewBuildReport.aspx";
+            //if(task.Contains("18.1") && !task.Contains("unoptim"))
+            //    return "http://ccnet.devexpress.devx/ccnet/server/farm/project/Test.v18.1+WPF.Functional+VisualTests/build/log20171129115622.xml/ViewBuildReport.aspx";
             return Instance.GetTaskUrl(task);
         }
         public static FarmExtendedStatus GetExtendedTaskStatus(string task) {
