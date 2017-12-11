@@ -20,10 +20,15 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Button Content="Auto Load Repositories From Work Directory" Click="{DXEvent Handler='LoadFromWorkingFolder()'}"/>
-        <dxg:GridControl Grid.Row="1" ItemsSource="{Binding Repositories}">
+        <TextBlock Grid.Row="1" Margin="10">
+            <Run>For example:</Run>
+            <Run FontWeight="Bold">"c:\work" what contains "c:\work\2017.1" or "c:\work\2017.1\common", "c:\work\2018.1", etc</Run>
+        </TextBlock>
+        <dxg:GridControl Grid.Row="2" ItemsSource="{Binding Repositories}">
             <dxg:GridColumn FieldName="Version">
                 <dxg:GridColumn.EditSettings>
                     <dxe:ComboBoxEditSettings ItemsSource="{x:Static core:Repository.Versions}"/>

@@ -43,7 +43,6 @@ namespace DXVisualTestFixer.ViewModels {
 
         public MainViewModel() {
             UpdateConfig();
-            UpdateContent();
         }
 
         void FarmRefreshed(FarmRefreshedEventArgs args) {
@@ -88,6 +87,13 @@ namespace DXVisualTestFixer.ViewModels {
         }
 
         void UpdateContent() {
+            if(Config.Repositories.Length == 0) {
+                Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
+                    GetService<IMessageBoxService>()?.ShowMessage("Add repositories in settings", "Add repositories in settings", MessageButton.OK, MessageIcon.Information);
+                    ShowSettings();
+                }));
+                return;
+            }
             RefreshTestList();
         }
 
