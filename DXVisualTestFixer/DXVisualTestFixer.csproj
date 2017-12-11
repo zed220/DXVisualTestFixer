@@ -31,8 +31,8 @@
     <PublisherName>Zed220</PublisherName>
     <SuiteName>Visual Tests Tool</SuiteName>
     <MinimumRequiredVersion>1.0.1.0</MinimumRequiredVersion>
-    <ApplicationRevision>4</ApplicationRevision>
-    <ApplicationVersion>1.0.3.%2a</ApplicationVersion>
+    <ApplicationRevision>18</ApplicationRevision>
+    <ApplicationVersion>1.0.17.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -242,6 +242,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -309,6 +310,7 @@
     <Compile Include="Farm\ProjectI.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Native\DiffLineBackgroundRenderer.cs" />
+    <Compile Include="Native\UpdateAppService.cs" />
     <Compile Include="ViewModels\ApplyChangesViewModel.cs" />
     <Compile Include="ViewModels\ChangedTestsModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />

@@ -185,7 +185,7 @@ namespace DXVisualTestFixer.Core {
             return imagePath;
         }
 
-        public static bool ApplyTest(TestInfo test) {
+        public static bool ApplyTest(TestInfo test, Func<string, bool> checkoutFunc) {
             string actualTestResourceName = GetTestResourceName(test);
             string xmlPath = GetXmlFilePath(actualTestResourceName, test);
             string imagePath = GetImageFilePath(actualTestResourceName, test);
@@ -194,11 +194,23 @@ namespace DXVisualTestFixer.Core {
                 //Debug.WriteLine("fire save test" + test.ToLog());
                 return false;
             }
-            File.Delete(xmlPath);
+            if(!SafeDeleteFile(xmlPath, checkoutFunc))
+                return false;
+            if(!SafeDeleteFile(imagePath, checkoutFunc))
+                return false;
             File.WriteAllText(xmlPath, test.TextCurrent);
-            File.Delete(imagePath);
             File.WriteAllBytes(imagePath, test.ImageCurrentArr);
             return true;
+        }
+        static bool SafeDeleteFile(string path, Func<string, bool> checkoutFunc) {
+            if((File.GetAttributes(path) & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+                if(checkoutFunc(path)) {
+                    if((File.GetAttributes(path) & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+                        return false;
+                    File.Delete(path);
+                    return true;
+                }
+            return false;
         }
     }
 }

@@ -4,11 +4,14 @@ using DXVisualTestFixer.Configuration;
 using DXVisualTestFixer.Core;
 using DXVisualTestFixer.Farm;
 using DXVisualTestFixer.Mif;
+using DXVisualTestFixer.Services;
 using System;
 using System.Collections.Generic;
+using System.Deployment.Application;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using System.Windows.Threading;
 using ThoughtWorks.CruiseControl.Remote;
 
@@ -117,10 +120,16 @@ namespace DXVisualTestFixer.ViewModels {
             changedTests.ForEach(ApplyTest);
             UpdateContent();
         }
+        bool ShowCheckOutMessageBox(string text) {
+            MessageResult? result = GetService<IMessageBoxService>()?.ShowMessage("Please checkout file in DXVCS \n" + text, "Please checkout file in DXVCS", MessageButton.OKCancel, MessageIcon.Information);
+            return result.HasValue && result.Value == MessageResult.OK;
+        }
         void ApplyTest(TestInfoWrapper testWrapper) {
-            TestsService.ApplyTest(testWrapper.TestInfo);
+            if(!TestsService.ApplyTest(testWrapper.TestInfo, ShowCheckOutMessageBox))
+                GetService<IMessageBoxService>()?.ShowMessage("Test not fixed \n" + testWrapper.ToLog(), "Test not fixed", MessageButton.OK, MessageIcon.Information);
         }
         public void RefreshTestList() {
+            Tests = null;
             Status = ProgramStatus.Loading;
             FarmIntegrator.Start(FarmRefreshed);
         }
@@ -130,6 +139,10 @@ namespace DXVisualTestFixer.ViewModels {
         }
         void MovePrevCore() {
             MovePrev?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void InstallUpdateSyncWithInfo() {
+            UpdateAppService.Update(GetService<IMessageBoxService>());
         }
 
         public event EventHandler MoveNext;

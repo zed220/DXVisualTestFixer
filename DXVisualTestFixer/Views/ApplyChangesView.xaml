@@ -8,10 +8,10 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <dxg:GridControl ItemsSource="{Binding ChangedTestsModel.Tests}" AutoExpandAllGroups="True" ShowBorder="False">
-        <dxg:GridColumn FieldName="Version" GroupIndex="0" MergeWithPreviousGroup="True"/>
-        <dxg:GridColumn FieldName="Team.Name" GroupIndex="1" MergeWithPreviousGroup="True"/>
-        <dxg:GridColumn FieldName="Name" GroupIndex="2" MergeWithPreviousGroup="True"/>
-        <dxg:GridColumn FieldName="Theme" Width="*"/>
+        <dxg:GridColumn FieldName="TestInfo.Version" GroupIndex="0" MergeWithPreviousGroup="True"/>
+        <dxg:GridColumn FieldName="TestInfo.Team.Name" GroupIndex="1" MergeWithPreviousGroup="True"/>
+        <dxg:GridColumn FieldName="TestInfo.Name" GroupIndex="2" MergeWithPreviousGroup="True"/>
+        <dxg:GridColumn FieldName="TestInfo.Theme" Width="*"/>
         <dxg:GridControl.TotalSummary>
             <dxg:GridSummaryItem SummaryType="Count" Alignment="Left"/>
         </dxg:GridControl.TotalSummary>
