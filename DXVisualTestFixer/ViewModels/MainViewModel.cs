@@ -104,7 +104,7 @@ namespace DXVisualTestFixer.ViewModels {
                     new TestInfoModel() { TestInfo = CurrentTest, MoveNextRow = new Action(MoveNextCore), MovePrevRow = new Action(MovePrevCore) });
         }
         void OnTestsChanged() {
-            CurrentTest = Tests.FirstOrDefault();
+            CurrentTest = Tests?.FirstOrDefault();
         }
 
         public void ShowSettings() {
