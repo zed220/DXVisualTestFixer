@@ -6,7 +6,15 @@ using System.Threading.Tasks;
 
 namespace DXVisualTestFixer.Configuration {
     public static class VersionInfo {
-        public const string VersionString = "1.0.34"; // do not specify revision if 0
+        public static string VersionString = GetVersion();
         public static readonly Version Version = new Version(VersionString);
+
+        static string GetVersion() {
+            if(System.Deployment.Application.ApplicationDeployment.IsNetworkDeployed) {
+                System.Deployment.Application.ApplicationDeployment ad = System.Deployment.Application.ApplicationDeployment.CurrentDeployment;
+                return ad.CurrentVersion.ToString(3);
+            }
+            return "0.0.0";
+        }
     }
 }

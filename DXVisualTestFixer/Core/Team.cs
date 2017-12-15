@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 namespace DXVisualTestFixer.Core {
     public class Team {
         public string Name { get; set; }
+        public string Version { get; set; }
         public string TestResourcesPath { get; set; }
         public string ServerFolderName { get; set; }
         public bool SupportOptimized { get; set; }
