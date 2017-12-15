@@ -4,7 +4,7 @@ using DevExpress.Mvvm;
 
 namespace DXVisualTestFixer.Services {
     public static class UpdateAppService {
-        public static void Update(IMessageBoxService messageBoxService) {
+        public static void Update(IMessageBoxService messageBoxService, bool informNoUpdate) {
             UpdateCheckInfo info = null;
 
             if(ApplicationDeployment.IsNetworkDeployed) {
@@ -27,7 +27,8 @@ namespace DXVisualTestFixer.Services {
                     return;
                 }
                 if(!info.UpdateAvailable) {
-                    messageBoxService?.ShowMessage("No updates available", "No updates available");
+                    if(informNoUpdate)
+                        messageBoxService?.ShowMessage("No updates available", "No updates available");
                     return;
                 }
                 Boolean doUpdate = true;

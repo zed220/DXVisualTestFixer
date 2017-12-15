@@ -204,13 +204,14 @@ namespace DXVisualTestFixer.Core {
             return true;
         }
         static bool SafeDeleteFile(string path, Func<string, bool> checkoutFunc) {
-            if((File.GetAttributes(path) & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
-                if(checkoutFunc(path)) {
-                    if((File.GetAttributes(path) & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
-                        return false;
-                    File.Delete(path);
-                    return true;
-                }
+            if((File.GetAttributes(path) & FileAttributes.ReadOnly) != FileAttributes.ReadOnly)
+                return true;
+            if(checkoutFunc(path)) {
+                if((File.GetAttributes(path) & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+                    return false;
+                File.Delete(path);
+                return true;
+            }
             return false;
         }
     }

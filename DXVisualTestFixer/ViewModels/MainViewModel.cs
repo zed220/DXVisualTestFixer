@@ -42,6 +42,7 @@ namespace DXVisualTestFixer.ViewModels {
         }
 
         public MainViewModel() {
+            InstallUpdateSyncWithInfo(false);
             UpdateConfig();
         }
 
@@ -147,8 +148,10 @@ namespace DXVisualTestFixer.ViewModels {
             MovePrev?.Invoke(this, EventArgs.Empty);
         }
 
-        public void InstallUpdateSyncWithInfo() {
-            UpdateAppService.Update(GetService<IMessageBoxService>());
+        public void InstallUpdateSyncWithInfo(bool informNoUpdate) {
+            Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
+                UpdateAppService.Update(GetService<IMessageBoxService>(), informNoUpdate);
+            }));
         }
 
         public event EventHandler MoveNext;

@@ -38,9 +38,9 @@
                     </Setter>
                 </Style>
             </dxdo:LayoutGroup.Resources>
-            <dxdo:LayoutPanel ShowCaption="True" Caption="Before" ShowCloseButton="False" ShowPinButton="False" Content="{Binding ImageBeforeArr}" AllowSizing="False"/>
-            <dxdo:LayoutPanel ShowCaption="True" Caption="Current" ShowCloseButton="False" ShowPinButton="False"  Content="{Binding ImageCurrentArr}" AllowSizing="False"/>
-            <dxdo:LayoutPanel ShowCaption="True" Caption="Diff" ShowCloseButton="False" ShowPinButton="False" Content="{Binding ImageDiffArr}" AllowSizing="False"/>
+            <dxdo:LayoutPanel ShowCaption="True" Caption="Before" ShowCloseButton="False" ShowPinButton="False" Content="{Binding ImageBeforeArr}" AllowSizing="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False"/>
+            <dxdo:LayoutPanel ShowCaption="True" Caption="Current" ShowCloseButton="False" ShowPinButton="False"  Content="{Binding ImageCurrentArr}" AllowSizing="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False"/>
+            <dxdo:LayoutPanel ShowCaption="True" Caption="Diff" ShowCloseButton="False" ShowPinButton="False" Content="{Binding ImageDiffArr}" AllowSizing="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False"/>
         </dxdo:LayoutGroup>
         <dxdo:LayoutPanel ItemHeight="150" ShowCaption="False" DataContext="{Binding TestInfoModel.TestInfo.TestInfo}">
             <avalonedit:TextEditor FontFamily="Consolas" IsReadOnly="True">
