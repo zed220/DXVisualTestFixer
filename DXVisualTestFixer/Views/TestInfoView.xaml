@@ -49,6 +49,9 @@
                 </dxmvvm:Interaction.Behaviors>
             </avalonedit:TextEditor>
         </dxdo:LayoutPanel>
+        <dxdo:LayoutPanel Background="#55FF0000" ItemWidth="*" ItemHeight="Auto" ShowBorder="False" ShowCaption="False" Visibility="{Binding Path=TestInfoModel.TestInfo.Valid, Converter={dxmvvm:BooleanToVisibilityConverter Inverse=True}}">
+            <TextBlock Margin="4" VerticalAlignment="Center" Text="{DXBinding Expr='`Test Info wrong. Update the ` + @c.TestInfoModel.TestInfo.TestInfo.Version + ` repostiroy to last version.`'}"/>
+        </dxdo:LayoutPanel>
         <dxdo:LayoutGroup Orientation="Horizontal" ItemHeight="Auto">
             <dxdo:LayoutPanel ItemWidth="*" ShowBorder="False" ShowCaption="False">
                 <TextBlock Margin="4" VerticalAlignment="Center" Text="{DXBinding Expr='TestInfoModel.TestInfo.ToLog()'}"/>
@@ -57,7 +60,7 @@
                 <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
                     <Button Content="Prev" Click="{DXEvent Handler='TestInfoModel.MovePrevRow.Invoke()'}"/>
                     <Button Content="Next" Click="{DXEvent Handler='TestInfoModel.MoveNextRow.Invoke()'}"/>
-                    <Button Content="Valid And Next" Click="{DXEvent Handler='Valid()'}"/>
+                    <Button Content="Valid And Next" Click="{DXEvent Handler='Valid()'}" IsEnabled="{Binding Path=TestInfoModel.TestInfo.Valid}"/>
                     <Button Content="Wrong And Next" Click="{DXEvent Handler='Invalid()'}"/>
                 </StackPanel>
             </dxdo:LayoutPanel>

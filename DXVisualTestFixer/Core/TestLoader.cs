@@ -24,23 +24,22 @@ namespace DXVisualTestFixer.Core {
                 HtmlNode testMessageHeaderNode = GetTestMessageHeaderNode(testStartNode);
                 HtmlNode testMessageNode = GetTestMessageNode(testMessageHeaderNode);
                 string message = testMessageNode.InnerText;
-                ParseMessage(testName, message, result);
+                ParseMessage(taskInfo, testName, message, result);
             }
             return result;
         }
 
-        static void ParseMessage(string testName, string message, List<CorpDirTestInfo> resultList) {
-            //testName = testName.Split('.').Last();
+        static void ParseMessage(FarmTaskInfo farmTaskInfo, string testName, string message, List<CorpDirTestInfo> resultList) {
             List<string> themedResultPaths = message.Split(new[] { " - failed:" }, StringSplitOptions.RemoveEmptyEntries).ToList();
             foreach(var part in themedResultPaths) {
-                ParseMessagePart(testName, part, resultList);
+                ParseMessagePart(farmTaskInfo, testName, part, resultList);
             }
         }
-        static void ParseMessagePart(string testName, string message, List<CorpDirTestInfo> resultList) {
+        static void ParseMessagePart(FarmTaskInfo farmTaskInfo, string testName, string message, List<CorpDirTestInfo> resultList) {
             List<string> paths = message.Split(new[] { @"\\corp"}, StringSplitOptions.RemoveEmptyEntries).ToList();
             List<string>  resultPaths = PatchPaths(paths);
             CorpDirTestInfo info = null;
-            if(!CorpDirTestInfo.TryCreate(testName, resultPaths, out info))
+            if(!CorpDirTestInfo.TryCreate(farmTaskInfo, testName, resultPaths, out info))
                 return;
             resultList.Add(info);
         }

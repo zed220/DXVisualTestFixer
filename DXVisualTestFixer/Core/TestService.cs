@@ -17,34 +17,51 @@ namespace DXVisualTestFixer.Core {
             new Team() { Name = "Grid", ServerFolderName = "4DXGridTeam", TestResourcesPath = "DevExpress.Xpf.VisualTests\\DevExpress.Xpf.VisualTests\\WpfGrid\\ThemesImages", SupportOptimized = true },
             new Team() { Name = "TabControl", ServerFolderName = "4DXTabControl", TestResourcesPath = "DevExpress.Xpf.VisualTests\\DevExpress.Xpf.VisualTests\\WpfCore\\ThemesImages" },
             new Team() { Name = "CoreAndEditors", ServerFolderName = "4DXCoreTeam", TestResourcesPath = "DevExpress.Xpf.VisualTests\\DevExpress.Xpf.VisualTests\\WpfCore\\ThemesImages" },
+            new Team() { Name = "ThemedWindow", ServerFolderName = "ThemedWindowImages", TestResourcesPath = "DevExpress.Xpf.VisualTests\\DevExpress.Xpf.VisualTests\\WpfCore\\ThemedWindowImages" },
             new Team() { Name = "Pivot", ServerFolderName = "4Pivot", TestResourcesPath = "DevExpress.Xpf.VisualTests\\DevExpress.Xpf.VisualTests\\WpfPivot\\ThemesImages" },
             new Team() { Name = "Scheduler", ServerFolderName = "4WpfScheduler", TestResourcesPath = "DevExpress.Xpf.VisualTests\\DevExpress.Xpf.VisualTests\\WpfScheduler\\ThemesImages" },
             new Team() { Name = "Navigation", ServerFolderName = "4XPFNavigationTeam", TestResourcesPath = "DevExpress.Xpf.VisualTests\\DevExpress.Xpf.VisualTests\\Navigation\\ThemesImages" },
             new Team() { Name = "Svg", ServerFolderName = "Svg2Images", TestResourcesPath = "DevExpress.Xpf.VisualTests\\DevExpress.Xpf.VisualTests\\WpfCore\\Svg2Images" },
         };
 
-        public static List<TestInfo> Load(List<FarmTaskInfo> farmTasks) {
+        public static List<TestInfo> LoadParrallel(List<FarmTaskInfo> farmTasks) {
             List<TestInfo> result = new List<TestInfo>();
+            List<Task<List<TestInfo>>> allTasks = new List<Task<List<TestInfo>>>();
             foreach(FarmTaskInfo farmTaskInfo in farmTasks) {
-                foreach(CorpDirTestInfo corpDirTestInfo in TestLoader.LoadFromInfo(farmTaskInfo)) {
-                    TestInfo testInfo = new TestInfo();
-                    testInfo.Name = corpDirTestInfo.TestName;
-                    testInfo.Team = Teams.First(t => t.ServerFolderName == corpDirTestInfo.TeamName);
-                    testInfo.Theme = corpDirTestInfo.ThemeName;
-                    if(testInfo.Team.SupportOptimized)
-                        testInfo.Optimized = !farmTaskInfo.Url.Contains("UnoptimizedMode");
-                    testInfo.Version = farmTaskInfo.Repository.Version;
-                    LoadTextFile(corpDirTestInfo.InstantTextEditPath, s => { testInfo.TextBefore = s; });
-                    LoadTextFile(corpDirTestInfo.CurrentTextEditPath, s => { testInfo.TextCurrent = s; });
-                    BuildTextDiff(testInfo);
-                    LoadImage(corpDirTestInfo.InstantImagePath, s => { testInfo.ImageBeforeArr = s; });
-                    LoadImage(corpDirTestInfo.CurrentImagePath, s => { testInfo.ImageCurrentArr = s; });
-                    LoadImage(corpDirTestInfo.ImageDiffPath, s => { testInfo.ImageDiffArr = s; });
-                    if(TestValid(testInfo))
-                        result.Add(testInfo);
-                }
+                FarmTaskInfo info = farmTaskInfo;
+                allTasks.Add(Task.Factory.StartNew<List<TestInfo>>(() => LoadFromFarmTaskInfo(info)));
+            }
+            Task.WaitAll(allTasks.ToArray());
+            allTasks.ForEach(t => result.AddRange(t.Result));
+            return result;
+        }
+        static List<TestInfo> LoadFromFarmTaskInfo(FarmTaskInfo farmTaskInfo) {
+            List<TestInfo> result = new List<TestInfo>();
+            foreach(CorpDirTestInfo corpDirTestInfo in TestLoader.LoadFromInfo(farmTaskInfo)) {
+                TestInfo testInfo = TryCreateTestInfo(corpDirTestInfo);
+                if(testInfo != null)
+                    result.Add(testInfo);
             }
             return result;
+        }
+
+        static TestInfo TryCreateTestInfo(CorpDirTestInfo corpDirTestInfo) {
+            TestInfo testInfo = new TestInfo();
+            testInfo.Name = corpDirTestInfo.TestName;
+            testInfo.Team = Teams.First(t => t.ServerFolderName == corpDirTestInfo.TeamName);
+            testInfo.Theme = corpDirTestInfo.ThemeName;
+            if(testInfo.Team.SupportOptimized)
+                testInfo.Optimized = !corpDirTestInfo.FarmTaskInfo.Url.Contains("UnoptimizedMode");
+            testInfo.Version = corpDirTestInfo.FarmTaskInfo.Repository.Version;
+            LoadTextFile(corpDirTestInfo.InstantTextEditPath, s => { testInfo.TextBefore = s; });
+            LoadTextFile(corpDirTestInfo.CurrentTextEditPath, s => { testInfo.TextCurrent = s; });
+            BuildTextDiff(testInfo);
+            LoadImage(corpDirTestInfo.InstantImagePath, s => { testInfo.ImageBeforeArr = s; });
+            LoadImage(corpDirTestInfo.CurrentImagePath, s => { testInfo.ImageCurrentArr = s; });
+            LoadImage(corpDirTestInfo.ImageDiffPath, s => { testInfo.ImageDiffArr = s; });
+            //if(TestValid(testInfo))
+            //    testInfo.Valid = true;
+            return testInfo;
         }
         
         static void LoadTextFile(string path, Action<string> saveAction) {
@@ -121,7 +138,7 @@ namespace DXVisualTestFixer.Core {
             return true;
         }
 
-        static bool TestValid(TestInfo test) {
+        public static bool TestValid(TestInfo test) {
             string actualTestResourceName = GetTestResourceName(test);
             string xmlPath = GetXmlFilePath(actualTestResourceName, test);
             if(xmlPath == null) {

@@ -70,7 +70,7 @@ namespace DXVisualTestFixer.ViewModels {
 
         void UpdateAllTests() {
             Task.Factory.StartNew(() => {
-                var tests = TestsService.Load(GetAllTasks()).Select(t => new TestInfoWrapper(t)).ToList();
+                var tests = TestsService.LoadParrallel(GetAllTasks()).Select(t => new TestInfoWrapper(t)).ToList();
                 App.Current.Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
                     Tests = tests;
                     Status = ProgramStatus.Idle;
@@ -88,7 +88,7 @@ namespace DXVisualTestFixer.ViewModels {
         }
 
         void UpdateContent() {
-            if(Config.Repositories.Length == 0) {
+            if(Config.Repositories == null || Config.Repositories.Length == 0) {
                 Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
                     GetService<IMessageBoxService>()?.ShowMessage("Add repositories in settings", "Add repositories in settings", MessageButton.OK, MessageIcon.Information);
                     ShowSettings();

@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 
 namespace DXVisualTestFixer.Core {
     public class CorpDirTestInfo {
+        public FarmTaskInfo FarmTaskInfo { get; private set; }
+
         public string CurrentTextEditPath { get; private set; }
         public string InstantTextEditPath { get; private set; }
         public string CurrentImagePath { get; private set; }
@@ -17,9 +19,10 @@ namespace DXVisualTestFixer.Core {
         public string TestName { get; private set; }
         public string ThemeName { get; private set; }
 
-        public static bool TryCreate(string testName, List<string> corpPaths, out CorpDirTestInfo result) {
+        public static bool TryCreate(FarmTaskInfo farmTaskInfo, string testName, List<string> corpPaths, out CorpDirTestInfo result) {
             result = null;
             CorpDirTestInfo temp = new CorpDirTestInfo();
+            temp.FarmTaskInfo = farmTaskInfo;
             foreach(var path in corpPaths) {
                 if(path.EndsWith("CurrentTextEdit.xml")) {
                     temp.CurrentTextEditPath = path;

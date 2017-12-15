@@ -10,6 +10,7 @@ namespace DXVisualTestFixer.ViewModels {
     public class TestInfoWrapper : BindableBase {
         public TestInfoWrapper(TestInfo testInfo) {
             TestInfo = testInfo;
+            Valid = TestsService.TestValid(testInfo);
         }
 
         public TestInfo TestInfo { get; private set; }
@@ -18,6 +19,7 @@ namespace DXVisualTestFixer.ViewModels {
             get { return GetProperty(() => CommitChange); }
             set { SetProperty(() => CommitChange, value); }
         }
+        public bool Valid { get; private set; }
 
         public string ToLog() {
             return String.Format("Team: {0}, Version: {1}, Test: {2}, Theme: {3}", TestInfo?.Team.Name, TestInfo?.Version, TestInfo?.Name, TestInfo?.Theme);

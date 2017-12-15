@@ -143,6 +143,7 @@
                                 </dxmvvm:Interaction.Behaviors>
                                 <controls:TableViewAdvNavigation.FormatConditions>
                                     <dxg:FormatCondition FieldName="CommitChange" ValueRule="Equal" Value1="True" PredefinedFormatName="GreenFillWithDarkGreenText" ApplyToRow="True"/>
+                                    <dxg:FormatCondition FieldName="Valid" ValueRule="Equal" Value1="False" PredefinedFormatName="LightRedFillWithDarkRedText" ApplyToRow="True"/>
                                 </controls:TableViewAdvNavigation.FormatConditions>
                             </controls:TableViewAdvNavigation>
                         </dxg:GridControl.View>
