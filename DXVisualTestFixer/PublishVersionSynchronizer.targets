@@ -1,0 +1,20 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <UsingTask TaskName="PublishVersionSynchronizer.PublishVersionSyncTask" AssemblyFile="$(TargetDir)\PublishVersionSynchronizer.dll"/>
+  
+  <PropertyGroup>
+    <BuildDependsOn>
+      PublishVersionSync;
+      BeforeBuild;
+      CoreBuild;
+      AfterBuild
+    </BuildDependsOn>
+  </PropertyGroup>
+
+  <Target Name="PublishVersionSync">
+    <PublishVersionSyncTask ProjectFilePath="$(MSBuildProjectFullPath)" VersionStringFilePath="$(MSBuildProjectDirectory)\Config\VersionInfo.cs">
+	    <Output PropertyName="ErrorMessage" TaskParameter="Error" />
+    </PublishVersionSyncTask>
+    <Message Text="(out) Publish version patched" Condition="'$(ErrorMessage)' == ''"/>
+	  <Error Condition="'$(ErrorMessage)' != ''" Text="$(ErrorMessage)" />
+  </Target>
+</Project>

@@ -319,6 +319,9 @@
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModels\TestInfoWrapper.cs" />
     <Compile Include="ViewModels\TestInfoViewModel.cs" />
+    <Content Include="PublishVersionSynchronizer.targets">
+      <SubType>Designer</SubType>
+    </Content>
     <Compile Include="Views\ApplyChangesView.xaml.cs">
       <DependentUpon>ApplyChangesView.xaml</DependentUpon>
     </Compile>
@@ -384,7 +387,9 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="DXVisualTestFixer_TemporaryKey.pfx" />
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -761,4 +766,5 @@
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="PublishVersionSynchronizer.targets" />
 </Project>
