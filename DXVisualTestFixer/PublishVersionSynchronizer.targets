@@ -1,5 +1,5 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <UsingTask TaskName="PublishVersionSynchronizer.PublishVersionSyncTask" AssemblyFile="$(TargetDir)\PublishVersionSynchronizer.dll"/>
+  <UsingTask TaskName="PublishVersionSynchronizer.PublishVersionSyncTask" AssemblyFile="$(TargetDir)\..\..\lib\PublishVersionSynchronizer\PublishVersionSynchronizer.dll"/>
   
   <PropertyGroup>
     <BuildDependsOn>
