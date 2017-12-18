@@ -153,6 +153,9 @@
             </dxdo:LayoutGroup>
         </dxdo:DockLayoutManager>
         <dxr:RibbonStatusBarControl Grid.Row="2" IsSizeGripVisible="True">
+            <dxr:RibbonStatusBarControl.LeftItems>
+                <dxb:BarStaticItem Content="{Binding CorrentLogLine}" AutoSizeMode="None"/>
+            </dxr:RibbonStatusBarControl.LeftItems>
             <dxr:RibbonStatusBarControl.RightItems>
                 <dxb:BarStaticItem Content="{Binding Status}" AutoSizeMode="None"/>
             </dxr:RibbonStatusBarControl.RightItems>

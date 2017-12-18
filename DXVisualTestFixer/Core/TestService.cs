@@ -1,4 +1,5 @@
-﻿using DXVisualTestFixer.Configuration;
+﻿using CommonServiceLocator;
+using DXVisualTestFixer.Configuration;
 using KellermanSoftware.CompareNetObjects;
 using System;
 using System.Collections.Generic;
@@ -33,17 +34,23 @@ namespace DXVisualTestFixer.Core {
             return result;
         }
         static List<TestInfo> LoadFromFarmTaskInfo(FarmTaskInfo farmTaskInfo) {
+            ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage($"Load tests for {farmTaskInfo.Url}");
             List<TestInfo> result = new List<TestInfo>();
             foreach(CorpDirTestInfo corpDirTestInfo in TestLoader.LoadFromInfo(farmTaskInfo)) {
+                ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage($"Start load test v{corpDirTestInfo.FarmTaskInfo.Repository.Version} {corpDirTestInfo.TestName}.{corpDirTestInfo.ThemeName}");
                 TestInfo testInfo = TryCreateTestInfo(corpDirTestInfo);
+                ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage($"End load test v{corpDirTestInfo.FarmTaskInfo.Repository.Version} {corpDirTestInfo.TestName}.{corpDirTestInfo.ThemeName}");
                 if(testInfo != null) {
                     var status = TestStatus(testInfo);
-                    if(status == TestState.Fixed)
+                    if(status == TestState.Fixed) {
+                        ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage($"Test already fixed: v{corpDirTestInfo.FarmTaskInfo.Repository.Version} {corpDirTestInfo.TestName}.{corpDirTestInfo.ThemeName}");
                         continue;
+                    }
                     testInfo.Valid = status == TestState.Valid;
                     result.Add(testInfo);
                 }
             }
+            ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage($"Finish load tests for {farmTaskInfo.Url}");
             return result;
         }
 

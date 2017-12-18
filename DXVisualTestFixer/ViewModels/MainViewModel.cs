@@ -1,4 +1,5 @@
-﻿using DevExpress.Mvvm;
+﻿using CommonServiceLocator;
+using DevExpress.Mvvm;
 using DevExpress.Mvvm.ModuleInjection;
 using DXVisualTestFixer.Configuration;
 using DXVisualTestFixer.Core;
@@ -40,16 +41,26 @@ namespace DXVisualTestFixer.ViewModels {
             get { return GetProperty(() => Status); }
             set { SetProperty(() => Status, value); }
         }
+        public string CorrentLogLine {
+            get { return GetProperty(() => CorrentLogLine); }
+            set { SetProperty(() => CorrentLogLine, value); }
+        }
 
         public MainViewModel() {
             InstallUpdateSyncWithInfo(false);
             UpdateConfig();
+            ServiceLocator.Current.GetInstance<ILoggingService>().MessageReserved += OnLoggingMessageReserved;
+        }
+
+        void OnLoggingMessageReserved(object sender, IMessageEventArgs args) {
+            CorrentLogLine = args.Message;
         }
 
         void FarmRefreshed(FarmRefreshedEventArgs args) {
             if(args == null) {
                 App.Current.Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
                     FarmIntegrator.Stop();
+                    ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage("Farm integrator succes");
                     UpdateAllTests();
                 }));
                 return;
@@ -70,7 +81,9 @@ namespace DXVisualTestFixer.ViewModels {
 
         void UpdateAllTests() {
             Task.Factory.StartNew(() => {
+                ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage("Start refreshing tests");
                 var tests = TestsService.LoadParrallel(GetAllTasks()).Select(t => new TestInfoWrapper(t)).ToList();
+                ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage("");
                 App.Current.Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
                     Tests = tests;
                     Status = ProgramStatus.Idle;
@@ -80,10 +93,12 @@ namespace DXVisualTestFixer.ViewModels {
 
 
         void UpdateConfig() {
+            ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage("Checking config");
             var config = ConfigSerializer.GetConfig();
             if(Config != null && ConfigSerializer.IsConfigEquals(config, Config))
                 return;
             Config = config;
+            ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage("Config loaded");
             UpdateContent();
         }
 
@@ -136,6 +151,7 @@ namespace DXVisualTestFixer.ViewModels {
                 GetService<IMessageBoxService>()?.ShowMessage("Test not fixed \n" + testWrapper.ToLog(), "Test not fixed", MessageButton.OK, MessageIcon.Information);
         }
         public void RefreshTestList() {
+            ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage("Start farm integrator");
             Tests = null;
             Status = ProgramStatus.Loading;
             FarmIntegrator.Start(FarmRefreshed);
@@ -150,7 +166,9 @@ namespace DXVisualTestFixer.ViewModels {
 
         public void InstallUpdateSyncWithInfo(bool informNoUpdate) {
             Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
+                ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage("Check application updates");
                 UpdateAppService.Update(GetService<IMessageBoxService>(), informNoUpdate);
+                ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage("Finish check application updates");
             }));
         }
 

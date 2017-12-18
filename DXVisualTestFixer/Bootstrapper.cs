@@ -18,6 +18,7 @@ namespace DXVisualTestFixer {
 
         static void RegisterTypes() {
             RootContainer.RegisterType<IMifRegistrator, RepositoriesViewMifRegistrator>(new ContainerControlledLifetimeManager());
+            RootContainer.RegisterType<ILoggingService, LoggingService>(new ContainerControlledLifetimeManager());
             RootContainer.RegisterType<IMainViewModel, MainViewModel>(new ContainerControlledLifetimeManager());
             RootContainer.RegisterType<ITestInfoViewModel, TestInfoViewModel>(new TransientLifetimeManager());
             RootContainer.RegisterType<ISettingsViewModel, SettingsViewModel>(new TransientLifetimeManager());
