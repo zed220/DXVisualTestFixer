@@ -36,8 +36,13 @@ namespace DXVisualTestFixer.Core {
             List<TestInfo> result = new List<TestInfo>();
             foreach(CorpDirTestInfo corpDirTestInfo in TestLoader.LoadFromInfo(farmTaskInfo)) {
                 TestInfo testInfo = TryCreateTestInfo(corpDirTestInfo);
-                if(testInfo != null)
+                if(testInfo != null) {
+                    var status = TestStatus(testInfo);
+                    if(status == TestState.Fixed)
+                        continue;
+                    testInfo.Valid = status == TestState.Valid;
                     result.Add(testInfo);
+                }
             }
             return result;
         }
@@ -135,33 +140,32 @@ namespace DXVisualTestFixer.Core {
             return true;
         }
 
-        public static bool TestValid(TestInfo test) {
+        public static TestState TestStatus(TestInfo test) {
             string actualTestResourceName = GetTestResourceName(test);
             string xmlPath = GetXmlFilePath(actualTestResourceName, test);
             if(xmlPath == null) {
                 //log
-                return false;
+                return TestState.Invalid;
             }
             string imagePath = GetImageFilePath(actualTestResourceName, test);
             if(imagePath == null) {
                 //log
-                return false;
+                return TestState.Invalid;
             }
-            if(!IsTextEquals(test.TextBefore, File.ReadAllText(xmlPath), out _)) {
-                //log -> outdated sources
-                return false;
+            if(!IsTextEquals(test.TextCurrent, File.ReadAllText(xmlPath), out _)) {
+                return TestState.Valid;
             }
-            if(!String.IsNullOrEmpty(test.TextDiff))
-                return true;
             byte[] imageSource = null;
             if(!LoadImage(imagePath, img => imageSource = img)) {
                 //log
                 Debug.WriteLine("fire GetActualFailedTests imageSource");
-                return false;
+                return TestState.Invalid;
             }
+            //if(!String.IsNullOrEmpty(test.TextDiff))
+            //    return true;
             if(IsImageEquals(test.ImageCurrentArr, imageSource))
-                return false;
-            return true;
+                return TestState.Fixed;
+            return TestState.Valid;
         }
 
         static string GetTestResourceName(TestInfo test) {
@@ -228,5 +232,9 @@ namespace DXVisualTestFixer.Core {
             }
             return false;
         }
+    }
+
+    public enum TestState {
+        Valid, Invalid, Fixed
     }
 }

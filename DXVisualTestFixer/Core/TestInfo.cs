@@ -22,5 +22,6 @@ namespace DXVisualTestFixer.Core {
         public string TextCurrent { get; set; }
         public bool Optimized { get; set; }
         public string TextDiff { get; set; }
+        public bool Valid { get; set; }
     }
 }

@@ -108,10 +108,10 @@
                 <dxdo:LayoutPanel ShowCaption="False" ItemWidth="300">
                     <dxg:GridControl ItemsSource="{Binding Tests}" CurrentItem="{Binding CurrentTest, Mode=TwoWay}" AutoExpandAllGroups="True" ShowBorder="False" 
                                      ShowLoadingPanel="{DXBinding Expr='Status != $viewModels:ProgramStatus.Idle'}">
-                        <dxg:GridColumn FieldName="TestInfo.Version" GroupIndex="0" MergeWithPreviousGroup="True"/>
-                        <dxg:GridColumn FieldName="TestInfo.Team.Name" GroupIndex="1" MergeWithPreviousGroup="True"/>
-                        <dxg:GridColumn FieldName="TestInfo.Name" GroupIndex="2" MergeWithPreviousGroup="True"/>
-                        <dxg:GridColumn FieldName="TestInfo.Theme" Width="*">
+                        <dxg:GridColumn FieldName="TestInfo.Version" GroupIndex="0" MergeWithPreviousGroup="False" Header="Version"/>
+                        <dxg:GridColumn FieldName="TestInfo.Team.Name" GroupIndex="1" MergeWithPreviousGroup="False" Header="Team"/>
+                        <dxg:GridColumn FieldName="TestInfo.Name" GroupIndex="2" MergeWithPreviousGroup="True" Header="Name"/>
+                        <dxg:GridColumn FieldName="TestInfo.Theme" Width="*" Header="Theme">
                             <dxg:GridColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
