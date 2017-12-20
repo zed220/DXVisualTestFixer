@@ -9,6 +9,13 @@ using System.Windows.Media;
 
 namespace DXVisualTestFixer.Core {
     public class TestInfo {
+        StringBuilder _InvalidLogBuilder;
+        StringBuilder InvalidLogBuilder { get {
+                if(_InvalidLogBuilder == null)
+                    _InvalidLogBuilder = new StringBuilder();
+                return _InvalidLogBuilder;
+            } }
+
         public string Name { get; set; }
         public Team Team { get; set; }
         public string Theme { get; set; }
@@ -23,5 +30,16 @@ namespace DXVisualTestFixer.Core {
         public bool Optimized { get; set; }
         public string TextDiff { get; set; }
         public bool Valid { get; set; }
+        public string InvalidLog { get { return InvalidLogBuilder.ToString(); } }
+
+        public void LogCustomError(string text) {
+            InvalidLogBuilder.AppendLine(text);
+        }
+        public void LogDirectoryNotFound(string dirPath) {
+            LogCustomError($"Directory not found: \"{dirPath}\"");
+        }
+        public void LogFileNotFound(string filePath) {
+            LogCustomError($"File not found: \"{filePath}\"");
+        }
     }
 }

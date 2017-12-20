@@ -148,44 +148,43 @@ namespace DXVisualTestFixer.Core {
         }
 
         public static TestState TestStatus(TestInfo test) {
+            TestState result = TestState.Valid;
             string actualTestResourceName = GetTestResourceName(test);
+            if(actualTestResourceName == null) {
+                return TestState.Invalid;
+            }
             string xmlPath = GetXmlFilePath(actualTestResourceName, test);
             if(xmlPath == null) {
-                //log
-                return TestState.Invalid;
+                result = TestState.Invalid;
             }
             string imagePath = GetImageFilePath(actualTestResourceName, test);
             if(imagePath == null) {
-                //log
-                return TestState.Invalid;
+                result = TestState.Invalid;
             }
+            if(result == TestState.Invalid)
+                return result;
             if(!IsTextEquals(test.TextCurrent, File.ReadAllText(xmlPath), out _)) {
                 return TestState.Valid;
             }
             byte[] imageSource = null;
             if(!LoadImage(imagePath, img => imageSource = img)) {
-                //log
-                Debug.WriteLine("fire GetActualFailedTests imageSource");
+                test.LogCustomError($"File Can not load: \"{imagePath}\"");
                 return TestState.Invalid;
             }
-            //if(!String.IsNullOrEmpty(test.TextDiff))
-            //    return true;
             if(IsImageEquals(test.ImageCurrentArr, imageSource))
                 return TestState.Fixed;
-            return TestState.Valid;
+            return result;
         }
 
         static string GetTestResourceName(TestInfo test) {
             var repository = ConfigSerializer.GetConfig().Repositories.Where(r => r.Version == test.Version).FirstOrDefault();
             if(repository == null) {
-                //log
-                Debug.WriteLine("fire GetActualFailedTests repository");
+                test.LogCustomError($"Config not found for version \"{test.Version}\"");
                 return null;
             }
             string actualTestResourcesPath = Path.Combine(repository.Path, test.Team.TestResourcesPath, test.Name);
             if(!Directory.Exists(actualTestResourcesPath)) {
-                //log;
-                Debug.WriteLine("fire GetActualFailedTests actualTestResourcesPath");
+                test.LogDirectoryNotFound(actualTestResourcesPath);
                 return null;
             }
             return Path.Combine(actualTestResourcesPath, test.Theme);
@@ -195,8 +194,7 @@ namespace DXVisualTestFixer.Core {
                 testResourceName = testResourceName + "_optimized";
             string xmlPath = Path.ChangeExtension(testResourceName, "xml");
             if(!File.Exists(xmlPath)) {
-                //log
-                Debug.WriteLine("fire GetActualFailedTests xmlPath");
+                test.LogFileNotFound(xmlPath);
                 return null;
             }
             return xmlPath;
@@ -204,8 +202,7 @@ namespace DXVisualTestFixer.Core {
         static string GetImageFilePath(string testResourceName, TestInfo test) {
             string imagePath = Path.ChangeExtension(testResourceName, "png");
             if(!File.Exists(imagePath)) {
-                //log
-                Debug.WriteLine("fire GetActualFailedTests imagePath");
+                test.LogFileNotFound(imagePath);
                 return null;
             }
             return imagePath;

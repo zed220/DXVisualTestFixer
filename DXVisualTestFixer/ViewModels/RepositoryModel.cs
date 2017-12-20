@@ -42,9 +42,14 @@ namespace DXVisualTestFixer.ViewModels {
             info.ErrorType = ErrorType.None;
             if(propertyName == nameof(Path)) {
                 if(!Directory.Exists(Path)) {
-                    info.ErrorText = String.Format("Directory \"{0}\" does not exists", Path);
+                    info.ErrorText = $"Directory \"{Path}\" does not exists. Example value: \"c:\\Work\\2017.2\\XPF\"";
                     info.ErrorType = ErrorType.Default;
                     return;
+                }
+                string visualTestsPath = System.IO.Path.Combine(Path, "DevExpress.Xpf.VisualTests");
+                if(!Directory.Exists(visualTestsPath)) {
+                    info.ErrorText = $"Directory \"{visualTestsPath}\" does not exists. Example value: \"c:\\Work\\2017.2\\XPF\"";
+                    info.ErrorType = ErrorType.Default;
                 }
             }
         }
