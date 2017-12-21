@@ -41,12 +41,7 @@ namespace DXVisualTestFixer.Core {
                 TestInfo testInfo = TryCreateTestInfo(corpDirTestInfo);
                 ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage($"End load test v{corpDirTestInfo.FarmTaskInfo.Repository.Version} {corpDirTestInfo.TestName}.{corpDirTestInfo.ThemeName}");
                 if(testInfo != null) {
-                    var status = TestStatus(testInfo);
-                    if(status == TestState.Fixed) {
-                        ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage($"Test already fixed: v{corpDirTestInfo.FarmTaskInfo.Repository.Version} {corpDirTestInfo.TestName}.{corpDirTestInfo.ThemeName}");
-                        continue;
-                    }
-                    testInfo.Valid = status == TestState.Valid;
+                    testInfo.Valid = TestStatus(testInfo);
                     result.Add(testInfo);
                 }
             }

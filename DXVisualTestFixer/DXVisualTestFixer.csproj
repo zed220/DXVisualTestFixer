@@ -31,8 +31,8 @@
     <PublisherName>Zed220</PublisherName>
     <SuiteName>Visual Tests Tool</SuiteName>
     <MinimumRequiredVersion>1.0.1.0</MinimumRequiredVersion>
-    <ApplicationRevision>42</ApplicationRevision>
-    <ApplicationVersion>1.0.45.%2a</ApplicationVersion>
+    <ApplicationRevision>45</ApplicationRevision>
+    <ApplicationVersion>1.0.48.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -77,157 +77,157 @@
       <HintPath>..\lib\DXFarm\ccnet.smart.plugin.dll</HintPath>
     </Reference>
     <Reference Include="CommonServiceLocator, Version=2.0.1.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
-      <HintPath>..\packages\Unity.5.3.2\lib\net47\CommonServiceLocator.dll</HintPath>
+      <HintPath>..\packages\Unity.5.4.0\lib\net47\CommonServiceLocator.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.CodeParser.v17.2, Version=17.2.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.74\lib\net40\DevExpress.CodeParser.v17.2.dll</HintPath>
+    <Reference Include="DevExpress.CodeParser.v17.2, Version=17.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.75\lib\net40\DevExpress.CodeParser.v17.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Data.v17.2, Version=17.2.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.74\lib\net40\DevExpress.Data.v17.2.dll</HintPath>
+    <Reference Include="DevExpress.Data.v17.2, Version=17.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.75\lib\net40\DevExpress.Data.v17.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Diagram.v17.2.Core, Version=17.2.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.74\lib\net40\DevExpress.Diagram.v17.2.Core.dll</HintPath>
+    <Reference Include="DevExpress.Diagram.v17.2.Core, Version=17.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.75\lib\net40\DevExpress.Diagram.v17.2.Core.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Dialogs.v17.2.Core, Version=17.2.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.74\lib\net40\DevExpress.Dialogs.v17.2.Core.dll</HintPath>
+    <Reference Include="DevExpress.Dialogs.v17.2.Core, Version=17.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.75\lib\net40\DevExpress.Dialogs.v17.2.Core.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Images.v17.2, Version=17.2.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.74\lib\net40\DevExpress.Images.v17.2.dll</HintPath>
+    <Reference Include="DevExpress.Images.v17.2, Version=17.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.75\lib\net40\DevExpress.Images.v17.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Mvvm.v17.2, Version=17.2.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.74\lib\net40\DevExpress.Mvvm.v17.2.dll</HintPath>
+    <Reference Include="DevExpress.Mvvm.v17.2, Version=17.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.75\lib\net40\DevExpress.Mvvm.v17.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Pdf.v17.2.Core, Version=17.2.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.74\lib\net40\DevExpress.Pdf.v17.2.Core.dll</HintPath>
+    <Reference Include="DevExpress.Pdf.v17.2.Core, Version=17.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.75\lib\net40\DevExpress.Pdf.v17.2.Core.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Printing.v17.2.Core, Version=17.2.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.74\lib\net40\DevExpress.Printing.v17.2.Core.dll</HintPath>
+    <Reference Include="DevExpress.Printing.v17.2.Core, Version=17.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.75\lib\net40\DevExpress.Printing.v17.2.Core.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Accordion.v17.2, Version=17.2.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.74\lib\net40\DevExpress.Xpf.Accordion.v17.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Accordion.v17.2, Version=17.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.75\lib\net40\DevExpress.Xpf.Accordion.v17.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Controls.v17.2, Version=17.2.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.74\lib\net40\DevExpress.Xpf.Controls.v17.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Controls.v17.2, Version=17.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.75\lib\net40\DevExpress.Xpf.Controls.v17.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Core.v17.2, Version=17.2.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.74\lib\net40\DevExpress.Xpf.Core.v17.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Core.v17.2, Version=17.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.75\lib\net40\DevExpress.Xpf.Core.v17.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Diagram.v17.2, Version=17.2.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.74\lib\net40\DevExpress.Xpf.Diagram.v17.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Diagram.v17.2, Version=17.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.75\lib\net40\DevExpress.Xpf.Diagram.v17.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Dialogs.v17.2, Version=17.2.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.74\lib\net40\DevExpress.Xpf.Dialogs.v17.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Dialogs.v17.2, Version=17.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.75\lib\net40\DevExpress.Xpf.Dialogs.v17.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Docking.v17.2, Version=17.2.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.74\lib\net40\DevExpress.Xpf.Docking.v17.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Docking.v17.2, Version=17.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.75\lib\net40\DevExpress.Xpf.Docking.v17.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.DocumentViewer.v17.2.Core, Version=17.2.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.74\lib\net40\DevExpress.Xpf.DocumentViewer.v17.2.Core.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.DocumentViewer.v17.2.Core, Version=17.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.75\lib\net40\DevExpress.Xpf.DocumentViewer.v17.2.Core.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Grid.v17.2, Version=17.2.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.74\lib\net40\DevExpress.Xpf.Grid.v17.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Grid.v17.2, Version=17.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.75\lib\net40\DevExpress.Xpf.Grid.v17.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Grid.v17.2.Core, Version=17.2.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.74\lib\net40\DevExpress.Xpf.Grid.v17.2.Core.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Grid.v17.2.Core, Version=17.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.75\lib\net40\DevExpress.Xpf.Grid.v17.2.Core.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Layout.v17.2.Core, Version=17.2.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.74\lib\net40\DevExpress.Xpf.Layout.v17.2.Core.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Layout.v17.2.Core, Version=17.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.75\lib\net40\DevExpress.Xpf.Layout.v17.2.Core.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.LayoutControl.v17.2, Version=17.2.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.74\lib\net40\DevExpress.Xpf.LayoutControl.v17.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.LayoutControl.v17.2, Version=17.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.75\lib\net40\DevExpress.Xpf.LayoutControl.v17.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.NavBar.v17.2, Version=17.2.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.74\lib\net40\DevExpress.Xpf.NavBar.v17.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.NavBar.v17.2, Version=17.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.75\lib\net40\DevExpress.Xpf.NavBar.v17.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.PropertyGrid.v17.2, Version=17.2.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.74\lib\net40\DevExpress.Xpf.PropertyGrid.v17.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.PropertyGrid.v17.2, Version=17.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.75\lib\net40\DevExpress.Xpf.PropertyGrid.v17.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Ribbon.v17.2, Version=17.2.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.74\lib\net40\DevExpress.Xpf.Ribbon.v17.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Ribbon.v17.2, Version=17.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.75\lib\net40\DevExpress.Xpf.Ribbon.v17.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Themes.DXStyle.v17.2, Version=17.2.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.74\lib\net40\DevExpress.Xpf.Themes.DXStyle.v17.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Themes.DXStyle.v17.2, Version=17.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.75\lib\net40\DevExpress.Xpf.Themes.DXStyle.v17.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Themes.LightGray.v17.2, Version=17.2.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.74\lib\net40\DevExpress.Xpf.Themes.LightGray.v17.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Themes.LightGray.v17.2, Version=17.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.75\lib\net40\DevExpress.Xpf.Themes.LightGray.v17.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Themes.MetropolisDark.v17.2, Version=17.2.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.74\lib\net40\DevExpress.Xpf.Themes.MetropolisDark.v17.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Themes.MetropolisDark.v17.2, Version=17.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.75\lib\net40\DevExpress.Xpf.Themes.MetropolisDark.v17.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Themes.MetropolisLight.v17.2, Version=17.2.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.74\lib\net40\DevExpress.Xpf.Themes.MetropolisLight.v17.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Themes.MetropolisLight.v17.2, Version=17.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.75\lib\net40\DevExpress.Xpf.Themes.MetropolisLight.v17.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Themes.Office2007Black.v17.2, Version=17.2.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.74\lib\net40\DevExpress.Xpf.Themes.Office2007Black.v17.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Themes.Office2007Black.v17.2, Version=17.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.75\lib\net40\DevExpress.Xpf.Themes.Office2007Black.v17.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Themes.Office2007Blue.v17.2, Version=17.2.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.74\lib\net40\DevExpress.Xpf.Themes.Office2007Blue.v17.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Themes.Office2007Blue.v17.2, Version=17.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.75\lib\net40\DevExpress.Xpf.Themes.Office2007Blue.v17.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Themes.Office2007Silver.v17.2, Version=17.2.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.74\lib\net40\DevExpress.Xpf.Themes.Office2007Silver.v17.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Themes.Office2007Silver.v17.2, Version=17.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.75\lib\net40\DevExpress.Xpf.Themes.Office2007Silver.v17.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Themes.Office2010Black.v17.2, Version=17.2.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.74\lib\net40\DevExpress.Xpf.Themes.Office2010Black.v17.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Themes.Office2010Black.v17.2, Version=17.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.75\lib\net40\DevExpress.Xpf.Themes.Office2010Black.v17.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Themes.Office2010Blue.v17.2, Version=17.2.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.74\lib\net40\DevExpress.Xpf.Themes.Office2010Blue.v17.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Themes.Office2010Blue.v17.2, Version=17.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.75\lib\net40\DevExpress.Xpf.Themes.Office2010Blue.v17.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Themes.Office2010Silver.v17.2, Version=17.2.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.74\lib\net40\DevExpress.Xpf.Themes.Office2010Silver.v17.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Themes.Office2010Silver.v17.2, Version=17.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.75\lib\net40\DevExpress.Xpf.Themes.Office2010Silver.v17.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Themes.Office2013.v17.2, Version=17.2.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.74\lib\net40\DevExpress.Xpf.Themes.Office2013.v17.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Themes.Office2013.v17.2, Version=17.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.75\lib\net40\DevExpress.Xpf.Themes.Office2013.v17.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Themes.Office2013DarkGray.v17.2, Version=17.2.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.74\lib\net40\DevExpress.Xpf.Themes.Office2013DarkGray.v17.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Themes.Office2013DarkGray.v17.2, Version=17.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.75\lib\net40\DevExpress.Xpf.Themes.Office2013DarkGray.v17.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Themes.Office2013LightGray.v17.2, Version=17.2.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.74\lib\net40\DevExpress.Xpf.Themes.Office2013LightGray.v17.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Themes.Office2013LightGray.v17.2, Version=17.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.75\lib\net40\DevExpress.Xpf.Themes.Office2013LightGray.v17.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Themes.Office2016Black.v17.2, Version=17.2.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.74\lib\net40\DevExpress.Xpf.Themes.Office2016Black.v17.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Themes.Office2016Black.v17.2, Version=17.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.75\lib\net40\DevExpress.Xpf.Themes.Office2016Black.v17.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Themes.Office2016BlackSE.v17.2, Version=17.2.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.74\lib\net40\DevExpress.Xpf.Themes.Office2016BlackSE.v17.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Themes.Office2016BlackSE.v17.2, Version=17.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.75\lib\net40\DevExpress.Xpf.Themes.Office2016BlackSE.v17.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Themes.Office2016Colorful.v17.2, Version=17.2.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.74\lib\net40\DevExpress.Xpf.Themes.Office2016Colorful.v17.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Themes.Office2016Colorful.v17.2, Version=17.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.75\lib\net40\DevExpress.Xpf.Themes.Office2016Colorful.v17.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Themes.Office2016ColorfulSE.v17.2, Version=17.2.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.74\lib\net40\DevExpress.Xpf.Themes.Office2016ColorfulSE.v17.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Themes.Office2016ColorfulSE.v17.2, Version=17.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.75\lib\net40\DevExpress.Xpf.Themes.Office2016ColorfulSE.v17.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Themes.Office2016DarkGraySE.v17.2, Version=17.2.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.74\lib\net40\DevExpress.Xpf.Themes.Office2016DarkGraySE.v17.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Themes.Office2016DarkGraySE.v17.2, Version=17.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.75\lib\net40\DevExpress.Xpf.Themes.Office2016DarkGraySE.v17.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Themes.Office2016White.v17.2, Version=17.2.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.74\lib\net40\DevExpress.Xpf.Themes.Office2016White.v17.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Themes.Office2016White.v17.2, Version=17.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.75\lib\net40\DevExpress.Xpf.Themes.Office2016White.v17.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Themes.Office2016WhiteSE.v17.2, Version=17.2.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.74\lib\net40\DevExpress.Xpf.Themes.Office2016WhiteSE.v17.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Themes.Office2016WhiteSE.v17.2, Version=17.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.75\lib\net40\DevExpress.Xpf.Themes.Office2016WhiteSE.v17.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Themes.Seven.v17.2, Version=17.2.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.74\lib\net40\DevExpress.Xpf.Themes.Seven.v17.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Themes.Seven.v17.2, Version=17.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.75\lib\net40\DevExpress.Xpf.Themes.Seven.v17.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Themes.Super.v17.2, Version=17.2.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.74\lib\net40\DevExpress.Xpf.Themes.Super.v17.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Themes.Super.v17.2, Version=17.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.75\lib\net40\DevExpress.Xpf.Themes.Super.v17.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Themes.TouchlineDark.v17.2, Version=17.2.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.74\lib\net40\DevExpress.Xpf.Themes.TouchlineDark.v17.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Themes.TouchlineDark.v17.2, Version=17.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.75\lib\net40\DevExpress.Xpf.Themes.TouchlineDark.v17.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Themes.VS2010.v17.2, Version=17.2.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.74\lib\net40\DevExpress.Xpf.Themes.VS2010.v17.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Themes.VS2010.v17.2, Version=17.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.75\lib\net40\DevExpress.Xpf.Themes.VS2010.v17.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Themes.VS2017Blue.v17.2, Version=17.2.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.74\lib\net40\DevExpress.Xpf.Themes.VS2017Blue.v17.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Themes.VS2017Blue.v17.2, Version=17.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.75\lib\net40\DevExpress.Xpf.Themes.VS2017Blue.v17.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Themes.VS2017Dark.v17.2, Version=17.2.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.74\lib\net40\DevExpress.Xpf.Themes.VS2017Dark.v17.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Themes.VS2017Dark.v17.2, Version=17.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.75\lib\net40\DevExpress.Xpf.Themes.VS2017Dark.v17.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Themes.VS2017Light.v17.2, Version=17.2.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.74\lib\net40\DevExpress.Xpf.Themes.VS2017Light.v17.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Themes.VS2017Light.v17.2, Version=17.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.75\lib\net40\DevExpress.Xpf.Themes.VS2017Light.v17.2.dll</HintPath>
     </Reference>
-    <Reference Include="HtmlAgilityPack, Version=1.6.7.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
-      <HintPath>..\packages\HtmlAgilityPack.1.6.7\lib\Net45\HtmlAgilityPack.dll</HintPath>
+    <Reference Include="HtmlAgilityPack, Version=1.6.8.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlAgilityPack.1.6.8\lib\Net45\HtmlAgilityPack.dll</HintPath>
     </Reference>
     <Reference Include="ICSharpCode.AvalonEdit, Version=5.0.3.0, Culture=neutral, PublicKeyToken=9cc39be672370310, processorArchitecture=MSIL">
       <HintPath>..\packages\AvalonEdit.5.0.4\lib\Net40\ICSharpCode.AvalonEdit.dll</HintPath>
@@ -255,26 +255,26 @@
     <Reference Include="ThoughtWorks.CruiseControl.Remote">
       <HintPath>..\lib\DXFarm\ThoughtWorks.CruiseControl.Remote.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.Abstractions, Version=2.3.1.0, Culture=neutral, PublicKeyToken=6d32ff45e0ccc69f, processorArchitecture=MSIL">
-      <HintPath>..\packages\Unity.5.3.2\lib\net47\Unity.Abstractions.dll</HintPath>
+    <Reference Include="Unity.Abstractions, Version=2.4.0.0, Culture=neutral, PublicKeyToken=6d32ff45e0ccc69f, processorArchitecture=MSIL">
+      <HintPath>..\packages\Unity.5.4.0\lib\net47\Unity.Abstractions.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.Configuration, Version=5.1.0.0, Culture=neutral, PublicKeyToken=6d32ff45e0ccc69f, processorArchitecture=MSIL">
-      <HintPath>..\packages\Unity.5.3.2\lib\net47\Unity.Configuration.dll</HintPath>
+    <Reference Include="Unity.Configuration, Version=5.1.1.0, Culture=neutral, PublicKeyToken=6d32ff45e0ccc69f, processorArchitecture=MSIL">
+      <HintPath>..\packages\Unity.5.4.0\lib\net47\Unity.Configuration.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.Container, Version=5.3.2.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
-      <HintPath>..\packages\Unity.5.3.2\lib\net47\Unity.Container.dll</HintPath>
+    <Reference Include="Unity.Container, Version=5.4.0.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
+      <HintPath>..\packages\Unity.5.4.0\lib\net47\Unity.Container.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.Interception, Version=5.1.0.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
-      <HintPath>..\packages\Unity.5.3.2\lib\net47\Unity.Interception.dll</HintPath>
+    <Reference Include="Unity.Interception, Version=5.2.0.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
+      <HintPath>..\packages\Unity.5.4.0\lib\net47\Unity.Interception.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.Interception.Configuration, Version=5.1.0.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
-      <HintPath>..\packages\Unity.5.3.2\lib\net47\Unity.Interception.Configuration.dll</HintPath>
+    <Reference Include="Unity.Interception.Configuration, Version=5.1.1.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
+      <HintPath>..\packages\Unity.5.4.0\lib\net47\Unity.Interception.Configuration.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.RegistrationByConvention, Version=2.1.1.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
-      <HintPath>..\packages\Unity.5.3.2\lib\net47\Unity.RegistrationByConvention.dll</HintPath>
+    <Reference Include="Unity.RegistrationByConvention, Version=2.1.2.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
+      <HintPath>..\packages\Unity.5.4.0\lib\net47\Unity.RegistrationByConvention.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.ServiceLocation, Version=2.0.8.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
-      <HintPath>..\packages\Unity.5.3.2\lib\net47\Unity.ServiceLocation.dll</HintPath>
+    <Reference Include="Unity.ServiceLocation, Version=2.0.9.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
+      <HintPath>..\packages\Unity.5.4.0\lib\net47\Unity.ServiceLocation.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
@@ -288,6 +288,7 @@
     <Compile Include="Behaviors\AvalonEditTextBindingBehavior.cs" />
     <Compile Include="Behaviors\BrowseDirBehavior.cs" />
     <Compile Include="Behaviors\ImageScaleBehavior.cs" />
+    <Compile Include="Behaviors\MergedTestInfoButtonBehavior.cs" />
     <Compile Include="Behaviors\ScrollVIewerDragBehavior.cs" />
     <Compile Include="Config\ConfigSerializer.cs" />
     <Compile Include="Config\Serializer.cs" />
@@ -329,6 +330,9 @@
     <Compile Include="Views\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\MergedTestInfoView.xaml.cs">
+      <DependentUpon>MergedTestInfoView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\SettingsView.xaml.cs">
       <DependentUpon>SettingsView.xaml</DependentUpon>
     </Compile>
@@ -354,6 +358,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\MainView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MergedTestInfoView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -692,7 +700,7 @@
       <IncludeHash>True</IncludeHash>
       <FileType>Assembly</FileType>
     </PublishFile>
-    <PublishFile Include="DevExpress.Xpf.Themes.Office2016White.v17.2">
+    <PublishFile Include="DevExpress.Xpf.Themes.Office2016WhiteSE.v17.2">
       <Visible>False</Visible>
       <Group>themes</Group>
       <TargetPath>

@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="DXVisualTestFixer.Views.TestInfoView"
+﻿<UserControl x:Class="DXVisualTestFixer.Views.MergedTestInfoView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -24,31 +24,46 @@
         </dxmvvm:ObjectToObjectConverter>
     </UserControl.Resources>
     <dxdo:LayoutGroup Orientation="Vertical" ShowCaption="False">
-        <dxdo:LayoutGroup DataContext="{Binding TestInfoModel.TestInfo.TestInfo}">
-            <dxdo:LayoutGroup.Resources>
-                <Style TargetType="{x:Type dxdo:LayoutPanel}">
-                    <Setter Property="ContentTemplate">
-                        <Setter.Value>
-                            <DataTemplate>
-                                <controls:DraggableScrollViewer HorizontalScrollBarVisibility="Auto" dx:ScrollBarExtensions.HandlesDefaultMouseScrolling="False">
-                                    <dxmvvm:Interaction.Behaviors>
-                                        <behaviors:ScrollVIewerDragBehavior/>
-                                    </dxmvvm:Interaction.Behaviors>
-                                    <Image Source="{Binding Path=Content, Converter={StaticResource ArrayToImageConverter}, RelativeSource={RelativeSource TemplatedParent}}" Stretch="None">
-                                        <dxmvvm:Interaction.Behaviors>
-                                            <behaviors:ImageScaleBehavior/>
-                                        </dxmvvm:Interaction.Behaviors>
-                                    </Image>
-                                </controls:DraggableScrollViewer>
-                            </DataTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </dxdo:LayoutGroup.Resources>
-            <dxdo:LayoutPanel ShowCaption="True" Caption="Before" ShowCloseButton="False" ShowPinButton="False" Content="{Binding ImageBeforeArr}" AllowSizing="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False"/>
-            <dxdo:LayoutPanel ShowCaption="True" Caption="Current" ShowCloseButton="False" ShowPinButton="False"  Content="{Binding ImageCurrentArr}" AllowSizing="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False"/>
-            <dxdo:LayoutPanel ShowCaption="True" Caption="Diff" ShowCloseButton="False" ShowPinButton="False" Content="{Binding ImageDiffArr}" AllowSizing="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False"/>
-        </dxdo:LayoutGroup>
+        <dxdo:LayoutPanel DataContext="{Binding TestInfoModel.TestInfo.TestInfo}" ShowCaption="True" Caption="Merged" ShowCloseButton="False" ShowPinButton="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False">
+            <dxdo:LayoutPanel.Resources>
+                <DataTemplate x:Key="DraggableScrollViewerDataTemplate">
+                    <controls:DraggableScrollViewer HorizontalScrollBarVisibility="Auto" dx:ScrollBarExtensions.HandlesDefaultMouseScrolling="False">
+                        <dxmvvm:Interaction.Behaviors>
+                            <behaviors:ScrollVIewerDragBehavior/>
+                        </dxmvvm:Interaction.Behaviors>
+                        <Image Source="{Binding Path=Content, Converter={StaticResource ArrayToImageConverter}, RelativeSource={RelativeSource TemplatedParent}}" Stretch="None">
+                            <dxmvvm:Interaction.Behaviors>
+                                <behaviors:ImageScaleBehavior/>
+                            </dxmvvm:Interaction.Behaviors>
+                        </Image>
+                    </controls:DraggableScrollViewer>
+                </DataTemplate>
+            </dxdo:LayoutPanel.Resources>
+            <Grid>
+                <ContentControl x:Name="before" Content="{Binding ImageBeforeArr}" ContentTemplate="{StaticResource ResourceKey=DraggableScrollViewerDataTemplate}"/>
+                <ContentControl x:Name="current" Content="{Binding ImageCurrentArr}" ContentTemplate="{StaticResource ResourceKey=DraggableScrollViewerDataTemplate}"/>
+                <ContentControl x:Name="diff" Content="{Binding ImageDiffArr}" ContentTemplate="{StaticResource ResourceKey=DraggableScrollViewerDataTemplate}"/>
+            </Grid>
+        </dxdo:LayoutPanel>
+        <dxdo:LayoutPanel ShowBorder="False" ShowCaption="False" ItemHeight="Auto">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Content="Diff" Padding="10" Margin="5">
+                    <dxmvvm:Interaction.Behaviors>
+                        <behaviors:MergedTestInfoButtonBehavior Hide1="{Binding ElementName=before}" Hide2="{Binding ElementName=current}" Show="{Binding ElementName=diff}"/>
+                    </dxmvvm:Interaction.Behaviors>
+                </Button>
+                <Button Content="Original" Padding="10" Margin="5">
+                    <dxmvvm:Interaction.Behaviors>
+                        <behaviors:MergedTestInfoButtonBehavior Hide1="{Binding ElementName=diff}" Hide2="{Binding ElementName=current}" Show="{Binding ElementName=before}"/>
+                    </dxmvvm:Interaction.Behaviors>
+                </Button>
+                <Button Content="Current" Padding="10" Margin="5">
+                    <dxmvvm:Interaction.Behaviors>
+                        <behaviors:MergedTestInfoButtonBehavior Hide1="{Binding ElementName=diff}" Hide2="{Binding ElementName=before}" Show="{Binding ElementName=current}"/>
+                    </dxmvvm:Interaction.Behaviors>
+                </Button>
+            </StackPanel>
+        </dxdo:LayoutPanel>
         <dxdo:LayoutPanel ItemHeight="150" ShowCaption="False" DataContext="{Binding TestInfoModel.TestInfo.TestInfo}">
             <avalonedit:TextEditor FontFamily="Consolas" IsReadOnly="True">
                 <dxmvvm:Interaction.Behaviors>

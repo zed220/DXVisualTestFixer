@@ -45,6 +45,10 @@ namespace DXVisualTestFixer.ViewModels {
             get { return GetProperty(() => CorrentLogLine); }
             set { SetProperty(() => CorrentLogLine, value); }
         }
+        public TestViewType TestViewType {
+            get { return GetProperty(() => TestViewType); }
+            set { SetProperty(() => TestViewType, value, OnTestViewTypeChanged); }
+        }
 
         public MainViewModel() {
             InstallUpdateSyncWithInfo(false);
@@ -170,6 +174,15 @@ namespace DXVisualTestFixer.ViewModels {
                 UpdateAppService.Update(GetService<IMessageBoxService>(), informNoUpdate);
                 ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage("Finish check application updates");
             }));
+        }
+        public void ChangeTestViewType(TestViewType testViewType) {
+            TestViewType = testViewType;
+        }
+
+        void OnTestViewTypeChanged() {
+            ModuleManager.DefaultManager.Clear(Regions.TestInfo);
+            MifRegistrator.InitializeTestInfo(TestViewType);
+            OnCurrentTestChanged();
         }
 
         public event EventHandler MoveNext;

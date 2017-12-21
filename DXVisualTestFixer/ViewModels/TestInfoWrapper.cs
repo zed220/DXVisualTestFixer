@@ -14,7 +14,7 @@ namespace DXVisualTestFixer.ViewModels {
 
         public TestInfo TestInfo { get; private set; }
 
-        public bool Valid { get { return TestInfo.Valid; } }
+        public TestState Valid { get { return TestInfo.Valid; } }
 
         public bool CommitChange {
             get { return GetProperty(() => CommitChange); }

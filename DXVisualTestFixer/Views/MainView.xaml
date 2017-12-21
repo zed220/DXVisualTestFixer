@@ -15,6 +15,7 @@
              xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
              xmlns:controls="clr-namespace:DXVisualTestFixer.Controls"
              xmlns:viewModels="clr-namespace:DXVisualTestFixer.ViewModels"
+             xmlns:core="clr-namespace:DXVisualTestFixer.Core"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
@@ -100,6 +101,13 @@
                             LargeGlyph="{dx:DXImageOffice2013 Image=Download_32x32.png}">
                         </dxb:BarButtonItem>
                     </dxr:RibbonPageGroup>
+                    <dxr:RibbonPageGroup Caption="Appearance">
+                        <dxb:BarCheckItem Content="Tuple"/>
+                        <dxb:BarCheckItem Content="Split View" IsChecked="{DXBinding Expr='@c.TestViewType == $mif:TestViewType.Split', Mode=OneWay}"
+                                          Command="{DXCommand Execute='@c.ChangeTestViewType($mif:TestViewType.Split)'}"/>
+                        <dxb:BarCheckItem Content="Merged View" IsChecked="{DXBinding Expr='@c.TestViewType == $mif:TestViewType.Merged', Mode=OneWay}"
+                                          Command="{DXCommand Execute='@c.ChangeTestViewType($mif:TestViewType.Merged)'}"/>
+                    </dxr:RibbonPageGroup> 
                 </dxr:RibbonPage>
             </dxr:RibbonDefaultPageCategory>
         </dxr:RibbonControl>
@@ -142,8 +150,9 @@
                                     <dxmvvm:EventToCommand EventName="MovePrev" Command="{DXCommand Execute='@s.AssociatedObject.MovePrevDataRow()'}" SourceObject="{Binding}"/>
                                 </dxmvvm:Interaction.Behaviors>
                                 <controls:TableViewAdvNavigation.FormatConditions>
-                                    <dxg:FormatCondition FieldName="CommitChange" ValueRule="Equal" Value1="True" PredefinedFormatName="GreenFillWithDarkGreenText" ApplyToRow="True"/>
-                                    <dxg:FormatCondition FieldName="Valid" ValueRule="Equal" Value1="False" PredefinedFormatName="LightRedFillWithDarkRedText" ApplyToRow="True"/>
+                                    <dxg:FormatCondition FieldName="CommitChange" ValueRule="Equal" Value1="True" PredefinedFormatName="YellowFillWithDarkYellowText" ApplyToRow="True"/>
+                                    <dxg:FormatCondition FieldName="Valid" ValueRule="Equal" Value1="{x:Static core:TestState.Invalid}" PredefinedFormatName="LightRedFillWithDarkRedText" ApplyToRow="True"/>
+                                    <dxg:FormatCondition FieldName="Valid" ValueRule="Equal" Value1="{x:Static core:TestState.Fixed}" PredefinedFormatName="GreenFillWithDarkGreenText" ApplyToRow="True"/>
                                 </controls:TableViewAdvNavigation.FormatConditions>
                             </controls:TableViewAdvNavigation>
                         </dxg:GridControl.View>
