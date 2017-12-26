@@ -187,7 +187,7 @@ namespace DXVisualTestFixer.Core {
         static string GetXmlFilePath(string testResourceName, TestInfo test) {
             if(test.Optimized)
                 testResourceName = testResourceName + "_optimized";
-            string xmlPath = Path.ChangeExtension(testResourceName, "xml");
+            string xmlPath = testResourceName + ".xml";
             if(!File.Exists(xmlPath)) {
                 test.LogFileNotFound(xmlPath);
                 return null;
@@ -195,7 +195,7 @@ namespace DXVisualTestFixer.Core {
             return xmlPath;
         }
         static string GetImageFilePath(string testResourceName, TestInfo test) {
-            string imagePath = Path.ChangeExtension(testResourceName, "png");
+            string imagePath = testResourceName + ".png";
             if(!File.Exists(imagePath)) {
                 test.LogFileNotFound(imagePath);
                 return null;
