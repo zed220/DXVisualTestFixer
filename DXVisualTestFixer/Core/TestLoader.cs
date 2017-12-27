@@ -47,6 +47,8 @@ namespace DXVisualTestFixer.Core {
         static List<string> PatchPaths(List<string> resultPaths) {
             List<string> result = new List<string>();
             foreach(var pathCandidate in resultPaths) {
+                if(!pathCandidate.Contains('\\'))
+                    continue;
                 string cleanPath = @"\\corp" + pathCandidate.Replace("\r", String.Empty).Replace("\n", String.Empty).Replace(@"\\", @"\");
                 if(cleanPath.Contains(' '))
                     continue;
@@ -54,6 +56,11 @@ namespace DXVisualTestFixer.Core {
                     result.Add(cleanPath);
                 }
                 else {
+                    if(cleanPath.Contains("InstantBitmap.png")) {
+                        cleanPath = cleanPath.Split(new[] { "InstantBitmap.png" }, StringSplitOptions.RemoveEmptyEntries).First() + "InstantBitmap.png";
+                        if(File.Exists(cleanPath))
+                            result.Add(cleanPath);
+                    }
                     if(cleanPath.Contains("BitmapDif.png")) {
                         cleanPath = cleanPath.Split(new[] { "BitmapDif.png" }, StringSplitOptions.RemoveEmptyEntries).First() + "BitmapDif.png";
                         if(File.Exists(cleanPath))

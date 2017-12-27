@@ -45,7 +45,7 @@ namespace DXVisualTestFixer.Core {
                     continue;
                 }
             }
-            if(temp.CurrentTextEditPath != null && temp.InstantTextEditPath != null && temp.CurrentImagePath != null && temp.InstantImagePath != null && temp.ImageDiffPath != null) {
+            if(temp.CurrentTextEditPath != null && temp.InstantTextEditPath != null && temp.CurrentImagePath != null && temp.InstantImagePath != null) {// && temp.ImageDiffPath != null
                 temp.TeamName = temp.CurrentTextEditPath.Split(new string[] { @"\\corp\builds\testbuilds\" }, StringSplitOptions.RemoveEmptyEntries).First().Split('\\').First();
                 string[] testNameAndTheme = Path.GetDirectoryName(temp.CurrentTextEditPath).Split('\\').Last().Split('.');
                 temp.TestName = testNameAndTheme[0];

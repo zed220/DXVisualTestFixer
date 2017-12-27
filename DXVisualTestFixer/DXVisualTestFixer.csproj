@@ -32,7 +32,7 @@
     <SuiteName>Visual Tests Tool</SuiteName>
     <MinimumRequiredVersion>1.0.1.0</MinimumRequiredVersion>
     <ApplicationRevision>46</ApplicationRevision>
-    <ApplicationVersion>1.0.49.%2a</ApplicationVersion>
+    <ApplicationVersion>1.0.50.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
