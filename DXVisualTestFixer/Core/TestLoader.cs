@@ -16,7 +16,18 @@ namespace DXVisualTestFixer.Core {
 
         static List<CorpDirTestInfo> LoadFromUri(FarmTaskInfo taskInfo, string url) {
             List<CorpDirTestInfo> result = new List<CorpDirTestInfo>();
-            HtmlDocument htmlSnippet = new HtmlWeb().Load(url);
+            //HtmlWeb htmlWeb = new HtmlWeb();
+            //htmlWeb.CaptureRedirect = true;
+            //htmlWeb.PreRequest = (request) => {
+            //    if(request.Address.ToString().Contains("ViewBuildReport.aspx")) {
+            //        request.Abort();
+            //        return false;
+            //    }
+            //    //request.Abort();
+            //    return true;
+            //};
+            //HtmlDocument htmlSnippet = htmlWeb.Load(url);
+            //HtmlDocument htmlSnippet = new HtmlWeb() { CaptureRedirect = true,  }.Load(url);
             foreach(HtmlNode testStartNode in FindAllTestLineStarts(url)) {
                 HtmlNode testHeaderNode = GetTestHeaderNode(testStartNode);
                 HtmlNode testNameNode = GetTestNameNode(testHeaderNode);
