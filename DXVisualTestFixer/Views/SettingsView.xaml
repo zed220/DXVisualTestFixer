@@ -11,53 +11,85 @@
              xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
              xmlns:dxdi="http://schemas.devexpress.com/winfx/2008/xaml/dialogs"
              xmlns:behaviors="clr-namespace:DXVisualTestFixer.Behaviors"
+             xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <dxmvvm:Interaction.Behaviors>
         <dx:DXMessageBoxService x:Name="messageBoxService"/>
         <dxdi:DXFolderBrowserDialogService x:Name="folderBrowserDialogService"/>
     </dxmvvm:Interaction.Behaviors>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <GroupBox Header="Auto loader" Margin="5">
-            <dx:BackgroundPanel>
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    <TextBlock Margin="10">
+    <dx:DXTabControl>
+        <dx:DXTabItem Header="Repositories">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <GroupBox Header="Auto loader" Margin="5">
+                    <dx:BackgroundPanel>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Margin="10">
                         <Run>Select work directory. For example:</Run>
                         <Run FontWeight="Bold">"c:\work" what contains "c:\work\2017.1" or "c:\work\2017.1\common", "c:\work\2018.1", etc</Run>
-                    </TextBlock>
-                    <Button Grid.Row="1" Padding="5" Margin="5" Content="Auto Load Repositories From Work Directory" Click="{DXEvent Handler='LoadFromWorkingFolder()'}"/>
-                </Grid>
-            </dx:BackgroundPanel>
-        </GroupBox>
-        <dxg:GridControl Grid.Row="2" ItemsSource="{Binding Repositories}">
-            <dxg:GridColumn FieldName="Version">
-                <dxg:GridColumn.EditSettings>
-                    <dxe:ComboBoxEditSettings ItemsSource="{x:Static core:Repository.Versions}"/>
-                </dxg:GridColumn.EditSettings>
-            </dxg:GridColumn>
-            <dxg:GridColumn FieldName="Path" Width="*">
-                <dxg:GridColumn.CellTemplate>
-                    <DataTemplate>
-                        <dxe:ButtonEdit x:Name="PART_Editor">
-                            <dxmvvm:Interaction.Behaviors>
-                                <behaviors:BrowseDirBehavior/>
-                            </dxmvvm:Interaction.Behaviors>
-                        </dxe:ButtonEdit>
-                    </DataTemplate>
-                </dxg:GridColumn.CellTemplate>
-            </dxg:GridColumn>
-            <dxg:GridControl.View>
-                <dxg:TableView NewItemRowPosition="Bottom" ShowDataNavigator="True" />
-            </dxg:GridControl.View>
-        </dxg:GridControl>
-    </Grid>
+                            </TextBlock>
+                            <Button Grid.Row="1" Padding="5" Margin="5" Content="Auto Load Repositories From Work Directory" Click="{DXEvent Handler='LoadFromWorkingFolder()'}"/>
+                        </Grid>
+                    </dx:BackgroundPanel>
+                </GroupBox>
+                <dxg:GridControl Grid.Row="2" ItemsSource="{Binding Repositories}">
+                    <dxg:GridColumn FieldName="Version">
+                        <dxg:GridColumn.EditSettings>
+                            <dxe:ComboBoxEditSettings ItemsSource="{x:Static core:Repository.Versions}"/>
+                        </dxg:GridColumn.EditSettings>
+                    </dxg:GridColumn>
+                    <dxg:GridColumn FieldName="Path" Width="*">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dxe:ButtonEdit x:Name="PART_Editor">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <behaviors:BrowseDirBehavior/>
+                                    </dxmvvm:Interaction.Behaviors>
+                                </dxe:ButtonEdit>
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+                    <dxg:GridControl.View>
+                        <dxg:TableView NewItemRowPosition="Bottom" ShowDataNavigator="True" />
+                    </dxg:GridControl.View>
+                </dxg:GridControl>
+            </Grid>
+        </dx:DXTabItem>
+        <dx:DXTabItem Header="Application">
+            <dxlc:LayoutControl Orientation="Vertical" VerticalAlignment="Top">
+                <dxlc:LayoutItem Label="Default theme: " VerticalAlignment="Center">
+                    <dxe:ComboBoxEdit 
+                            EditValue="{Binding Path=ThemeName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                            IsTextEditable="False"
+                            ItemsSource="{x:Static dx:Theme.Themes}" 
+                            DisplayMember="FullName" 
+                            ValueMember="Name">
+                    </dxe:ComboBoxEdit>
+                </dxlc:LayoutItem>
+                <!--<dxlc:LayoutItem Label="Use touch scrollbars: " VerticalAlignment="Center">
+                    <dxe:CheckEdit>
+                        <dxe:CheckEdit.EditValue>
+                            <Binding Path="ScrollBarMode" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                <Binding.Converter>
+                                    <dxmvvm:ObjectToObjectConverter DefaultSource="Standard" DefaultTarget="False">
+                                        <dxmvvm:MapItem Source="TouchOverlap" Target="True"/>
+                                    </dxmvvm:ObjectToObjectConverter>
+                                </Binding.Converter>
+                            </Binding>
+                        </dxe:CheckEdit.EditValue>
+                    </dxe:CheckEdit>
+                </dxlc:LayoutItem>-->
+            </dxlc:LayoutControl>
+        </dx:DXTabItem>
+    </dx:DXTabControl>
+
 </UserControl>

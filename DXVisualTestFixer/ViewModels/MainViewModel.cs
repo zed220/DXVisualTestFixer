@@ -109,6 +109,7 @@ namespace DXVisualTestFixer.ViewModels {
             if(Config != null && ConfigSerializer.IsConfigEquals(config, Config))
                 return;
             Config = config;
+            ServiceLocator.Current.GetInstance<IAppearanceService>()?.SetTheme(Config.ThemeName);
             ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage("Config loaded");
             UpdateContent();
         }

@@ -23,6 +23,10 @@ namespace DXVisualTestFixer.ViewModels {
             get { return GetProperty(() => Repositories); }
             set { SetProperty(() => Repositories, value); }
         }
+        public string ThemeName {
+            get { return GetProperty(() => ThemeName); }
+            set { SetProperty(() => ThemeName, value, () => Config.ThemeName = ThemeName); }
+        }
 
         public IEnumerable<UICommand> DialogCommands { get; private set; }
 
@@ -41,6 +45,7 @@ namespace DXVisualTestFixer.ViewModels {
 
         void OnConfigChanged() {
             LoadRepositories();
+            ThemeName = Config.ThemeName;
         }
 
         void LoadRepositories() {

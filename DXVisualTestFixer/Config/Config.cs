@@ -13,6 +13,7 @@ namespace DXVisualTestFixer.Configuration {
         public Repository[] Repositories { get; set; }
         public string LastVersion { get; set; }
         public string InstallPath { get; set; }
+        public string ThemeName { get; set; } = "Office2016White";
 
         public static Config GenerateDefault() {
             var result = Validate(new Config());
