@@ -23,11 +23,21 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Button Content="Auto Load Repositories From Work Directory" Click="{DXEvent Handler='LoadFromWorkingFolder()'}"/>
-        <TextBlock Grid.Row="1" Margin="10">
-            <Run>For example:</Run>
-            <Run FontWeight="Bold">"c:\work" what contains "c:\work\2017.1" or "c:\work\2017.1\common", "c:\work\2018.1", etc</Run>
-        </TextBlock>
+        <GroupBox Header="Auto loader" Margin="5">
+            <dx:BackgroundPanel>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Margin="10">
+                        <Run>Select work directory. For example:</Run>
+                        <Run FontWeight="Bold">"c:\work" what contains "c:\work\2017.1" or "c:\work\2017.1\common", "c:\work\2018.1", etc</Run>
+                    </TextBlock>
+                    <Button Grid.Row="1" Padding="5" Margin="5" Content="Auto Load Repositories From Work Directory" Click="{DXEvent Handler='LoadFromWorkingFolder()'}"/>
+                </Grid>
+            </dx:BackgroundPanel>
+        </GroupBox>
         <dxg:GridControl Grid.Row="2" ItemsSource="{Binding Repositories}">
             <dxg:GridColumn FieldName="Version">
                 <dxg:GridColumn.EditSettings>

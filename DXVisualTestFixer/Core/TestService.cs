@@ -1,5 +1,6 @@
 ﻿using CommonServiceLocator;
 using DXVisualTestFixer.Configuration;
+using DXVisualTestFixer.ViewModels;
 using KellermanSoftware.CompareNetObjects;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ using System.Windows.Media.Imaging;
 
 namespace DXVisualTestFixer.Core {
     public static class TestsService {
-        public static List<TestInfo> LoadParrallel(List<FarmTaskInfo> farmTasks) {
+        public static List<TestInfo> LoadParrallel(List<FarmTaskInfo> farmTasks, LoadingProgressController loadingProgressController) {
             //foreach(var version in Repository.Versions) {
             //    foreach(var team in Teams) {
             //        TeamConfigsReader r = new TeamConfigsReader();
@@ -24,29 +25,46 @@ namespace DXVisualTestFixer.Core {
             //    }
             //}
             List<TestInfo> result = new List<TestInfo>();
-            List<Task<List<TestInfo>>> allTasks = new List<Task<List<TestInfo>>>();
-            foreach(FarmTaskInfo farmTaskInfo in farmTasks) {
-                FarmTaskInfo info = farmTaskInfo;
-                allTasks.Add(Task.Factory.StartNew<List<TestInfo>>(() => LoadFromFarmTaskInfo(info)));
+            List<Task<TestInfo>> allTasks = new List<Task<TestInfo>>();
+            foreach(CorpDirTestInfo corpDirTestInfo in LoadFromFarmTaskInfoParallel(farmTasks, loadingProgressController)) {
+                CorpDirTestInfo info = corpDirTestInfo;
+                allTasks.Add(Task.Factory.StartNew<TestInfo>(() => LoadTestInfo(info, loadingProgressController)));
             }
             Task.WaitAll(allTasks.ToArray());
-            allTasks.ForEach(t => result.AddRange(t.Result));
+            allTasks.ForEach(t => { if(t.Result != null) result.Add(t.Result); });
             return result;
         }
-        static List<TestInfo> LoadFromFarmTaskInfo(FarmTaskInfo farmTaskInfo) {
-            ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage($"Load tests for {farmTaskInfo.Url}");
-            List<TestInfo> result = new List<TestInfo>();
-            foreach(CorpDirTestInfo corpDirTestInfo in TestLoader.LoadFromInfo(farmTaskInfo)) {
-                ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage($"Start load test v{corpDirTestInfo.FarmTaskInfo.Repository.Version} {corpDirTestInfo.TestName}.{corpDirTestInfo.ThemeName}");
-                TestInfo testInfo = TryCreateTestInfo(corpDirTestInfo);
-                ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage($"End load test v{corpDirTestInfo.FarmTaskInfo.Repository.Version} {corpDirTestInfo.TestName}.{corpDirTestInfo.ThemeName}");
-                if(testInfo != null) {
-                    testInfo.Valid = TestStatus(testInfo);
-                    result.Add(testInfo);
-                }
+        static List<CorpDirTestInfo> LoadFromFarmTaskInfoParallel(List<FarmTaskInfo> farmTasks, LoadingProgressController loadingProgressController) {
+            loadingProgressController.Enlarge(farmTasks.Count);
+            ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage($"Collecting tests information from farm");
+            List<CorpDirTestInfo> corpDirTestInfoList = new List<CorpDirTestInfo>();
+            List<Task<List<CorpDirTestInfo>>> allTasks = new List<Task<List<CorpDirTestInfo>>>();
+            foreach(FarmTaskInfo farmTaskInfo in farmTasks) {
+                FarmTaskInfo info = farmTaskInfo;
+                allTasks.Add(Task.Factory.StartNew<List<CorpDirTestInfo>>(() => LoadFromFarmTaskInfo(info, loadingProgressController)));
             }
-            ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage($"Finish load tests for {farmTaskInfo.Url}");
-            return result;
+            Task.WaitAll(allTasks.ToArray());
+            allTasks.ForEach(t => corpDirTestInfoList.AddRange(t.Result));
+            loadingProgressController.Flush();
+            loadingProgressController.Enlarge(corpDirTestInfoList.Count);
+            return corpDirTestInfoList;
+        }
+        static List<CorpDirTestInfo> LoadFromFarmTaskInfo(FarmTaskInfo farmTaskInfo, LoadingProgressController loadingProgressController) {
+            List<CorpDirTestInfo> taskTestInfos = TestLoader.LoadFromInfo(farmTaskInfo);
+            loadingProgressController.IncreaseProgress(1);
+            return taskTestInfos;
+        }
+        static TestInfo LoadTestInfo(CorpDirTestInfo corpDirTestInfo, LoadingProgressController loadingProgressController) {
+            ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage($"Start load test v{corpDirTestInfo.FarmTaskInfo.Repository.Version} {corpDirTestInfo.TestName}.{corpDirTestInfo.ThemeName}");
+            TestInfo testInfo = TryCreateTestInfo(corpDirTestInfo);
+            ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage($"End load test v{corpDirTestInfo.FarmTaskInfo.Repository.Version} {corpDirTestInfo.TestName}.{corpDirTestInfo.ThemeName}");
+            if(testInfo != null) {
+                testInfo.Valid = TestStatus(testInfo);
+                loadingProgressController.IncreaseProgress(1);
+                return testInfo;
+            }
+            loadingProgressController.IncreaseProgress(1);
+            return null;
         }
 
         static TestInfo TryCreateTestInfo(CorpDirTestInfo corpDirTestInfo) {

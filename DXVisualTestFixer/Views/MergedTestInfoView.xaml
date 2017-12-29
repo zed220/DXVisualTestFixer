@@ -45,6 +45,24 @@
                 <ContentControl x:Name="diff" Content="{Binding ImageDiffArr}" ContentTemplate="{StaticResource ResourceKey=DraggableScrollViewerDataTemplate}"/>
             </Grid>
         </dxdo:LayoutPanel>
+        <dxdo:LayoutPanel ItemHeight="150" ShowCaption="False" DataContext="{Binding TestInfoModel.TestInfo.TestInfo}">
+            <avalonedit:TextEditor FontFamily="Consolas" IsReadOnly="True">
+                <dxmvvm:Interaction.Behaviors>
+                    <behaviors:AvalonEditTextBindingBehavior Text="{Binding Path=TextDiff}"/>
+                </dxmvvm:Interaction.Behaviors>
+            </avalonedit:TextEditor>
+        </dxdo:LayoutPanel>
+        <dxdo:LayoutPanel Background="#55FF0000" ItemWidth="*" ItemHeight="Auto" ShowBorder="False" ShowCaption="False" Visibility="{Binding Path='TestInfoModel.TestInfo.Valid', Converter={StaticResource InvalidToVisibilityConverter}}">
+            <StackPanel>
+                <TextBlock Margin="4" VerticalAlignment="Center" Text="{DXBinding Expr='`Test Info wrong. Update the ` + @c.TestInfoModel.TestInfo.TestInfo.Version + ` repostiroy to last version. Error log:`'}"/>
+                <TextBlock Margin="4" VerticalAlignment="Center" Text="{DXBinding Expr='@c.TestInfoModel.TestInfo.TestInfo.InvalidLog'}"/>
+            </StackPanel>
+        </dxdo:LayoutPanel>
+        <dxdo:LayoutPanel Background="#5500FF00" ItemWidth="*" ItemHeight="Auto" ShowBorder="False" ShowCaption="False" Visibility="{Binding Path='TestInfoModel.TestInfo.Valid', Converter={StaticResource FixedToVisibilityConverter}}">
+            <StackPanel>
+                <TextBlock Margin="4" VerticalAlignment="Center" Text="Test already fixed."/>
+            </StackPanel>
+        </dxdo:LayoutPanel>
         <dxdo:LayoutPanel ShowBorder="False" ShowCaption="False" ItemHeight="Auto">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <Button Content="Diff" Padding="10" Margin="5">
@@ -62,24 +80,6 @@
                         <behaviors:MergedTestInfoButtonBehavior Hide1="{Binding ElementName=diff}" Hide2="{Binding ElementName=before}" Show="{Binding ElementName=current}"/>
                     </dxmvvm:Interaction.Behaviors>
                 </Button>
-            </StackPanel>
-        </dxdo:LayoutPanel>
-        <dxdo:LayoutPanel ItemHeight="150" ShowCaption="False" DataContext="{Binding TestInfoModel.TestInfo.TestInfo}">
-            <avalonedit:TextEditor FontFamily="Consolas" IsReadOnly="True">
-                <dxmvvm:Interaction.Behaviors>
-                    <behaviors:AvalonEditTextBindingBehavior Text="{Binding Path=TextDiff}"/>
-                </dxmvvm:Interaction.Behaviors>
-            </avalonedit:TextEditor>
-        </dxdo:LayoutPanel>
-        <dxdo:LayoutPanel Background="#55FF0000" ItemWidth="*" ItemHeight="Auto" ShowBorder="False" ShowCaption="False" Visibility="{Binding Path='TestInfoModel.TestInfo.Valid', Converter={StaticResource InvalidToVisibilityConverter}}">
-            <StackPanel>
-                <TextBlock Margin="4" VerticalAlignment="Center" Text="{DXBinding Expr='`Test Info wrong. Update the ` + @c.TestInfoModel.TestInfo.TestInfo.Version + ` repostiroy to last version. Error log:`'}"/>
-                <TextBlock Margin="4" VerticalAlignment="Center" Text="{DXBinding Expr='@c.TestInfoModel.TestInfo.TestInfo.InvalidLog'}"/>
-            </StackPanel>
-        </dxdo:LayoutPanel>
-        <dxdo:LayoutPanel Background="#5500FF00" ItemWidth="*" ItemHeight="Auto" ShowBorder="False" ShowCaption="False" Visibility="{Binding Path='TestInfoModel.TestInfo.Valid', Converter={StaticResource FixedToVisibilityConverter}}">
-            <StackPanel>
-                <TextBlock Margin="4" VerticalAlignment="Center" Text="Test already fixed."/>
             </StackPanel>
         </dxdo:LayoutPanel>
         <dxdo:LayoutGroup Orientation="Horizontal" ItemHeight="Auto">

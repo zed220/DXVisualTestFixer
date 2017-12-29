@@ -49,8 +49,13 @@ namespace DXVisualTestFixer.ViewModels {
             get { return GetProperty(() => TestViewType); }
             set { SetProperty(() => TestViewType, value, OnTestViewTypeChanged); }
         }
+        public LoadingProgressController LoadingProgressController {
+            get { return GetProperty(() => LoadingProgressController); }
+            set { SetProperty(() => LoadingProgressController, value); }
+        }
 
         public MainViewModel() {
+            LoadingProgressController = new LoadingProgressController();
             InstallUpdateSyncWithInfo(false);
             UpdateConfig();
             ServiceLocator.Current.GetInstance<ILoggingService>().MessageReserved += OnLoggingMessageReserved;
@@ -86,11 +91,13 @@ namespace DXVisualTestFixer.ViewModels {
         void UpdateAllTests() {
             Task.Factory.StartNew(() => {
                 ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage("Start refreshing tests");
-                var tests = TestsService.LoadParrallel(GetAllTasks()).Select(t => new TestInfoWrapper(t)).ToList();
+                LoadingProgressController.Start();
+                var tests = TestsService.LoadParrallel(GetAllTasks(), LoadingProgressController).Select(t => new TestInfoWrapper(t)).ToList();
                 ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage("");
                 App.Current.Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
                     Tests = tests;
                     Status = ProgramStatus.Idle;
+                    LoadingProgressController.Stop();
                 }));
             });
         }

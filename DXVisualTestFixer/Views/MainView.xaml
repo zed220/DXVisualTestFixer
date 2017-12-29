@@ -102,7 +102,6 @@
                         </dxb:BarButtonItem>
                     </dxr:RibbonPageGroup>
                     <dxr:RibbonPageGroup Caption="Appearance">
-                        <dxb:BarCheckItem Content="Tuple"/>
                         <dxb:BarCheckItem Content="Split View" IsChecked="{DXBinding Expr='@c.TestViewType == $mif:TestViewType.Split', Mode=OneWay}"
                                           Command="{DXCommand Execute='@c.ChangeTestViewType($mif:TestViewType.Split)'}"/>
                         <dxb:BarCheckItem Content="Merged View" IsChecked="{DXBinding Expr='@c.TestViewType == $mif:TestViewType.Merged', Mode=OneWay}"
@@ -163,6 +162,11 @@
         </dxdo:DockLayoutManager>
         <dxr:RibbonStatusBarControl Grid.Row="2" IsSizeGripVisible="True">
             <dxr:RibbonStatusBarControl.LeftItems>
+                <dxb:BarEditItem EditWidth="200" EditValue="{Binding Path=LoadingProgressController.Value, Mode=OneWay}" IsVisible="{Binding Path=LoadingProgressController.IsEnabled}">
+                    <dxb:BarEditItem.EditSettings>
+                        <dxe:ProgressBarEditSettings IsEnabled="False" Maximum="{Binding Path=LoadingProgressController.Maximum}"/>
+                    </dxb:BarEditItem.EditSettings>
+                </dxb:BarEditItem>
                 <dxb:BarStaticItem Content="{Binding CorrentLogLine}" AutoSizeMode="None"/>
             </dxr:RibbonStatusBarControl.LeftItems>
             <dxr:RibbonStatusBarControl.RightItems>
