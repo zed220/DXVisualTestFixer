@@ -1,7 +1,6 @@
 ﻿using CommonServiceLocator;
 using DXVisualTestFixer.Configuration;
 using DXVisualTestFixer.ViewModels;
-using KellermanSoftware.CompareNetObjects;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -111,15 +110,31 @@ namespace DXVisualTestFixer.Core {
                 testInfo.TextDiff = differences;
         }
         static bool IsTextEquals(string left, string right, out string diff) {
-            CompareLogic compareLogic = new CompareLogic();
-            ComparisonResult result = compareLogic.Compare(left, right);
             diff = null;
-            if(!result.AreEqual)
-                diff = result.DifferencesString;
-            return result.AreEqual;
+            if(left == right)
+                return true;
+            diff = BuildDefferences(left, right);
+            return false;
         }
+
+        static string BuildDefferences(string left, string right) {
+            StringBuilder sb = new StringBuilder();
+            string[] leftArr = left.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
+            string[] rightArr = right.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
+            for(int line = 0; line < Math.Min(leftArr.Length, rightArr.Length); line++) {
+                string leftstr = leftArr[line];
+                string rightstr = rightArr[line];
+                if(leftstr == rightstr) {
+                    sb.AppendLine(leftstr);
+                    continue;
+                }
+                sb.AppendLine("-" + leftstr);
+                sb.AppendLine("+" + rightstr);
+            }
+            return sb.ToString();
+        }
+
         static bool IsImageEquals(byte[] left, byte[] right) {
-            CompareLogic compareLogic = new CompareLogic();
             Bitmap imgLeft = null;
             using(MemoryStream s = new MemoryStream(left)) {
                 imgLeft = Image.FromStream(s) as Bitmap;

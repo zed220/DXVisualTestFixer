@@ -64,7 +64,7 @@
                 </dxg:GridControl>
             </Grid>
         </dx:DXTabItem>
-        <dx:DXTabItem Header="Application">
+        <!--<dx:DXTabItem Header="Application">
             <dxlc:LayoutControl Orientation="Vertical" VerticalAlignment="Top">
                 <dxlc:LayoutItem Label="Default theme: " VerticalAlignment="Center">
                     <dxe:ComboBoxEdit 
@@ -75,21 +75,8 @@
                             ValueMember="Name">
                     </dxe:ComboBoxEdit>
                 </dxlc:LayoutItem>
-                <!--<dxlc:LayoutItem Label="Use touch scrollbars: " VerticalAlignment="Center">
-                    <dxe:CheckEdit>
-                        <dxe:CheckEdit.EditValue>
-                            <Binding Path="ScrollBarMode" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
-                                <Binding.Converter>
-                                    <dxmvvm:ObjectToObjectConverter DefaultSource="Standard" DefaultTarget="False">
-                                        <dxmvvm:MapItem Source="TouchOverlap" Target="True"/>
-                                    </dxmvvm:ObjectToObjectConverter>
-                                </Binding.Converter>
-                            </Binding>
-                        </dxe:CheckEdit.EditValue>
-                    </dxe:CheckEdit>
-                </dxlc:LayoutItem>-->
             </dxlc:LayoutControl>
-        </dx:DXTabItem>
+        </dx:DXTabItem>-->
     </dx:DXTabControl>
 
 </UserControl>
