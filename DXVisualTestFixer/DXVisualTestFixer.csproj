@@ -31,8 +31,8 @@
     <PublisherName>Zed220</PublisherName>
     <SuiteName>Visual Tests Tool</SuiteName>
     <MinimumRequiredVersion>1.0.1.0</MinimumRequiredVersion>
-    <ApplicationRevision>50</ApplicationRevision>
-    <ApplicationVersion>1.0.60.%2a</ApplicationVersion>
+    <ApplicationRevision>52</ApplicationRevision>
+    <ApplicationVersion>1.0.62.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -302,6 +302,7 @@
     <Compile Include="Core\Team.cs" />
     <Compile Include="Core\TestInfo.cs" />
     <Compile Include="Core\TestLoader.cs" />
+    <Compile Include="Core\TestLoader_Old.cs" />
     <Compile Include="Core\TestService.cs" />
     <Compile Include="Farm\BuildNotificationViewInfo.cs" />
     <Compile Include="Farm\DXCCTrayCore.cs" />
@@ -311,6 +312,7 @@
     <Compile Include="Log.cs" />
     <Compile Include="LoggingService.cs" />
     <Compile Include="Native\DiffLineBackgroundRenderer.cs" />
+    <Compile Include="Native\ImageComparer.cs" />
     <Compile Include="Native\UpdateAppService.cs" />
     <Compile Include="ViewModels\ApplyChangesViewModel.cs" />
     <Compile Include="ViewModels\ChangedTestsModel.cs" />

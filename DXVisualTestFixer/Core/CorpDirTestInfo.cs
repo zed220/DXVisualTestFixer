@@ -19,7 +19,7 @@ namespace DXVisualTestFixer.Core {
         public string TestName { get; private set; }
         public string ThemeName { get; private set; }
 
-        public static bool TryCreate(FarmTaskInfo farmTaskInfo, string testName, List<string> corpPaths, out CorpDirTestInfo result) {
+        public static bool TryCreate(FarmTaskInfo farmTaskInfo, List<string> corpPaths, out CorpDirTestInfo result) {
             result = null;
             CorpDirTestInfo temp = new CorpDirTestInfo();
             temp.FarmTaskInfo = farmTaskInfo;

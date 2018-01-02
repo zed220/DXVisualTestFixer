@@ -3,54 +3,83 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace DXVisualTestFixer.Core {
     public static class TestLoader {
         public static List<CorpDirTestInfo> LoadFromInfo(FarmTaskInfo taskInfo) {
+            string realUrl = CapureRealUrl(taskInfo.Url);
             List<CorpDirTestInfo> result = new List<CorpDirTestInfo>();
-            result.AddRange(LoadFromUri(taskInfo, taskInfo.Url));
-            return result;
-        }
-
-        static List<CorpDirTestInfo> LoadFromUri(FarmTaskInfo taskInfo, string url) {
-            List<CorpDirTestInfo> result = new List<CorpDirTestInfo>();
-            //HtmlWeb htmlWeb = new HtmlWeb();
-            //htmlWeb.CaptureRedirect = true;
-            //htmlWeb.PreRequest = (request) => {
-            //    if(request.Address.ToString().Contains("ViewBuildReport.aspx")) {
-            //        request.Abort();
-            //        return false;
-            //    }
-            //    //request.Abort();
-            //    return true;
-            //};
-            //HtmlDocument htmlSnippet = htmlWeb.Load(url);
-            //HtmlDocument htmlSnippet = new HtmlWeb() { CaptureRedirect = true,  }.Load(url);
-            foreach(HtmlNode testStartNode in FindAllTestLineStarts(url)) {
-                HtmlNode testHeaderNode = GetTestHeaderNode(testStartNode);
-                HtmlNode testNameNode = GetTestNameNode(testHeaderNode);
-                string testName = testNameNode.InnerText;
-                HtmlNode testMessageHeaderNode = GetTestMessageHeaderNode(testStartNode);
-                HtmlNode testMessageNode = GetTestMessageNode(testMessageHeaderNode);
-                string message = testMessageNode.InnerText;
-                ParseMessage(taskInfo, testName, message, result);
+            if(realUrl == null || !realUrl.Contains("ViewBuildReport.aspx")) {
+                return TestLoader_Old.LoadFromUri(taskInfo);
             }
+            XmlDocument myXmlDocument = new XmlDocument();
+            myXmlDocument.Load(realUrl.Replace("ViewBuildReport.aspx", "XmlBuildLog.xml"));
+            List<Task<List<CorpDirTestInfo>>> allTasks = new List<Task<List<CorpDirTestInfo>>>();
+            foreach(XmlElement testCaseXml in FindFailedTests(myXmlDocument)) {
+                XmlNode resultNode = testCaseXml.FindByName("failure").FindByName("message");
+                allTasks.Add(Task.Factory.StartNew<List<CorpDirTestInfo>>(() => {
+                    List<CorpDirTestInfo> localRes = new List<CorpDirTestInfo>();
+                    ParseMessage(taskInfo, resultNode.InnerText, localRes);
+                    return localRes;
+                }));
+            }
+            Task.WaitAll(allTasks.ToArray());
+            allTasks.ForEach(t => result.AddRange(t.Result));
             return result;
         }
-
-        static void ParseMessage(FarmTaskInfo farmTaskInfo, string testName, string message, List<CorpDirTestInfo> resultList) {
+        static IEnumerable<XmlElement> FindFailedTests(XmlDocument myXmlDocument) {
+            XmlNode testResults = myXmlDocument.FindByName("cruisecontrol")?.FindByName("build")?.FindByName("test-results");
+            if(testResults == null)
+                return null;
+            return FindAllFailedTests(testResults);
+        }
+        static IEnumerable<XmlElement> FindAllFailedTests(XmlNode testResults) {
+            foreach(XmlNode node in testResults.ChildNodes) {
+                XmlElement xmlElement = node as XmlElement;
+                if(xmlElement != null && xmlElement.Name == "test-case" && xmlElement.GetAttribute("success") == "False")
+                    yield return xmlElement;
+                else {
+                    foreach(XmlElement subNode in FindAllFailedTests(node))
+                        yield return subNode;
+                }
+            }
+        }
+        static XmlNode FindByName(this XmlNode element, string name) {
+            foreach(XmlNode node in element.ChildNodes) {
+                if(node.Name == name)
+                    return node;
+            }
+            return null;
+        }
+        static string LoadXmlString(string xmlUri) {
+            HtmlWeb htmlWeb = new HtmlWeb();
+            var r = htmlWeb.Load(xmlUri);
+            using(Stream s = new MemoryStream()) {
+                r.Save(s);
+                s.Seek(0, SeekOrigin.Begin);
+                using(StreamReader reader = new StreamReader(s)) {
+                    return reader.ReadToEnd();
+                }
+            }
+        }
+        static string CapureRealUrl(string url) {
+            HtmlWeb htmlWeb = new HtmlWeb();
+            HtmlDocument htmlSnippet = htmlWeb.Load(url);
+            return htmlWeb.ResponseUri.ToString();
+        }
+        public static void ParseMessage(FarmTaskInfo farmTaskInfo, string message, List<CorpDirTestInfo> resultList) {
             List<string> themedResultPaths = message.Split(new[] { " - failed:" }, StringSplitOptions.RemoveEmptyEntries).ToList();
             foreach(var part in themedResultPaths) {
-                ParseMessagePart(farmTaskInfo, testName, part, resultList);
+                ParseMessagePart(farmTaskInfo, part, resultList);
             }
         }
-        static void ParseMessagePart(FarmTaskInfo farmTaskInfo, string testName, string message, List<CorpDirTestInfo> resultList) {
-            List<string> paths = message.Split(new[] { @"\\corp"}, StringSplitOptions.RemoveEmptyEntries).ToList();
-            List<string>  resultPaths = PatchPaths(paths);
+        static void ParseMessagePart(FarmTaskInfo farmTaskInfo, string message, List<CorpDirTestInfo> resultList) {
+            List<string> paths = message.Split(new[] { @"\\corp" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+            List<string> resultPaths = PatchPaths(paths);
             CorpDirTestInfo info = null;
-            if(!CorpDirTestInfo.TryCreate(farmTaskInfo, testName, resultPaths, out info))
+            if(!CorpDirTestInfo.TryCreate(farmTaskInfo, resultPaths, out info))
                 return;
             resultList.Add(info);
         }
@@ -80,41 +109,6 @@ namespace DXVisualTestFixer.Core {
                 }
             }
             return result;
-        }
-
-        static List<HtmlNode> FindAllTestLineStarts(string url) {
-            List<HtmlNode> result = new List<HtmlNode>();
-            HtmlDocument htmlSnippet = new HtmlWeb().Load(url);
-            try {
-                foreach(HtmlNode link in htmlSnippet.DocumentNode.SelectNodes("//hr[@width]"))
-                    result.Add(link.ParentNode.ParentNode);
-            }
-            catch { }
-            return result;
-        }
-        static HtmlNode GetTestHeaderNode(HtmlNode startNode) {
-            foreach(HtmlNode node in startNode.NextSibling.NextSibling.ChildNodes) {
-                if(node.InnerText == "Test:")
-                    return node;
-            }
-            return null;
-        }
-        static HtmlNode GetTestNameNode(HtmlNode currentNode) {
-            foreach(HtmlNode node in currentNode.NextSibling.NextSibling.ChildNodes) {
-                if(node.InnerText.StartsWith("DevExpress."))
-                    return node;
-            }
-            return null;
-        }
-        static HtmlNode GetTestMessageHeaderNode(HtmlNode startNode) {
-            foreach(HtmlNode node in startNode.NextSibling.NextSibling.NextSibling.NextSibling.NextSibling.NextSibling.ChildNodes) {
-                if(node.InnerText == "Message:")
-                    return node;
-            }
-            return null;
-        }
-        static HtmlNode GetTestMessageNode(HtmlNode currentNode) {
-            return currentNode.NextSibling.NextSibling;
         }
     }
 }

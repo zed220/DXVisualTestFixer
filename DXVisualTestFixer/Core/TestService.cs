@@ -1,5 +1,6 @@
 ﻿using CommonServiceLocator;
 using DXVisualTestFixer.Configuration;
+using DXVisualTestFixer.Native;
 using DXVisualTestFixer.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -143,28 +144,8 @@ namespace DXVisualTestFixer.Core {
             using(MemoryStream s = new MemoryStream(right)) {
                 imgRight = Image.FromStream(s) as Bitmap;
             }
-            return IsImageEqualsCore(imgLeft, imgRight);
+            return ImageComparer.CompareMemCmp(imgLeft, imgRight);
         }
-        static bool IsImageEqualsCore(Bitmap firstImage, Bitmap secondImage) {
-            if(firstImage == null || secondImage == null) {
-                //log
-                Debug.WriteLine("fire IsImageEqualsCore");
-                return false;
-            }
-            if(firstImage.Width != secondImage.Width || firstImage.Height != secondImage.Height)
-                return false;
-            for(int i = 0; i < firstImage.Width; i++) {
-                for(int j = 0; j < firstImage.Height; j++) {
-                    string firstPixel = firstImage.GetPixel(i, j).ToString();
-                    string secondPixel = secondImage.GetPixel(i, j).ToString();
-                    if(firstPixel != secondPixel) {
-                        return false;
-                    }
-                }
-            }
-            return true;
-        }
-
         static bool LoadImage(string path, Action<byte[]> saveAction) {
             if(!File.Exists(path)) {
                 //log
