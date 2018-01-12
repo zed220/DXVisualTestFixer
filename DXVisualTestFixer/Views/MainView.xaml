@@ -16,6 +16,7 @@
              xmlns:controls="clr-namespace:DXVisualTestFixer.Controls"
              xmlns:viewModels="clr-namespace:DXVisualTestFixer.ViewModels"
              xmlns:core="clr-namespace:DXVisualTestFixer.Core"
+             xmlns:behaviors="clr-namespace:DXVisualTestFixer.Behaviors"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
@@ -113,10 +114,13 @@
         <dxdo:DockLayoutManager Grid.Row="1">
             <dxdo:LayoutGroup AllowDrag="False">
                 <dxdo:LayoutPanel ShowCaption="False" ItemWidth="300">
-                    <dxg:GridControl ItemsSource="{Binding Tests}" CurrentItem="{Binding CurrentTest, Mode=TwoWay}" AutoExpandAllGroups="True" ShowBorder="False" 
+                    <controls:GridControlEx ItemsSource="{Binding Tests}" CurrentItem="{Binding CurrentTest, Mode=TwoWay}" AutoExpandAllGroups="True" ShowBorder="False" 
                                      ShowLoadingPanel="{DXBinding Expr='Status != $viewModels:ProgramStatus.Idle'}">
-                        <dxg:GridColumn FieldName="TestInfo.Version" GroupIndex="0" MergeWithPreviousGroup="False" Header="Version"/>
-                        <dxg:GridColumn FieldName="TestInfo.Team.Name" GroupIndex="1" MergeWithPreviousGroup="False" Header="Team"/>
+                        <dxmvvm:Interaction.Behaviors>
+                            <behaviors:CustomFilterPopulatorBehavior/>
+                        </dxmvvm:Interaction.Behaviors>
+                        <dxg:GridColumn FieldName="Version" GroupIndex="0" MergeWithPreviousGroup="False" Header="Version"/>
+                        <dxg:GridColumn FieldName="TeamName" GroupIndex="1" MergeWithPreviousGroup="False" Header="Team"/>
                         <dxg:GridColumn FieldName="TestInfo.Name" GroupIndex="2" MergeWithPreviousGroup="True" Header="Name"/>
                         <dxg:GridColumn FieldName="TestInfo.Theme" Width="*" Header="Theme">
                             <dxg:GridColumn.CellTemplate>
@@ -138,12 +142,12 @@
                                 </DataTemplate>
                             </dxg:GridColumn.CellTemplate>
                         </dxg:GridColumn>
-                        <dxg:GridControl.TotalSummary>
+                        <controls:GridControlEx.TotalSummary>
                             <dxg:GridSummaryItem SummaryType="Count" Alignment="Left"/>
-                        </dxg:GridControl.TotalSummary>
-                        <dxg:GridControl.View>
-                            <controls:TableViewAdvNavigation AllowEditing="False" ShowVerticalLines="False" ShowIndicator="False" ShowHorizontalLines="False" ShowColumnHeaders="False" ShowGroupPanel="False" 
-                                           ShowFixedTotalSummary="True">
+                        </controls:GridControlEx.TotalSummary>
+                        <controls:GridControlEx.View>
+                            <controls:TableViewAdvNavigation AllowEditing="False" ShowVerticalLines="False" ShowIndicator="False" ShowHorizontalLines="False" ShowColumnHeaders="False" 
+                                                             ShowGroupPanel="False" ShowFixedTotalSummary="True">
                                 <dxmvvm:Interaction.Behaviors>
                                     <dxmvvm:EventToCommand EventName="MoveNext" Command="{DXCommand Execute='@s.AssociatedObject.MoveNextDataRow()'}" SourceObject="{Binding}"/>
                                     <dxmvvm:EventToCommand EventName="MovePrev" Command="{DXCommand Execute='@s.AssociatedObject.MovePrevDataRow()'}" SourceObject="{Binding}"/>
@@ -154,8 +158,8 @@
                                     <dxg:FormatCondition FieldName="Valid" ValueRule="Equal" Value1="{x:Static core:TestState.Fixed}" PredefinedFormatName="GreenFillWithDarkGreenText" ApplyToRow="True"/>
                                 </controls:TableViewAdvNavigation.FormatConditions>
                             </controls:TableViewAdvNavigation>
-                        </dxg:GridControl.View>
-                    </dxg:GridControl>
+                        </controls:GridControlEx.View>
+                    </controls:GridControlEx>
                 </dxdo:LayoutPanel>
                 <dxdo:LayoutPanel dxmvvm:UIRegion.Region="{x:Static mif:Regions.TestInfo}" ShowCaption="False"/>
             </dxdo:LayoutGroup>

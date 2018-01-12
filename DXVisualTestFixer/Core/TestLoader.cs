@@ -32,8 +32,9 @@ namespace DXVisualTestFixer.Core {
         static IEnumerable<XmlElement> FindFailedTests(XmlDocument myXmlDocument) {
             XmlNode testResults = myXmlDocument.FindByName("cruisecontrol")?.FindByName("build")?.FindByName("test-results");
             if(testResults == null)
-                return null;
-            return FindAllFailedTests(testResults);
+                yield break;
+            foreach(XmlElement subNode in FindAllFailedTests(testResults))
+                yield return subNode;
         }
         static IEnumerable<XmlElement> FindAllFailedTests(XmlNode testResults) {
             foreach(XmlNode node in testResults.ChildNodes) {

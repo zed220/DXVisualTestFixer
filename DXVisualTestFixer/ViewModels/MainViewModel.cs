@@ -1,6 +1,8 @@
 ﻿using CommonServiceLocator;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.ModuleInjection;
+using DevExpress.Xpf.Editors;
+using DevExpress.Xpf.Grid;
 using DXVisualTestFixer.Configuration;
 using DXVisualTestFixer.Core;
 using DXVisualTestFixer.Farm;
@@ -53,6 +55,10 @@ namespace DXVisualTestFixer.ViewModels {
             get { return GetProperty(() => LoadingProgressController); }
             set { SetProperty(() => LoadingProgressController, value); }
         }
+        //public List<CompactModeFilterItem> FilterItems {
+        //    get { return GetProperty(() => FilterItems); }
+        //    set { SetProperty(() => FilterItems, value); }
+        //}
 
         public MainViewModel() {
             LoadingProgressController = new LoadingProgressController();
@@ -90,18 +96,33 @@ namespace DXVisualTestFixer.ViewModels {
 
         void UpdateAllTests() {
             Task.Factory.StartNew(() => {
+                //FilterItems = null;
                 ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage("Start refreshing tests");
                 LoadingProgressController.Start();
-                var tests = TestsService.LoadParrallel(GetAllTasks(), LoadingProgressController).Select(t => new TestInfoWrapper(t)).ToList();
+                List<FarmTaskInfo> failedTasks = GetAllTasks();
+                var tests = TestsService.LoadParrallel(failedTasks, LoadingProgressController).Select(t => new TestInfoWrapper(t)).ToList();
                 ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage("");
                 App.Current.Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
                     Tests = tests;
+                    //BuildFilterItems(failedTasks);
                     Status = ProgramStatus.Idle;
                     LoadingProgressController.Stop();
                 }));
             });
         }
 
+        //void BuildFilterItems(List<FarmTaskInfo> failedTasks) {
+        //    if(failedTasks.Count == 0)
+        //        return;
+        //    FilterItems = new List<CompactModeFilterItem>();
+        //    FilterItems.Add(new CompactModeFilterItem() { DisplayValue = "All" });
+        //    foreach(var version in failedTasks.Select(ft => ft.Repository.Version).Distinct().OrderByDescending(s => s)) {
+        //        CompactModeFilterItem item = new CompactModeFilterItem();
+        //        item.DisplayValue = version;
+        //        item.EditValue = $"[Version] = '{version}'";
+        //        FilterItems.Add(item);
+        //    }
+        //}
 
         void UpdateConfig() {
             ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage("Checking config");
