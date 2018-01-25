@@ -24,6 +24,7 @@ namespace DXVisualTestFixer {
             RootContainer.RegisterType<ITestInfoViewModel, TestInfoViewModel>(new TransientLifetimeManager());
             RootContainer.RegisterType<ISettingsViewModel, SettingsViewModel>(new TransientLifetimeManager());
             RootContainer.RegisterType<IApplyChangesViewModel, ApplyChangesViewModel>(new TransientLifetimeManager());
+            RootContainer.RegisterType<IFilterPanelViewModel, FilterPanelViewModel>(new TransientLifetimeManager());
         }
         static void RegisterServiceLocator() {
             ServiceLocator.SetLocatorProvider(() => new UnityServiceLocator(RootContainer));

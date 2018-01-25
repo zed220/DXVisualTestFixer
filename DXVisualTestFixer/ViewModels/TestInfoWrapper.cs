@@ -8,7 +8,10 @@ using System.Threading.Tasks;
 
 namespace DXVisualTestFixer.ViewModels {
     public class TestInfoWrapper : BindableBase {
-        public TestInfoWrapper(TestInfo testInfo) {
+        MainViewModel ViewModel;
+
+        public TestInfoWrapper(MainViewModel viewModel, TestInfo testInfo) {
+            ViewModel = viewModel;
             TestInfo = testInfo;
         }
 
@@ -20,7 +23,14 @@ namespace DXVisualTestFixer.ViewModels {
 
         public bool CommitChange {
             get { return GetProperty(() => CommitChange); }
-            set { SetProperty(() => CommitChange, value); }
+            set { SetProperty(() => CommitChange, value, OnChanged); }
+        }
+
+        void OnChanged() {
+            if(CommitChange)
+                ViewModel.TestsToCommitCount++;
+            else
+                ViewModel.TestsToCommitCount--;
         }
 
         public string ToLog() {

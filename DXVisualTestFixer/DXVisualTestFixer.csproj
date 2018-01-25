@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -31,8 +31,8 @@
     <PublisherName>Zed220</PublisherName>
     <SuiteName>Visual Tests Tool</SuiteName>
     <MinimumRequiredVersion>1.0.1.0</MinimumRequiredVersion>
-    <ApplicationRevision>57</ApplicationRevision>
-    <ApplicationVersion>1.0.68.%2a</ApplicationVersion>
+    <ApplicationRevision>58</ApplicationRevision>
+    <ApplicationVersion>1.1.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -284,8 +284,8 @@
     </ApplicationDefinition>
     <Compile Include="AppearanceService.cs" />
     <Compile Include="Behaviors\AvalonEditTextBindingBehavior.cs" />
+    <Compile Include="Behaviors\BarItemIndicatorBehavior.cs" />
     <Compile Include="Behaviors\BrowseDirBehavior.cs" />
-    <Compile Include="Behaviors\CustomFilterPopulatorBehavior.cs" />
     <Compile Include="Behaviors\ImageScaleBehavior.cs" />
     <Compile Include="Behaviors\MergedTestInfoButtonBehavior.cs" />
     <Compile Include="Behaviors\ScrollVIewerDragBehavior.cs" />
@@ -318,6 +318,7 @@
     <Compile Include="Native\UpdateAppService.cs" />
     <Compile Include="ViewModels\ApplyChangesViewModel.cs" />
     <Compile Include="ViewModels\ChangedTestsModel.cs" />
+    <Compile Include="ViewModels\FilterPanelViewModel.cs" />
     <Compile Include="ViewModels\LoadingProgressController.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\RepositoryModel.cs" />
@@ -329,6 +330,9 @@
     </Content>
     <Compile Include="Views\ApplyChangesView.xaml.cs">
       <DependentUpon>ApplyChangesView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\FilterPanelView.xaml.cs">
+      <DependentUpon>FilterPanelView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
@@ -357,6 +361,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Views\ApplyChangesView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\FilterPanelView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -527,6 +535,7 @@
     </Content>
     <Content Include="XmlConfigs\18.1_ThemedWindow.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </Content>
     <Content Include="XmlConfigs\18.1_StandardControls.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

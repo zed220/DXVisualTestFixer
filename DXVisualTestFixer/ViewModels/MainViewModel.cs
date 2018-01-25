@@ -1,4 +1,5 @@
 ﻿using CommonServiceLocator;
+using DevExpress.Data.Filtering;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.ModuleInjection;
 using DevExpress.Xpf.Editors;
@@ -55,10 +56,14 @@ namespace DXVisualTestFixer.ViewModels {
             get { return GetProperty(() => LoadingProgressController); }
             set { SetProperty(() => LoadingProgressController, value); }
         }
-        //public List<CompactModeFilterItem> FilterItems {
-        //    get { return GetProperty(() => FilterItems); }
-        //    set { SetProperty(() => FilterItems, value); }
-        //}
+        public int TestsToCommitCount {
+            get { return GetProperty(() => TestsToCommitCount); }
+            set { SetProperty(() => TestsToCommitCount, value); }
+        }
+        public CriteriaOperator CurrentFilter {
+            get { return GetProperty(() => CurrentFilter); }
+            set { SetProperty(() => CurrentFilter, value); }
+        }
 
         public MainViewModel() {
             LoadingProgressController = new LoadingProgressController();
@@ -106,7 +111,7 @@ namespace DXVisualTestFixer.ViewModels {
                 ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage("Start refreshing tests");
                 LoadingProgressController.Start();
                 List<FarmTaskInfo> failedTasks = GetAllTasks();
-                var tests = TestsService.LoadParrallel(failedTasks, LoadingProgressController).Select(t => new TestInfoWrapper(t)).ToList();
+                var tests = TestsService.LoadParrallel(failedTasks, LoadingProgressController).Select(t => new TestInfoWrapper(this, t)).ToList();
                 ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage("");
                 App.Current.Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
                     Tests = tests;
@@ -168,7 +173,21 @@ namespace DXVisualTestFixer.ViewModels {
                     new TestInfoModel() { TestInfo = CurrentTest, MoveNextRow = new Action(MoveNextCore), MovePrevRow = new Action(MovePrevCore) });
         }
         void OnTestsChanged() {
-            CurrentTest = Tests?.FirstOrDefault();
+            if(Tests == null) {
+                TestsToCommitCount = 0;
+                CurrentTest = null;
+                CurrentFilter = null;
+                ModuleManager.DefaultManager.Clear(Regions.FilterPanel);
+            }
+            else {
+                CurrentTest = Tests.FirstOrDefault();
+                ModuleManager.DefaultManager.InjectOrNavigate(Regions.FilterPanel, Modules.FilterPanel,
+                    new FilterPanelViewModelParameter(Tests, SetFilter));
+            }
+        }
+
+        void SetFilter(CriteriaOperator op) {
+            CurrentFilter = op;
         }
 
         public void ShowSettings() {

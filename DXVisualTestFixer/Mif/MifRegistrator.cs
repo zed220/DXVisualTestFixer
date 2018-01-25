@@ -21,6 +21,7 @@ namespace DXVisualTestFixer.Mif {
             //ModuleManager.DefaultManager.Register(Regions.TestInfo, new Module(Modules.TestInfo, ServiceLocator.Current.GetInstance<ITestInfoViewModel>, typeof(TestInfoView)));
             ModuleManager.DefaultManager.Register(Regions.Settings, new Module(Modules.Settings, ServiceLocator.Current.GetInstance<ISettingsViewModel>, typeof(SettingsView)));
             ModuleManager.DefaultManager.Register(Regions.ApplyChanges, new Module(Modules.ApplyChanges, ServiceLocator.Current.GetInstance<IApplyChangesViewModel>, typeof(ApplyChangesView)));
+            ModuleManager.DefaultManager.Register(Regions.FilterPanel, new Module(Modules.FilterPanel, ServiceLocator.Current.GetInstance<IFilterPanelViewModel>, typeof(FilterPanelView)));
         }
 
         public static void InitializeTestInfo(TestViewType viewType) {

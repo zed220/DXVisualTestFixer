@@ -10,6 +10,7 @@ namespace DXVisualTestFixer.Mif {
         public static string TestInfo => nameof(TestInfo);
         public static string Settings => nameof(Settings);
         public static string ApplyChanges => nameof(ApplyChanges);
+        public static string FilterPanel => nameof(FilterPanel);
     }
 
     public static class Modules {
@@ -17,5 +18,6 @@ namespace DXVisualTestFixer.Mif {
         public static string TestInfo => nameof(TestInfo);
         public static string Settings => nameof(Settings);
         public static string ApplyChanges => nameof(ApplyChanges);
+        public static string FilterPanel => nameof(FilterPanel);
     }
 }

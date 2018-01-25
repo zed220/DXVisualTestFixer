@@ -84,6 +84,26 @@
                             Content="Apply Changes"
                             Command="{DXCommand Execute='ApplyChanges()'}"
                             LargeGlyph="{dx:DXImageOffice2013 Image=Apply_32x32.png}">
+                            <dxb:BarButtonItem.GlyphTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <dx:DXImage Source="{dx:DXImageOffice2013 Image=Apply_32x32.png}"/>
+                                        <Border Width="16" Height="16" CornerRadius="8" BorderThickness="1" Background="Green" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,0,-3,0"
+                                                BorderBrush="White">
+                                            <Border.Visibility>
+                                                <Binding Path="TestsToCommitCount">
+                                                    <Binding.Converter>
+                                                        <dxmvvm:ObjectToObjectConverter DefaultTarget="Visible">
+                                                            <dxmvvm:MapItem Source="0" Target="Collapsed"/>
+                                                        </dxmvvm:ObjectToObjectConverter>
+                                                    </Binding.Converter>
+                                                </Binding>
+                                            </Border.Visibility>
+                                            <TextBlock TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding TestsToCommitCount}" FontSize="9" Foreground="White"/>
+                                        </Border>
+                                    </Grid>
+                                </DataTemplate>
+                            </dxb:BarButtonItem.GlyphTemplate>
                         </dxb:BarButtonItem>
                     </dxr:RibbonPageGroup>
                     <dxr:RibbonPageGroup Caption="Settings">
@@ -113,65 +133,66 @@
         </dxr:RibbonControl>
         <dxdo:DockLayoutManager Grid.Row="1">
             <dxdo:LayoutGroup AllowDrag="False">
-                <dxdo:LayoutPanel ShowCaption="False" ItemWidth="300">
-                    <controls:GridControlEx ItemsSource="{Binding Tests}" CurrentItem="{Binding CurrentTest, Mode=TwoWay}" AutoExpandAllGroups="True" ShowBorder="False" 
-                                     ShowLoadingPanel="{DXBinding Expr='Status != $viewModels:ProgramStatus.Idle'}">
-                        <dxmvvm:Interaction.Behaviors>
-                            <behaviors:CustomFilterPopulatorBehavior/>
-                        </dxmvvm:Interaction.Behaviors>
-                        <dxg:GridColumn FieldName="Version" GroupIndex="0" MergeWithPreviousGroup="False" Header="Version"/>
-                        <dxg:GridColumn FieldName="TeamName" GroupIndex="1" MergeWithPreviousGroup="False" Header="Team"/>
-                        <dxg:GridColumn FieldName="TestInfo.Name" GroupIndex="2" MergeWithPreviousGroup="True" Header="Name"/>
-                        <dxg:GridColumn FieldName="TestInfo.Theme" Width="*" Header="Theme">
-                            <dxg:GridColumn.CellTemplate>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
-                                        <dxe:TextEdit x:Name="PART_Editor"/>
-                                        <dxe:TextEdit EditMode="InplaceInactive" Margin="2,0,0,0">
-                                            <dxe:TextEdit.EditValue>
-                                                <Binding Path="RowData.Row.TestInfo.Optimized">
-                                                    <Binding.Converter>
-                                                        <dxmvvm:ObjectToObjectConverter DefaultSource="False" DefaultTarget="{x:Null}">
-                                                            <dxmvvm:MapItem Source="True" Target="(optimized)"/>
-                                                        </dxmvvm:ObjectToObjectConverter>
-                                                    </Binding.Converter>
-                                                </Binding>
-                                            </dxe:TextEdit.EditValue>
-                                        </dxe:TextEdit>
-                                        <dxe:TextEdit EditMode="InplaceInactive" Margin="2,0,0,0" EditValue="{Binding Path=RowData.Row.Dpi, Mode=OneWay}">
-                                            <dxe:TextEdit.Visibility>
-                                                <Binding Path="RowData.Row.Dpi">
-                                                    <Binding.Converter>
-                                                        <dxmvvm:ObjectToObjectConverter DefaultTarget="Visible">
-                                                            <dxmvvm:MapItem Source="96" Target="Collapsed"/>
-                                                        </dxmvvm:ObjectToObjectConverter>
-                                                    </Binding.Converter>
-                                                </Binding>
-                                            </dxe:TextEdit.Visibility>
-                                        </dxe:TextEdit>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </dxg:GridColumn.CellTemplate>
-                        </dxg:GridColumn>
-                        <controls:GridControlEx.TotalSummary>
-                            <dxg:GridSummaryItem SummaryType="Count" Alignment="Left"/>
-                        </controls:GridControlEx.TotalSummary>
-                        <controls:GridControlEx.View>
-                            <controls:TableViewAdvNavigation AllowEditing="False" ShowVerticalLines="False" ShowIndicator="False" ShowHorizontalLines="False" ShowColumnHeaders="False" 
-                                                             ShowGroupPanel="False" ShowFixedTotalSummary="True">
-                                <dxmvvm:Interaction.Behaviors>
-                                    <dxmvvm:EventToCommand EventName="MoveNext" Command="{DXCommand Execute='@s.AssociatedObject.MoveNextDataRow()'}" SourceObject="{Binding}"/>
-                                    <dxmvvm:EventToCommand EventName="MovePrev" Command="{DXCommand Execute='@s.AssociatedObject.MovePrevDataRow()'}" SourceObject="{Binding}"/>
-                                </dxmvvm:Interaction.Behaviors>
-                                <controls:TableViewAdvNavigation.FormatConditions>
-                                    <dxg:FormatCondition FieldName="CommitChange" ValueRule="Equal" Value1="True" PredefinedFormatName="YellowFillWithDarkYellowText" ApplyToRow="True"/>
-                                    <dxg:FormatCondition FieldName="Valid" ValueRule="Equal" Value1="{x:Static core:TestState.Invalid}" PredefinedFormatName="LightRedFillWithDarkRedText" ApplyToRow="True"/>
-                                    <dxg:FormatCondition FieldName="Valid" ValueRule="Equal" Value1="{x:Static core:TestState.Fixed}" PredefinedFormatName="GreenFillWithDarkGreenText" ApplyToRow="True"/>
-                                </controls:TableViewAdvNavigation.FormatConditions>
-                            </controls:TableViewAdvNavigation>
-                        </controls:GridControlEx.View>
-                    </controls:GridControlEx>
-                </dxdo:LayoutPanel>
+                <dxdo:LayoutGroup AllowDrag="False" Orientation="Vertical" ItemWidth="300" AllowSplitters="False">
+                    <dxdo:LayoutPanel ShowCaption="False" ItemHeight="Auto" Caption="Filters"
+                                      dxmvvm:UIRegion.Region="{x:Static mif:Regions.FilterPanel}"/>
+                    <dxdo:LayoutPanel ShowCaption="False" ItemHeight="*">
+                        <controls:GridControlEx ItemsSource="{Binding Tests}" CurrentItem="{Binding CurrentTest, Mode=TwoWay}" AutoExpandAllGroups="True" ShowBorder="False" 
+                                         ShowLoadingPanel="{DXBinding Expr='Status != $viewModels:ProgramStatus.Idle'}" FixedFilter="{Binding CurrentFilter}">
+                            <dxg:GridColumn FieldName="Version" GroupIndex="0" MergeWithPreviousGroup="False" Header="Version"/>
+                            <dxg:GridColumn FieldName="TeamName" GroupIndex="1" MergeWithPreviousGroup="False" Header="Team"/>
+                            <dxg:GridColumn FieldName="TestInfo.Name" GroupIndex="2" MergeWithPreviousGroup="True" Header="Name"/>
+                            <dxg:GridColumn FieldName="TestInfo.Theme" Width="*" Header="Theme">
+                                <dxg:GridColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <dxe:TextEdit x:Name="PART_Editor"/>
+                                            <dxe:TextEdit EditMode="InplaceInactive" Margin="2,0,0,0">
+                                                <dxe:TextEdit.EditValue>
+                                                    <Binding Path="RowData.Row.TestInfo.Optimized">
+                                                        <Binding.Converter>
+                                                            <dxmvvm:ObjectToObjectConverter DefaultSource="False" DefaultTarget="{x:Null}">
+                                                                <dxmvvm:MapItem Source="True" Target="(optimized)"/>
+                                                            </dxmvvm:ObjectToObjectConverter>
+                                                        </Binding.Converter>
+                                                    </Binding>
+                                                </dxe:TextEdit.EditValue>
+                                            </dxe:TextEdit>
+                                            <dxe:TextEdit EditMode="InplaceInactive" Margin="2,0,0,0" EditValue="{Binding Path=RowData.Row.Dpi, Mode=OneWay}">
+                                                <dxe:TextEdit.Visibility>
+                                                    <Binding Path="RowData.Row.Dpi">
+                                                        <Binding.Converter>
+                                                            <dxmvvm:ObjectToObjectConverter DefaultTarget="Visible">
+                                                                <dxmvvm:MapItem Source="96" Target="Collapsed"/>
+                                                            </dxmvvm:ObjectToObjectConverter>
+                                                        </Binding.Converter>
+                                                    </Binding>
+                                                </dxe:TextEdit.Visibility>
+                                            </dxe:TextEdit>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </dxg:GridColumn.CellTemplate>
+                            </dxg:GridColumn>
+                            <controls:GridControlEx.TotalSummary>
+                                <dxg:GridSummaryItem SummaryType="Count" Alignment="Left"/>
+                            </controls:GridControlEx.TotalSummary>
+                            <controls:GridControlEx.View>
+                                <controls:TableViewAdvNavigation AllowEditing="False" ShowVerticalLines="False" ShowIndicator="False" ShowHorizontalLines="False" ShowColumnHeaders="False" 
+                                                                 ShowGroupPanel="False" ShowFixedTotalSummary="True">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <dxmvvm:EventToCommand EventName="MoveNext" Command="{DXCommand Execute='@s.AssociatedObject.MoveNextDataRow()'}" SourceObject="{Binding}"/>
+                                        <dxmvvm:EventToCommand EventName="MovePrev" Command="{DXCommand Execute='@s.AssociatedObject.MovePrevDataRow()'}" SourceObject="{Binding}"/>
+                                    </dxmvvm:Interaction.Behaviors>
+                                    <controls:TableViewAdvNavigation.FormatConditions>
+                                        <dxg:FormatCondition FieldName="CommitChange" ValueRule="Equal" Value1="True" PredefinedFormatName="YellowFillWithDarkYellowText" ApplyToRow="True"/>
+                                        <dxg:FormatCondition FieldName="Valid" ValueRule="Equal" Value1="{x:Static core:TestState.Invalid}" PredefinedFormatName="LightRedFillWithDarkRedText" ApplyToRow="True"/>
+                                        <dxg:FormatCondition FieldName="Valid" ValueRule="Equal" Value1="{x:Static core:TestState.Fixed}" PredefinedFormatName="GreenFillWithDarkGreenText" ApplyToRow="True"/>
+                                    </controls:TableViewAdvNavigation.FormatConditions>
+                                </controls:TableViewAdvNavigation>
+                            </controls:GridControlEx.View>
+                        </controls:GridControlEx>
+                    </dxdo:LayoutPanel>
+                </dxdo:LayoutGroup>
                 <dxdo:LayoutPanel dxmvvm:UIRegion.Region="{x:Static mif:Regions.TestInfo}" ShowCaption="False"/>
             </dxdo:LayoutGroup>
         </dxdo:DockLayoutManager>
