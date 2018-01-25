@@ -89,18 +89,37 @@ namespace DXVisualTestFixer.ViewModels {
                 return;
             List<string> savedVersions = Repositories.Select(r => r.Version).ToList();
             foreach(var ver in Repository.Versions.Where(v => !savedVersions.Contains(v))) {
+                //if(Repository.InNewVersion(ver))
                 string verDir = String.Format("20{0}", ver);
-                string verPath = Path.Combine(service.ResultPath, verDir);
-                if(!Directory.Exists(verPath))
-                    continue;
-
-                string visualTestsPathVar = Path.Combine(verPath, "XPF\\");
-                if(!Directory.Exists(visualTestsPathVar)) {
-                    visualTestsPathVar = Path.Combine(verPath, "common\\XPF\\");
-                    if(!Directory.Exists(visualTestsPathVar))
-                        continue;
+                //string verPath = Path.Combine(service.ResultPath, verDir);
+                foreach(var directoryPath in Directory.GetDirectories(service.ResultPath)) {
+                    string dirName = Path.GetFileName(directoryPath);
+                    if(dirName.Contains(String.Format("20{0}", ver)) || dirName.Contains(ver)) {
+                        if(Repository.InNewVersion(ver)) {
+                            if(!File.Exists(directoryPath + "\\VisualTestsConfig.xml"))
+                                continue;
+                            Repositories.Add(new RepositoryModel(new Repository() { Version = ver, Path = directoryPath + "\\" }));
+                            continue;
+                        }
+                        string visualTestsPathVar = Path.Combine(directoryPath, "XPF\\");
+                        if(!Directory.Exists(visualTestsPathVar)) {
+                            visualTestsPathVar = Path.Combine(directoryPath, "common\\XPF\\");
+                            if(!Directory.Exists(visualTestsPathVar))
+                                continue;
+                        }
+                        Repositories.Add(new RepositoryModel(new Repository() { Version = ver, Path = visualTestsPathVar }));
+                    }
                 }
-                Repositories.Add(new RepositoryModel(new Repository() { Version = ver, Path = visualTestsPathVar }));
+                //if(!Directory.Exists(verPath))
+                //    continue;
+
+                //string visualTestsPathVar = Path.Combine(verPath, "XPF\\");
+                //if(!Directory.Exists(visualTestsPathVar)) {
+                //    visualTestsPathVar = Path.Combine(verPath, "common\\XPF\\");
+                //    if(!Directory.Exists(visualTestsPathVar))
+                //        continue;
+                //}
+                //Repositories.Add(new RepositoryModel(new Repository() { Version = ver, Path = visualTestsPathVar }));
             }
         }
     }

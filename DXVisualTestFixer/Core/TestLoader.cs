@@ -21,6 +21,7 @@ namespace DXVisualTestFixer.Core {
                 XmlNode resultNode = testCaseXml.FindByName("failure").FindByName("message");
                 allTasks.Add(Task.Factory.StartNew<List<CorpDirTestInfo>>(() => {
                     List<CorpDirTestInfo> localRes = new List<CorpDirTestInfo>();
+                    //if(resultNode.InnerText.Contains("Navigation"))
                     ParseMessage(taskInfo, resultNode.InnerText, localRes);
                     return localRes;
                 }));
@@ -30,11 +31,13 @@ namespace DXVisualTestFixer.Core {
             return result;
         }
         static IEnumerable<XmlElement> FindFailedTests(XmlDocument myXmlDocument) {
-            XmlNode testResults = myXmlDocument.FindByName("cruisecontrol")?.FindByName("build")?.FindByName("test-results");
-            if(testResults == null)
+            XmlNode buildNode = myXmlDocument.FindByName("cruisecontrol")?.FindByName("build");
+            if(buildNode == null)
                 yield break;
-            foreach(XmlElement subNode in FindAllFailedTests(testResults))
-                yield return subNode;
+            foreach(var testResults in buildNode.FindAllByName("test-results")) {
+                foreach(XmlElement subNode in FindAllFailedTests(testResults))
+                    yield return subNode;
+            }
         }
         static IEnumerable<XmlElement> FindAllFailedTests(XmlNode testResults) {
             foreach(XmlNode node in testResults.ChildNodes) {
@@ -53,6 +56,12 @@ namespace DXVisualTestFixer.Core {
                     return node;
             }
             return null;
+        }
+        static IEnumerable<XmlNode> FindAllByName(this XmlNode element, string name) {
+            foreach(XmlNode node in element.ChildNodes) {
+                if(node.Name == name)
+                    yield return node;
+            }
         }
         static string LoadXmlString(string xmlUri) {
             HtmlWeb htmlWeb = new HtmlWeb();
@@ -104,6 +113,11 @@ namespace DXVisualTestFixer.Core {
                     }
                     if(cleanPath.Contains("BitmapDif.png")) {
                         cleanPath = cleanPath.Split(new[] { "BitmapDif.png" }, StringSplitOptions.RemoveEmptyEntries).First() + "BitmapDif.png";
+                        if(File.Exists(cleanPath))
+                            result.Add(cleanPath);
+                    }
+                    if(cleanPath.Contains("CurrentBitmap.png")) {
+                        cleanPath = cleanPath.Split(new[] { "CurrentBitmap.png" }, StringSplitOptions.RemoveEmptyEntries).First() + "CurrentBitmap.png";
                         if(File.Exists(cleanPath))
                             result.Add(cleanPath);
                     }

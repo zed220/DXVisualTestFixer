@@ -84,6 +84,12 @@ namespace DXVisualTestFixer.ViewModels {
         List<FarmTaskInfo> GetAllTasks() {
             List<FarmTaskInfo> result = new List<FarmTaskInfo>();
             foreach(var repository in Config.Repositories) {
+                if(Repository.InNewVersion(repository.Version)) {
+                    if(FarmIntegrator.GetTaskStatus(repository.GetTaskName_New()).BuildStatus == IntegrationStatus.Failure) {
+                        result.Add(new FarmTaskInfo(repository, FarmIntegrator.GetTaskUrl(repository.GetTaskName_New())));
+                    }
+                    continue;
+                }
                 if(FarmIntegrator.GetTaskStatus(repository.GetTaskName()).BuildStatus == IntegrationStatus.Failure) {
                     result.Add(new FarmTaskInfo(repository, FarmIntegrator.GetTaskUrl(repository.GetTaskName())));
                 }
@@ -142,6 +148,15 @@ namespace DXVisualTestFixer.ViewModels {
                     ShowSettings();
                 }));
                 return;
+            }
+            foreach(var repoModel in Config.Repositories.Select(rep => new RepositoryModel(rep))) {
+                if(!repoModel.IsValid()) {
+                    Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
+                        GetService<IMessageBoxService>()?.ShowMessage("Some repositories has wrong settings", "Modify repositories in settings", MessageButton.OK, MessageIcon.Information);
+                        ShowSettings();
+                    }));
+                    return;
+                }
             }
             RefreshTestList();
         }

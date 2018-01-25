@@ -16,6 +16,12 @@ using System.Windows.Media.Imaging;
 namespace DXVisualTestFixer.Core {
     public static class TestsService {
         public static List<TestInfo> LoadParrallel(List<FarmTaskInfo> farmTasks, LoadingProgressController loadingProgressController) {
+            //Team team = new Team();
+            //team.Name = "ThemedWindow";
+            //team.Version = "18.1";
+            //team.TeamInfos = new List<TeamInfo>() { new TeamInfo() { Dpi = 96, ServerFolderName = "4DXThemedWindow_dpi_96", TestResourcesPath = @"Images_dpi96\WpfCore\ThemedWindowImages", Optimized = false } };
+            //var s = TeamConfigsReader.SaveConfig(team);
+            //File.WriteAllText($"c:\\1\\myConfig.config", s);
             //foreach(var version in Repository.Versions) {
             //    foreach(var team in Teams) {
             //        TeamConfigsReader r = new TeamConfigsReader();
@@ -71,10 +77,20 @@ namespace DXVisualTestFixer.Core {
             TestInfo testInfo = new TestInfo();
             testInfo.Version = corpDirTestInfo.FarmTaskInfo.Repository.Version;
             testInfo.Name = corpDirTestInfo.TestName;
-            testInfo.Team = TeamConfigsReader.GetTeam(corpDirTestInfo.FarmTaskInfo.Repository.Version, corpDirTestInfo.TeamName);
+            TeamInfo info = null;
+            testInfo.Team = TeamConfigsReader.GetTeam(corpDirTestInfo.FarmTaskInfo.Repository.Version, corpDirTestInfo.ServerFolderName, out info);
+            testInfo.TeamInfo = info;
+            testInfo.Dpi = info.Dpi;
             testInfo.Theme = corpDirTestInfo.ThemeName;
-            if(testInfo.Team.SupportOptimized)
-                testInfo.Optimized = !corpDirTestInfo.FarmTaskInfo.Url.Contains("UnoptimizedMode");
+            if(Convert.ToInt32(testInfo.Version.Split('.')[0]) < 18) {
+                if(testInfo.TeamInfo.Optimized.HasValue)
+                    testInfo.Optimized = !corpDirTestInfo.FarmTaskInfo.Url.Contains("UnoptimizedMode");
+            }
+            else {
+                //new version
+                if(testInfo.TeamInfo.Optimized.HasValue)
+                    testInfo.Optimized = testInfo.TeamInfo.Optimized.Value;
+            }
             LoadTextFile(corpDirTestInfo.InstantTextEditPath, s => { testInfo.TextBefore = s; });
             LoadTextFile(corpDirTestInfo.CurrentTextEditPath, s => { testInfo.TextCurrent = s; });
             BuildTextDiff(testInfo);
@@ -158,15 +174,15 @@ namespace DXVisualTestFixer.Core {
 
         public static TestState TestStatus(TestInfo test) {
             TestState result = TestState.Valid;
-            string actualTestResourceName = GetTestResourceName(test);
+            string actualTestResourceName = GetTestResourceName(test, true);
             if(actualTestResourceName == null) {
                 return TestState.Invalid;
             }
-            string xmlPath = GetXmlFilePath(actualTestResourceName, test);
+            string xmlPath = GetXmlFilePath(actualTestResourceName, test, true);
             if(xmlPath == null) {
                 result = TestState.Invalid;
             }
-            string imagePath = GetImageFilePath(actualTestResourceName, test);
+            string imagePath = GetImageFilePath(actualTestResourceName, test, true);
             if(imagePath == null) {
                 result = TestState.Invalid;
             }
@@ -185,32 +201,35 @@ namespace DXVisualTestFixer.Core {
             return result;
         }
 
-        static string GetTestResourceName(TestInfo test) {
+        static string GetTestResourceName(TestInfo test, bool checkDirectoryExists) {
             var repository = ConfigSerializer.GetConfig().Repositories.Where(r => r.Version == test.Version).FirstOrDefault();
             if(repository == null) {
                 test.LogCustomError($"Config not found for version \"{test.Version}\"");
                 return null;
             }
-            string actualTestResourcesPath = Path.Combine(repository.Path, test.Team.TestResourcesPath, test.Name);
+            string actualTestResourcesPath = Path.Combine(repository.Path, test.TeamInfo.TestResourcesPath, test.Name);
             if(!Directory.Exists(actualTestResourcesPath)) {
-                test.LogDirectoryNotFound(actualTestResourcesPath);
-                return null;
+                if(checkDirectoryExists) {
+                    test.LogDirectoryNotFound(actualTestResourcesPath);
+                    return null;
+                }
+                Directory.CreateDirectory(actualTestResourcesPath);
             }
             return Path.Combine(actualTestResourcesPath, test.Theme);
         }
-        static string GetXmlFilePath(string testResourceName, TestInfo test) {
+        static string GetXmlFilePath(string testResourceName, TestInfo test, bool checkExists) {
             if(test.Optimized)
                 testResourceName = testResourceName + "_optimized";
             string xmlPath = testResourceName + ".xml";
-            if(!File.Exists(xmlPath)) {
+            if(checkExists && !File.Exists(xmlPath)) {
                 test.LogFileNotFound(xmlPath);
                 return null;
             }
             return xmlPath;
         }
-        static string GetImageFilePath(string testResourceName, TestInfo test) {
+        static string GetImageFilePath(string testResourceName, TestInfo test, bool checkExists) {
             string imagePath = testResourceName + ".png";
-            if(!File.Exists(imagePath)) {
+            if(checkExists && !File.Exists(imagePath)) {
                 test.LogFileNotFound(imagePath);
                 return null;
             }
@@ -218,12 +237,10 @@ namespace DXVisualTestFixer.Core {
         }
 
         public static bool ApplyTest(TestInfo test, Func<string, bool> checkoutFunc) {
-            string actualTestResourceName = GetTestResourceName(test);
-            string xmlPath = GetXmlFilePath(actualTestResourceName, test);
-            string imagePath = GetImageFilePath(actualTestResourceName, test);
+            string actualTestResourceName = GetTestResourceName(test, false);
+            string xmlPath = GetXmlFilePath(actualTestResourceName, test, false);
+            string imagePath = GetImageFilePath(actualTestResourceName, test, false);
             if(imagePath == null || xmlPath == null) {
-                //log
-                //Debug.WriteLine("fire save test" + test.ToLog());
                 return false;
             }
             if(!SafeDeleteFile(xmlPath, checkoutFunc))
@@ -235,6 +252,8 @@ namespace DXVisualTestFixer.Core {
             return true;
         }
         static bool SafeDeleteFile(string path, Func<string, bool> checkoutFunc) {
+            if(!File.Exists(path))
+                return true;
             if((File.GetAttributes(path) & FileAttributes.ReadOnly) != FileAttributes.ReadOnly)
                 return true;
             if(checkoutFunc(path)) {

@@ -8,8 +8,13 @@ namespace DXVisualTestFixer.Core {
     public class Team {
         public string Name { get; set; }
         public string Version { get; set; }
-        public string TestResourcesPath { get; set; }
+        public List<TeamInfo> TeamInfos { get; set; }
+    }
+
+    public class TeamInfo {
         public string ServerFolderName { get; set; }
-        public bool SupportOptimized { get; set; }
+        public string TestResourcesPath { get; set; }
+        public int Dpi { get; set; }
+        public bool? Optimized { get; set; }
     }
 }

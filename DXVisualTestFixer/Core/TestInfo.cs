@@ -18,6 +18,7 @@ namespace DXVisualTestFixer.Core {
 
         public string Name { get; set; }
         public Team Team { get; set; }
+        public TeamInfo TeamInfo { get; set; }
         public string Theme { get; set; }
         public string Fixture { get; set; }
         public string Version { get; set; }

@@ -14,7 +14,7 @@ namespace DXVisualTestFixer.Configuration {
         //public IEnumerable<Team> RegisteredConfigs => configs.Values;
         //public static Team this[int] => configs[name];
 
-        public static Team GetTeam(string version, string serverFolderName) {
+        public static Team GetTeam(string version, string serverFolderName, out TeamInfo info) {
             //var v = Application.ProductVersion;
             //System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
             //FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
@@ -22,8 +22,14 @@ namespace DXVisualTestFixer.Configuration {
             //var ver = typeof(TeamConfigsReader).Assembly.GetName().Version;
 
             //System.Version ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-
-            return configs.Where(c => c.Version == version).Where(c => c.ServerFolderName == serverFolderName).FirstOrDefault();
+            foreach(var team in configs.Where(c => c.Version == version)) {
+                info = team.TeamInfos.FirstOrDefault(i => i.ServerFolderName == serverFolderName);
+                if(info != null)
+                    return team;
+            }
+            info = null;
+            return null;
+            //return configs.Where(c => c.Version == version).Where(c => c.ServerFolderName == serverFolderName).FirstOrDefault();
         }
 
         static TeamConfigsReader() {

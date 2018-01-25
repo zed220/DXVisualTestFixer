@@ -29,7 +29,10 @@ namespace DXVisualTestFixer.Behaviors {
             AssociatedObject.ClearColumnFilter("TeamName");
             View.CompactModeFilterItems.Clear();
             List<CompactModeFilterItem> filterItems = new List<CompactModeFilterItem>() { new CompactModeFilterItem() { DisplayValue = "All" } };
-            foreach(var team in AssociatedObject.GetProducts().OrderBy(t => t)) {
+            var products = AssociatedObject.GetProducts();
+            if(products == null)
+                return;
+            foreach(var team in products.OrderBy(t => t)) {
                 CompactModeFilterItem item = new CompactModeFilterItem();
                 item.DisplayValue = team;
                 item.EditValue = $"[TeamName] = '{team}'";

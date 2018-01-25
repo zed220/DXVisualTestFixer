@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DevExpress.Xpf.Core;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -16,8 +17,11 @@ namespace DXVisualTestFixer.Core {
         public string ImageDiffPath { get; private set; }
 
         public string TeamName { get; private set; }
+        public string ServerFolderName { get; private set; }
         public string TestName { get; private set; }
         public string ThemeName { get; private set; }
+        public bool PossibleNewTest { get; private set; }
+        public int Dpi { get; private set; } = 96;
 
         public static bool TryCreate(FarmTaskInfo farmTaskInfo, List<string> corpPaths, out CorpDirTestInfo result) {
             result = null;
@@ -45,17 +49,54 @@ namespace DXVisualTestFixer.Core {
                     continue;
                 }
             }
-            if(temp.CurrentTextEditPath != null && temp.InstantTextEditPath != null && temp.CurrentImagePath != null && temp.InstantImagePath != null) {// && temp.ImageDiffPath != null
-                temp.TeamName = temp.CurrentTextEditPath.Split(new string[] { @"\\corp\builds\testbuilds\" }, StringSplitOptions.RemoveEmptyEntries).First().Split('\\').First();
-                string[] testNameAndTheme = Path.GetDirectoryName(temp.CurrentTextEditPath).Split('\\').Last().Split('.');
-                temp.TestName = testNameAndTheme[0];
-                temp.ThemeName = testNameAndTheme[1];
-                if(testNameAndTheme.Length > 2)
-                    temp.ThemeName += '.' + testNameAndTheme[2];
+            if(temp.CurrentTextEditPath != null && temp.CurrentImagePath != null) {// && temp.ImageDiffPath != null
+                                                                                   //&& temp.InstantTextEditPath != null && temp.InstantImagePath != null
+                temp.ServerFolderName = temp.CurrentTextEditPath.Split(new string[] { @"\\corp\builds\testbuilds\" }, StringSplitOptions.RemoveEmptyEntries).First().Split('\\').First();
+                if(temp.ServerFolderName.Contains("_dpi_")) {
+                    var nameAndDpi = temp.ServerFolderName.Split(new[] { "_dpi_" }, StringSplitOptions.RemoveEmptyEntries);
+                    temp.TeamName = nameAndDpi[0];
+                    temp.Dpi = Int32.Parse(nameAndDpi[1]);
+                }
+                else
+                    temp.TeamName = temp.ServerFolderName;
+                string testNameAndTheme = Path.GetDirectoryName(temp.CurrentTextEditPath).Split('\\').Last();
+                if(!TryUpdateThemeAndName(testNameAndTheme, temp))
+                    return false;
+                //string[] testNameAndTheme = Path.GetDirectoryName(temp.CurrentTextEditPath).Split('\\').Last().Split('.');
+                //temp.TestName = testNameAndTheme[0];
+                //temp.ThemeName = testNameAndTheme[1];
+                //if(temp.InstantTextEditPath == null || temp.InstantImagePath == null) {
+                //    temp.PossibleNewTest = true;
+                //}
+                //if(testNameAndTheme.Length > 2)
+                //    temp.ThemeName += '.' + testNameAndTheme[2];
                 result = temp;
                 return true;
             }
             return false;
+        }
+        static bool TryUpdateThemeAndName(string testNameAndTheme, CorpDirTestInfo result) {
+            List<string> allThemes = Theme.Themes.Select(t => t.Name).ToList();
+            allThemes.Sort(new ThemeNameComparer());
+            foreach(string theme in allThemes.Where(t => t.Contains("Touch")).Concat(allThemes.Where(t => !t.Contains("Touch")))) {
+                string themeName = theme.Replace(";", ".");
+                if(!testNameAndTheme.Contains(themeName))
+                    continue;
+                result.ThemeName = themeName;
+                result.TestName = testNameAndTheme.Replace("." + themeName, "");
+                return true;
+            }
+            return false;
+        }
+    }
+
+    class ThemeNameComparer : IComparer<string> {
+        public int Compare(string x, string y) {
+            if(x.Length > y.Length)
+                return -1;
+            if(x.Length < y.Length)
+                return 1;
+            return Comparer<string>.Default.Compare(x, y);
         }
     }
 }

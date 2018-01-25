@@ -138,6 +138,17 @@
                                                 </Binding>
                                             </dxe:TextEdit.EditValue>
                                         </dxe:TextEdit>
+                                        <dxe:TextEdit EditMode="InplaceInactive" Margin="2,0,0,0" EditValue="{Binding Path=RowData.Row.Dpi, Mode=OneWay}">
+                                            <dxe:TextEdit.Visibility>
+                                                <Binding Path="RowData.Row.Dpi">
+                                                    <Binding.Converter>
+                                                        <dxmvvm:ObjectToObjectConverter DefaultTarget="Visible">
+                                                            <dxmvvm:MapItem Source="96" Target="Collapsed"/>
+                                                        </dxmvvm:ObjectToObjectConverter>
+                                                    </Binding.Converter>
+                                                </Binding>
+                                            </dxe:TextEdit.Visibility>
+                                        </dxe:TextEdit>
                                     </StackPanel>
                                 </DataTemplate>
                             </dxg:GridColumn.CellTemplate>
