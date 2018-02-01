@@ -32,7 +32,7 @@
     <SuiteName>Visual Tests Tool</SuiteName>
     <MinimumRequiredVersion>1.0.1.0</MinimumRequiredVersion>
     <ApplicationRevision>59</ApplicationRevision>
-    <ApplicationVersion>1.1.0.%2a</ApplicationVersion>
+    <ApplicationVersion>1.1.1.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -485,6 +485,7 @@
     </Content>
     <Content Include="XmlConfigs\17.1_ThemedWindow.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </Content>
     <Content Include="XmlConfigs\17.2_CoreAndEditors.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

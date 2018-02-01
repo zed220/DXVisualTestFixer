@@ -77,6 +77,8 @@ namespace DXVisualTestFixer.Core {
         }
         static bool TryUpdateThemeAndName(string testNameAndTheme, CorpDirTestInfo result) {
             List<string> allThemes = Theme.Themes.Select(t => t.Name).ToList();
+            allThemes.Add("Base");
+            allThemes.Add("Super");
             allThemes.Sort(new ThemeNameComparer());
             foreach(string theme in allThemes.Where(t => t.Contains("Touch")).Concat(allThemes.Where(t => !t.Contains("Touch")))) {
                 string themeName = theme.Replace(";", ".");
