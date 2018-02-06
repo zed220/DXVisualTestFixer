@@ -15,7 +15,6 @@ namespace DXVisualTestFixer.Behaviors {
 
         protected override void OnAttached() {
             base.OnAttached();
-            AssociatedObject.Unloaded += AssociatedObject_Unloaded;
             TrackingImages.Add(AssociatedObject);
             AssociatedObject.PreviewMouseWheel += AssociatedObject_PreviewMouseWheel;
             AssociatedObject.LayoutTransform = new ScaleTransform();
@@ -35,11 +34,6 @@ namespace DXVisualTestFixer.Behaviors {
                 if(scaleTransform.ScaleY < 0.3)
                     scaleTransform.ScaleY = 0.3;
             }
-        }
-
-        void AssociatedObject_Unloaded(object sender, RoutedEventArgs e) {
-            AssociatedObject.Unloaded -= AssociatedObject_Unloaded;
-            Detach();
         }
 
         protected override void OnDetaching() {
