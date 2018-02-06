@@ -137,7 +137,7 @@
                     <dxdo:LayoutPanel ShowCaption="False" ItemHeight="Auto" Caption="Filters"
                                       dxmvvm:UIRegion.Region="{x:Static mif:Regions.FilterPanel}"/>
                     <dxdo:LayoutPanel ShowCaption="False" ItemHeight="*">
-                        <controls:GridControlEx ItemsSource="{Binding Tests}" CurrentItem="{Binding CurrentTest, Mode=TwoWay}" AutoExpandAllGroups="True" ShowBorder="False" 
+                        <dxg:GridControl ItemsSource="{Binding Tests}" CurrentItem="{Binding CurrentTest, Mode=TwoWay}" AutoExpandAllGroups="True" ShowBorder="False" 
                                          ShowLoadingPanel="{DXBinding Expr='Status != $viewModels:ProgramStatus.Idle'}" FixedFilter="{Binding CurrentFilter}">
                             <dxg:GridColumn FieldName="Version" GroupIndex="0" MergeWithPreviousGroup="False" Header="Version"/>
                             <dxg:GridColumn FieldName="TeamName" GroupIndex="1" MergeWithPreviousGroup="False" Header="Team"/>
@@ -173,10 +173,10 @@
                                     </DataTemplate>
                                 </dxg:GridColumn.CellTemplate>
                             </dxg:GridColumn>
-                            <controls:GridControlEx.TotalSummary>
+                            <dxg:GridControl.TotalSummary>
                                 <dxg:GridSummaryItem SummaryType="Count" Alignment="Left"/>
-                            </controls:GridControlEx.TotalSummary>
-                            <controls:GridControlEx.View>
+                            </dxg:GridControl.TotalSummary>
+                            <dxg:GridControl.View>
                                 <controls:TableViewAdvNavigation AllowEditing="False" ShowVerticalLines="False" ShowIndicator="False" ShowHorizontalLines="False" ShowColumnHeaders="False" 
                                                                  ShowGroupPanel="False" ShowFixedTotalSummary="True">
                                     <dxmvvm:Interaction.Behaviors>
@@ -189,8 +189,8 @@
                                         <dxg:FormatCondition FieldName="Valid" ValueRule="Equal" Value1="{x:Static core:TestState.Fixed}" PredefinedFormatName="GreenFillWithDarkGreenText" ApplyToRow="True"/>
                                     </controls:TableViewAdvNavigation.FormatConditions>
                                 </controls:TableViewAdvNavigation>
-                            </controls:GridControlEx.View>
-                        </controls:GridControlEx>
+                            </dxg:GridControl.View>
+                        </dxg:GridControl>
                     </dxdo:LayoutPanel>
                 </dxdo:LayoutGroup>
                 <dxdo:LayoutPanel dxmvvm:UIRegion.Region="{x:Static mif:Regions.TestInfo}" ShowCaption="False"/>

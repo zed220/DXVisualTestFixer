@@ -88,8 +88,8 @@
             </dxdo:LayoutPanel>
             <dxdo:LayoutPanel ShowBorder="False" ShowCaption="False" ItemWidth="Auto">
                 <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Button Content="Prev" Click="{DXEvent Handler='TestInfoModel.MovePrevRow.Invoke()'}"/>
-                    <Button Content="Next" Click="{DXEvent Handler='TestInfoModel.MoveNextRow.Invoke()'}"/>
+                    <Button Content="Prev" Click="{DXEvent Handler='TestInfoModel.MovePrevRow.Invoke()'}" Width="100"/>
+                    <Button Content="Next" Click="{DXEvent Handler='TestInfoModel.MoveNextRow.Invoke()'}" Width="100"/>
                     <Button Content="Valid And Next" Click="{DXEvent Handler='Valid()'}" IsEnabled="{DXBinding Expr='TestInfoModel.TestInfo.Valid == $core:TestState.Valid'}"/>
                     <Button Content="Commit New Test" Click="{DXEvent Handler='Valid()'}" IsEnabled="{DXBinding Expr='TestInfoModel.TestInfo.Valid == $core:TestState.Invalid'}"
                             Visibility="{DXBinding Expr='TestInfoModel.TestInfo.Valid == $core:TestState.Invalid', Converter={dxmvvm:BooleanToVisibilityConverter}}"/>

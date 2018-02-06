@@ -9,19 +9,22 @@ using System.Threading.Tasks;
 namespace DXVisualTestFixer.Controls {
     public class TableViewAdvNavigation : TableView {
         public void MoveNextDataRow() {
-            RepeatMoveAction(MoveNextRow);
+            RepeatMoveAction(i => ++i);
         }
         public void MovePrevDataRow() {
-            RepeatMoveAction(MovePrevRow);
+            RepeatMoveAction(i => --i);
         }
-        void RepeatMoveAction(Action action) {
+        void RepeatMoveAction(Func<int, int> action) {
             int tryCount = 0;
+            int focusedRowHandleCandidate = FocusedRowHandle;
+            int visibleIndex = Grid.GetRowVisibleIndexByHandle(FocusedRowHandle);
             do {
-                action();
-                tryCount++;
-            } while(FocusedRowHandle < 0 && tryCount < 5);
-            if(FocusedRowHandle < 0)
-                FocusedRowHandle = 0;
+                visibleIndex = action(visibleIndex);
+                focusedRowHandleCandidate = Grid.GetRowHandleByVisibleIndex(visibleIndex);
+            }
+            while(focusedRowHandleCandidate < 0 && tryCount++ < 5);
+            if(focusedRowHandleCandidate >= 0)
+                FocusedRowHandle = focusedRowHandleCandidate;
         }
     }
 }

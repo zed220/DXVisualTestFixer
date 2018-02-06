@@ -167,10 +167,17 @@ namespace DXVisualTestFixer.ViewModels {
         }
 
         void OnCurrentTestChanged() {
-            ModuleManager.DefaultManager.Clear(Regions.TestInfo);
-            if(CurrentTest != null)
-                ModuleManager.DefaultManager.InjectOrNavigate(Regions.TestInfo, Modules.TestInfo,
-                    new TestInfoModel() { TestInfo = CurrentTest, MoveNextRow = new Action(MoveNextCore), MovePrevRow = new Action(MovePrevCore) });
+            if(CurrentTest == null) {
+                ModuleManager.DefaultManager.Clear(Regions.TestInfo);
+                return;
+            }
+            TestInfoModel testInfoModel = new TestInfoModel() { TestInfo = CurrentTest, MoveNextRow = new Action(MoveNextCore), MovePrevRow = new Action(MovePrevCore) };
+            var vm = ModuleManager.DefaultManager.GetRegion(Regions.TestInfo).GetViewModel(Modules.TestInfo);
+            if(vm == null) {
+                ModuleManager.DefaultManager.InjectOrNavigate(Regions.TestInfo, Modules.TestInfo, testInfoModel);
+                return;
+            }
+            ((ISupportParameter)ModuleManager.DefaultManager.GetRegion(Regions.TestInfo).GetViewModel(Modules.TestInfo)).Parameter = testInfoModel;
         }
         void OnTestsChanged() {
             if(Tests == null) {
