@@ -10,7 +10,7 @@ using System.Windows.Media.Imaging;
 
 namespace DXVisualTestFixer.Converters {
     public class ArrayToImageConverter : IValueConverter {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
+        public virtual object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
             byte[] imageData = value as byte[];
             if(imageData == null || imageData.Length == 0)
                 return null;

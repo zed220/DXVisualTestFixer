@@ -13,7 +13,6 @@ namespace DXVisualTestFixer.Behaviors {
 
         protected override void OnAttached() {
             base.OnAttached();
-            AssociatedObject.Unloaded += AssociatedObject_Unloaded;
             TrackingScrollViewers.Add(AssociatedObject);
             AssociatedObject.ScrollChanged += AssociatedObject_ScrollChanged;
         }
@@ -23,11 +22,6 @@ namespace DXVisualTestFixer.Behaviors {
                 sv.ScrollToHorizontalOffset(e.HorizontalOffset);
                 sv.ScrollToVerticalOffset(e.VerticalOffset);
             }
-        }
-
-        void AssociatedObject_Unloaded(object sender, RoutedEventArgs e) {
-            AssociatedObject.Unloaded -= AssociatedObject_Unloaded;
-            Detach();
         }
 
         protected override void OnDetaching() {

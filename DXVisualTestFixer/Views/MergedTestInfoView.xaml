@@ -12,10 +12,10 @@
              xmlns:controls="clr-namespace:DXVisualTestFixer.Controls"
              xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
              xmlns:core="clr-namespace:DXVisualTestFixer.Core"
+             xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
-        <converters:ArrayToImageConverter x:Key="ArrayToImageConverter"/>
         <dxmvvm:ObjectToObjectConverter x:Key="InvalidToVisibilityConverter" DefaultTarget="Collapsed">
             <dxmvvm:MapItem Source="Invalid" Target="Visible"/>
         </dxmvvm:ObjectToObjectConverter>
@@ -25,20 +25,6 @@
     </UserControl.Resources>
     <dxdo:LayoutGroup Orientation="Vertical" ShowCaption="False">
         <dxdo:LayoutPanel DataContext="{Binding TestInfoModel.TestInfo.TestInfo}" ShowCaption="True" Caption="Merged" ShowCloseButton="False" ShowPinButton="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False">
-            <dxdo:LayoutPanel.Resources>
-                <DataTemplate x:Key="DraggableScrollViewerDataTemplate">
-                    <controls:DraggableScrollViewer HorizontalScrollBarVisibility="Auto" dx:ScrollBarExtensions.HandlesDefaultMouseScrolling="False">
-                        <dxmvvm:Interaction.Behaviors>
-                            <behaviors:ScrollVIewerDragBehavior/>
-                        </dxmvvm:Interaction.Behaviors>
-                        <Image Source="{Binding Path=Content, Converter={StaticResource ArrayToImageConverter}, RelativeSource={RelativeSource TemplatedParent}}" Stretch="None">
-                            <dxmvvm:Interaction.Behaviors>
-                                <behaviors:ImageScaleBehavior/>
-                            </dxmvvm:Interaction.Behaviors>
-                        </Image>
-                    </controls:DraggableScrollViewer>
-                </DataTemplate>
-            </dxdo:LayoutPanel.Resources>
             <Grid>
                 <ContentControl x:Name="before" Content="{Binding ImageBeforeArr}" ContentTemplate="{StaticResource ResourceKey=DraggableScrollViewerDataTemplate}"/>
                 <ContentControl x:Name="current" Content="{Binding ImageCurrentArr}" ContentTemplate="{StaticResource ResourceKey=DraggableScrollViewerDataTemplate}"/>

@@ -164,7 +164,6 @@ namespace DXVisualTestFixer.Core {
         }
         static bool LoadImage(string path, Action<byte[]> saveAction) {
             if(!File.Exists(path)) {
-                //log
                 Debug.WriteLine("fire LoadImage");
                 return false;
             }

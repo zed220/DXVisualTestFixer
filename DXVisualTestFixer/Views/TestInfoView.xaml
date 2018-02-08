@@ -27,22 +27,7 @@
         <dxdo:LayoutGroup DataContext="{Binding TestInfoModel.TestInfo.TestInfo}">
             <dxdo:LayoutGroup.Resources>
                 <Style TargetType="{x:Type dxdo:LayoutPanel}">
-                    <Setter Property="ContentTemplate">
-                        <Setter.Value>
-                            <DataTemplate>
-                                <controls:DraggableScrollViewer HorizontalScrollBarVisibility="Auto" dx:ScrollBarExtensions.HandlesDefaultMouseScrolling="False">
-                                    <dxmvvm:Interaction.Behaviors>
-                                        <behaviors:ScrollVIewerDragBehavior/>
-                                    </dxmvvm:Interaction.Behaviors>
-                                    <Image Source="{Binding Path=Content, Converter={StaticResource ArrayToImageConverter}, RelativeSource={RelativeSource TemplatedParent}}" Stretch="None">
-                                        <dxmvvm:Interaction.Behaviors>
-                                            <behaviors:ImageScaleBehavior/>
-                                        </dxmvvm:Interaction.Behaviors>
-                                    </Image>
-                                </controls:DraggableScrollViewer>
-                            </DataTemplate>
-                        </Setter.Value>
-                    </Setter>
+                    <Setter Property="ContentTemplate" Value="{StaticResource DraggableScrollViewerDataTemplate}"/>
                 </Style>
             </dxdo:LayoutGroup.Resources>
             <dxdo:LayoutPanel ShowCaption="True" Caption="Before" ShowCloseButton="False" ShowPinButton="False" Content="{Binding ImageBeforeArr}" AllowSizing="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False"/>

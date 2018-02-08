@@ -17,9 +17,12 @@
              xmlns:viewModels="clr-namespace:DXVisualTestFixer.ViewModels"
              xmlns:core="clr-namespace:DXVisualTestFixer.Core"
              xmlns:behaviors="clr-namespace:DXVisualTestFixer.Behaviors"
+             xmlns:converters="clr-namespace:DXVisualTestFixer.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
+        <converters:TestViewTypeConverter x:Key="TestViewTypeConverterSplit" TrueValue="{x:Static mif:TestViewType.Split}" FalseValue="{x:Static mif:TestViewType.Merged}"/>
+        <converters:TestViewTypeConverter x:Key="TestViewTypeConverterMerged" TrueValue="{x:Static mif:TestViewType.Merged}" FalseValue="{x:Static mif:TestViewType.Split}"/>
         <Style TargetType="{x:Type dxe:ComboBoxEdit}">
             <Setter Property="Margin" Value="4"/>
         </Style>
@@ -122,11 +125,21 @@
                             LargeGlyph="{dx:DXImageOffice2013 Image=Download_32x32.png}">
                         </dxb:BarButtonItem>
                     </dxr:RibbonPageGroup>
-                    <dxr:RibbonPageGroup Caption="Appearance">
-                        <dxb:BarCheckItem Content="Split View" IsChecked="{DXBinding Expr='@c.TestViewType == $mif:TestViewType.Split', Mode=OneWay}"
+                    <dxr:RibbonPageGroup Caption="View Type">
+                        <dxb:BarEditItem>
+                            <dxb:BarEditItem.EditSettings>
+                                <dxe:ListBoxEditSettings>
+                                    <dxe:ListBoxEditSettings.Items>
+                                        <dxe:ListBoxEditItem Content="Split" IsSelected="{Binding Path=DataContext.TestViewType, Converter={StaticResource TestViewTypeConverterSplit}, Mode=TwoWay}"/>
+                                        <dxe:ListBoxEditItem Content="Merged" IsSelected="{Binding Path=DataContext.TestViewType, Converter={StaticResource TestViewTypeConverterMerged}, Mode=TwoWay}"/>
+                                    </dxe:ListBoxEditSettings.Items>
+                                </dxe:ListBoxEditSettings>
+                            </dxb:BarEditItem.EditSettings>
+                        </dxb:BarEditItem>
+                        <!--<dxb:BarCheckItem Content="Split View" IsChecked="{DXBinding Expr='@c.TestViewType == $mif:TestViewType.Split', Mode=OneWay}"
                                           Command="{DXCommand Execute='@c.ChangeTestViewType($mif:TestViewType.Split)'}"/>
                         <dxb:BarCheckItem Content="Merged View" IsChecked="{DXBinding Expr='@c.TestViewType == $mif:TestViewType.Merged', Mode=OneWay}"
-                                          Command="{DXCommand Execute='@c.ChangeTestViewType($mif:TestViewType.Merged)'}"/>
+                                          Command="{DXCommand Execute='@c.ChangeTestViewType($mif:TestViewType.Merged)'}"/>-->
                     </dxr:RibbonPageGroup> 
                 </dxr:RibbonPage>
             </dxr:RibbonDefaultPageCategory>

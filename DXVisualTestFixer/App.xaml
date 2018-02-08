@@ -3,9 +3,17 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:DXVisualTestFixer"
              xmlns:dxdo="http://schemas.devexpress.com/winfx/2008/xaml/docking"
+             xmlns:controls="clr-namespace:DXVisualTestFixer.Controls"
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+             xmlns:behaviors="clr-namespace:DXVisualTestFixer.Behaviors"
+             xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+             xmlns:converters="clr-namespace:DXVisualTestFixer.Converters"
              StartupUri="Shell.xaml">
     <Application.Resources>
         <ResourceDictionary>
+            <converters:ArrayToImageConverter x:Key="ArrayToImageConverter"/>
+            <converters:ImageToClipboardConverter x:Key="ImageToClipboardConverter"/>
             <Style TargetType="{x:Type Window}">
                 <Setter Property="UseLayoutRounding" Value="True"/>
             </Style>
@@ -17,6 +25,23 @@
                 <Setter Property="AllowFloat" Value="False"/>
                 <Setter Property="AllowDrag" Value="False"/>
             </Style>
+            <DataTemplate x:Key="DraggableScrollViewerDataTemplate">
+                <controls:DraggableScrollViewer HorizontalScrollBarVisibility="Auto" dx:ScrollBarExtensions.HandlesDefaultMouseScrolling="False">
+                    <dxmvvm:Interaction.Behaviors>
+                        <behaviors:ScrollVIewerDragBehavior/>
+                    </dxmvvm:Interaction.Behaviors>
+                    <Image Source="{Binding Path=Content, Converter={StaticResource ArrayToImageConverter}, RelativeSource={RelativeSource TemplatedParent}}" Stretch="None">
+                        <dxb:BarManager.DXContextMenu>
+                            <dxb:PopupMenu>
+                                <dxb:BarButtonItem Content="Copy Image To Clipboard" Command="{Binding Converter={StaticResource ImageToClipboardConverter}}"/>
+                            </dxb:PopupMenu>
+                        </dxb:BarManager.DXContextMenu>
+                        <dxmvvm:Interaction.Behaviors>
+                            <behaviors:ImageScaleBehavior/>
+                        </dxmvvm:Interaction.Behaviors>
+                    </Image>
+                </controls:DraggableScrollViewer>
+            </DataTemplate>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
