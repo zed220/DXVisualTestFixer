@@ -33,7 +33,7 @@
                     <Image Source="{Binding Path=Content, Converter={StaticResource ArrayToImageConverter}, RelativeSource={RelativeSource TemplatedParent}}" Stretch="None">
                         <dxb:BarManager.DXContextMenu>
                             <dxb:PopupMenu>
-                                <dxb:BarButtonItem Content="Copy Image To Clipboard" Command="{Binding Converter={StaticResource ImageToClipboardConverter}}"/>
+                                <dxb:BarButtonItem Content="Copy Image To Clipboard" Glyph="{dx:DXImageOffice2013 Image=Copy_16x16.png}" Command="{Binding Converter={StaticResource ImageToClipboardConverter}}"/>
                             </dxb:PopupMenu>
                         </dxb:BarManager.DXContextMenu>
                         <dxmvvm:Interaction.Behaviors>

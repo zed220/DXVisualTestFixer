@@ -31,8 +31,8 @@
     <PublisherName>Zed220</PublisherName>
     <SuiteName>Visual Tests Tool</SuiteName>
     <MinimumRequiredVersion>1.0.1.0</MinimumRequiredVersion>
-    <ApplicationRevision>64</ApplicationRevision>
-    <ApplicationVersion>1.1.5.%2a</ApplicationVersion>
+    <ApplicationRevision>66</ApplicationRevision>
+    <ApplicationVersion>1.1.6.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
