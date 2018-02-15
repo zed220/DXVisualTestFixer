@@ -69,8 +69,12 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <dxr:RibbonControl RibbonStyle="Office2010" ToolbarShowMode="Hide" AllowCustomization="False" MinimizationButtonVisibility="Collapsed" RibbonHeaderVisibility="Collapsed" 
-                           IsEnabled="{DXBinding Expr='Status == $viewModels:ProgramStatus.Idle'}">
+        <dxr:RibbonControl RibbonStyle="Office2010" ToolbarShowMode="ShowAbove" AllowCustomization="False" MinimizationButtonVisibility="Collapsed" RibbonHeaderVisibility="Visible" 
+                           IsEnabled="{DXBinding Expr='Status == $viewModels:ProgramStatus.Idle'}" ToolbarShowCustomizationButton="False" ShowApplicationButton="False">
+            <dxr:RibbonControl.ToolbarItems>
+                <dxb:BarButtonItem Glyph="{dx:DXImageOffice2013 Image=MoveUp_16x16.png}" GlyphSize="Small" Content="Update requeued" 
+                                   IsVisible="{Binding Path=UpdateService.HasUpdate}" Command="{DXCommand Execute='UpdateService.Update()'}"/>
+            </dxr:RibbonControl.ToolbarItems>
             <dxr:RibbonDefaultPageCategory>
                 <dxr:RibbonPage Caption="Main">
                     <dxr:RibbonPageGroup Caption="Work">
@@ -117,29 +121,16 @@
                             Command="{DXCommand Execute='ShowSettings()'}"
                             LargeGlyph="{dx:DXImageOffice2013 Image=Properties_32x32.png}">
                         </dxb:BarButtonItem>
-                        <dxb:BarButtonItem
-                            RibbonStyle="Large" 
-                            GlyphSize="Large" 
-                            Content="Update"
-                            Command="{DXCommand Execute='InstallUpdateSyncWithInfo(true)'}"
-                            LargeGlyph="{dx:DXImageOffice2013 Image=Download_32x32.png}">
-                        </dxb:BarButtonItem>
-                    </dxr:RibbonPageGroup>
-                    <dxr:RibbonPageGroup Caption="View Type">
                         <dxb:BarEditItem>
                             <dxb:BarEditItem.EditSettings>
                                 <dxe:ListBoxEditSettings>
                                     <dxe:ListBoxEditSettings.Items>
-                                        <dxe:ListBoxEditItem Content="Split" IsSelected="{Binding Path=DataContext.TestViewType, Converter={StaticResource TestViewTypeConverterSplit}, Mode=TwoWay}"/>
-                                        <dxe:ListBoxEditItem Content="Merged" IsSelected="{Binding Path=DataContext.TestViewType, Converter={StaticResource TestViewTypeConverterMerged}, Mode=TwoWay}"/>
+                                        <dxe:ListBoxEditItem Content="Split View" IsSelected="{Binding Path=DataContext.TestViewType, Converter={StaticResource TestViewTypeConverterSplit}, Mode=TwoWay}"/>
+                                        <dxe:ListBoxEditItem Content="Merged View" IsSelected="{Binding Path=DataContext.TestViewType, Converter={StaticResource TestViewTypeConverterMerged}, Mode=TwoWay}"/>
                                     </dxe:ListBoxEditSettings.Items>
                                 </dxe:ListBoxEditSettings>
                             </dxb:BarEditItem.EditSettings>
                         </dxb:BarEditItem>
-                        <!--<dxb:BarCheckItem Content="Split View" IsChecked="{DXBinding Expr='@c.TestViewType == $mif:TestViewType.Split', Mode=OneWay}"
-                                          Command="{DXCommand Execute='@c.ChangeTestViewType($mif:TestViewType.Split)'}"/>
-                        <dxb:BarCheckItem Content="Merged View" IsChecked="{DXBinding Expr='@c.TestViewType == $mif:TestViewType.Merged', Mode=OneWay}"
-                                          Command="{DXCommand Execute='@c.ChangeTestViewType($mif:TestViewType.Merged)'}"/>-->
                     </dxr:RibbonPageGroup> 
                 </dxr:RibbonPage>
             </dxr:RibbonDefaultPageCategory>
@@ -155,7 +146,14 @@
                             <dxg:GridColumn FieldName="Version" GroupIndex="0" MergeWithPreviousGroup="False" Header="Version"/>
                             <dxg:GridColumn FieldName="TeamName" GroupIndex="1" MergeWithPreviousGroup="False" Header="Team"/>
                             <dxg:GridColumn FieldName="TestInfo.Name" GroupIndex="2" MergeWithPreviousGroup="True" Header="Name"/>
-                            <dxg:GridColumn FieldName="TestInfo.Theme" Width="*" Header="Theme">
+                            <dxg:GridColumn FieldName="CommitChange" Header="Commit" Width="20">
+                                <dxg:GridColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <dxe:CheckEdit IsChecked="{Binding Path=RowData.Row.CommitChange, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </DataTemplate>
+                                </dxg:GridColumn.CellTemplate>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn FieldName="TestInfo.Theme" Width="*" Header="Theme" AllowEditing="False">
                                 <dxg:GridColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal">
@@ -190,7 +188,7 @@
                                 <dxg:GridSummaryItem SummaryType="Count" Alignment="Left"/>
                             </dxg:GridControl.TotalSummary>
                             <dxg:GridControl.View>
-                                <controls:TableViewAdvNavigation AllowEditing="False" ShowVerticalLines="False" ShowIndicator="False" ShowHorizontalLines="False" ShowColumnHeaders="False" 
+                                <controls:TableViewAdvNavigation AllowEditing="True" ShowVerticalLines="False" ShowIndicator="False" ShowHorizontalLines="False" ShowColumnHeaders="False" 
                                                                  ShowGroupPanel="False" ShowFixedTotalSummary="True">
                                     <dxmvvm:Interaction.Behaviors>
                                         <dxmvvm:EventToCommand EventName="MoveNext" Command="{DXCommand Execute='@s.AssociatedObject.MoveNextDataRow()'}" SourceObject="{Binding}"/>

@@ -5,6 +5,7 @@ using Unity.ServiceLocation;
 using DXVisualTestFixer.Mif;
 using Unity.Lifetime;
 using DXVisualTestFixer.ViewModels;
+using DXVisualTestFixer.Services;
 
 namespace DXVisualTestFixer {
     public static class Bootstrapper {
@@ -23,6 +24,7 @@ namespace DXVisualTestFixer {
             RootContainer.RegisterType<IAppearanceService, AppearanceService>(new ContainerControlledLifetimeManager());
             RootContainer.RegisterType<ITestInfoViewModel, TestInfoViewModel>(new TransientLifetimeManager());
             RootContainer.RegisterType<ISettingsViewModel, SettingsViewModel>(new TransientLifetimeManager());
+            RootContainer.RegisterType<IUpdateService, UpdateService>(new TransientLifetimeManager());
             RootContainer.RegisterType<IApplyChangesViewModel, ApplyChangesViewModel>(new TransientLifetimeManager());
             RootContainer.RegisterType<IFilterPanelViewModel, FilterPanelViewModel>(new TransientLifetimeManager());
         }

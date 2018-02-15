@@ -64,10 +64,15 @@ namespace DXVisualTestFixer.ViewModels {
             get { return GetProperty(() => CurrentFilter); }
             set { SetProperty(() => CurrentFilter, value); }
         }
+        public IUpdateService UpdateService {
+            get { return GetProperty(() => UpdateService); }
+            set { SetProperty(() => UpdateService, value); }
+        }
 
         public MainViewModel() {
             LoadingProgressController = new LoadingProgressController();
-            InstallUpdateSyncWithInfo(false);
+            UpdateService = ServiceLocator.Current.GetInstance<IUpdateService>();
+            UpdateService.Start();
             UpdateConfig();
             ServiceLocator.Current.GetInstance<ILoggingService>().MessageReserved += OnLoggingMessageReserved;
         }
@@ -107,7 +112,6 @@ namespace DXVisualTestFixer.ViewModels {
 
         void UpdateAllTests() {
             Task.Factory.StartNew(() => {
-                //FilterItems = null;
                 ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage("Start refreshing tests");
                 LoadingProgressController.Start();
                 List<FarmTaskInfo> failedTasks = GetAllTasks();
@@ -115,25 +119,11 @@ namespace DXVisualTestFixer.ViewModels {
                 ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage("");
                 App.Current.Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
                     Tests = tests;
-                    //BuildFilterItems(failedTasks);
                     Status = ProgramStatus.Idle;
                     LoadingProgressController.Stop();
                 }));
             });
         }
-
-        //void BuildFilterItems(List<FarmTaskInfo> failedTasks) {
-        //    if(failedTasks.Count == 0)
-        //        return;
-        //    FilterItems = new List<CompactModeFilterItem>();
-        //    FilterItems.Add(new CompactModeFilterItem() { DisplayValue = "All" });
-        //    foreach(var version in failedTasks.Select(ft => ft.Repository.Version).Distinct().OrderByDescending(s => s)) {
-        //        CompactModeFilterItem item = new CompactModeFilterItem();
-        //        item.DisplayValue = version;
-        //        item.EditValue = $"[Version] = '{version}'";
-        //        FilterItems.Add(item);
-        //    }
-        //}
 
         void UpdateConfig() {
             ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage("Checking config");
@@ -238,13 +228,13 @@ namespace DXVisualTestFixer.ViewModels {
             MovePrev?.Invoke(this, EventArgs.Empty);
         }
 
-        public void InstallUpdateSyncWithInfo(bool informNoUpdate) {
-            Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
-                ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage("Check application updates");
-                UpdateAppService.Update(GetService<IMessageBoxService>(), informNoUpdate);
-                ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage("Finish check application updates");
-            }));
-        }
+        //public void InstallUpdateSyncWithInfo(bool informNoUpdate) {
+        //    Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
+        //        ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage("Check application updates");
+        //        UpdateAppService.Update(GetService<IMessageBoxService>(), informNoUpdate);
+        //        ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage("Finish check application updates");
+        //    }));
+        //}
         public void ChangeTestViewType(TestViewType testViewType) {
             TestViewType = testViewType;
         }

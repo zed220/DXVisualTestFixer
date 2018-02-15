@@ -1,6 +1,7 @@
 ﻿using CommonServiceLocator;
 using DXVisualTestFixer.Configuration;
 using DXVisualTestFixer.Native;
+using DXVisualTestFixer.Services;
 using DXVisualTestFixer.ViewModels;
 using System;
 using System.Collections.Generic;

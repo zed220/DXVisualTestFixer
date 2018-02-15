@@ -12,7 +12,7 @@
         dx:ScrollBarExtensions.ScrollBarMode="TouchOverlap"
         ShowActivated="True"
         mc:Ignorable="d"
-        WindowKind="Normal"
+        WindowKind="Ribbon"
         Title="{DXBinding Expr='`Visual Tests Tool v` + $configuration:VersionInfo.VersionString'}" MinHeight="768" MinWidth="1024">
     <Grid>
         <ContentControl x:Name="content" dxmvvm:UIRegion.Region="{x:Static mif:Regions.Main}"/>
