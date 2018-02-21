@@ -10,6 +10,7 @@
         xmlns:configuration="clr-namespace:DXVisualTestFixer.Configuration"
         xmlns:mif="clr-namespace:DXVisualTestFixer.Mif"
         dx:ScrollBarExtensions.ScrollBarMode="TouchOverlap"
+        UseLayoutRounding="True"
         ShowActivated="True"
         mc:Ignorable="d"
         WindowKind="Ribbon"

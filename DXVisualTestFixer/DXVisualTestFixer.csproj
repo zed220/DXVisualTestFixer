@@ -31,8 +31,8 @@
     <PublisherName>Zed220</PublisherName>
     <SuiteName>Visual Tests Tool</SuiteName>
     <MinimumRequiredVersion>1.0.1.0</MinimumRequiredVersion>
-    <ApplicationRevision>70</ApplicationRevision>
-    <ApplicationVersion>1.1.9.%2a</ApplicationVersion>
+    <ApplicationRevision>72</ApplicationRevision>
+    <ApplicationVersion>1.2.1.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -521,6 +521,7 @@
     </Content>
     <Content Include="XmlConfigs\18.1_GridControl.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </Content>
     <Content Include="XmlConfigs\18.1_Navigation.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -547,6 +548,10 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="XmlConfigs\18.1_Bars.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="XmlConfigs\18.1_Editors.config">
+      <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

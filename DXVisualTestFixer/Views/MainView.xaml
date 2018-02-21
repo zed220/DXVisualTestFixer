@@ -149,7 +149,7 @@
                             <dxg:GridColumn FieldName="CommitChange" Header="Commit" Width="20">
                                 <dxg:GridColumn.CellTemplate>
                                     <DataTemplate>
-                                        <dxe:CheckEdit IsChecked="{Binding Path=RowData.Row.CommitChange, UpdateSourceTrigger=PropertyChanged}"/>
+                                        <dxe:CheckEdit IsChecked="{Binding Path=RowData.Row.CommitChange, UpdateSourceTrigger=PropertyChanged}" EditMode="InplaceActive"/>
                                     </DataTemplate>
                                 </dxg:GridColumn.CellTemplate>
                             </dxg:GridColumn>
@@ -189,7 +189,7 @@
                             </dxg:GridControl.TotalSummary>
                             <dxg:GridControl.View>
                                 <controls:TableViewAdvNavigation AllowEditing="True" ShowVerticalLines="False" ShowIndicator="False" ShowHorizontalLines="False" ShowColumnHeaders="False" 
-                                                                 ShowGroupPanel="False" ShowFixedTotalSummary="True">
+                                                                 ShowGroupPanel="False" ShowFixedTotalSummary="True" RowDoubleClick="{DXEvent Handler='@s.DoubleClick(@args)'}">
                                     <dxmvvm:Interaction.Behaviors>
                                         <dxmvvm:EventToCommand EventName="MoveNext" Command="{DXCommand Execute='@s.AssociatedObject.MoveNextDataRow()'}" SourceObject="{Binding}"/>
                                         <dxmvvm:EventToCommand EventName="MovePrev" Command="{DXCommand Execute='@s.AssociatedObject.MovePrevDataRow()'}" SourceObject="{Binding}"/>

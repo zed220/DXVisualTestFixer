@@ -1,4 +1,5 @@
 ﻿using DevExpress.Xpf.Grid;
+using DXVisualTestFixer.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +26,20 @@ namespace DXVisualTestFixer.Controls {
             while(focusedRowHandleCandidate < 0 && tryCount++ < 5);
             if(focusedRowHandleCandidate >= 0)
                 FocusedRowHandle = focusedRowHandleCandidate;
+        }
+
+        public void DoubleClick(RowDoubleClickEventArgs e) {
+            if(!e.HitInfo.InRow)
+                return;
+            if(Grid.IsGroupRowHandle(e.HitInfo.RowHandle))
+                return;
+            if(e.HitInfo.Column.FieldName != "TestInfo.Theme")
+                return;
+            e.Handled = true;
+            TestInfoWrapper testInfoWrapper = Grid.GetRow(e.HitInfo.RowHandle) as TestInfoWrapper;
+            if(testInfoWrapper == null)
+                return;
+            testInfoWrapper.CommitChange = !testInfoWrapper.CommitChange;
         }
     }
 }
