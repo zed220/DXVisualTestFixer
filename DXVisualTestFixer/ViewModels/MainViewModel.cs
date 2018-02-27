@@ -44,9 +44,9 @@ namespace DXVisualTestFixer.ViewModels {
             get { return GetProperty(() => Status); }
             set { SetProperty(() => Status, value); }
         }
-        public string CorrentLogLine {
-            get { return GetProperty(() => CorrentLogLine); }
-            set { SetProperty(() => CorrentLogLine, value); }
+        public string CurrentLogLine {
+            get { return GetProperty(() => CurrentLogLine); }
+            set { SetProperty(() => CurrentLogLine, value); }
         }
         public TestViewType TestViewType {
             get { return GetProperty(() => TestViewType); }
@@ -78,7 +78,7 @@ namespace DXVisualTestFixer.ViewModels {
         }
 
         void OnLoggingMessageReserved(object sender, IMessageEventArgs args) {
-            CorrentLogLine = args.Message;
+            CurrentLogLine = args.Message;
         }
 
         void FarmRefreshed(FarmRefreshedEventArgs args) {

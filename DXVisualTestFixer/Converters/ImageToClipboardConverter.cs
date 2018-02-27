@@ -14,6 +14,8 @@ using System.Windows.Media.Imaging;
 namespace DXVisualTestFixer.Converters {
     public class ImageToClipboardConverter : ArrayToImageConverter {
         public override object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
+            if(value == null)
+                return null;
             return new DelegateCommand(() => {
                 PngBitmapDecoder pngd = null;
                 using(MemoryStream ms = new MemoryStream((byte[])value)) {

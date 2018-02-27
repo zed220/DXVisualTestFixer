@@ -18,16 +18,37 @@
              xmlns:core="clr-namespace:DXVisualTestFixer.Core"
              xmlns:behaviors="clr-namespace:DXVisualTestFixer.Behaviors"
              xmlns:converters="clr-namespace:DXVisualTestFixer.Converters"
+             xmlns:dxgt="http://schemas.devexpress.com/winfx/2008/xaml/grid/themekeys"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
         <converters:TestViewTypeConverter x:Key="TestViewTypeConverterSplit" TrueValue="{x:Static mif:TestViewType.Split}" FalseValue="{x:Static mif:TestViewType.Merged}"/>
         <converters:TestViewTypeConverter x:Key="TestViewTypeConverterMerged" TrueValue="{x:Static mif:TestViewType.Merged}" FalseValue="{x:Static mif:TestViewType.Split}"/>
+        <converters:StackPanelToTooltipConverter x:Key="StackPanelToTooltipConverter"/>
         <Style TargetType="{x:Type dxe:ComboBoxEdit}">
             <Setter Property="Margin" Value="4"/>
         </Style>
         <Style TargetType="{x:Type Button}">
             <Setter Property="Margin" Value="4"/>
+        </Style>
+        <Style TargetType="dxg:GroupValuePresenter">
+            <Setter Property="Margin" Value="{DynamicResource {dxgt:GroupRowThemeKey ResourceKey=GroupValuePresenterMargin}}" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="ToolTip">
+                <Setter.Value>
+                    <MultiBinding Converter="{StaticResource StackPanelToTooltipConverter}">
+                        <Binding Path="."/>
+                        <Binding Path="IsMouseOver" RelativeSource="{RelativeSource Self}"/>
+                    </MultiBinding>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="dxg:GroupValuePresenter">
+                        <StackPanel x:Name="PART_GroupValuesPanel" Orientation="Horizontal" Margin="{DynamicResource {dxgt:GroupRowThemeKey ResourceKey=GroupRowContentMargin}}"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
     </UserControl.Resources>
     <dxmvvm:Interaction.Behaviors>
@@ -70,7 +91,8 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <dxr:RibbonControl RibbonStyle="Office2010" ToolbarShowMode="ShowAbove" AllowCustomization="False" MinimizationButtonVisibility="Collapsed" RibbonHeaderVisibility="Visible" 
-                           IsEnabled="{DXBinding Expr='Status == $viewModels:ProgramStatus.Idle'}" ToolbarShowCustomizationButton="False" ShowApplicationButton="False">
+                           IsEnabled="{DXBinding Expr='Status == $viewModels:ProgramStatus.Idle'}" ToolbarShowCustomizationButton="False" ShowApplicationButton="False"
+                           AsyncMergingEnabled="True" >
             <dxr:RibbonControl.ToolbarItems>
                 <dxb:BarButtonItem Glyph="{dx:DXImageOffice2013 Image=MoveUp_16x16.png}" GlyphSize="Small" Content="Update requeued" 
                                    IsVisible="{Binding Path=UpdateService.HasUpdate}" Command="{DXCommand Execute='UpdateService.Update()'}"/>
@@ -125,8 +147,10 @@
                             <dxb:BarEditItem.EditSettings>
                                 <dxe:ListBoxEditSettings>
                                     <dxe:ListBoxEditSettings.Items>
-                                        <dxe:ListBoxEditItem Content="Split View" IsSelected="{Binding Path=DataContext.TestViewType, Converter={StaticResource TestViewTypeConverterSplit}, Mode=TwoWay}"/>
-                                        <dxe:ListBoxEditItem Content="Merged View" IsSelected="{Binding Path=DataContext.TestViewType, Converter={StaticResource TestViewTypeConverterMerged}, Mode=TwoWay}"/>
+                                        <dxe:ListBoxEditItem Content="Split View" IsSelected="{Binding Path=DataContext.TestViewType, Converter={StaticResource TestViewTypeConverterSplit}, Mode=OneWay}"
+                                                             Selected="{DXEvent Handler='DataContext.ChangeTestViewType($mif:TestViewType.Split)'}"/>
+                                        <dxe:ListBoxEditItem Content="Merged View" IsSelected="{Binding Path=DataContext.TestViewType, Converter={StaticResource TestViewTypeConverterMerged}, Mode=OneWay}"
+                                                             Selected="{DXEvent Handler='DataContext.ChangeTestViewType($mif:TestViewType.Merged)'}"/>
                                     </dxe:ListBoxEditSettings.Items>
                                 </dxe:ListBoxEditSettings>
                             </dxb:BarEditItem.EditSettings>
@@ -204,21 +228,19 @@
                         </dxg:GridControl>
                     </dxdo:LayoutPanel>
                 </dxdo:LayoutGroup>
-                <dxdo:LayoutPanel dxmvvm:UIRegion.Region="{x:Static mif:Regions.TestInfo}" ShowCaption="False"/>
+                <dxdo:LayoutPanel dxmvvm:UIRegion.Region="{x:Static mif:Regions.TestInfo}" ShowCaption="False" dxb:MergingProperties.ElementMergingBehavior="All"/>
             </dxdo:LayoutGroup>
         </dxdo:DockLayoutManager>
         <dxr:RibbonStatusBarControl Grid.Row="2" IsSizeGripVisible="True">
             <dxr:RibbonStatusBarControl.LeftItems>
+                <dxb:BarStaticItem Content="{Binding Status}" AutoSizeMode="Content"/>
                 <dxb:BarEditItem EditWidth="200" EditValue="{Binding Path=LoadingProgressController.Value, Mode=OneWay}" IsVisible="{Binding Path=LoadingProgressController.IsEnabled}">
                     <dxb:BarEditItem.EditSettings>
                         <dxe:ProgressBarEditSettings IsEnabled="False" Maximum="{Binding Path=LoadingProgressController.Maximum}"/>
                     </dxb:BarEditItem.EditSettings>
                 </dxb:BarEditItem>
-                <dxb:BarStaticItem Content="{Binding CorrentLogLine}" AutoSizeMode="None"/>
+                <dxb:BarStaticItem Content="{Binding CurrentLogLine}" AutoSizeMode="None" IsVisible="{DXBinding Expr='@s.Content ne $string.Empty'}"/>
             </dxr:RibbonStatusBarControl.LeftItems>
-            <dxr:RibbonStatusBarControl.RightItems>
-                <dxb:BarStaticItem Content="{Binding Status}" AutoSizeMode="None"/>
-            </dxr:RibbonStatusBarControl.RightItems>
         </dxr:RibbonStatusBarControl>
     </Grid>
 </UserControl>

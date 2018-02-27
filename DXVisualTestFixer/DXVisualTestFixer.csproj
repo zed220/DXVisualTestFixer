@@ -31,8 +31,8 @@
     <PublisherName>Zed220</PublisherName>
     <SuiteName>Visual Tests Tool</SuiteName>
     <MinimumRequiredVersion>1.0.1.0</MinimumRequiredVersion>
-    <ApplicationRevision>72</ApplicationRevision>
-    <ApplicationVersion>1.2.1.%2a</ApplicationVersion>
+    <ApplicationRevision>73</ApplicationRevision>
+    <ApplicationVersion>1.2.2.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -297,6 +297,7 @@
     <Compile Include="Controls\TableViewAdvNavigation.cs" />
     <Compile Include="Converters\ArrayToImageConverter.cs" />
     <Compile Include="Converters\ImageToClipboardConverter.cs" />
+    <Compile Include="Converters\StackPanelToTooltipConverter.cs" />
     <Compile Include="Converters\TestViewTypeConverter.cs" />
     <Compile Include="Core\CorpDirTestInfo.cs" />
     <Compile Include="Core\FarmTaskInfo.cs" />
@@ -468,6 +469,7 @@
     </Content>
     <Content Include="XmlConfigs\17.1_GridControl.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </Content>
     <Content Include="XmlConfigs\17.1_Navigation.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
