@@ -26,7 +26,7 @@
                 <Setter Property="AllowDrag" Value="False"/>
             </Style>
             <DataTemplate x:Key="DraggableScrollViewerDataTemplate">
-                <controls:DraggableScrollViewer HorizontalScrollBarVisibility="Auto" dx:ScrollBarExtensions.HandlesDefaultMouseScrolling="False">
+                <controls:DraggableScrollViewer HorizontalScrollBarVisibility="Auto" dx:ScrollBarExtensions.HandlesDefaultMouseScrolling="False" dx:ScrollBarExtensions.AllowMouseScrolling="False">
                     <dxmvvm:Interaction.Behaviors>
                         <behaviors:ScrollVIewerDragBehavior/>
                     </dxmvvm:Interaction.Behaviors>

@@ -19,6 +19,7 @@
              xmlns:behaviors="clr-namespace:DXVisualTestFixer.Behaviors"
              xmlns:converters="clr-namespace:DXVisualTestFixer.Converters"
              xmlns:dxgt="http://schemas.devexpress.com/winfx/2008/xaml/grid/themekeys"
+             xmlns:sys="clr-namespace:System.Collections;assembly=mscorlib"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
@@ -143,18 +144,23 @@
                             Command="{DXCommand Execute='ShowSettings()'}"
                             LargeGlyph="{dx:DXImageOffice2013 Image=Properties_32x32.png}">
                         </dxb:BarButtonItem>
-                        <dxb:BarEditItem>
-                            <dxb:BarEditItem.EditSettings>
-                                <dxe:ListBoxEditSettings>
-                                    <dxe:ListBoxEditSettings.Items>
-                                        <dxe:ListBoxEditItem Content="Split View" IsSelected="{Binding Path=DataContext.TestViewType, Converter={StaticResource TestViewTypeConverterSplit}, Mode=OneWay}"
-                                                             Selected="{DXEvent Handler='DataContext.ChangeTestViewType($mif:TestViewType.Split)'}"/>
-                                        <dxe:ListBoxEditItem Content="Merged View" IsSelected="{Binding Path=DataContext.TestViewType, Converter={StaticResource TestViewTypeConverterMerged}, Mode=OneWay}"
-                                                             Selected="{DXEvent Handler='DataContext.ChangeTestViewType($mif:TestViewType.Merged)'}"/>
-                                    </dxe:ListBoxEditSettings.Items>
-                                </dxe:ListBoxEditSettings>
-                            </dxb:BarEditItem.EditSettings>
-                        </dxb:BarEditItem>
+                    </dxr:RibbonPageGroup>
+                    <dxr:RibbonPageGroup Caption="View Type">
+                        <dxb:BarItemSelector  SelectedItem="{Binding TestViewType, Mode=TwoWay}">
+                            <dxb:BarItemSelector.ItemLinksSource>
+                                <sys:ArrayList>
+                                    <mif:TestViewType>Split</mif:TestViewType>
+                                    <mif:TestViewType>Merged</mif:TestViewType>
+                                </sys:ArrayList>
+                            </dxb:BarItemSelector.ItemLinksSource>
+                            <dxb:BarItemSelector.ItemTemplate>
+                                <DataTemplate>
+                                    <ContentControl>
+                                        <dxb:BarCheckItem Content="{Binding}" RibbonStyle="SmallWithText"/>
+                                    </ContentControl>
+                                </DataTemplate>
+                            </dxb:BarItemSelector.ItemTemplate>
+                        </dxb:BarItemSelector>
                     </dxr:RibbonPageGroup> 
                 </dxr:RibbonPage>
             </dxr:RibbonDefaultPageCategory>

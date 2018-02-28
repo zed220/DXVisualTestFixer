@@ -12,28 +12,42 @@ using System.Windows.Media;
 namespace DXVisualTestFixer.Behaviors {
     public class ImageScaleBehavior : Behavior<Image> {
         static List<Image> TrackingImages = new List<Image>();
+        static int Scale = 100;
 
         protected override void OnAttached() {
             base.OnAttached();
             TrackingImages.Add(AssociatedObject);
             AssociatedObject.PreviewMouseWheel += AssociatedObject_PreviewMouseWheel;
-            AssociatedObject.LayoutTransform = new ScaleTransform();
+            AssociatedObject.LayoutTransform = new ScaleTransform() { ScaleX = Scale, ScaleY = Scale };
+            SetScale(100);
         }
 
         void AssociatedObject_PreviewMouseWheel(object sender, MouseWheelEventArgs e) {
             e.Handled = true;
-            double dScale = e.Delta > 0 ? 0.1 : -0.1;
+            if(e.Delta < 0)
+                ZoomOut();
+            else
+                ZoomIn();
+        }
+
+        public static void ZoomOut() {
+            SetScale(Math.Max(30, Scale - 10));
+        }
+        public static void ZoomIn() {
+            SetScale(Math.Min(300, Scale + 10));
+        }
+        public static void Zoom100() {
+            SetScale(100);
+        }
+        public static void SetScale(int scale) {
             foreach(Image img in TrackingImages) {
                 ScaleTransform scaleTransform = img.LayoutTransform as ScaleTransform;
                 if(scaleTransform == null)
                     return;
-                scaleTransform.ScaleX = Math.Round(scaleTransform.ScaleX + dScale, 1);
-                if(scaleTransform.ScaleX < 0.3)
-                    scaleTransform.ScaleX = 0.3;
-                scaleTransform.ScaleY = Math.Round(scaleTransform.ScaleY + dScale, 1);
-                if(scaleTransform.ScaleY < 0.3)
-                    scaleTransform.ScaleY = 0.3;
+                scaleTransform.ScaleX = scale / 100d;
+                scaleTransform.ScaleY = scale / 100d;
             }
+            Scale = scale;
         }
 
         protected override void OnDetaching() {

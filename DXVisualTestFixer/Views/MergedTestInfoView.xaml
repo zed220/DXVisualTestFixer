@@ -29,13 +29,21 @@
         <dxr:RibbonControl>
             <dxr:RibbonDefaultPageCategory>
                 <dxr:RibbonPage Caption="Main">
-                    <dxr:RibbonPageGroup Caption="Clipboard" DataContext="{Binding Path=TestInfoModel.TestInfo.TestInfo}">
+                    <dxr:RibbonPageGroup Caption="Tools" DataContext="{Binding Path=TestInfoModel.TestInfo.TestInfo}">
                         <dxb:BarButtonItem RibbonStyle="Large" Content="Copy Original" LargeGlyph="{dx:DXImageOffice2013 Image=Copy_32x32.png}" GlyphSize="Large"
                                            Command="{Binding ImageBeforeArr, Converter={StaticResource ImageToClipboardConverter}}"/>
                         <dxb:BarButtonItem RibbonStyle="Large" Content="Copy Current" LargeGlyph="{dx:DXImageOffice2013 Image=Copy_32x32.png}" GlyphSize="Large"
                                            Command="{Binding ImageCurrentArr, Converter={StaticResource ImageToClipboardConverter}}"/>
                         <dxb:BarButtonItem RibbonStyle="Large" Content="Copy Diff" LargeGlyph="{dx:DXImageOffice2013 Image=Copy_32x32.png}" GlyphSize="Large"
                                            Command="{Binding ImageDiffArr, Converter={StaticResource ImageToClipboardConverter}}"/>
+                    </dxr:RibbonPageGroup>
+                    <dxr:RibbonPageGroup Caption="View">
+                        <dxb:BarButtonItem RibbonStyle="Large" Content="Zoom -10%" LargeGlyph="{dx:DXImageOffice2013 Image=ZoomOut_32x32.png}" GlyphSize="Large"
+                                           Command="{DXCommand Execute='$behaviors:ImageScaleBehavior.ZoomOut()'}"/>
+                        <dxb:BarButtonItem RibbonStyle="Large" Content="Zoom 100%" LargeGlyph="{dx:DXImageOffice2013 Image=Zoom100_32x32.png}" GlyphSize="Large"
+                                           Command="{DXCommand Execute='$behaviors:ImageScaleBehavior.Zoom100()'}"/>
+                        <dxb:BarButtonItem RibbonStyle="Large" Content="Zoom +10%" LargeGlyph="{dx:DXImageOffice2013 Image=ZoomIn_32x32.png}" GlyphSize="Large"
+                                           Command="{DXCommand Execute='$behaviors:ImageScaleBehavior.ZoomIn()'}"/>
                     </dxr:RibbonPageGroup>
                 </dxr:RibbonPage>
             </dxr:RibbonDefaultPageCategory>
