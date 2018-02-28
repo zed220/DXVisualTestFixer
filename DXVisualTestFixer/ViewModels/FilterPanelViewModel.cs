@@ -62,8 +62,8 @@ namespace DXVisualTestFixer.ViewModels {
 
         private void InitializeDefaultFilters() {
             List<string> actualTeamsList = TeamsList != null ? TeamsList.ToList() : new List<string>();
-            if(actualTeamsList.Contains("Editors"))
-                actualTeamsList.Remove("Editors");
+            //if(actualTeamsList.Contains("Editors"))
+            //    actualTeamsList.Remove("Editors");
             SelectedTeams = new List<object>(actualTeamsList);
             //TeamsList.ForEach(SelectedTeams.Add);
             SelectedVersions = new List<object>(VersionsList ?? new List<string>());
