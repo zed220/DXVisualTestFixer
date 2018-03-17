@@ -9,7 +9,7 @@ namespace DXVisualTestFixer.Core {
                 HtmlNode testMessageHeaderNode = GetTestMessageHeaderNode(testStartNode);
                 HtmlNode testMessageNode = GetTestMessageNode(testMessageHeaderNode);
                 string message = testMessageNode.InnerText;
-                TestLoader.ParseMessage(taskInfo, message, result);
+                TestLoader.ParseMessage(taskInfo, "Error", message, "Error", result);
             }
             return result;
         }

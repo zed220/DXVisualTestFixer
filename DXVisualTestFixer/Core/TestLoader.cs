@@ -18,11 +18,14 @@ namespace DXVisualTestFixer.Core {
             myXmlDocument.Load(realUrl.Replace("ViewBuildReport.aspx", "XmlBuildLog.xml"));
             List<Task<List<CorpDirTestInfo>>> allTasks = new List<Task<List<CorpDirTestInfo>>>();
             foreach(XmlElement testCaseXml in FindFailedTests(myXmlDocument)) {
-                XmlNode resultNode = testCaseXml.FindByName("failure").FindByName("message");
+                string originalTestName = testCaseXml.GetAttribute("name");
+                XmlNode failureNode = testCaseXml.FindByName("failure");
                 allTasks.Add(Task.Factory.StartNew<List<CorpDirTestInfo>>(() => {
+                    XmlNode resultNode = failureNode.FindByName("message");
+                    XmlNode stackTraceNode = failureNode.FindByName("stack-trace");
                     List<CorpDirTestInfo> localRes = new List<CorpDirTestInfo>();
                     //if(resultNode.InnerText.Contains("Navigation"))
-                    ParseMessage(taskInfo, resultNode.InnerText, localRes);
+                    ParseMessage(taskInfo, originalTestName, resultNode.InnerText, stackTraceNode.InnerText, localRes);
                     return localRes;
                 }));
             }
@@ -79,7 +82,11 @@ namespace DXVisualTestFixer.Core {
             HtmlDocument htmlSnippet = htmlWeb.Load(url);
             return htmlWeb.ResponseUri.ToString();
         }
-        public static void ParseMessage(FarmTaskInfo farmTaskInfo, string message, List<CorpDirTestInfo> resultList) {
+        public static void ParseMessage(FarmTaskInfo farmTaskInfo, string originalTestName, string message, string stackTrace, List<CorpDirTestInfo> resultList) {
+            if(!message.StartsWith("Exception - NUnit.Framework.AssertionException")) {
+                resultList.Add(CorpDirTestInfo.CreateError(farmTaskInfo, originalTestName, message, stackTrace));
+                return;
+            }
             List<string> themedResultPaths = message.Split(new[] { " - failed:" }, StringSplitOptions.RemoveEmptyEntries).ToList();
             foreach(var part in themedResultPaths) {
                 ParseMessagePart(farmTaskInfo, part, resultList);

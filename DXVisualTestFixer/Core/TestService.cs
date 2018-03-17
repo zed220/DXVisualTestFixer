@@ -66,7 +66,8 @@ namespace DXVisualTestFixer.Core {
             TestInfo testInfo = TryCreateTestInfo(corpDirTestInfo);
             ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage($"End load test v{corpDirTestInfo.FarmTaskInfo.Repository.Version} {corpDirTestInfo.TestName}.{corpDirTestInfo.ThemeName}");
             if(testInfo != null) {
-                testInfo.Valid = TestStatus(testInfo);
+                if(testInfo.Valid != TestState.Error)
+                    testInfo.Valid = TestStatus(testInfo);
                 loadingProgressController.IncreaseProgress(1);
                 return testInfo;
             }
@@ -78,6 +79,14 @@ namespace DXVisualTestFixer.Core {
             TestInfo testInfo = new TestInfo();
             testInfo.Version = corpDirTestInfo.FarmTaskInfo.Repository.Version;
             testInfo.Name = corpDirTestInfo.TestName;
+            if(corpDirTestInfo.TeamName == CorpDirTestInfo.ErrorTeamName) {
+                testInfo.Valid = TestState.Error;
+                testInfo.TextDiff = "+" + testInfo.Name + Environment.NewLine + Environment.NewLine + corpDirTestInfo. ErrorText;
+                testInfo.Theme = "Error";
+                testInfo.Dpi = 0;
+                testInfo.Team = new Team() { Name = CorpDirTestInfo.ErrorTeamName, Version = corpDirTestInfo.FarmTaskInfo.Repository.Version };
+                return testInfo;
+            }
             TeamInfo info = null;
             testInfo.Team = TeamConfigsReader.GetTeam(corpDirTestInfo.FarmTaskInfo.Repository.Version, corpDirTestInfo.ServerFolderName, out info);
             testInfo.TeamInfo = info;
@@ -267,6 +276,6 @@ namespace DXVisualTestFixer.Core {
     }
 
     public enum TestState {
-        Valid, Invalid, Fixed
+        Valid, Invalid, Fixed, Error
     }
 }

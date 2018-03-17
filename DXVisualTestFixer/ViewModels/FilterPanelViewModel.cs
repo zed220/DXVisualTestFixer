@@ -68,7 +68,8 @@ namespace DXVisualTestFixer.ViewModels {
             //TeamsList.ForEach(SelectedTeams.Add);
             SelectedVersions = new List<object>(VersionsList ?? new List<string>());
             //VersionsList.ForEach(SelectedVersions.Add);
-            SelectedDpis = new List<object>() { 96 };
+            SelectedDpis = new List<object>();
+            DpiList.ForEach(dpi => SelectedDpis.Add(dpi));
             //SelectedDpis.Add(96);
         }
 

@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 
 namespace DXVisualTestFixer.Core {
     public class CorpDirTestInfo {
+        public const string ErrorTeamName = "Error";
+
         public FarmTaskInfo FarmTaskInfo { get; private set; }
 
         public string CurrentTextEditPath { get; private set; }
@@ -20,9 +22,19 @@ namespace DXVisualTestFixer.Core {
         public string ServerFolderName { get; private set; }
         public string TestName { get; private set; }
         public string ThemeName { get; private set; }
-        public bool PossibleNewTest { get; private set; }
+        public string StackTrace { get; private set; }
+        public string ErrorText { get; private set; }
         public int Dpi { get; private set; } = 96;
 
+        public static CorpDirTestInfo CreateError(FarmTaskInfo farmTaskInfo, string testName, string errorText, string stackTrace) {
+            CorpDirTestInfo result = new CorpDirTestInfo();
+            result.FarmTaskInfo = farmTaskInfo;
+            result.ErrorText = errorText;
+            result.TeamName = "Error";
+            result.StackTrace = stackTrace;
+            result.TestName = testName;
+            return result;
+        }
         public static bool TryCreate(FarmTaskInfo farmTaskInfo, List<string> corpPaths, out CorpDirTestInfo result) {
             result = null;
             CorpDirTestInfo temp = new CorpDirTestInfo();

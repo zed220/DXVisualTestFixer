@@ -19,7 +19,7 @@ namespace DXVisualTestFixer.ViewModels {
         public TestState Valid { get { return TestInfo.Valid; } }
         public string Version { get { return TestInfo.Version; } }
         public string TeamName { get { return TestInfo.Team.Name; } }
-        public int Dpi { get { return TestInfo.TeamInfo.Dpi; } }
+        public int Dpi { get { return TestInfo.Dpi; } }
 
         public bool CommitChange {
             get { return GetProperty(() => CommitChange); }
