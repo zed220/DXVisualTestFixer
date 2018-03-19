@@ -1,4 +1,5 @@
-﻿using DevExpress.Xpf.Core;
+﻿using DevExpress.Logify.WPF;
+using DevExpress.Xpf.Core;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -13,6 +14,9 @@ namespace DXVisualTestFixer {
     /// </summary>
     public partial class App : Application {
         public App() {
+            LogifyAlert.Instance.ApiKey = "1CFEC5BD43E34C5AB6A58911736E8360";
+            LogifyAlert.Instance.ConfirmSendReport = true;
+            LogifyAlert.Instance.Run();
             ApplicationThemeHelper.UseLegacyDefaultTheme = true;
         }
 
