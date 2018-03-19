@@ -37,7 +37,7 @@ namespace DXVisualTestFixer.Controls {
                 return;
             e.Handled = true;
             TestInfoWrapper testInfoWrapper = Grid.GetRow(e.HitInfo.RowHandle) as TestInfoWrapper;
-            if(testInfoWrapper == null)
+            if(testInfoWrapper == null || testInfoWrapper.Valid == Core.TestState.Error)
                 return;
             testInfoWrapper.CommitChange = !testInfoWrapper.CommitChange;
         }

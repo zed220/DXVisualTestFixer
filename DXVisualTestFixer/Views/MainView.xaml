@@ -243,6 +243,7 @@
                                                         <Binding.Converter>
                                                             <dxmvvm:ObjectToObjectConverter DefaultTarget="Visible">
                                                                 <dxmvvm:MapItem Source="96" Target="Collapsed"/>
+                                                                <dxmvvm:MapItem Source="0" Target="Collapsed"/>
                                                             </dxmvvm:ObjectToObjectConverter>
                                                         </Binding.Converter>
                                                     </Binding>
