@@ -17,6 +17,8 @@ namespace DXVisualTestFixer.Core {
             } }
 
         public string Name { get; set; }
+        public string NameWithNamespace { get; set; }
+        public string ResourceFolderName { get; set; }
         public Team Team { get; set; }
         public TeamInfo TeamInfo { get; set; }
         public string Theme { get; set; }

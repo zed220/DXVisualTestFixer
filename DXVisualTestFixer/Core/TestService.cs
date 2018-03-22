@@ -79,6 +79,8 @@ namespace DXVisualTestFixer.Core {
             TestInfo testInfo = new TestInfo();
             testInfo.Version = corpDirTestInfo.FarmTaskInfo.Repository.Version;
             testInfo.Name = corpDirTestInfo.TestName;
+            testInfo.NameWithNamespace = corpDirTestInfo.TestNameWithNamespace;
+            testInfo.ResourceFolderName = corpDirTestInfo.ResourceFolderName;
             if(corpDirTestInfo.TeamName == CorpDirTestInfo.ErrorTeamName) {
                 testInfo.Valid = TestState.Error;
                 testInfo.TextDiff = "+" + testInfo.Name + Environment.NewLine + Environment.NewLine + corpDirTestInfo. ErrorText;
@@ -216,7 +218,7 @@ namespace DXVisualTestFixer.Core {
                 test.LogCustomError($"Config not found for version \"{test.Version}\"");
                 return null;
             }
-            string actualTestResourcesPath = Path.Combine(repository.Path, test.TeamInfo.TestResourcesPath, test.Name);
+            string actualTestResourcesPath = Path.Combine(repository.Path, test.TeamInfo.TestResourcesPath, test.ResourceFolderName);
             if(!Directory.Exists(actualTestResourcesPath)) {
                 if(checkDirectoryExists) {
                     test.LogDirectoryNotFound(actualTestResourcesPath);

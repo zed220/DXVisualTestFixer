@@ -34,7 +34,7 @@ namespace DXVisualTestFixer.ViewModels {
         }
 
         public string ToLog() {
-            return String.Format("Team: {0}, Version: {1}, Test: {2}, Theme: {3}", TestInfo?.Team.Name, TestInfo?.Version, TestInfo?.Name, TestInfo?.Theme);
+            return String.Format("Team: {0}, Version: {1}, Test: {2}, Theme: {3}", TestInfo?.Team.Name, TestInfo?.Version, TestInfo?.NameWithNamespace, TestInfo?.Theme);
         }
     }
 }

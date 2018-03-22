@@ -18,14 +18,14 @@ namespace DXVisualTestFixer.Core {
             myXmlDocument.Load(realUrl.Replace("ViewBuildReport.aspx", "XmlBuildLog.xml"));
             List<Task<List<CorpDirTestInfo>>> allTasks = new List<Task<List<CorpDirTestInfo>>>();
             foreach(XmlElement testCaseXml in FindFailedTests(myXmlDocument)) {
-                string originalTestName = testCaseXml.GetAttribute("name");
+                string testNameAndNamespace = testCaseXml.GetAttribute("name");
                 XmlNode failureNode = testCaseXml.FindByName("failure");
                 allTasks.Add(Task.Factory.StartNew<List<CorpDirTestInfo>>(() => {
                     XmlNode resultNode = failureNode.FindByName("message");
                     XmlNode stackTraceNode = failureNode.FindByName("stack-trace");
                     List<CorpDirTestInfo> localRes = new List<CorpDirTestInfo>();
                     //if(resultNode.InnerText.Contains("Navigation"))
-                    ParseMessage(taskInfo, originalTestName, resultNode.InnerText, stackTraceNode.InnerText, localRes);
+                    ParseMessage(taskInfo, testNameAndNamespace, resultNode.InnerText, stackTraceNode.InnerText, localRes);
                     return localRes;
                 }));
             }
@@ -82,21 +82,21 @@ namespace DXVisualTestFixer.Core {
             HtmlDocument htmlSnippet = htmlWeb.Load(url);
             return htmlWeb.ResponseUri.ToString();
         }
-        public static void ParseMessage(FarmTaskInfo farmTaskInfo, string originalTestName, string message, string stackTrace, List<CorpDirTestInfo> resultList) {
+        public static void ParseMessage(FarmTaskInfo farmTaskInfo, string testNameAndNamespace, string message, string stackTrace, List<CorpDirTestInfo> resultList) {
             if(!message.StartsWith("Exception - NUnit.Framework.AssertionException")) {
-                resultList.Add(CorpDirTestInfo.CreateError(farmTaskInfo, originalTestName, message, stackTrace));
+                resultList.Add(CorpDirTestInfo.CreateError(farmTaskInfo, testNameAndNamespace, message, stackTrace));
                 return;
             }
             List<string> themedResultPaths = message.Split(new[] { " - failed:" }, StringSplitOptions.RemoveEmptyEntries).ToList();
             foreach(var part in themedResultPaths) {
-                ParseMessagePart(farmTaskInfo, part, resultList);
+                ParseMessagePart(farmTaskInfo, testNameAndNamespace, part, resultList);
             }
         }
-        static void ParseMessagePart(FarmTaskInfo farmTaskInfo, string message, List<CorpDirTestInfo> resultList) {
+        static void ParseMessagePart(FarmTaskInfo farmTaskInfo, string testNameAndNamespace, string message, List<CorpDirTestInfo> resultList) {
             List<string> paths = message.Split(new[] { @"\\corp" }, StringSplitOptions.RemoveEmptyEntries).ToList();
             List<string> resultPaths = PatchPaths(paths);
             CorpDirTestInfo info = null;
-            if(!CorpDirTestInfo.TryCreate(farmTaskInfo, resultPaths, out info))
+            if(!CorpDirTestInfo.TryCreate(farmTaskInfo, testNameAndNamespace, resultPaths, out info))
                 return;
             resultList.Add(info);
         }

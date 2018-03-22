@@ -21,24 +21,35 @@ namespace DXVisualTestFixer.Core {
         public string TeamName { get; private set; }
         public string ServerFolderName { get; private set; }
         public string TestName { get; private set; }
+        public string TestNameWithNamespace { get; private set; }
+        public string ResourceFolderName { get; private set; }
         public string ThemeName { get; private set; }
         public string StackTrace { get; private set; }
         public string ErrorText { get; private set; }
         public int Dpi { get; private set; } = 96;
 
-        public static CorpDirTestInfo CreateError(FarmTaskInfo farmTaskInfo, string testName, string errorText, string stackTrace) {
+        static string GetTestName(string testNameAndNamespace) {
+            if(!testNameAndNamespace.Contains('.'))
+                return testNameAndNamespace;
+            return testNameAndNamespace.Split('.').Last();
+        }
+
+        public static CorpDirTestInfo CreateError(FarmTaskInfo farmTaskInfo, string testNameAndNamespace, string errorText, string stackTrace) {
             CorpDirTestInfo result = new CorpDirTestInfo();
             result.FarmTaskInfo = farmTaskInfo;
             result.ErrorText = errorText;
             result.TeamName = "Error";
             result.StackTrace = stackTrace;
-            result.TestName = testName;
+            result.TestName = GetTestName(testNameAndNamespace);
+            result.TestNameWithNamespace = testNameAndNamespace;
             return result;
         }
-        public static bool TryCreate(FarmTaskInfo farmTaskInfo, List<string> corpPaths, out CorpDirTestInfo result) {
+        public static bool TryCreate(FarmTaskInfo farmTaskInfo, string testNameAndNamespace, List<string> corpPaths, out CorpDirTestInfo result) {
             result = null;
             CorpDirTestInfo temp = new CorpDirTestInfo();
             temp.FarmTaskInfo = farmTaskInfo;
+            temp.TestName = GetTestName(testNameAndNamespace);
+            temp.TestNameWithNamespace = testNameAndNamespace;
             foreach(var path in corpPaths) {
                 if(path.EndsWith("CurrentTextEdit.xml")) {
                     temp.CurrentTextEditPath = path;
@@ -71,8 +82,8 @@ namespace DXVisualTestFixer.Core {
                 }
                 else
                     temp.TeamName = temp.ServerFolderName;
-                string testNameAndTheme = Path.GetDirectoryName(temp.CurrentTextEditPath).Split('\\').Last();
-                if(!TryUpdateThemeAndName(testNameAndTheme, temp))
+                string folderNameAndTheme = Path.GetDirectoryName(temp.CurrentTextEditPath).Split('\\').Last();
+                if(!TryUpdateThemeAndFolderName(folderNameAndTheme, temp))
                     return false;
                 //string[] testNameAndTheme = Path.GetDirectoryName(temp.CurrentTextEditPath).Split('\\').Last().Split('.');
                 //temp.TestName = testNameAndTheme[0];
@@ -87,17 +98,17 @@ namespace DXVisualTestFixer.Core {
             }
             return false;
         }
-        static bool TryUpdateThemeAndName(string testNameAndTheme, CorpDirTestInfo result) {
+        static bool TryUpdateThemeAndFolderName(string folderNameAndTheme, CorpDirTestInfo result) {
             List<string> allThemes = Theme.Themes.Select(t => t.Name).ToList();
             allThemes.Add("Base");
             allThemes.Add("Super");
             allThemes.Sort(new ThemeNameComparer());
             foreach(string theme in allThemes.Where(t => t.Contains("Touch")).Concat(allThemes.Where(t => !t.Contains("Touch")))) {
                 string themeName = theme.Replace(";", ".");
-                if(!testNameAndTheme.Contains(themeName))
+                if(!folderNameAndTheme.Contains(themeName))
                     continue;
                 result.ThemeName = themeName;
-                result.TestName = testNameAndTheme.Replace("." + themeName, "");
+                result.ResourceFolderName = folderNameAndTheme.Replace("." + themeName, "");
                 return true;
             }
             return false;

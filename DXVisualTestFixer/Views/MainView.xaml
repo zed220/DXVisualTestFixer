@@ -202,8 +202,8 @@
                         <dxg:GridControl ItemsSource="{Binding Tests}" CurrentItem="{Binding CurrentTest, Mode=TwoWay}" AutoExpandAllGroups="True" ShowBorder="False" 
                                          ShowLoadingPanel="{DXBinding Expr='Status != $viewModels:ProgramStatus.Idle'}" FixedFilter="{Binding CurrentFilter}">
                             <dxg:GridColumn FieldName="Version" GroupIndex="0" MergeWithPreviousGroup="False" Header="Version"/>
-                            <dxg:GridColumn FieldName="TeamName" GroupIndex="1" MergeWithPreviousGroup="False" Header="Team"/>
-                            <dxg:GridColumn FieldName="TestInfo.Name" GroupIndex="2" MergeWithPreviousGroup="True" Header="Name"/>
+                            <dxg:GridColumn FieldName="TeamName" GroupIndex="1" MergeWithPreviousGroup="True" Header="Team"/>
+                            <dxg:GridColumn FieldName="TestInfo.Name" GroupIndex="2" MergeWithPreviousGroup="False" Header="Name"/>
                             <dxg:GridColumn FieldName="CommitChange" Header="Commit" Width="20">
                                 <dxg:GridColumn.CellTemplate>
                                     <DataTemplate>
