@@ -27,6 +27,14 @@
             </Style>
             <DataTemplate x:Key="DraggableScrollViewerDataTemplate">
                 <controls:DraggableScrollViewer HorizontalScrollBarVisibility="Auto" dx:ScrollBarExtensions.HandlesDefaultMouseScrolling="False" dx:ScrollBarExtensions.AllowMouseScrolling="False">
+                    <controls:DraggableScrollViewer.Background>
+                        <LinearGradientBrush EndPoint="0,0" StartPoint="8,8" MappingMode="Absolute" SpreadMethod="Repeat">
+                            <GradientStop Color="#3FC6C6C6" Offset="0" />
+                            <GradientStop Color="#3FC6C6C6" Offset="0.5" />
+                            <GradientStop Color="White" Offset="0.5" />
+                            <GradientStop Color="White" Offset="1" />
+                        </LinearGradientBrush>
+                    </controls:DraggableScrollViewer.Background>
                     <dxmvvm:Interaction.Behaviors>
                         <behaviors:ScrollVIewerDragBehavior/>
                     </dxmvvm:Interaction.Behaviors>
