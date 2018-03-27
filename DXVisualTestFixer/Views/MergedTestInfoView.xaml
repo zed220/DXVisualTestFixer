@@ -52,8 +52,8 @@
             <dxdo:LayoutPanel DataContext="{Binding TestInfoModel.TestInfo.TestInfo}" ShowCaption="True" Caption="Merged" ShowCloseButton="False" ShowPinButton="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False">
                 <Grid>
                     <ContentControl x:Name="before" Content="{Binding ImageBeforeArr}" ContentTemplate="{StaticResource ResourceKey=DraggableScrollViewerDataTemplate}"/>
-                    <ContentControl x:Name="current" Content="{Binding ImageCurrentArr}" ContentTemplate="{StaticResource ResourceKey=DraggableScrollViewerDataTemplate}" Visibility="Collapsed"/>
-                    <ContentControl x:Name="diff" Content="{Binding ImageDiffArr}" ContentTemplate="{StaticResource ResourceKey=DraggableScrollViewerDataTemplate}" Visibility="Collapsed"/>
+                    <ContentControl x:Name="current" Content="{Binding ImageCurrentArr}" ContentTemplate="{StaticResource ResourceKey=DraggableScrollViewerDataTemplate}" Visibility="Hidden"/>
+                    <ContentControl x:Name="diff" Content="{Binding ImageDiffArr}" ContentTemplate="{StaticResource ResourceKey=DraggableScrollViewerDataTemplate}" Visibility="Hidden"/>
                 </Grid>
             </dxdo:LayoutPanel>
             <dxdo:LayoutPanel ItemHeight="150" ShowCaption="False" DataContext="{Binding TestInfoModel.TestInfo.TestInfo}">
