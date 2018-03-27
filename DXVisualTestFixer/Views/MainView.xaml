@@ -104,7 +104,7 @@
                     <dxr:RibbonPageGroup Caption="Work">
                         <dxb:BarButtonItem RibbonStyle="Large" 
                                            GlyphSize="Large" 
-                                           Content="Update Tests"
+                                           Content="Sync Tests Info"
                                            KeyGesture="F5" dxb:BarManager.KeyGestureWorkingMode="AllKeyGesture"
                                            Command="{DXCommand Execute='RefreshTestList()'}"
                                            LargeGlyph="{dx:DXImageOffice2013 Image=Refresh_32x32.png}">
@@ -114,7 +114,8 @@
                             GlyphSize="Large" 
                             Content="Apply Changes"
                             Command="{DXCommand Execute='ApplyChanges()'}"
-                            LargeGlyph="{dx:DXImageOffice2013 Image=Apply_32x32.png}">
+                            LargeGlyph="{dx:DXImageOffice2013 Image=Apply_32x32.png}"
+                            IsEnabled="{DXBinding Expr='TestsToCommitCount gt 0'}">
                             <dxb:BarButtonItem.GlyphTemplate>
                                 <DataTemplate>
                                     <Grid>

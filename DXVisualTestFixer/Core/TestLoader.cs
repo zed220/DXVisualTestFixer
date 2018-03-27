@@ -8,8 +8,7 @@ using System.Xml;
 
 namespace DXVisualTestFixer.Core {
     public static class TestLoader {
-        public static List<CorpDirTestInfo> LoadFromInfo(FarmTaskInfo taskInfo) {
-            string realUrl = CapureRealUrl(taskInfo.Url);
+        public static List<CorpDirTestInfo> LoadFromInfo(FarmTaskInfo taskInfo, string realUrl) {
             List<CorpDirTestInfo> result = new List<CorpDirTestInfo>();
             if(realUrl == null || !realUrl.Contains("ViewBuildReport.aspx")) {
                 return TestLoader_Old.LoadFromUri(taskInfo);
@@ -76,11 +75,6 @@ namespace DXVisualTestFixer.Core {
                     return reader.ReadToEnd();
                 }
             }
-        }
-        static string CapureRealUrl(string url) {
-            HtmlWeb htmlWeb = new HtmlWeb();
-            HtmlDocument htmlSnippet = htmlWeb.Load(url);
-            return htmlWeb.ResponseUri.ToString();
         }
         public static void ParseMessage(FarmTaskInfo farmTaskInfo, string testNameAndNamespace, string message, string stackTrace, List<CorpDirTestInfo> resultList) {
             if(!message.StartsWith("Exception - NUnit.Framework.AssertionException")) {

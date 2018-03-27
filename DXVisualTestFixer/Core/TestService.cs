@@ -3,6 +3,7 @@ using DXVisualTestFixer.Configuration;
 using DXVisualTestFixer.Native;
 using DXVisualTestFixer.Services;
 using DXVisualTestFixer.ViewModels;
+using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -15,59 +16,93 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace DXVisualTestFixer.Core {
-    public static class TestsService {
-        public static List<TestInfo> LoadParrallel(List<FarmTaskInfo> farmTasks, LoadingProgressController loadingProgressController) {
-            //Team team = new Team();
-            //team.Name = "ThemedWindow";
-            //team.Version = "18.1";
-            //team.TeamInfos = new List<TeamInfo>() { new TeamInfo() { Dpi = 96, ServerFolderName = "4DXThemedWindow_dpi_96", TestResourcesPath = @"Images_dpi96\WpfCore\ThemedWindowImages", Optimized = false } };
-            //var s = TeamConfigsReader.SaveConfig(team);
-            //File.WriteAllText($"c:\\1\\myConfig.config", s);
-            //foreach(var version in Repository.Versions) {
-            //    foreach(var team in Teams) {
-            //        TeamConfigsReader r = new TeamConfigsReader();
-            //        team.Version = version;
-            //        var s = r.SaveConfig(team);
-            //        File.WriteAllText($"c:\\1\\{version}_{team.Name}.config", s);
-            //    }
-            //}
-            List<TestInfo> result = new List<TestInfo>();
-            List<Task<TestInfo>> allTasks = new List<Task<TestInfo>>();
-            foreach(CorpDirTestInfo corpDirTestInfo in LoadFromFarmTaskInfoParallel(farmTasks, loadingProgressController)) {
-                CorpDirTestInfo info = corpDirTestInfo;
-                allTasks.Add(Task.Factory.StartNew<TestInfo>(() => LoadTestInfo(info, loadingProgressController)));
-            }
-            Task.WaitAll(allTasks.ToArray());
-            allTasks.ForEach(t => { if(t.Result != null) result.Add(t.Result); });
-            return result;
+    public class TestInfoCached {
+        public TestInfoCached(string realUrl, List<TestInfo> testList) {
+            RealUrl = realUrl;
+            TestList = testList;
         }
-        static List<CorpDirTestInfo> LoadFromFarmTaskInfoParallel(List<FarmTaskInfo> farmTasks, LoadingProgressController loadingProgressController) {
+
+        public string RealUrl { get; }
+        public List<TestInfo> TestList { get; }
+    }
+
+    public class TestsService {
+        Dictionary<FarmTaskInfo, TestInfoCached> RealUrlCache = new Dictionary<FarmTaskInfo, TestInfoCached>();
+
+        readonly LoadingProgressController loadingProgressController;
+
+        public TestsService(LoadingProgressController loadingProgressController) {
+            this.loadingProgressController = loadingProgressController;
+        }
+
+        public async Task<List<TestInfo>> LoadTestsAsync(List<FarmTaskInfo> farmTasks) {
+            loadingProgressController.Flush();
             loadingProgressController.Enlarge(farmTasks.Count);
             ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage($"Collecting tests information from farm");
-            List<CorpDirTestInfo> corpDirTestInfoList = new List<CorpDirTestInfo>();
-            List<Task<List<CorpDirTestInfo>>> allTasks = new List<Task<List<CorpDirTestInfo>>>();
+            List<Task<List<TestInfo>>> allTasks = new List<Task<List<TestInfo>>>();
             foreach(FarmTaskInfo farmTaskInfo in farmTasks) {
                 FarmTaskInfo info = farmTaskInfo;
-                allTasks.Add(Task.Factory.StartNew<List<CorpDirTestInfo>>(() => LoadFromFarmTaskInfo(info, loadingProgressController)));
+                var task = LoadTestsCore(info);
+                allTasks.Add(task);
+            }
+            List<TestInfo> result = new List<TestInfo>();
+            foreach(var task in allTasks) {
+                await task;
+                result.AddRange(task.Result);
+            }
+            return result;
+        }
+        async Task<List<TestInfo>> LoadTestsCore(FarmTaskInfo farmTaskInfo) {
+            string realUrl = await CapureRealUrl(farmTaskInfo.Url);
+            if(RealUrlCache.TryGetValue(farmTaskInfo, out TestInfoCached cache)) {
+                if(cache.RealUrl == realUrl) {
+                    ActualizeTests(cache.TestList);
+                    return cache.TestList;
+                }
+            }
+            List<Task<TestInfo>> allTasks = new List<Task<TestInfo>>();
+            foreach(CorpDirTestInfo corpDirTestInfo in LoadFromFarmTaskInfo(farmTaskInfo, realUrl)) {
+                loadingProgressController.IncreaseProgress(1);
+                CorpDirTestInfo info = corpDirTestInfo;
+                allTasks.Add(Task.Factory.StartNew<TestInfo>(() => LoadTestInfo(info)));
+            }
+            List<TestInfo> result = new List<TestInfo>();
+            foreach(var task in allTasks) {
+                await task;
+                result.Add(task.Result);
+            }
+            RealUrlCache[farmTaskInfo] = new TestInfoCached(realUrl, result);
+            return result;
+        }
+
+        void ActualizeTests(List<TestInfo> testList) {
+            List<Task> allTasks = new List<Task>();
+            foreach(TestInfo test in testList) {
+                TestInfo t = test;
+                allTasks.Add(Task.Factory.StartNew(() => TestsService.UpdateTestStatus(test)));
             }
             Task.WaitAll(allTasks.ToArray());
-            allTasks.ForEach(t => corpDirTestInfoList.AddRange(t.Result));
-            loadingProgressController.Flush();
+        }
+
+        List<CorpDirTestInfo> LoadFromFarmTaskInfo(FarmTaskInfo farmTaskInfo, string realUrl) {
+            List<CorpDirTestInfo> corpDirTestInfoList = TestLoader.LoadFromInfo(farmTaskInfo, realUrl);
             loadingProgressController.Enlarge(corpDirTestInfoList.Count);
             return corpDirTestInfoList;
         }
-        static List<CorpDirTestInfo> LoadFromFarmTaskInfo(FarmTaskInfo farmTaskInfo, LoadingProgressController loadingProgressController) {
-            List<CorpDirTestInfo> taskTestInfos = TestLoader.LoadFromInfo(farmTaskInfo);
-            loadingProgressController.IncreaseProgress(1);
-            return taskTestInfos;
+        static async Task<string> CapureRealUrl(string url) {
+            return await Task.Factory.StartNew<string>(() => {
+                HtmlWeb htmlWeb = new HtmlWeb();
+                HtmlDocument htmlSnippet = htmlWeb.Load(url);
+                return htmlWeb.ResponseUri.ToString();
+            });
         }
-        static TestInfo LoadTestInfo(CorpDirTestInfo corpDirTestInfo, LoadingProgressController loadingProgressController) {
+
+        TestInfo LoadTestInfo(CorpDirTestInfo corpDirTestInfo) {
             ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage($"Start load test v{corpDirTestInfo.FarmTaskInfo.Repository.Version} {corpDirTestInfo.TestName}.{corpDirTestInfo.ThemeName}");
             TestInfo testInfo = TryCreateTestInfo(corpDirTestInfo);
             ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage($"End load test v{corpDirTestInfo.FarmTaskInfo.Repository.Version} {corpDirTestInfo.TestName}.{corpDirTestInfo.ThemeName}");
             if(testInfo != null) {
-                if(testInfo.Valid != TestState.Error)
-                    testInfo.Valid = TestStatus(testInfo);
+                UpdateTestStatus(testInfo);
                 loadingProgressController.IncreaseProgress(1);
                 return testInfo;
             }
@@ -83,7 +118,7 @@ namespace DXVisualTestFixer.Core {
             testInfo.ResourceFolderName = corpDirTestInfo.ResourceFolderName;
             if(corpDirTestInfo.TeamName == CorpDirTestInfo.ErrorTeamName) {
                 testInfo.Valid = TestState.Error;
-                testInfo.TextDiff = "+" + testInfo.Name + Environment.NewLine + Environment.NewLine + corpDirTestInfo. ErrorText;
+                testInfo.TextDiff = "+" + testInfo.Name + Environment.NewLine + Environment.NewLine + corpDirTestInfo.ErrorText;
                 testInfo.Theme = "Error";
                 testInfo.Dpi = 0;
                 testInfo.Team = new Team() { Name = CorpDirTestInfo.ErrorTeamName, Version = corpDirTestInfo.FarmTaskInfo.Repository.Version };
@@ -113,7 +148,7 @@ namespace DXVisualTestFixer.Core {
             //    testInfo.Valid = true;
             return testInfo;
         }
-        
+
         static void LoadTextFile(string path, Action<string> saveAction) {
             string pathWithExtension = Path.ChangeExtension(path, ".xml");
             if(!File.Exists(pathWithExtension)) {
@@ -183,33 +218,39 @@ namespace DXVisualTestFixer.Core {
             return true;
         }
 
-        public static TestState TestStatus(TestInfo test) {
+        public static void UpdateTestStatus(TestInfo test) {
+            if(test.Valid == TestState.Error)
+                return;
             TestState result = TestState.Valid;
             string actualTestResourceName = GetTestResourceName(test, true);
             if(actualTestResourceName == null) {
-                return TestState.Invalid;
+                test.Valid = TestState.Invalid;
+                return;
             }
             string xmlPath = GetXmlFilePath(actualTestResourceName, test, true);
             if(xmlPath == null) {
-                result = TestState.Invalid;
+                test.Valid = TestState.Invalid;
             }
             string imagePath = GetImageFilePath(actualTestResourceName, test, true);
             if(imagePath == null) {
-                result = TestState.Invalid;
+                test.Valid = TestState.Invalid;
             }
             if(result == TestState.Invalid)
-                return result;
+                return;
             if(!IsTextEquals(test.TextCurrent, File.ReadAllText(xmlPath), out _)) {
-                return TestState.Valid;
+                test.Valid = TestState.Valid;
+                return;
             }
             byte[] imageSource = null;
             if(!LoadImage(imagePath, img => imageSource = img)) {
                 test.LogCustomError($"File Can not load: \"{imagePath}\"");
-                return TestState.Invalid;
+                test.Valid = TestState.Invalid;
+                return;
             }
-            if(IsImageEquals(test.ImageCurrentArr, imageSource))
-                return TestState.Fixed;
-            return result;
+            if(IsImageEquals(test.ImageCurrentArr, imageSource)) {
+                test.Valid = TestState.Fixed;
+                return;
+            }
         }
 
         static string GetTestResourceName(TestInfo test, bool checkDirectoryExists) {

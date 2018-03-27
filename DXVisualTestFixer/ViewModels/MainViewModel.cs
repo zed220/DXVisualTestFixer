@@ -68,10 +68,15 @@ namespace DXVisualTestFixer.ViewModels {
             get { return GetProperty(() => UpdateService); }
             set { SetProperty(() => UpdateService, value); }
         }
+        public TestsService TestService {
+            get { return GetProperty(() => TestService); }
+            set { SetProperty(() => TestService, value); }
+        }
 
         public MainViewModel() {
             LoadingProgressController = new LoadingProgressController();
             UpdateService = ServiceLocator.Current.GetInstance<IUpdateService>();
+            TestService = new TestsService(LoadingProgressController);
             UpdateService.Start();
             UpdateConfig();
             ServiceLocator.Current.GetInstance<ILoggingService>().MessageReserved += OnLoggingMessageReserved;
@@ -112,16 +117,18 @@ namespace DXVisualTestFixer.ViewModels {
 
         void UpdateAllTests() {
             Task.Factory.StartNew(() => {
-                ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage("Start refreshing tests");
+                ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage("Refreshing tests");
                 LoadingProgressController.Start();
                 List<FarmTaskInfo> failedTasks = GetAllTasks();
-                var tests = TestsService.LoadParrallel(failedTasks, LoadingProgressController).Select(t => new TestInfoWrapper(this, t)).ToList();
-                ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage("");
-                App.Current.Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
-                    Tests = tests;
-                    Status = ProgramStatus.Idle;
-                    LoadingProgressController.Stop();
-                }));
+                TestService.LoadTestsAsync(failedTasks).ContinueWith(res => {
+                    var tests = res.Result.Where(t => t != null).Select(t => new TestInfoWrapper(this, t)).ToList();
+                    ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage("");
+                    App.Current.Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
+                        Tests = tests;
+                        Status = ProgramStatus.Idle;
+                        LoadingProgressController.Stop();
+                    }));
+                });
             });
         }
 
@@ -215,7 +222,12 @@ namespace DXVisualTestFixer.ViewModels {
                 GetService<IMessageBoxService>()?.ShowMessage("Test not fixed \n" + testWrapper.ToLog(), "Test not fixed", MessageButton.OK, MessageIcon.Information);
         }
         public void RefreshTestList() {
-            ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage("Start farm integrator");
+            if(Tests?.FirstOrDefault(t => t.CommitChange) != null) {
+                MessageResult? result = GetService<IMessageBoxService>()?.ShowMessage("You has uncommitted tests! Do you want to refresh tests list and flush all uncommitted tests?", "Uncommitted tests", MessageButton.OKCancel, MessageIcon.Information);
+                if(!result.HasValue || result.Value != MessageResult.OK)
+                    return;
+            }
+            ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage("Waiting response from farm integrator");
             Tests = null;
             Status = ProgramStatus.Loading;
             FarmIntegrator.Start(FarmRefreshed);
