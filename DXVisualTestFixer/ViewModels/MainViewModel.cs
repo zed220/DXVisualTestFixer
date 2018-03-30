@@ -87,14 +87,13 @@ namespace DXVisualTestFixer.ViewModels {
             CurrentLogLine = args.Message;
         }
 
-        void FarmRefreshed(FarmRefreshedEventArgs args) {
+        async void FarmRefreshed(FarmRefreshedEventArgs args) {
             if(args == null) {
-                App.Current.Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
+                await App.Current.Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(async () => {
                     FarmIntegrator.Stop();
                     ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage("Farm integrator succes");
-                    UpdateAllTests();
+                    await UpdateAllTests().ConfigureAwait(false);
                 }));
-                return;
             }
         }
         List<FarmTaskInfo> GetAllTasks() {
@@ -116,21 +115,18 @@ namespace DXVisualTestFixer.ViewModels {
             return result;
         }
 
-        void UpdateAllTests() {
-            Task.Factory.StartNew(() => {
-                ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage("Refreshing tests");
-                LoadingProgressController.Start();
-                List<FarmTaskInfo> failedTasks = GetAllTasks();
-                TestService.LoadTestsAsync(failedTasks).ContinueWith(res => {
-                    var tests = res.Result.Where(t => t != null).Select(t => new TestInfoWrapper(this, t)).ToList();
-                    ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage("");
-                    App.Current.Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
-                        Tests = tests;
-                        Status = ProgramStatus.Idle;
-                        LoadingProgressController.Stop();
-                    }));
-                });
-            });
+        async Task UpdateAllTests() {
+            ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage("Refreshing tests");
+            LoadingProgressController.Start();
+            List<FarmTaskInfo> failedTasks = GetAllTasks();
+            List<TestInfo> testInfos = await TestService.LoadTestsAsync(failedTasks).ConfigureAwait(false);
+            var tests = testInfos.Where(t => t != null).Select(t => new TestInfoWrapper(this, t)).ToList();
+            ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage("");
+            await App.Current.Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
+                Tests = tests;
+                Status = ProgramStatus.Idle;
+                LoadingProgressController.Stop();
+            }));
         }
 
         void UpdateConfig() {

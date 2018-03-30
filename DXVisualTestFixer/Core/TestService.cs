@@ -42,18 +42,13 @@ namespace DXVisualTestFixer.Core {
             List<Task<List<TestInfo>>> allTasks = new List<Task<List<TestInfo>>>();
             foreach(FarmTaskInfo farmTaskInfo in farmTasks) {
                 FarmTaskInfo info = farmTaskInfo;
-                var task = LoadTestsCore(info);
+                var task = LoadTestsCoreAsync(info);
                 allTasks.Add(task);
             }
-            List<TestInfo> result = new List<TestInfo>();
-            foreach(var task in allTasks) {
-                await task;
-                result.AddRange(task.Result);
-            }
-            return result;
+            return (await Task.WhenAll(allTasks.ToArray()).ConfigureAwait(false)).SelectMany(i => i).ToList();
         }
-        async Task<List<TestInfo>> LoadTestsCore(FarmTaskInfo farmTaskInfo) {
-            string realUrl = await CapureRealUrl(farmTaskInfo.Url);
+        async Task<List<TestInfo>> LoadTestsCoreAsync(FarmTaskInfo farmTaskInfo) {
+            string realUrl = await CapureRealUrl(farmTaskInfo.Url).ConfigureAwait(false);
             if(RealUrlCache.TryGetValue(farmTaskInfo, out TestInfoCached cache)) {
                 if(cache.RealUrl == realUrl) {
                     ActualizeTests(cache.TestList);
@@ -66,11 +61,7 @@ namespace DXVisualTestFixer.Core {
                 CorpDirTestInfo info = corpDirTestInfo;
                 allTasks.Add(Task.Factory.StartNew<TestInfo>(() => LoadTestInfo(info)));
             }
-            List<TestInfo> result = new List<TestInfo>();
-            foreach(var task in allTasks) {
-                await task;
-                result.Add(task.Result);
-            }
+            List<TestInfo> result = (await Task.WhenAll(allTasks.ToArray()).ConfigureAwait(false)).ToList();
             RealUrlCache[farmTaskInfo] = new TestInfoCached(realUrl, result);
             return result;
         }
@@ -89,8 +80,8 @@ namespace DXVisualTestFixer.Core {
             loadingProgressController.Enlarge(corpDirTestInfoList.Count);
             return corpDirTestInfoList;
         }
-        static async Task<string> CapureRealUrl(string url) {
-            return await Task.Factory.StartNew<string>(() => {
+        static Task<string> CapureRealUrl(string url) {
+            return Task.Factory.StartNew<string>(() => {
                 HtmlWeb htmlWeb = new HtmlWeb();
                 HtmlDocument htmlSnippet = htmlWeb.Load(url);
                 return htmlWeb.ResponseUri.ToString();
