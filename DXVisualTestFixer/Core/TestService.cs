@@ -221,7 +221,6 @@ namespace DXVisualTestFixer.Core {
         public static void UpdateTestStatus(TestInfo test) {
             if(test.Valid == TestState.Error)
                 return;
-            TestState result = TestState.Valid;
             string actualTestResourceName = GetTestResourceName(test, true);
             if(actualTestResourceName == null) {
                 test.Valid = TestState.Invalid;
@@ -235,7 +234,7 @@ namespace DXVisualTestFixer.Core {
             if(imagePath == null) {
                 test.Valid = TestState.Invalid;
             }
-            if(result == TestState.Invalid)
+            if(test.Valid == TestState.Invalid)
                 return;
             if(!IsTextEquals(test.TextCurrent, File.ReadAllText(xmlPath), out _)) {
                 test.Valid = TestState.Valid;

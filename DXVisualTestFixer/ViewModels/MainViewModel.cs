@@ -1,5 +1,6 @@
 ﻿using CommonServiceLocator;
 using DevExpress.Data.Filtering;
+using DevExpress.Logify.WPF;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.ModuleInjection;
 using DevExpress.Xpf.Editors;
@@ -200,6 +201,10 @@ namespace DXVisualTestFixer.ViewModels {
             UpdateConfig();
         }
         public void ApplyChanges() {
+            if(TestsToCommitCount == 0) {
+                GetService<IMessageBoxService>()?.ShowMessage("Nothing to commit", "Nothing to commit", MessageButton.OK, MessageIcon.Information);
+                return;
+            }
             List<TestInfoWrapper> changedTests = Tests.Where(t => t.CommitChange).ToList();
             if(changedTests.Count == 0) {
                 GetService<IMessageBoxService>()?.ShowMessage("Nothing to commit", "Nothing to commit", MessageButton.OK, MessageIcon.Information);
@@ -211,6 +216,7 @@ namespace DXVisualTestFixer.ViewModels {
             if(!changedTestsModel.Apply)
                 return;
             changedTests.ForEach(ApplyTest);
+            TestsToCommitCount = 0;
             UpdateContent();
         }
         bool ShowCheckOutMessageBox(string text) {
@@ -222,7 +228,7 @@ namespace DXVisualTestFixer.ViewModels {
                 GetService<IMessageBoxService>()?.ShowMessage("Test not fixed \n" + testWrapper.ToLog(), "Test not fixed", MessageButton.OK, MessageIcon.Information);
         }
         public void RefreshTestList() {
-            if(Tests?.FirstOrDefault(t => t.CommitChange) != null) {
+            if(TestsToCommitCount > 0) {
                 MessageResult? result = GetService<IMessageBoxService>()?.ShowMessage("You has uncommitted tests! Do you want to refresh tests list and flush all uncommitted tests?", "Uncommitted tests", MessageButton.OKCancel, MessageIcon.Information);
                 if(!result.HasValue || result.Value != MessageResult.OK)
                     return;
