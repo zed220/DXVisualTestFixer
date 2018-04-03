@@ -1,5 +1,6 @@
 ﻿using DevExpress.Mvvm;
 using DXVisualTestFixer.Core;
+using DXVisualTestFixer.Mif;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,9 +11,15 @@ namespace DXVisualTestFixer.ViewModels {
     public interface ITestInfoViewModel : ISupportParameter { }
 
     public class TestInfoModel {
+        public TestInfoModel(MergerdTestViewType mergerdTestViewType) {
+            MergerdTestViewType = mergerdTestViewType;
+        }
+
         public TestInfoWrapper TestInfo { get; set; }
         public Action MoveNextRow { get; set; }
         public Action MovePrevRow { get; set; }
+        public MergerdTestViewType MergerdTestViewType { get; }
+        public Action<MergerdTestViewType> SetMergerdTestViewType;
     }
 
     public class TestInfoViewModel : ViewModelBase, ITestInfoViewModel {
@@ -20,10 +27,19 @@ namespace DXVisualTestFixer.ViewModels {
             get { return GetProperty(() => TestInfoModel); }
             private set { SetProperty(() => TestInfoModel, value); }
         }
+        public MergerdTestViewType MergerdTestViewType {
+            get { return GetProperty(() => MergerdTestViewType); }
+            set { SetProperty(() => MergerdTestViewType, value, OnMergerdTestViewTypeChanged); }
+        }
+
+        void OnMergerdTestViewTypeChanged() {
+            TestInfoModel?.SetMergerdTestViewType(MergerdTestViewType);
+        }
 
         protected override void OnParameterChanged(object parameter) {
             base.OnParameterChanged(parameter);
-            TestInfoModel = parameter as TestInfoModel;
+            TestInfoModel = (TestInfoModel)parameter;
+            MergerdTestViewType = TestInfoModel.MergerdTestViewType;
         }
 
         public void Valid() {

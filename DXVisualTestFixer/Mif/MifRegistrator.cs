@@ -12,6 +12,11 @@ using System.Windows;
 
 namespace DXVisualTestFixer.Mif {
     public enum TestViewType { Split, Merged }
+    public enum MergerdTestViewType {
+        Diff,
+        Before,
+        Current,
+    }
 
     public static class MifRegistrator {
         static MifRegistrator() {

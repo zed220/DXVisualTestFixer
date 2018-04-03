@@ -23,7 +23,6 @@ namespace DXVisualTestFixer.Core {
                     XmlNode resultNode = failureNode.FindByName("message");
                     XmlNode stackTraceNode = failureNode.FindByName("stack-trace");
                     List<CorpDirTestInfo> localRes = new List<CorpDirTestInfo>();
-                    //if(resultNode.InnerText.Contains("Navigation"))
                     ParseMessage(taskInfo, testNameAndNamespace, resultNode.InnerText, stackTraceNode.InnerText, localRes);
                     return localRes;
                 }));

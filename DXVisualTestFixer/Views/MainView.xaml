@@ -188,8 +188,6 @@
                                 </DataTemplate>
                             </dxb:BarItemSelector.ItemTemplate>
                         </dxb:BarItemSelector>
-                        <!--<dxb:BarCheckItem IsChecked="{Binding Path=(controls:DraggableScrollViewer.DraggableMode), ElementName=TestInfo, Mode=TwoWay, 
-                            UpdateSourceTrigger=PropertyChanged}" Content="Draggable Mode"/>-->
                     </dxr:RibbonPageGroup>
                 </dxr:RibbonPage>
             </dxr:RibbonDefaultPageCategory>

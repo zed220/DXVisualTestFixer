@@ -53,6 +53,10 @@ namespace DXVisualTestFixer.ViewModels {
             get { return GetProperty(() => TestViewType); }
             set { SetProperty(() => TestViewType, value, OnTestViewTypeChanged); }
         }
+        public MergerdTestViewType MergerdTestViewType {
+            get { return GetProperty(() => MergerdTestViewType); }
+            set { SetProperty(() => MergerdTestViewType, value); }
+        }
         public LoadingProgressController LoadingProgressController {
             get { return GetProperty(() => LoadingProgressController); }
             set { SetProperty(() => LoadingProgressController, value); }
@@ -165,7 +169,12 @@ namespace DXVisualTestFixer.ViewModels {
                 ModuleManager.DefaultManager.Clear(Regions.TestInfo);
                 return;
             }
-            TestInfoModel testInfoModel = new TestInfoModel() { TestInfo = CurrentTest, MoveNextRow = new Action(MoveNextCore), MovePrevRow = new Action(MovePrevCore) };
+            TestInfoModel testInfoModel = new TestInfoModel(MergerdTestViewType) {
+                TestInfo = CurrentTest,
+                MoveNextRow = new Action(MoveNextCore),
+                MovePrevRow = new Action(MovePrevCore),
+                SetMergerdTestViewType = vt => MergerdTestViewType = vt
+            };
             var vm = ModuleManager.DefaultManager.GetRegion(Regions.TestInfo).GetViewModel(Modules.TestInfo);
             if(vm == null) {
                 ModuleManager.DefaultManager.InjectOrNavigate(Regions.TestInfo, Modules.TestInfo, testInfoModel);

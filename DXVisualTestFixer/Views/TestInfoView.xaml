@@ -38,7 +38,7 @@
                         <dxb:BarButtonItem RibbonStyle="Large" Content="Copy Diff" LargeGlyph="{dx:DXImageOffice2013 Image=Copy_32x32.png}" GlyphSize="Large"
                                            Command="{Binding ImageDiffArr, Converter={StaticResource ImageToClipboardConverter}}"/>
                     </dxr:RibbonPageGroup>
-                    <dxr:RibbonPageGroup Caption="View">
+                    <dxr:RibbonPageGroup Caption="Zoom">
                         <dxb:BarButtonItem RibbonStyle="Large" Content="Zoom -10%" LargeGlyph="{dx:DXImageOffice2013 Image=ZoomOut_32x32.png}" GlyphSize="Large"
                                            Command="{DXCommand Execute='$behaviors:ImageScaleBehavior.ZoomOut()'}"/>
                         <dxb:BarButtonItem RibbonStyle="Large" Content="Zoom 100%" LargeGlyph="{dx:DXImageOffice2013 Image=Zoom100_32x32.png}" GlyphSize="Large"

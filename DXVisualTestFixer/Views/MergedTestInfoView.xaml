@@ -14,6 +14,9 @@
              xmlns:core="clr-namespace:DXVisualTestFixer.Core"
              xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
              xmlns:dxr="http://schemas.devexpress.com/winfx/2008/xaml/ribbon"
+             xmlns:sys="clr-namespace:System.Collections;assembly=mscorlib"
+             xmlns:mif="clr-namespace:DXVisualTestFixer.Mif"
+             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
@@ -24,6 +27,9 @@
             <dxmvvm:MapItem Source="Fixed" Target="Visible"/>
         </dxmvvm:ObjectToObjectConverter>
         <converters:ImageToClipboardConverter x:Key="ImageToClipboardConverter"/>
+        <dxmvvm:ObjectToObjectConverter x:Key="VisibilityConverter" DefaultSource="False" DefaultTarget="Hidden">
+            <dxmvvm:MapItem Source="True" Target="Visible"/>
+        </dxmvvm:ObjectToObjectConverter>
     </UserControl.Resources>
     <Grid>
         <dxr:RibbonControl>
@@ -37,7 +43,7 @@
                         <dxb:BarButtonItem RibbonStyle="Large" Content="Copy Diff" LargeGlyph="{dx:DXImageOffice2013 Image=Copy_32x32.png}" GlyphSize="Large"
                                            Command="{Binding ImageDiffArr, Converter={StaticResource ImageToClipboardConverter}}"/>
                     </dxr:RibbonPageGroup>
-                    <dxr:RibbonPageGroup Caption="View">
+                    <dxr:RibbonPageGroup Caption="Zoom">
                         <dxb:BarButtonItem RibbonStyle="Large" Content="Zoom -10%" LargeGlyph="{dx:DXImageOffice2013 Image=ZoomOut_32x32.png}" GlyphSize="Large"
                                            Command="{DXCommand Execute='$behaviors:ImageScaleBehavior.ZoomOut()'}"/>
                         <dxb:BarButtonItem RibbonStyle="Large" Content="Zoom 100%" LargeGlyph="{dx:DXImageOffice2013 Image=Zoom100_32x32.png}" GlyphSize="Large"
@@ -45,15 +51,47 @@
                         <dxb:BarButtonItem RibbonStyle="Large" Content="Zoom +10%" LargeGlyph="{dx:DXImageOffice2013 Image=ZoomIn_32x32.png}" GlyphSize="Large"
                                            Command="{DXCommand Execute='$behaviors:ImageScaleBehavior.ZoomIn()'}"/>
                     </dxr:RibbonPageGroup>
+                    <dxr:RibbonPageGroup Caption="Current View">
+                        <dxb:BarItemSelector  SelectedItem="{Binding MergerdTestViewType, Mode=TwoWay}">
+                            <dxb:BarItemSelector.ItemLinksSource>
+                                <sys:ArrayList>
+                                    <mif:MergerdTestViewType>Diff</mif:MergerdTestViewType>
+                                    <mif:MergerdTestViewType>Before</mif:MergerdTestViewType>
+                                    <mif:MergerdTestViewType>Current</mif:MergerdTestViewType>
+                                </sys:ArrayList>
+                            </dxb:BarItemSelector.ItemLinksSource>
+                            <dxb:BarItemSelector.ItemTemplate>
+                                <DataTemplate>
+                                    <ContentControl>
+                                        <dxb:BarCheckItem Content="{Binding}" RibbonStyle="SmallWithText"/>
+                                    </ContentControl>
+                                </DataTemplate>
+                            </dxb:BarItemSelector.ItemTemplate>
+                        </dxb:BarItemSelector>
+                    </dxr:RibbonPageGroup>
                 </dxr:RibbonPage>
             </dxr:RibbonDefaultPageCategory>
         </dxr:RibbonControl>
         <dxdo:LayoutGroup Orientation="Vertical" ShowCaption="False">
-            <dxdo:LayoutPanel DataContext="{Binding TestInfoModel.TestInfo.TestInfo}" ShowCaption="True" Caption="Merged" ShowCloseButton="False" ShowPinButton="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False">
+            <dxdo:LayoutPanel ShowCaption="True" ShowCloseButton="False" ShowPinButton="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False">
+                <dxdo:LayoutPanel.Caption>
+                    <dxe:ComboBoxEdit DataContext="{Binding DataContext}" EditValue="{Binding MergerdTestViewType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsTextEditable="False">
+                        <dxe:ComboBoxEdit.ItemsSource>
+                            <sys:ArrayList>
+                                <mif:MergerdTestViewType>Diff</mif:MergerdTestViewType>
+                                <mif:MergerdTestViewType>Before</mif:MergerdTestViewType>
+                                <mif:MergerdTestViewType>Current</mif:MergerdTestViewType>
+                            </sys:ArrayList>
+                        </dxe:ComboBoxEdit.ItemsSource>
+                    </dxe:ComboBoxEdit>
+                </dxdo:LayoutPanel.Caption>
                 <Grid>
-                    <ContentControl x:Name="before" Content="{Binding ImageBeforeArr}" ContentTemplate="{StaticResource ResourceKey=DraggableScrollViewerDataTemplate}"/>
-                    <ContentControl x:Name="current" Content="{Binding ImageCurrentArr}" ContentTemplate="{StaticResource ResourceKey=DraggableScrollViewerDataTemplate}" Visibility="Hidden"/>
-                    <ContentControl x:Name="diff" Content="{Binding ImageDiffArr}" ContentTemplate="{StaticResource ResourceKey=DraggableScrollViewerDataTemplate}" Visibility="Hidden"/>
+                    <ContentControl x:Name="before" Content="{Binding Path=TestInfoModel.TestInfo.TestInfo.ImageBeforeArr}" ContentTemplate="{StaticResource ResourceKey=DraggableScrollViewerDataTemplate}"
+                                    Visibility="{DXBinding Expr='MergerdTestViewType eq $mif:MergerdTestViewType.Before', Converter={StaticResource VisibilityConverter}}"/>
+                    <ContentControl x:Name="current" Content="{Binding Path=TestInfoModel.TestInfo.TestInfo.ImageCurrentArr}" ContentTemplate="{StaticResource ResourceKey=DraggableScrollViewerDataTemplate}"
+                                    Visibility="{DXBinding Expr='MergerdTestViewType eq $mif:MergerdTestViewType.Current', Converter={StaticResource VisibilityConverter}}"/>
+                    <ContentControl x:Name="diff" Content="{Binding Path=TestInfoModel.TestInfo.TestInfo.ImageDiffArr}" ContentTemplate="{StaticResource ResourceKey=DraggableScrollViewerDataTemplate}"
+                                    Visibility="{DXBinding Expr='MergerdTestViewType eq $mif:MergerdTestViewType.Diff', Converter={StaticResource VisibilityConverter}}"/>
                 </Grid>
             </dxdo:LayoutPanel>
             <dxdo:LayoutPanel ItemHeight="150" ShowCaption="False" DataContext="{Binding TestInfoModel.TestInfo.TestInfo}">
@@ -62,25 +100,6 @@
                         <behaviors:AvalonEditTextBindingBehavior Text="{Binding Path=TextDiff}"/>
                     </dxmvvm:Interaction.Behaviors>
                 </avalonedit:TextEditor>
-            </dxdo:LayoutPanel>
-            <dxdo:LayoutPanel ShowBorder="False" ShowCaption="False" ItemHeight="Auto">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <Button Content="Diff" Padding="10" Margin="5">
-                        <dxmvvm:Interaction.Behaviors>
-                            <behaviors:MergedTestInfoButtonBehavior Hide1="{Binding ElementName=before}" Hide2="{Binding ElementName=current}" Show="{Binding ElementName=diff}"/>
-                        </dxmvvm:Interaction.Behaviors>
-                    </Button>
-                    <Button Content="Original" Padding="10" Margin="5">
-                        <dxmvvm:Interaction.Behaviors>
-                            <behaviors:MergedTestInfoButtonBehavior Hide1="{Binding ElementName=diff}" Hide2="{Binding ElementName=current}" Show="{Binding ElementName=before}"/>
-                        </dxmvvm:Interaction.Behaviors>
-                    </Button>
-                    <Button Content="Current" Padding="10" Margin="5">
-                        <dxmvvm:Interaction.Behaviors>
-                            <behaviors:MergedTestInfoButtonBehavior Hide1="{Binding ElementName=diff}" Hide2="{Binding ElementName=before}" Show="{Binding ElementName=current}"/>
-                        </dxmvvm:Interaction.Behaviors>
-                    </Button>
-                </StackPanel>
             </dxdo:LayoutPanel>
             <dxdo:LayoutPanel Background="#55FF0000" ItemWidth="*" ItemHeight="Auto" ShowBorder="False" ShowCaption="False" Visibility="{Binding Path='TestInfoModel.TestInfo.Valid', Converter={StaticResource InvalidToVisibilityConverter}}">
                 <StackPanel>
