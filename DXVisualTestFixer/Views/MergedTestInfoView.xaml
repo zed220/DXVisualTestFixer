@@ -114,7 +114,7 @@
             </dxdo:LayoutPanel>
             <dxdo:LayoutGroup Orientation="Horizontal" ItemHeight="Auto">
                 <dxdo:LayoutPanel ItemWidth="*" ShowBorder="False" ShowCaption="False">
-                    <TextBlock Margin="4" VerticalAlignment="Center" Text="{DXBinding Expr='TestInfoModel.TestInfo.ToLog()'}"/>
+                    <dxe:TextEdit Margin="4" VerticalAlignment="Center" EditValue="{DXBinding Expr='TestInfoModel.TestInfo.ToLog()', Mode=OneWay}" IsReadOnly="True" ShowBorder="False"/>
                 </dxdo:LayoutPanel>
                 <dxdo:LayoutPanel ShowBorder="False" ShowCaption="False" ItemWidth="Auto">
                     <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">

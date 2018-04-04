@@ -144,7 +144,7 @@ namespace DXVisualTestFixer.Core {
             string pathWithExtension = Path.ChangeExtension(path, ".xml");
             if(!File.Exists(pathWithExtension)) {
                 //log
-                Debug.WriteLine("fire LoadTextFile");
+                //Debug.WriteLine("fire LoadTextFile");
                 return;
             }
             saveAction(File.ReadAllText(pathWithExtension));
@@ -202,7 +202,7 @@ namespace DXVisualTestFixer.Core {
         }
         static bool LoadImage(string path, Action<byte[]> saveAction) {
             if(!File.Exists(path)) {
-                Debug.WriteLine("fire LoadImage");
+                //Debug.WriteLine("fire LoadImage");
                 return false;
             }
             saveAction(File.ReadAllBytes(path));

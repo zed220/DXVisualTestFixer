@@ -31,7 +31,10 @@ namespace DXVisualTestFixer.Core {
         static string GetTestName(string testNameAndNamespace) {
             if(!testNameAndNamespace.Contains('.'))
                 return testNameAndNamespace;
-            return testNameAndNamespace.Split('.').Last();
+            if(!testNameAndNamespace.Contains('('))
+                return testNameAndNamespace.Split('.').Last();
+            string firstTestNamePart = testNameAndNamespace.Split('(').First();
+            return GetTestName(firstTestNamePart) + testNameAndNamespace.Remove(0, firstTestNamePart.Length);
         }
 
         public static CorpDirTestInfo CreateError(FarmTaskInfo farmTaskInfo, string testNameAndNamespace, string errorText, string stackTrace) {
