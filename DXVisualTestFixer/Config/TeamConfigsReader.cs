@@ -43,6 +43,9 @@ namespace DXVisualTestFixer.Configuration {
                 return Directory.GetFiles(dir, "*.config", SearchOption.AllDirectories).Select(Serializer.Deserialize<Team>).ToList();
             return new List<Team>();
         }
+        public static List<Team> GetAllTeams() {
+            return new List<Team>(configs);
+        }
         //public bool HasConfig(string name) {
         //    return configs.ContainsKey(name);
         //}

@@ -15,8 +15,8 @@
              xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
              xmlns:controls="clr-namespace:DXVisualTestFixer.Controls"
              xmlns:viewModels="clr-namespace:DXVisualTestFixer.ViewModels"
-             xmlns:core="clr-namespace:DXVisualTestFixer.Core"
              xmlns:behaviors="clr-namespace:DXVisualTestFixer.Behaviors"
+             xmlns:root="clr-namespace:DXVisualTestFixer"
              xmlns:converters="clr-namespace:DXVisualTestFixer.Converters"
              xmlns:dxgt="http://schemas.devexpress.com/winfx/2008/xaml/grid/themekeys"
              xmlns:sys="clr-namespace:System.Collections;assembly=mscorlib"
@@ -24,8 +24,8 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
-        <converters:TestViewTypeConverter x:Key="TestViewTypeConverterSplit" TrueValue="{x:Static mif:TestViewType.Split}" FalseValue="{x:Static mif:TestViewType.Merged}"/>
-        <converters:TestViewTypeConverter x:Key="TestViewTypeConverterMerged" TrueValue="{x:Static mif:TestViewType.Merged}" FalseValue="{x:Static mif:TestViewType.Split}"/>
+        <converters:TestViewTypeConverter x:Key="TestViewTypeConverterSplit" TrueValue="{x:Static root:TestViewType.Split}" FalseValue="{x:Static root:TestViewType.Merged}"/>
+        <converters:TestViewTypeConverter x:Key="TestViewTypeConverterMerged" TrueValue="{x:Static root:TestViewType.Merged}" FalseValue="{x:Static root:TestViewType.Split}"/>
         <converters:StackPanelToTooltipConverter x:Key="StackPanelToTooltipConverter"/>
         <Style TargetType="{x:Type dxe:ComboBoxEdit}">
             <Setter Property="Margin" Value="4"/>
@@ -85,6 +85,21 @@
                 </Style>
             </dxmvvm:UIWindowRegion.WindowStyle>
         </dxmvvm:UIWindowRegion>
+        <dxmvvm:UIWindowRegion x:Name="repositoryOptimizerService" RegionName="{x:Static mif:Regions.RepositoryOptimizer}" WindowShowMode="Dialog" SetWindowOwner="True">
+            <dxmvvm:UIWindowRegion.WindowFactory>
+                <DataTemplate>
+                    <dx:DXDialogWindow/>
+                </DataTemplate>
+            </dxmvvm:UIWindowRegion.WindowFactory>
+            <dxmvvm:UIWindowRegion.WindowStyle>
+                <Style TargetType="dx:DXDialogWindow">
+                    <Setter Property="Width" Value="1000"/>
+                    <Setter Property="Height" Value="800"/>
+                    <Setter Property="Title" Value="Repository Optimizer"/>
+                    <Setter Property="CommandsSource" Value="{Binding DialogCommands}"/>
+                </Style>
+            </dxmvvm:UIWindowRegion.WindowStyle>
+        </dxmvvm:UIWindowRegion>
     </dxmvvm:Interaction.Behaviors>
     <Grid>
         <Grid.RowDefinitions>
@@ -138,6 +153,14 @@
                             </dxb:BarButtonItem.GlyphTemplate>
                         </dxb:BarButtonItem>
                     </dxr:RibbonPageGroup>
+                    <dxr:RibbonPageGroup Caption="Service">
+                        <dxb:BarButtonItem RibbonStyle="Large" 
+                                           GlyphSize="Large" 
+                                           Content="Check Unused Files"
+                                           Command="{DXCommand Execute='ShowRepositoryOptimizer()'}"
+                                           LargeGlyph="{dx:DXImageOffice2013 Image=RemoveItem_32x32.png}">
+                        </dxb:BarButtonItem>
+                    </dxr:RibbonPageGroup>
                     <dxr:RibbonPageGroup Caption="Settings">
                         <dxb:BarButtonItem
                             RibbonStyle="Large" 
@@ -151,8 +174,8 @@
                         <dxb:BarItemSelector  SelectedItem="{Binding TestViewType, Mode=TwoWay}">
                             <dxb:BarItemSelector.ItemLinksSource>
                                 <sys:ArrayList>
-                                    <mif:TestViewType>Split</mif:TestViewType>
-                                    <mif:TestViewType>Merged</mif:TestViewType>
+                                    <root:TestViewType>Split</root:TestViewType>
+                                    <root:TestViewType>Merged</root:TestViewType>
                                 </sys:ArrayList>
                             </dxb:BarItemSelector.ItemLinksSource>
                             <dxb:BarItemSelector.ItemTemplate>
@@ -256,16 +279,22 @@
                                 <dxg:GridSummaryItem SummaryType="Count" Alignment="Left"/>
                             </dxg:GridControl.TotalSummary>
                             <dxg:GridControl.View>
-                                <controls:TableViewAdvNavigation AllowEditing="True" ShowVerticalLines="False" ShowIndicator="False" ShowHorizontalLines="False" ShowColumnHeaders="False" 
+                                <controls:TableViewAdvNavigation x:Name="view" AllowEditing="True" ShowVerticalLines="False" ShowIndicator="False" ShowHorizontalLines="False" ShowColumnHeaders="False" 
                                                                  ShowGroupPanel="False" ShowFixedTotalSummary="True" RowDoubleClick="{DXEvent Handler='@s.DoubleClick(@args)'}">
+                                    <dxb:BarManager.DXContextMenu>
+                                        <dxb:PopupMenu>
+                                            <dxb:BarButtonItem Content="Commit All In Viewport" Glyph="{dx:DXImage Image=SelectAll_16x16.png}" Command="{DXCommand Execute='@e(view).CommitAllInViewport()'}"/>
+                                            <dxb:BarButtonItem Content="Clear All Commits" Glyph="{dx:DXImageOffice2013 Image=Clear_16x16.png}" Command="{DXCommand Execute='ClearCommits()'}"/>
+                                        </dxb:PopupMenu>
+                                    </dxb:BarManager.DXContextMenu>
                                     <dxmvvm:Interaction.Behaviors>
                                         <dxmvvm:EventToCommand EventName="MoveNext" Command="{DXCommand Execute='@s.AssociatedObject.MoveNextDataRow()'}" SourceObject="{Binding}"/>
                                         <dxmvvm:EventToCommand EventName="MovePrev" Command="{DXCommand Execute='@s.AssociatedObject.MovePrevDataRow()'}" SourceObject="{Binding}"/>
                                     </dxmvvm:Interaction.Behaviors>
                                     <controls:TableViewAdvNavigation.FormatConditions>
                                         <dxg:FormatCondition FieldName="CommitChange" ValueRule="Equal" Value1="True" PredefinedFormatName="YellowFillWithDarkYellowText" ApplyToRow="True"/>
-                                        <dxg:FormatCondition FieldName="Valid" ValueRule="Equal" Value1="{x:Static core:TestState.Invalid}" PredefinedFormatName="LightRedFillWithDarkRedText" ApplyToRow="True"/>
-                                        <dxg:FormatCondition FieldName="Valid" ValueRule="Equal" Value1="{x:Static core:TestState.Fixed}" PredefinedFormatName="GreenFillWithDarkGreenText" ApplyToRow="True"/>
+                                        <dxg:FormatCondition FieldName="Valid" ValueRule="Equal" Value1="{x:Static root:TestState.Invalid}" PredefinedFormatName="LightRedFillWithDarkRedText" ApplyToRow="True"/>
+                                        <dxg:FormatCondition FieldName="Valid" ValueRule="Equal" Value1="{x:Static root:TestState.Fixed}" PredefinedFormatName="GreenFillWithDarkGreenText" ApplyToRow="True"/>
                                     </controls:TableViewAdvNavigation.FormatConditions>
                                 </controls:TableViewAdvNavigation>
                             </dxg:GridControl.View>

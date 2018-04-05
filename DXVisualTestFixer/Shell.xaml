@@ -14,6 +14,7 @@
         ShowActivated="True"
         mc:Ignorable="d"
         WindowKind="Ribbon"
+        Icon="89.ico"
         Title="{DXBinding Expr='`Visual Tests Tool v` + $configuration:VersionInfo.VersionString'}" MinHeight="768" MinWidth="1024">
     <Grid>
         <ContentControl x:Name="content" dxmvvm:UIRegion.Region="{x:Static mif:Regions.Main}"/>

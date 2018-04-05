@@ -24,6 +24,7 @@ namespace DXVisualTestFixer {
             RootContainer.RegisterType<IAppearanceService, AppearanceService>(new ContainerControlledLifetimeManager());
             RootContainer.RegisterType<ITestInfoViewModel, TestInfoViewModel>(new TransientLifetimeManager());
             RootContainer.RegisterType<ISettingsViewModel, SettingsViewModel>(new TransientLifetimeManager());
+            RootContainer.RegisterType<IRepositoryOptimizerViewModel, RepositoryOptimizerViewModel>(new TransientLifetimeManager());
             RootContainer.RegisterType<IUpdateService, UpdateService>(new TransientLifetimeManager());
             RootContainer.RegisterType<IApplyChangesViewModel, ApplyChangesViewModel>(new TransientLifetimeManager());
             RootContainer.RegisterType<IFilterPanelViewModel, FilterPanelViewModel>(new TransientLifetimeManager());

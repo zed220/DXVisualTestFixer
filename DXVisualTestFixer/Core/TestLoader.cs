@@ -7,19 +7,29 @@ using System.Threading.Tasks;
 using System.Xml;
 
 namespace DXVisualTestFixer.Core {
+    public class CorpDirTestInfoContainer {
+        public CorpDirTestInfoContainer(List<CorpDirTestInfo> failedTests, List<string> usedFiles) {
+            FailedTests = failedTests;
+            UsedFiles = usedFiles;
+        }
+
+        public List<CorpDirTestInfo> FailedTests { get; }
+        public List<string> UsedFiles { get; }
+    }
+
     public static class TestLoader {
-        public static List<CorpDirTestInfo> LoadFromInfo(FarmTaskInfo taskInfo, string realUrl) {
-            List<CorpDirTestInfo> result = new List<CorpDirTestInfo>();
+        public static CorpDirTestInfoContainer LoadFromInfo(FarmTaskInfo taskInfo, string realUrl) {
+            List<CorpDirTestInfo> failedTests = new List<CorpDirTestInfo>();
             if(realUrl == null || !realUrl.Contains("ViewBuildReport.aspx")) {
-                return TestLoader_Old.LoadFromUri(taskInfo);
+                throw new NotSupportedException("Contact Petr Zinovyev, please.");
             }
             XmlDocument myXmlDocument = new XmlDocument();
             myXmlDocument.Load(realUrl.Replace("ViewBuildReport.aspx", "XmlBuildLog.xml"));
-            List<Task<List<CorpDirTestInfo>>> allTasks = new List<Task<List<CorpDirTestInfo>>>();
+            List<Task<List<CorpDirTestInfo>>> failedTestsTasks = new List<Task<List<CorpDirTestInfo>>>();
             foreach(XmlElement testCaseXml in FindFailedTests(myXmlDocument)) {
                 string testNameAndNamespace = testCaseXml.GetAttribute("name");
                 XmlNode failureNode = testCaseXml.FindByName("failure");
-                allTasks.Add(Task.Factory.StartNew<List<CorpDirTestInfo>>(() => {
+                failedTestsTasks.Add(Task.Factory.StartNew<List<CorpDirTestInfo>>(() => {
                     XmlNode resultNode = failureNode.FindByName("message");
                     XmlNode stackTraceNode = failureNode.FindByName("stack-trace");
                     List<CorpDirTestInfo> localRes = new List<CorpDirTestInfo>();
@@ -27,18 +37,37 @@ namespace DXVisualTestFixer.Core {
                     return localRes;
                 }));
             }
-            Task.WaitAll(allTasks.ToArray());
-            allTasks.ForEach(t => result.AddRange(t.Result));
-            return result;
+            Task.WaitAll(failedTestsTasks.ToArray());
+            failedTestsTasks.ForEach(t => failedTests.AddRange(t.Result));
+            return new CorpDirTestInfoContainer(failedTests, FindUsedFiles(myXmlDocument).ToList());
         }
         static IEnumerable<XmlElement> FindFailedTests(XmlDocument myXmlDocument) {
-            XmlNode buildNode = myXmlDocument.FindByName("cruisecontrol")?.FindByName("build");
+            XmlNode buildNode = FindBuildNode(myXmlDocument);
             if(buildNode == null)
                 yield break;
             foreach(var testResults in buildNode.FindAllByName("test-results")) {
                 foreach(XmlElement subNode in FindAllFailedTests(testResults))
                     yield return subNode;
             }
+        }
+        static IEnumerable<string> FindUsedFiles(XmlDocument myXmlDocument) {
+            XmlNode buildNode = FindBuildNode(myXmlDocument);
+            if(buildNode == null)
+                yield break;
+            foreach(var usedFilesNode in buildNode.FindAllByName("FileUsingLog")) {
+                foreach(string usedFile in usedFilesNode.InnerText.Split('\n')) {
+                    if(String.IsNullOrEmpty(usedFile))
+                        continue;
+                    string result = usedFile.Replace("\r", "");
+                    if(result.Contains(@"\VisualTests\"))
+                        yield return result.Split(new[] { @"\VisualTests\" }, StringSplitOptions.RemoveEmptyEntries).Last();
+                    else
+                        yield return result;
+                }
+            }
+        }
+        static XmlNode FindBuildNode(XmlDocument myXmlDocument) {
+            return myXmlDocument.FindByName("cruisecontrol")?.FindByName("build");
         }
         static IEnumerable<XmlElement> FindAllFailedTests(XmlNode testResults) {
             foreach(XmlNode node in testResults.ChildNodes) {

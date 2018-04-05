@@ -77,6 +77,10 @@ namespace DXVisualTestFixer.ViewModels {
             get { return GetProperty(() => TestService); }
             set { SetProperty(() => TestService, value); }
         }
+        public Dictionary<Repository, List<string>> UsedFiles {
+            get { return GetProperty(() => UsedFiles); }
+            set { SetProperty(() => UsedFiles, value); }
+        }
 
         public MainViewModel() {
             LoadingProgressController = new LoadingProgressController();
@@ -123,11 +127,14 @@ namespace DXVisualTestFixer.ViewModels {
             ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage("Refreshing tests");
             LoadingProgressController.Start();
             List<FarmTaskInfo> failedTasks = GetAllTasks();
-            List<TestInfo> testInfos = await TestService.LoadTestsAsync(failedTasks).ConfigureAwait(false);
-            var tests = testInfos.Where(t => t != null).Select(t => new TestInfoWrapper(this, t)).ToList();
+            var testInfoContainer = await TestService.LoadTestsAsync(failedTasks).ConfigureAwait(false);
+            var tests = testInfoContainer.TestList.Where(t => t != null).Select(t => new TestInfoWrapper(this, t)).ToList();
             ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage("");
             await App.Current.Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
                 Tests = tests;
+                UsedFiles = testInfoContainer.UsedFiles;
+                //var vm = new RepositoryOptimizerViewModel();
+                //((ISupportParameter)vm).Parameter = UsedFiles;
                 Status = ProgramStatus.Idle;
                 LoadingProgressController.Stop();
             }));
@@ -200,7 +207,18 @@ namespace DXVisualTestFixer.ViewModels {
             CurrentFilter = op;
         }
 
+        public void ShowRepositoryOptimizer() {
+            if(CheckHasUncommittedChanges() || CheckAlarmAdmin())
+                return;
+            TestsToCommitCount = 0;
+            ModuleManager.DefaultWindowManager.Show(Regions.RepositoryOptimizer, Modules.RepositoryOptimizer, UsedFiles);
+            ModuleManager.DefaultWindowManager.Clear(Regions.RepositoryOptimizer);
+            UpdateContent();
+        }
         public void ShowSettings() {
+            if(CheckHasUncommittedChanges())
+                return;
+            TestsToCommitCount = 0;
             ModuleManager.DefaultWindowManager.Show(Regions.Settings, Modules.Settings);
             ModuleManager.DefaultWindowManager.Clear(Regions.Settings);
             UpdateConfig();
@@ -232,12 +250,23 @@ namespace DXVisualTestFixer.ViewModels {
             if(!TestsService.ApplyTest(testWrapper.TestInfo, ShowCheckOutMessageBox))
                 GetService<IMessageBoxService>()?.ShowMessage("Test not fixed \n" + testWrapper.ToLog(), "Test not fixed", MessageButton.OK, MessageIcon.Information);
         }
+        bool CheckHasUncommittedChanges() {
+            if(TestsToCommitCount == 0)
+                return false;
+            MessageResult? result = GetService<IMessageBoxService>()?.ShowMessage("You has uncommitted tests! Do you want to refresh tests list and flush all uncommitted tests?", "Uncommitted tests", MessageButton.OKCancel, MessageIcon.Information);
+            if(!result.HasValue || result.Value != MessageResult.OK)
+                return true;
+            return false;
+        }
+        bool CheckAlarmAdmin() {
+            MessageResult? result = GetService<IMessageBoxService>()?.ShowMessage("Warning! This tool is powerful and dangerous. Unbridled using may cause repository errors! Are you really sure?", "Warning", MessageButton.OKCancel, MessageIcon.Warning);
+            if(!result.HasValue || result.Value != MessageResult.OK)
+                return true;
+            return false;
+        }
         public void RefreshTestList() {
-            if(TestsToCommitCount > 0) {
-                MessageResult? result = GetService<IMessageBoxService>()?.ShowMessage("You has uncommitted tests! Do you want to refresh tests list and flush all uncommitted tests?", "Uncommitted tests", MessageButton.OKCancel, MessageIcon.Information);
-                if(!result.HasValue || result.Value != MessageResult.OK)
-                    return;
-            }
+            if(CheckHasUncommittedChanges())
+                return;
             ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage("Waiting response from farm integrator");
             Tests = null;
             Status = ProgramStatus.Loading;
@@ -249,6 +278,13 @@ namespace DXVisualTestFixer.ViewModels {
         }
         void MovePrevCore() {
             MovePrev?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void ClearCommits() {
+            if(TestsToCommitCount == 0)
+                return;
+            foreach(var test in Tests)
+                test.CommitChange = false;
         }
 
         //public void InstallUpdateSyncWithInfo(bool informNoUpdate) {

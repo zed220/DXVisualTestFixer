@@ -11,13 +11,6 @@ using System.Threading.Tasks;
 using System.Windows;
 
 namespace DXVisualTestFixer.Mif {
-    public enum TestViewType { Split, Merged }
-    public enum MergerdTestViewType {
-        Diff,
-        Before,
-        Current,
-    }
-
     public static class MifRegistrator {
         static MifRegistrator() {
             ViewModelLocator.Default = new VMLocator();
@@ -27,6 +20,7 @@ namespace DXVisualTestFixer.Mif {
             ModuleManager.DefaultManager.Register(Regions.Settings, new Module(Modules.Settings, ServiceLocator.Current.GetInstance<ISettingsViewModel>, typeof(SettingsView)));
             ModuleManager.DefaultManager.Register(Regions.ApplyChanges, new Module(Modules.ApplyChanges, ServiceLocator.Current.GetInstance<IApplyChangesViewModel>, typeof(ApplyChangesView)));
             ModuleManager.DefaultManager.Register(Regions.FilterPanel, new Module(Modules.FilterPanel, ServiceLocator.Current.GetInstance<IFilterPanelViewModel>, typeof(FilterPanelView)));
+            ModuleManager.DefaultManager.Register(Regions.RepositoryOptimizer, new Module(Modules.RepositoryOptimizer, ServiceLocator.Current.GetInstance<IRepositoryOptimizerViewModel>, typeof(RepositoryOptimizerView)));
         }
 
         public static void InitializeTestInfo(TestViewType viewType) {

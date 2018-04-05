@@ -17,13 +17,27 @@ using System.Windows.Media.Imaging;
 
 namespace DXVisualTestFixer.Core {
     public class TestInfoCached {
-        public TestInfoCached(string realUrl, List<TestInfo> testList) {
+        public TestInfoCached(Repository repository, string realUrl, List<TestInfo> testList, List<string> usedFiles) {
+            Repository = repository;
             RealUrl = realUrl;
             TestList = testList;
+            UsedFiles = usedFiles;
         }
 
+        public Repository Repository { get; }
         public string RealUrl { get; }
         public List<TestInfo> TestList { get; }
+        public List<string> UsedFiles { get; }
+    }
+
+    public class TestInfoContainer {
+        public TestInfoContainer() {
+            TestList = new List<TestInfo>();
+            UsedFiles = new Dictionary<Repository, List<string>>();
+        }
+
+        public List<TestInfo> TestList { get; }
+        public Dictionary<Repository, List<string>> UsedFiles { get; }
     }
 
     public class TestsService {
@@ -35,35 +49,42 @@ namespace DXVisualTestFixer.Core {
             this.loadingProgressController = loadingProgressController;
         }
 
-        public async Task<List<TestInfo>> LoadTestsAsync(List<FarmTaskInfo> farmTasks) {
+        public async Task<TestInfoContainer> LoadTestsAsync(List<FarmTaskInfo> farmTasks) {
             loadingProgressController.Flush();
             loadingProgressController.Enlarge(farmTasks.Count);
             ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage($"Collecting tests information from farm");
-            List<Task<List<TestInfo>>> allTasks = new List<Task<List<TestInfo>>>();
+            List<Task<TestInfoCached>> allTasks = new List<Task<TestInfoCached>>();
             foreach(FarmTaskInfo farmTaskInfo in farmTasks) {
                 FarmTaskInfo info = farmTaskInfo;
                 var task = LoadTestsCoreAsync(info);
                 allTasks.Add(task);
             }
-            return (await Task.WhenAll(allTasks.ToArray()).ConfigureAwait(false)).SelectMany(i => i).ToList();
+            TestInfoContainer result = new TestInfoContainer();
+            foreach(TestInfoCached cached in await Task.WhenAll(allTasks.ToArray()).ConfigureAwait(false)) {
+                result.TestList.AddRange(cached.TestList);
+                result.UsedFiles[cached.Repository] = cached.UsedFiles;
+            }
+            return result;
         }
-        async Task<List<TestInfo>> LoadTestsCoreAsync(FarmTaskInfo farmTaskInfo) {
+        async Task<TestInfoCached> LoadTestsCoreAsync(FarmTaskInfo farmTaskInfo) {
             string realUrl = await CapureRealUrl(farmTaskInfo.Url).ConfigureAwait(false);
             if(RealUrlCache.TryGetValue(farmTaskInfo, out TestInfoCached cache)) {
                 if(cache.RealUrl == realUrl) {
                     ActualizeTests(cache.TestList);
-                    return cache.TestList;
+                    return cache;
                 }
             }
             List<Task<TestInfo>> allTasks = new List<Task<TestInfo>>();
-            foreach(CorpDirTestInfo corpDirTestInfo in LoadFromFarmTaskInfo(farmTaskInfo, realUrl)) {
+            CorpDirTestInfoContainer corpDirTestInfoContainer = LoadFromFarmTaskInfo(farmTaskInfo, realUrl);
+            foreach(var corpDirTestInfo in corpDirTestInfoContainer.FailedTests) {
                 loadingProgressController.IncreaseProgress(1);
                 CorpDirTestInfo info = corpDirTestInfo;
                 allTasks.Add(Task.Factory.StartNew<TestInfo>(() => LoadTestInfo(info)));
             }
             List<TestInfo> result = (await Task.WhenAll(allTasks.ToArray()).ConfigureAwait(false)).ToList();
-            RealUrlCache[farmTaskInfo] = new TestInfoCached(realUrl, result);
-            return result;
+            TestInfoCached cachedValue = new TestInfoCached(farmTaskInfo.Repository, realUrl, result, corpDirTestInfoContainer.UsedFiles);
+            RealUrlCache[farmTaskInfo] = cachedValue;
+            return cachedValue;
         }
 
         void ActualizeTests(List<TestInfo> testList) {
@@ -75,10 +96,10 @@ namespace DXVisualTestFixer.Core {
             Task.WaitAll(allTasks.ToArray());
         }
 
-        List<CorpDirTestInfo> LoadFromFarmTaskInfo(FarmTaskInfo farmTaskInfo, string realUrl) {
-            List<CorpDirTestInfo> corpDirTestInfoList = TestLoader.LoadFromInfo(farmTaskInfo, realUrl);
-            loadingProgressController.Enlarge(corpDirTestInfoList.Count);
-            return corpDirTestInfoList;
+        CorpDirTestInfoContainer LoadFromFarmTaskInfo(FarmTaskInfo farmTaskInfo, string realUrl) {
+            CorpDirTestInfoContainer corpDirTestInfoContainer = TestLoader.LoadFromInfo(farmTaskInfo, realUrl);
+            loadingProgressController.Enlarge(corpDirTestInfoContainer.FailedTests.Count);
+            return corpDirTestInfoContainer;
         }
         static Task<string> CapureRealUrl(string url) {
             return Task.Factory.StartNew<string>(() => {
@@ -242,9 +263,14 @@ namespace DXVisualTestFixer.Core {
                 return;
             }
         }
-
+        public static string GetResourcePath(Repository repository, string relativePath) {
+            return Path.Combine(repository.Path, relativePath);
+        }
+        public static Repository GetRepository(string version) {
+            return ConfigSerializer.GetConfig().Repositories.Where(r => r.Version == version).FirstOrDefault();
+        }
         static string GetTestResourceName(TestInfo test, bool checkDirectoryExists) {
-            var repository = ConfigSerializer.GetConfig().Repositories.Where(r => r.Version == test.Version).FirstOrDefault();
+            var repository = GetRepository(test.Version);
             if(repository == null) {
                 test.LogCustomError($"Config not found for version \"{test.Version}\"");
                 return null;
@@ -306,9 +332,5 @@ namespace DXVisualTestFixer.Core {
             }
             return false;
         }
-    }
-
-    public enum TestState {
-        Valid, Invalid, Fixed, Error
     }
 }

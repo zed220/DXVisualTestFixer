@@ -37,9 +37,22 @@ namespace DXVisualTestFixer.Controls {
                 return;
             e.Handled = true;
             TestInfoWrapper testInfoWrapper = Grid.GetRow(e.HitInfo.RowHandle) as TestInfoWrapper;
-            if(testInfoWrapper == null || testInfoWrapper.Valid == Core.TestState.Error)
+            if(testInfoWrapper == null || testInfoWrapper.Valid == TestState.Error)
                 return;
             testInfoWrapper.CommitChange = !testInfoWrapper.CommitChange;
+        }
+
+        public void CommitAllInViewport() {
+            int i = 0;
+            while(i++ < Grid.VisibleRowCount - 1) {
+                int rowHandle = Grid.GetRowHandleByVisibleIndex(i);
+                if(!Grid.IsValidRowHandle(rowHandle) || Grid.IsGroupRowHandle(rowHandle))
+                    continue;
+                TestInfoWrapper wrapper = Grid.GetRow(rowHandle) as TestInfoWrapper;
+                if(wrapper == null || wrapper.Valid == TestState.Error)
+                    continue;
+                wrapper.CommitChange = true;
+            }
         }
     }
 }

@@ -7,29 +7,19 @@
              xmlns:dxdo="http://schemas.devexpress.com/winfx/2008/xaml/docking"
              xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
              xmlns:dxmmvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+             xmlns:converters="clr-namespace:DXVisualTestFixer.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <converters:DpiErrorConverter x:Key="DpiErrorConverter"/>
+    </UserControl.Resources>
     <dxdo:LayoutGroup ShowCaption="False" AllowDrag="False" Orientation="Vertical">
         <dxdo:LayoutControlItem Caption="Dpi">
-            <dxe:ComboBoxEdit ItemsSource="{Binding DpiList}" EditValue="{Binding SelectedDpis, UpdateSourceTrigger=PropertyChanged}" IsTextEditable="False" IncrementalFiltering="True" AllowDefaultButton="True" ValidateOnTextInput="True">
-                <dxe:ComboBoxEdit.DisplayTextConverter>
-                    <dxmmvm:ObjectToObjectConverter>
-                        <dxmmvm:MapItem Source="0" Target="Error"/>
-                    </dxmmvm:ObjectToObjectConverter>
-                </dxe:ComboBoxEdit.DisplayTextConverter>
+            <dxe:ComboBoxEdit ItemsSource="{Binding DpiList}" EditValue="{Binding SelectedDpis, UpdateSourceTrigger=PropertyChanged}" IsTextEditable="False" IncrementalFiltering="True" AllowDefaultButton="True" ValidateOnTextInput="True"
+                              DisplayTextConverter="{StaticResource DpiErrorConverter}">
                 <dxe:ComboBoxEdit.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock>
-                            <TextBlock.Text>
-                                <Binding Path=".">
-                                    <Binding.Converter>
-                                        <dxmmvm:ObjectToObjectConverter>
-                                            <dxmmvm:MapItem Source="0" Target="Error"/>
-                                        </dxmmvm:ObjectToObjectConverter>
-                                    </Binding.Converter>
-                                </Binding>
-                            </TextBlock.Text>
-                        </TextBlock>
+                        <TextBlock Text="{Binding Converter={StaticResource DpiErrorConverter}}"/>
                     </DataTemplate>
                 </dxe:ComboBoxEdit.ItemTemplate>
                 <dxe:ComboBoxEdit.StyleSettings>

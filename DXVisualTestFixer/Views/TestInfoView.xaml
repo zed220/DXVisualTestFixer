@@ -11,10 +11,10 @@
              xmlns:converters="clr-namespace:DXVisualTestFixer.Converters"
              xmlns:controls="clr-namespace:DXVisualTestFixer.Controls"
              xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
-             xmlns:core="clr-namespace:DXVisualTestFixer.Core"
              xmlns:dxr="http://schemas.devexpress.com/winfx/2008/xaml/ribbon"
              xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
              xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+             xmlns:root="clr-namespace:DXVisualTestFixer"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
@@ -87,10 +87,10 @@
                     <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
                         <Button Content="Prev" Click="{DXEvent Handler='TestInfoModel.MovePrevRow.Invoke()'}" Width="100"/>
                         <Button Content="Next" Click="{DXEvent Handler='TestInfoModel.MoveNextRow.Invoke()'}" Width="100"/>
-                        <Button Content="Valid And Next" Click="{DXEvent Handler='Valid()'}" IsEnabled="{DXBinding Expr='TestInfoModel.TestInfo.Valid == $core:TestState.Valid'}"/>
-                        <Button Content="Commit New Test" Click="{DXEvent Handler='Valid()'}" IsEnabled="{DXBinding Expr='TestInfoModel.TestInfo.Valid == $core:TestState.Invalid'}"
-                                Visibility="{DXBinding Expr='TestInfoModel.TestInfo.Valid == $core:TestState.Invalid', Converter={dxmvvm:BooleanToVisibilityConverter}}"/>
-                        <Button Content="Wrong And Next" Click="{DXEvent Handler='Invalid()'}" IsEnabled="{DXBinding Expr='TestInfoModel.TestInfo.Valid != $core:TestState.Fixed'}"/>
+                        <Button Content="Valid And Next" Click="{DXEvent Handler='Valid()'}" IsEnabled="{DXBinding Expr='TestInfoModel.TestInfo.Valid == $root:TestState.Valid'}"/>
+                        <Button Content="Commit New Test" Click="{DXEvent Handler='Valid()'}" IsEnabled="{DXBinding Expr='TestInfoModel.TestInfo.Valid == $root:TestState.Invalid'}"
+                                Visibility="{DXBinding Expr='TestInfoModel.TestInfo.Valid == $root:TestState.Invalid', Converter={dxmvvm:BooleanToVisibilityConverter}}"/>
+                        <Button Content="Wrong And Next" Click="{DXEvent Handler='Invalid()'}" IsEnabled="{DXBinding Expr='TestInfoModel.TestInfo.Valid != $root:TestState.Fixed'}"/>
                     </StackPanel>
                 </dxdo:LayoutPanel>
             </dxdo:LayoutGroup>
