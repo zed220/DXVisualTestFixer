@@ -87,11 +87,11 @@
                 </dxdo:LayoutPanel.Caption>
                 <Grid>
                     <ContentControl x:Name="before" Content="{Binding Path=TestInfoModel.TestInfo.TestInfo.ImageBeforeArr}" ContentTemplate="{StaticResource ResourceKey=DraggableScrollViewerDataTemplate}"
-                                    Visibility="{DXBinding Expr='MergerdTestViewType eq $mif:MergerdTestViewType.Before', Converter={StaticResource VisibilityConverter}}"/>
+                                    Visibility="{DXBinding Expr='MergerdTestViewType eq $root:MergerdTestViewType.Before', Converter={StaticResource VisibilityConverter}}"/>
                     <ContentControl x:Name="current" Content="{Binding Path=TestInfoModel.TestInfo.TestInfo.ImageCurrentArr}" ContentTemplate="{StaticResource ResourceKey=DraggableScrollViewerDataTemplate}"
-                                    Visibility="{DXBinding Expr='MergerdTestViewType eq $mif:MergerdTestViewType.Current', Converter={StaticResource VisibilityConverter}}"/>
+                                    Visibility="{DXBinding Expr='MergerdTestViewType eq $root:MergerdTestViewType.Current', Converter={StaticResource VisibilityConverter}}"/>
                     <ContentControl x:Name="diff" Content="{Binding Path=TestInfoModel.TestInfo.TestInfo.ImageDiffArr}" ContentTemplate="{StaticResource ResourceKey=DraggableScrollViewerDataTemplate}"
-                                    Visibility="{DXBinding Expr='MergerdTestViewType eq $mif:MergerdTestViewType.Diff', Converter={StaticResource VisibilityConverter}}"/>
+                                    Visibility="{DXBinding Expr='MergerdTestViewType eq $root:MergerdTestViewType.Diff', Converter={StaticResource VisibilityConverter}}"/>
                 </Grid>
             </dxdo:LayoutPanel>
             <dxdo:LayoutPanel ItemHeight="150" ShowCaption="False" DataContext="{Binding TestInfoModel.TestInfo.TestInfo}">
