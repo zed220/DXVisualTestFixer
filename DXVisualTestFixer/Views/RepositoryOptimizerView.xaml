@@ -15,10 +15,9 @@
         <dxdo:LayoutPanel Caption="Unused Files" ShowCloseButton="False" ShowPinButton="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False">
             <dxg:GridControl ItemsSource="{Binding UnusedFiles}" AutoExpandAllGroups="True" ShowBorder="False"
                              ShowLoadingPanel="{DXBinding Expr='Status != $viewModels:ProgramStatus.Idle'}" SelectionMode="Row">
-                <dxg:GridColumn FieldName="Path" Width="*"/>
-                <!--<dxg:GridColumn FieldName="Version" GroupIndex="0"/>
+                <dxg:GridColumn FieldName="Version" GroupIndex="0"/>
                 <dxg:GridColumn FieldName="DirName" GroupIndex="1"/>
-                <dxg:GridColumn FieldName="FileName" Width="*"/>-->
+                <dxg:GridColumn FieldName="FileName" Width="*"/>
                 <dxg:GridControl.TotalSummary>
                     <dxg:GridSummaryItem SummaryType="Count" Alignment="Right"/>
                 </dxg:GridControl.TotalSummary>
@@ -34,10 +33,9 @@
         <dxdo:LayoutPanel Caption="Files To Remove (Drag-Drop files here)" ShowCloseButton="False" ShowPinButton="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False">
             <dxg:GridControl ItemsSource="{Binding RemovedFiles}" AutoExpandAllGroups="True"  ShowBorder="False"
                              ShowLoadingPanel="{DXBinding Expr='Status != $viewModels:ProgramStatus.Idle'}" SelectionMode="Row">
-                <dxg:GridColumn FieldName="Path" Width="*"/>
-                <!--<dxg:GridColumn FieldName="Version" GroupIndex="0"/>
+                <dxg:GridColumn FieldName="Version" GroupIndex="0"/>
                 <dxg:GridColumn FieldName="DirName" GroupIndex="1"/>
-                <dxg:GridColumn FieldName="FileName" Width="*"/>-->
+                <dxg:GridColumn FieldName="FileName" Width="*"/>
                 <dxg:GridControl.TotalSummary>
                     <dxg:GridSummaryItem SummaryType="Count" Alignment="Right"/>
                 </dxg:GridControl.TotalSummary>
