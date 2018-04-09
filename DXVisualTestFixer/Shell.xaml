@@ -16,7 +16,18 @@
         WindowKind="Ribbon"
         Icon="89.ico"
         Title="{DXBinding Expr='`Visual Tests Tool v` + $configuration:VersionInfo.VersionString'}" MinHeight="768" MinWidth="1024">
-    <Grid>
-        <ContentControl x:Name="content" dxmvvm:UIRegion.Region="{x:Static mif:Regions.Main}"/>
-    </Grid>
+    <dx:ThemedWindow.Resources>
+        <Style TargetType="{x:Type dx:HeaderItemControl}">
+            <Setter Property="Command" Value="{Binding Command}"/>
+            <Setter Property="ToolTip" Value="Update application"/>
+            <Setter Property="ContentTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <dx:DXImage x:Name="image" Source="{dx:DXImageOffice2013 Image=MoveUp_16x16.png}" VerticalAlignment="Center" HorizontalAlignment="Center" Height="16" Width="16"/>
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </dx:ThemedWindow.Resources>
+    <ContentControl x:Name="content" dxmvvm:UIRegion.Region="{x:Static mif:Regions.Main}"/>
 </dx:ThemedWindow>

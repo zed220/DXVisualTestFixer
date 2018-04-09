@@ -109,11 +109,7 @@
         </Grid.RowDefinitions>
         <dxr:RibbonControl RibbonStyle="Office2010" ToolbarShowMode="ShowAbove" AllowCustomization="False" MinimizationButtonVisibility="Collapsed" RibbonHeaderVisibility="Visible" 
                            IsEnabled="{DXBinding Expr='Status == $viewModels:ProgramStatus.Idle'}" ToolbarShowCustomizationButton="False" ShowApplicationButton="False"
-                           AsyncMergingEnabled="True" >
-            <dxr:RibbonControl.ToolbarItems>
-                <dxb:BarButtonItem Glyph="{dx:DXImageOffice2013 Image=MoveUp_16x16.png}" GlyphSize="Small" Content="Update requeued" 
-                                   IsVisible="{Binding Path=UpdateService.HasUpdate}" Command="{DXCommand Execute='UpdateService.Update()'}"/>
-            </dxr:RibbonControl.ToolbarItems>
+                           AsyncMergingEnabled="True">
             <dxr:RibbonDefaultPageCategory>
                 <dxr:RibbonPage Caption="Main">
                     <dxr:RibbonPageGroup Caption="Work">

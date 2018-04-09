@@ -13,6 +13,7 @@ using DXVisualTestFixer.Services;
 using System;
 using System.Collections.Generic;
 using System.Deployment.Application;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -69,10 +70,6 @@ namespace DXVisualTestFixer.ViewModels {
             get { return GetProperty(() => CurrentFilter); }
             set { SetProperty(() => CurrentFilter, value); }
         }
-        public IUpdateService UpdateService {
-            get { return GetProperty(() => UpdateService); }
-            set { SetProperty(() => UpdateService, value); }
-        }
         public TestsService TestService {
             get { return GetProperty(() => TestService); }
             set { SetProperty(() => TestService, value); }
@@ -84,11 +81,10 @@ namespace DXVisualTestFixer.ViewModels {
 
         public MainViewModel() {
             LoadingProgressController = new LoadingProgressController();
-            UpdateService = ServiceLocator.Current.GetInstance<IUpdateService>();
             TestService = new TestsService(LoadingProgressController);
-            UpdateService.Start();
             UpdateConfig();
             ServiceLocator.Current.GetInstance<ILoggingService>().MessageReserved += OnLoggingMessageReserved;
+            ServiceLocator.Current.GetInstance<IUpdateService>().Start();
         }
 
         void OnLoggingMessageReserved(object sender, IMessageEventArgs args) {
@@ -133,8 +129,6 @@ namespace DXVisualTestFixer.ViewModels {
             await App.Current.Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
                 Tests = tests;
                 UsedFiles = testInfoContainer.UsedFiles;
-                //var vm = new RepositoryOptimizerViewModel();
-                //((ISupportParameter)vm).Parameter = UsedFiles;
                 Status = ProgramStatus.Idle;
                 LoadingProgressController.Stop();
             }));

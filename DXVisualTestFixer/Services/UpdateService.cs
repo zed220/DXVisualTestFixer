@@ -1,10 +1,14 @@
-﻿using DevExpress.Mvvm;
+﻿using CommonServiceLocator;
+using DevExpress.Mvvm;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Deployment.Application;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using System.Windows.Threading;
 
 namespace DXVisualTestFixer.Services {
@@ -14,26 +18,70 @@ namespace DXVisualTestFixer.Services {
         void Stop();
         bool HasUpdate { get; }
     }
+    public interface IButton {
+        bool IsEnabled { get; set; }
+        ICommand Command { get; set; }
+    }
+
+    public class UpdateButtonModel : BindableBase, IButton {
+        public bool IsEnabled {
+            get { return GetProperty(() => IsEnabled); }
+            set { SetProperty(() => IsEnabled, value); }
+        }
+        public ICommand Command {
+            get { return GetProperty(() => Command); }
+            set { SetProperty(() => Command, value); }
+        }
+    }
+
     public class UpdateService : BindableBase, IUpdateService {
         DispatcherTimer Timer;
         bool isNetworkDeployment;
+        bool isInUpdate = false;
 
+        public UpdateButtonModel UpdateButton {
+            get { return GetProperty(() => UpdateButton); }
+            private set { SetProperty(() => UpdateButton, value, OnUpdateButtonChanged); }
+        }
         public bool HasUpdate {
             get { return GetProperty(() => HasUpdate); }
-            private set { SetProperty(() => HasUpdate, value); }
+            private set { SetProperty(() => HasUpdate, value, OnHasUpdateChanged); }
+        }
+
+        void OnUpdateButtonChanged() {
+            ServiceLocator.Current.GetInstance<IShell>().HeaderItem = UpdateButton;
+        }
+
+        void OnHasUpdateChanged() {
+            if(HasUpdate && UpdateButton != null)
+                return;
+            if(!HasUpdate && UpdateButton == null)
+                return;
+            if(!HasUpdate && UpdateButton != null) {
+                UpdateButton = null;
+                return;
+            }
+            if(HasUpdate && UpdateButton == null) {
+                var updateButton = new UpdateButtonModel();
+                updateButton.Command = new DelegateCommand(Update);
+                updateButton.IsEnabled = true;
+                UpdateButton = updateButton;
+            }
         }
 
         public UpdateService() {
             isNetworkDeployment = ApplicationDeployment.IsNetworkDeployed;
-            if(!isNetworkDeployment)
+            if(!isNetworkDeployment) {
+                HasUpdate = true;
                 return;
+            }
             Timer = new DispatcherTimer(DispatcherPriority.ContextIdle);
             Timer.Interval = TimeSpan.FromMinutes(1);
             Timer.Tick += Timer_Tick;
         }
 
-        void Timer_Tick(object sender, EventArgs e) {
-            CheckUpdate();
+        async void Timer_Tick(object sender, EventArgs e) {
+            await CheckUpdate();
         }
 
         public void Start() {
@@ -55,7 +103,17 @@ namespace DXVisualTestFixer.Services {
             System.Windows.Forms.Application.Restart();
         }
 
-        void CheckUpdate() {
+        async Task CheckUpdate() {
+            if(HasUpdate)
+                return;
+            if(isInUpdate)
+                return;
+            isInUpdate = true;
+            await CheckUpdateCore();
+            isInUpdate = false;
+
+        }
+        async Task CheckUpdateCore() {
             UpdateCheckInfo info = null;
             ApplicationDeployment ad = ApplicationDeployment.CurrentDeployment;
             try {
@@ -73,64 +131,16 @@ namespace DXVisualTestFixer.Services {
             if(!info.UpdateAvailable) {
                 return;
             }
-            HasUpdate = false;
-            ad.Update();
+            bool handled = false;
+            AsyncCompletedEventHandler handler = (sender, e) => {
+                handled = true;
+            };
+            ad.UpdateCompleted += handler;
+            ad.UpdateAsync();
+            while(!handled)
+                await Task.Delay(100);
+            ad.UpdateCompleted -= handler;
             HasUpdate = true;
         }
-
-        //public void Update(IMessageBoxService messageBoxService, bool informNoUpdate) {
-        //    UpdateCheckInfo info = null;
-
-        //    if(ApplicationDeployment.IsNetworkDeployed) {
-        //        ApplicationDeployment ad = ApplicationDeployment.CurrentDeployment;
-        //        try {
-        //            info = ad.CheckForDetailedUpdate();
-        //        }
-        //        catch(DeploymentDownloadException dde) {
-        //            messageBoxService?.ShowMessage("The new version of the application cannot be downloaded at this time. \n\nPlease check your network connection, or try again later. Error: " + dde.Message);
-        //            return;
-        //        }
-        //        catch(InvalidDeploymentException ide) {
-        //            messageBoxService?.ShowMessage("Cannot check for a new version of the application. The ClickOnce deployment is corrupt. Please redeploy the application and try again. Error: " + ide.Message);
-        //            return;
-        //        }
-        //        catch(InvalidOperationException ioe) {
-        //            messageBoxService?.ShowMessage("This application cannot be updated. It is likely not a ClickOnce application. Error: " + ioe.Message);
-        //            return;
-        //        }
-        //        if(!info.UpdateAvailable) {
-        //            if(informNoUpdate)
-        //                messageBoxService?.ShowMessage("No updates available", "No updates available");
-        //            return;
-        //        }
-        //        Boolean doUpdate = true;
-        //        if(!info.IsUpdateRequired) {
-        //            MessageResult? dr = messageBoxService?.ShowMessage("An update is available. Would you like to update the application now?", "Update Available", MessageButton.OKCancel);
-        //            if(dr != MessageResult.OK)
-        //                doUpdate = false;
-        //        }
-        //        else {
-        //            // Display a message that the app MUST reboot. Display the minimum required version.
-        //            messageBoxService?.ShowMessage("This application has detected a mandatory update from your current " + "version to version " +
-        //                info.MinimumRequiredVersion.ToString() +
-        //                ". The application will now install the update and restart.",
-        //                "Update Available", MessageButton.OK,
-        //                MessageIcon.Information);
-        //        }
-
-        //        if(doUpdate) {
-        //            try {
-        //                ad.Update();
-        //                messageBoxService?.ShowMessage("The application has been upgraded, and will now restart.");
-        //                System.Windows.Application.Current.Shutdown();
-        //                System.Windows.Forms.Application.Restart();
-        //            }
-        //            catch(DeploymentDownloadException dde) {
-        //                messageBoxService?.ShowMessage("Cannot install the latest version of the application. \n\nPlease check your network connection, or try again later. Error: " + dde);
-        //                return;
-        //            }
-        //        }
-        //    }
-        //}
     }
 }

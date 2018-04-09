@@ -137,7 +137,7 @@ namespace DXVisualTestFixer.ViewModels {
                     string teamPath = TestsService.GetResourcePath(repository, info.TestResourcesPath);
                     List<string> unUsedFiles = new List<string>();
                     foreach(string file in Directory.EnumerateFiles(teamPath, "*", SearchOption.AllDirectories)) {
-                        if(!usedFiles.Contains(file))
+                        if(!usedFiles.Contains(file.ToLower()))
                             result.Add(new UnusedFileModel(file, team.Version));
                     }
                 }
@@ -150,7 +150,7 @@ namespace DXVisualTestFixer.ViewModels {
                 foreach(string fileRelPath in usedFileByRep.Value) {
                     string filePath = TestsService.GetResourcePath(usedFileByRep.Key, fileRelPath);
                     if(File.Exists(filePath))
-                        usedFiles.Add(filePath);
+                        usedFiles.Add(filePath.ToLower());
                 }
             }
             return usedFiles;

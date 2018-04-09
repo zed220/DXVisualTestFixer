@@ -60,7 +60,7 @@ namespace DXVisualTestFixer.Core {
                         continue;
                     string result = usedFile.Replace("\r", "");
                     if(result.Contains(@"\VisualTests\"))
-                        yield return result.Split(new[] { @"\VisualTests\" }, StringSplitOptions.RemoveEmptyEntries).Last();
+                        yield return result.Split(new[] { @"\VisualTests\" }, StringSplitOptions.RemoveEmptyEntries).Last().ToLower();
                     else
                         yield return result;
                 }
