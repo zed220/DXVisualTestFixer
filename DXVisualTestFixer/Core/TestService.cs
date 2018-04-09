@@ -181,33 +181,85 @@ namespace DXVisualTestFixer.Core {
                 testInfo.TextDiff = testInfo.TextBefore;
                 return;
             }
-            string differences = null;
-            if(!IsTextEquals(testInfo.TextBefore, testInfo.TextCurrent, out differences))
+            if(!IsTextEquals(testInfo.TextBefore, testInfo.TextCurrent, out string differences, out string fullDifferences)) {
                 testInfo.TextDiff = differences;
+                testInfo.TextDiffFull = fullDifferences;
+            }
         }
-        static bool IsTextEquals(string left, string right, out string diff) {
-            diff = null;
-            if(left == right)
+        static bool IsTextEquals(string left, string right, out string diff, out string fullDiff) {
+            if(left == right) {
+                diff = "+Texts Equals";
+                fullDiff = null;
                 return true;
-            diff = BuildDefferences(left, right);
+            }
+            TextDifferenceInfo info = BuildDefferences(left, right);
+            diff = info.DiffCompact;
+            fullDiff = info.DiffFull;
             return false;
         }
 
-        static string BuildDefferences(string left, string right) {
-            StringBuilder sb = new StringBuilder();
+        class TextDifferenceInfo {
+            public TextDifferenceInfo(string diffCompact, string diffFull) {
+                DiffCompact = diffCompact;
+                DiffFull = diffFull;
+            }
+
+            public string DiffCompact { get; }
+            public string DiffFull { get; }
+        }
+
+        static TextDifferenceInfo BuildDefferences(string left, string right) {
+            StringBuilder sbFull = new StringBuilder();
             string[] leftArr = left.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
             string[] rightArr = right.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
+            List<int> diffLines = new List<int>();
             for(int line = 0; line < Math.Min(leftArr.Length, rightArr.Length); line++) {
                 string leftstr = leftArr[line];
                 string rightstr = rightArr[line];
                 if(leftstr == rightstr) {
-                    sb.AppendLine(leftstr);
+                    sbFull.AppendLine(leftstr);
                     continue;
                 }
-                sb.AppendLine("-" + leftstr);
-                sb.AppendLine("+" + rightstr);
+                diffLines.Add(line);
+                sbFull.AppendLine("-" + leftstr);
+                sbFull.AppendLine("+" + rightstr);
             }
-            return sb.ToString();
+
+            return new TextDifferenceInfo(BuildCompactDifferences(leftArr, rightArr, diffLines), sbFull.ToString());
+        }
+
+        static string BuildCompactDifferences(string[] leftArr, string[] rightArr, List<int> diffLines) {
+            if(diffLines.Count == 0)
+                return null;
+            StringBuilder sbCompact = new StringBuilder();
+            bool inRegion = false;
+            foreach(int line in diffLines) {
+                if(line >= Math.Min(leftArr.Length, rightArr.Length))
+                    break;
+                if(!inRegion) {
+                    inRegion = true;
+                    if(line > 0) sbCompact.AppendLine("<...>");
+                    for(int i = line - 2; i < line; i++) {
+                        if(i < 0)
+                            continue;
+                        if(i < leftArr.Length) sbCompact.AppendLine(leftArr[i]);
+                        if(i < rightArr.Length) sbCompact.AppendLine(rightArr[i]);
+                    }
+                }
+                if(line < leftArr.Length) sbCompact.AppendLine("-" + leftArr[line]);
+                if(line < rightArr.Length) sbCompact.AppendLine("+" + rightArr[line]);
+                if(!diffLines.Contains(line + 1)) {
+                    inRegion = false;
+                    for(int i = line + 1; i < line + 3; i++) {
+                        if(i < 0)
+                            continue;
+                        if(i < leftArr.Length) sbCompact.AppendLine(leftArr[i]);
+                        if(i < rightArr.Length) sbCompact.AppendLine(rightArr[i]);
+                    }
+                    if((diffLines.IndexOf(line) == diffLines.Count - 1) && line < Math.Min(leftArr.Length, rightArr.Length)) sbCompact.AppendLine("<...>");
+                }
+            }
+            return sbCompact.ToString();
         }
 
         static bool IsImageEquals(byte[] left, byte[] right) {
@@ -248,7 +300,7 @@ namespace DXVisualTestFixer.Core {
             }
             if(test.Valid == TestState.Invalid)
                 return;
-            if(!IsTextEquals(test.TextCurrent, File.ReadAllText(xmlPath), out _)) {
+            if(!IsTextEquals(test.TextCurrent, File.ReadAllText(xmlPath), out _, out _)) {
                 test.Valid = TestState.Valid;
                 return;
             }

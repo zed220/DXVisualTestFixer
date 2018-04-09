@@ -32,6 +32,7 @@ namespace DXVisualTestFixer.Core {
         public string TextCurrent { get; set; }
         public bool Optimized { get; set; }
         public string TextDiff { get; set; }
+        public string TextDiffFull { get; set; }
         public TestState Valid { get; set; }
         public string InvalidLog { get { return InvalidLogBuilder.ToString(); } }
 

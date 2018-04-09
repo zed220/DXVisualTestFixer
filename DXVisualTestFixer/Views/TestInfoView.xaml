@@ -15,9 +15,13 @@
              xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
              xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
              xmlns:root="clr-namespace:DXVisualTestFixer"
+             xmlns:dxi="http://schemas.devexpress.com/winfx/2008/xaml/core/internal"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
+        <Style TargetType="{x:Type dxi:TabBorder}">
+            <Setter Property="BorderThickness" Value="0,1,0,0"/>
+        </Style>
         <converters:ArrayToImageConverter x:Key="ArrayToImageConverter"/>
         <dxmvvm:ObjectToObjectConverter x:Key="InvalidToVisibilityConverter" DefaultTarget="Collapsed">
             <dxmvvm:MapItem Source="Invalid" Target="Visible"/>
@@ -61,12 +65,23 @@
                 <dxdo:LayoutPanel ShowCaption="True" Caption="Current" ShowCloseButton="False" ShowPinButton="False"  Content="{Binding ImageCurrentArr}" AllowSizing="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False"/>
                 <dxdo:LayoutPanel ShowCaption="True" Caption="Diff" ShowCloseButton="False" ShowPinButton="False" Content="{Binding ImageDiffArr}" AllowSizing="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False"/>
             </dxdo:LayoutGroup>
-            <dxdo:LayoutPanel ItemHeight="150" ShowCaption="False" DataContext="{Binding TestInfoModel.TestInfo.TestInfo}">
-                <avalonedit:TextEditor FontFamily="Consolas" IsReadOnly="True">
-                    <dxmvvm:Interaction.Behaviors>
-                        <behaviors:AvalonEditTextBindingBehavior Text="{Binding Path=TextDiff}"/>
-                    </dxmvvm:Interaction.Behaviors>
-                </avalonedit:TextEditor>
+            <dxdo:LayoutPanel ItemHeight="150" ShowCaption="False">
+                <dx:DXTabControl Padding="1">
+                    <dx:DXTabItem Header="Diff Compact">
+                        <avalonedit:TextEditor DataContext="{Binding TestInfoModel.TestInfo.TestInfo}" FontFamily="Consolas" IsReadOnly="True">
+                            <dxmvvm:Interaction.Behaviors>
+                                <behaviors:AvalonEditTextBindingBehavior Text="{Binding Path=TextDiff}"/>
+                            </dxmvvm:Interaction.Behaviors>
+                        </avalonedit:TextEditor>
+                    </dx:DXTabItem>
+                    <dx:DXTabItem Header="Diff Full">
+                        <avalonedit:TextEditor DataContext="{Binding TestInfoModel.TestInfo.TestInfo}" FontFamily="Consolas" IsReadOnly="True">
+                            <dxmvvm:Interaction.Behaviors>
+                                <behaviors:AvalonEditTextBindingBehavior Text="{Binding Path=TextDiffFull}"/>
+                            </dxmvvm:Interaction.Behaviors>
+                        </avalonedit:TextEditor>
+                    </dx:DXTabItem>
+                </dx:DXTabControl>
             </dxdo:LayoutPanel>
             <dxdo:LayoutPanel Background="#55FF0000" ItemWidth="*" ItemHeight="Auto" ShowBorder="False" ShowCaption="False" Visibility="{Binding Path='TestInfoModel.TestInfo.Valid', Converter={StaticResource InvalidToVisibilityConverter}}">
                 <StackPanel>
