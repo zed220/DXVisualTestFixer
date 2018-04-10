@@ -13,6 +13,7 @@ using DXVisualTestFixer.Services;
 using System;
 using System.Collections.Generic;
 using System.Deployment.Application;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -39,6 +40,29 @@ namespace DXVisualTestFixer.ViewModels {
 
         public Dictionary<Repository, List<string>> UsedFiles { get; }
         public Dictionary<Repository, List<Team>> Teams { get; }
+    }
+
+    public class SolutionModel {
+        public SolutionModel(string version, string path) {
+            Version = version;
+            Path = GetRealPath(path);
+        }
+
+        public string Version { get; }
+        public string Path { get; }
+        public void OpenSolution() {
+            var solutionFilePath = Directory.EnumerateFiles(Path, "*.sln", SearchOption.TopDirectoryOnly).FirstOrDefault();
+            if(solutionFilePath == null)
+                return;
+            Process.Start(solutionFilePath);
+        }
+        public void OpenFolder() {
+            Process.Start(Path);
+        }
+        string GetRealPath(string path) {
+            string folderName = Repository.InNewVersion(Version) ? "VisualTests" : "DevExpress.Xpf.VisualTests";
+            return System.IO.Path.Combine(path, folderName);
+        }
     }
 
     public class MainViewModel : ViewModelBase, IMainViewModel {
@@ -95,6 +119,10 @@ namespace DXVisualTestFixer.ViewModels {
         public Dictionary<Repository, List<ElapsedTimeInfo>> ElapsedTimes {
             get { return GetProperty(() => ElapsedTimes); }
             set { SetProperty(() => ElapsedTimes, value); }
+        }
+        public List<SolutionModel> Solutions {
+            get { return GetProperty(() => Solutions); }
+            set { SetProperty(() => Solutions, value); }
         }
 
         public MainViewModel() {
@@ -154,12 +182,20 @@ namespace DXVisualTestFixer.ViewModels {
             }));
         }
 
+        void FillSolutions() {
+            List<SolutionModel> newSolutions = new List<SolutionModel>();
+            foreach(var repository in Config.Repositories)
+                newSolutions.Add(new SolutionModel(repository.Version, repository.Path));
+            Solutions = newSolutions;
+        }
+
         void UpdateConfig() {
             ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage("Checking config");
             var config = ConfigSerializer.GetConfig();
             if(Config != null && ConfigSerializer.IsConfigEquals(config, Config))
                 return;
             Config = config;
+            FillSolutions();
             ServiceLocator.Current.GetInstance<IAppearanceService>()?.SetTheme(Config.ThemeName);
             ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage("Config loaded");
             UpdateContent();
@@ -304,18 +340,9 @@ namespace DXVisualTestFixer.ViewModels {
             foreach(var test in Tests)
                 test.CommitChange = false;
         }
-
-        //public void InstallUpdateSyncWithInfo(bool informNoUpdate) {
-        //    Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
-        //        ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage("Check application updates");
-        //        UpdateAppService.Update(GetService<IMessageBoxService>(), informNoUpdate);
-        //        ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage("Finish check application updates");
-        //    }));
-        //}
         public void ChangeTestViewType(TestViewType testViewType) {
             TestViewType = testViewType;
         }
-
         void OnTestViewTypeChanged() {
             ModuleManager.DefaultManager.Clear(Regions.TestInfo);
             MifRegistrator.InitializeTestInfo(TestViewType);

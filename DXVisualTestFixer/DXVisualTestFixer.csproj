@@ -31,8 +31,8 @@
     <PublisherName>Zed220</PublisherName>
     <SuiteName>Visual Tests Tool</SuiteName>
     <MinimumRequiredVersion>1.0.1.0</MinimumRequiredVersion>
-    <ApplicationRevision>100</ApplicationRevision>
-    <ApplicationVersion>1.4.8.%2a</ApplicationVersion>
+    <ApplicationRevision>101</ApplicationRevision>
+    <ApplicationVersion>1.4.9.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -260,6 +260,8 @@
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModels\TestInfoWrapper.cs" />
     <Compile Include="ViewModels\TestInfoViewModel.cs" />
+    <Resource Include="Images\CSS.png" />
+    <Resource Include="Images\CSS_Small.png" />
     <Content Include="PublishVersionSynchronizer.targets">
       <SubType>Designer</SubType>
     </Content>

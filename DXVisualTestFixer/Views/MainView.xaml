@@ -163,6 +163,26 @@
                                 </DataTemplate>
                             </dxb:BarButtonItem.GlyphTemplate>
                         </dxb:BarButtonItem>
+                        <dxb:BarSubItem Content="Open Solution" Glyph="pack://application:,,,/DXVisualTestFixer;component/Images/CSS_Small.png" RibbonStyle="SmallWithText" 
+                                        ItemLinksSource="{Binding Solutions}">
+                            <dxb:BarSubItem.ItemTemplate>
+                                <DataTemplate>
+                                    <ContentControl>
+                                        <dxb:BarButtonItem Content="{Binding Version}" Command="{DXCommand Execute='OpenSolution()'}"/>
+                                    </ContentControl>
+                                </DataTemplate>
+                            </dxb:BarSubItem.ItemTemplate>
+                        </dxb:BarSubItem>
+                        <dxb:BarSubItem Content="Open Folder" Glyph="pack://application:,,,/DevExpress.Images.v17.2;component/DevAV/Actions/OpenDoc_16x16.png" RibbonStyle="SmallWithText"
+                                        ItemLinksSource="{Binding Solutions}">
+                            <dxb:BarSubItem.ItemTemplate>
+                                <DataTemplate>
+                                    <ContentControl>
+                                        <dxb:BarButtonItem Content="{Binding Version}" Command="{DXCommand Execute='OpenFolder()'}"/>
+                                    </ContentControl>
+                                </DataTemplate>
+                            </dxb:BarSubItem.ItemTemplate>
+                        </dxb:BarSubItem>
                     </dxr:RibbonPageGroup>
                     <dxr:RibbonPageGroup Caption="Service">
                         <dxb:BarButtonItem RibbonStyle="Large" 
