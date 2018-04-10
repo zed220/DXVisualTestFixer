@@ -100,6 +100,21 @@
                 </Style>
             </dxmvvm:UIWindowRegion.WindowStyle>
         </dxmvvm:UIWindowRegion>
+        <dxmvvm:UIWindowRegion x:Name="repositoryAnalyzerService" RegionName="{x:Static mif:Regions.RepositoryAnalyzer}" WindowShowMode="Dialog" SetWindowOwner="True">
+            <dxmvvm:UIWindowRegion.WindowFactory>
+                <DataTemplate>
+                    <dx:DXDialogWindow/>
+                </DataTemplate>
+            </dxmvvm:UIWindowRegion.WindowFactory>
+            <dxmvvm:UIWindowRegion.WindowStyle>
+                <Style TargetType="dx:DXDialogWindow">
+                    <Setter Property="Width" Value="1000"/>
+                    <Setter Property="Height" Value="800"/>
+                    <Setter Property="Title" Value="Repository Analyzer"/>
+                    <Setter Property="CommandsSource" Value="{Binding DialogCommands}"/>
+                </Style>
+            </dxmvvm:UIWindowRegion.WindowStyle>
+        </dxmvvm:UIWindowRegion>
     </dxmvvm:Interaction.Behaviors>
     <Grid>
         <Grid.RowDefinitions>
@@ -155,6 +170,12 @@
                                            Content="Check Unused Files"
                                            Command="{DXCommand Execute='ShowRepositoryOptimizer()'}"
                                            LargeGlyph="{dx:DXImageOffice2013 Image=RemoveItem_32x32.png}">
+                        </dxb:BarButtonItem>
+                        <dxb:BarButtonItem RibbonStyle="Large" 
+                                           GlyphSize="Large" 
+                                           Content="Analyze Timings"
+                                           Command="{DXCommand Execute='ShowRepositoryAnalyzer()'}"
+                                           LargeGlyph="{dx:DXImageOffice2013 Image=Chart_32x32.png}">
                         </dxb:BarButtonItem>
                     </dxr:RibbonPageGroup>
                     <dxr:RibbonPageGroup Caption="Settings">

@@ -12,6 +12,7 @@ namespace DXVisualTestFixer.Mif {
         public static string ApplyChanges => nameof(ApplyChanges);
         public static string FilterPanel => nameof(FilterPanel);
         public static string RepositoryOptimizer => nameof(RepositoryOptimizer);
+        public static string RepositoryAnalyzer => nameof(RepositoryAnalyzer);
     }
 
     public static class Modules {
@@ -21,5 +22,6 @@ namespace DXVisualTestFixer.Mif {
         public static string ApplyChanges => nameof(ApplyChanges);
         public static string FilterPanel => nameof(FilterPanel);
         public static string RepositoryOptimizer => nameof(RepositoryOptimizer);
+        public static string RepositoryAnalyzer => nameof(RepositoryAnalyzer);
     }
 }

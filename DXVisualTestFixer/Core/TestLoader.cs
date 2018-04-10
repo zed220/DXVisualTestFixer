@@ -1,6 +1,7 @@
 ﻿using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,13 +9,26 @@ using System.Xml;
 
 namespace DXVisualTestFixer.Core {
     public class CorpDirTestInfoContainer {
-        public CorpDirTestInfoContainer(List<CorpDirTestInfo> failedTests, List<string> usedFiles) {
+        public CorpDirTestInfoContainer(List<CorpDirTestInfo> failedTests, List<string> usedFiles, List<ElapsedTimeInfo> elapsedTimes, List<Team> teams) {
             FailedTests = failedTests;
             UsedFiles = usedFiles;
+            ElapsedTimes = elapsedTimes;
+            Teams = teams;
         }
 
         public List<CorpDirTestInfo> FailedTests { get; }
         public List<string> UsedFiles { get; }
+        public List<ElapsedTimeInfo> ElapsedTimes { get; }
+        public List<Team> Teams { get; }
+    }
+    public class ElapsedTimeInfo {
+        public ElapsedTimeInfo(string name, TimeSpan time) {
+            Name = name;
+            Time = time;
+        }
+
+        public string Name { get; }
+        public TimeSpan Time { get; }
     }
 
     public static class TestLoader {
@@ -39,7 +53,7 @@ namespace DXVisualTestFixer.Core {
             }
             Task.WaitAll(failedTestsTasks.ToArray());
             failedTestsTasks.ForEach(t => failedTests.AddRange(t.Result));
-            return new CorpDirTestInfoContainer(failedTests, FindUsedFiles(myXmlDocument).ToList());
+            return new CorpDirTestInfoContainer(failedTests, FindUsedFiles(myXmlDocument).ToList(), FindElapsedTimes(myXmlDocument), FindTeams(taskInfo.Repository.Version, myXmlDocument));
         }
         static IEnumerable<XmlElement> FindFailedTests(XmlDocument myXmlDocument) {
             XmlNode buildNode = FindBuildNode(myXmlDocument);
@@ -65,6 +79,69 @@ namespace DXVisualTestFixer.Core {
                         yield return result;
                 }
             }
+        }
+        static List<ElapsedTimeInfo> FindElapsedTimes(XmlDocument myXmlDocument) {
+            List<ElapsedTimeInfo> result = new List<ElapsedTimeInfo>();
+            XmlNode buildNode = FindBuildNode(myXmlDocument);
+            if(buildNode == null)
+                return result;
+            foreach(var elapsedTimeNode in buildNode.FindAllByName("ElapsedTime")) {
+                string name;
+                if(!elapsedTimeNode.TryGetAttibute("Name", out name))
+                    continue;
+                string time;
+                if(!elapsedTimeNode.TryGetAttibute("Time", out time))
+                    continue;
+                if(int.TryParse(time.Split('.').FirstOrDefault() ?? time, out int sec))
+                    result.Add(new ElapsedTimeInfo(name, TimeSpan.FromSeconds(sec)));
+            }
+            return result;
+        }
+        static List<Team> FindTeams(string version, XmlDocument myXmlDocument) {
+            Dictionary<string, Team> result = new Dictionary<string, Team>();
+            XmlNode buildNode = FindBuildNode(myXmlDocument);
+            if(buildNode == null)
+                return new List<Team>();
+            foreach(var teamNode in buildNode.FindAllByName("Project")) {
+                int dpi;
+                if(!teamNode.TryGetAttibute("Dpi", out dpi))
+                    continue;
+                string teamName;
+                if(!teamNode.TryGetAttibute("IncludedCategories", out teamName))
+                    continue;
+                string resourcesFolder;
+                if(!teamNode.TryGetAttibute("ResourcesFolder", out resourcesFolder))
+                    continue;
+                string testResourcesPath;
+                if(!teamNode.TryGetAttibute("TestResourcesPath", out testResourcesPath))
+                    continue;
+                var projectInfosNode = teamNode.FindByName("ProjectInfos");
+                if(projectInfosNode == null)
+                    continue;
+                foreach(var projectInfoNode in projectInfosNode.FindAllByName("ProjectInfo")) {
+                    string serverFolderName;
+                    if(!projectInfoNode.TryGetAttibute("ServerFolderName", out serverFolderName))
+                        continue;
+                    bool optimized;
+                    projectInfoNode.TryGetAttibute("Optimized", out optimized);
+                    Team team;
+                    if(!result.TryGetValue(teamName, out team))
+                        result[teamName] = team = new Team() { Name = teamName, Version = version };
+                    team.TeamInfos.Add(new TeamInfo() { Dpi = dpi, Optimized = optimized, ServerFolderName = serverFolderName, TestResourcesPath = Path.Combine(resourcesFolder, testResourcesPath) });
+                }
+            }
+            return result.Values.ToList();
+        }
+
+        static bool TryGetAttibute<T>(this XmlNode node, string name, out T value) {
+            value = default(T);
+            var res = node.Attributes[name];
+            if(res == null)
+                return false;
+            //value = (T)Convert.ChangeType(res, typeof(T));
+            var converter = TypeDescriptor.GetConverter(typeof(T));
+            value = (T)converter.ConvertFrom(res.Value);
+            return true;
         }
         static XmlNode FindBuildNode(XmlDocument myXmlDocument) {
             return myXmlDocument.FindByName("cruisecontrol")?.FindByName("build");

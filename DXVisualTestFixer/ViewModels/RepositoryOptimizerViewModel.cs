@@ -113,39 +113,35 @@ namespace DXVisualTestFixer.ViewModels {
         protected override void OnParameterChanged(object parameter) {
             base.OnParameterChanged(parameter);
             Status = ProgramStatus.Loading;
-            usedFilesByRep = (Dictionary<Repository, List<string>>)parameter;
-            Task.Factory.StartNew(() => UpdateUnusedFiles(usedFilesByRep)).ConfigureAwait(false);
+            var typedParam = (UnusedFiltesContainer)parameter;
+            Task.Factory.StartNew(() => UpdateUnusedFiles(typedParam.UsedFiles, typedParam.Teams)).ConfigureAwait(false);
         }
 
-        void UpdateUnusedFiles(Dictionary<Repository, List<string>> usedFilesByRep) {
-            List<string> usedFiles = GetUsedFiles(usedFilesByRep);
-            UnusedFiles = GetActualFiles(usedFilesByRep.Keys.Select(rep => rep.Version).Distinct().Where(v => Repository.InNewVersion(v)).ToList(), usedFiles);
+        void UpdateUnusedFiles(Dictionary<Repository, List<string>> usedFilesByRep, Dictionary<Repository, List<Team>> teams) {
+            HashSet<string> usedFiles = GetUsedFiles(usedFilesByRep);
+            UnusedFiles = GetActualFiles(usedFilesByRep.Keys.Select(rep => rep.Version).Distinct().Where(v => Repository.InNewVersion(v)).ToList(), usedFiles, teams);
             Status = ProgramStatus.Idle;
         }
 
-        ObservableCollection<UnusedFileModel> GetActualFiles(List<string> usedVersions, List<string> usedFiles) {
+        ObservableCollection<UnusedFileModel> GetActualFiles(List<string> usedVersions, HashSet<string> usedFiles, Dictionary<Repository, List<Team>> teams) {
             ObservableCollection<UnusedFileModel> result = new ObservableCollection<UnusedFileModel>();
-            foreach(Team team in TeamConfigsReader.GetAllTeams()) {
-                if(!usedVersions.Contains(team.Version))
-                    continue;
-                Repository repository = TestsService.GetRepository(team.Version);
-                if(repository == null) {
-                    //not included in config
-                    continue;
-                }
-                foreach(TeamInfo info in team.TeamInfos) {
-                    string teamPath = TestsService.GetResourcePath(repository, info.TestResourcesPath);
-                    List<string> unUsedFiles = new List<string>();
-                    foreach(string file in Directory.EnumerateFiles(teamPath, "*", SearchOption.AllDirectories)) {
-                        if(!usedFiles.Contains(file.ToLower()))
-                            result.Add(new UnusedFileModel(file, team.Version));
+            foreach(var repository in teams.Keys) {
+                foreach(Team team in teams[repository]) {
+                    if(!usedVersions.Contains(team.Version))
+                        continue;
+                    foreach(string teamPath in team.TeamInfos.Select(i => TestsService.GetResourcePath(repository, i.TestResourcesPath)).Distinct()) {
+                        List<string> unUsedFiles = new List<string>();
+                        foreach(string file in Directory.EnumerateFiles(teamPath, "*", SearchOption.AllDirectories)) {
+                            if(!usedFiles.Contains(file.ToLower()))
+                                result.Add(new UnusedFileModel(file, team.Version));
+                        }
                     }
                 }
             }
             return result;
         }
-        List<string> GetUsedFiles(Dictionary<Repository, List<string>> usedFilesByRep) {
-            List<string> usedFiles = new List<string>();
+        HashSet<string> GetUsedFiles(Dictionary<Repository, List<string>> usedFilesByRep) {
+            HashSet<string> usedFiles = new HashSet<string>();
             foreach(var usedFileByRep in usedFilesByRep) {
                 foreach(string fileRelPath in usedFileByRep.Value) {
                     string filePath = TestsService.GetResourcePath(usedFileByRep.Key, fileRelPath);

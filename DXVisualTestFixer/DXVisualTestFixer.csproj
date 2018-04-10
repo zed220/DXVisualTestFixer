@@ -31,8 +31,8 @@
     <PublisherName>Zed220</PublisherName>
     <SuiteName>Visual Tests Tool</SuiteName>
     <MinimumRequiredVersion>1.0.1.0</MinimumRequiredVersion>
-    <ApplicationRevision>99</ApplicationRevision>
-    <ApplicationVersion>1.4.7.%2a</ApplicationVersion>
+    <ApplicationRevision>100</ApplicationRevision>
+    <ApplicationVersion>1.4.8.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -254,6 +254,7 @@
     <Compile Include="ViewModels\FilterPanelViewModel.cs" />
     <Compile Include="ViewModels\LoadingProgressController.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="ViewModels\RepositoryAnalizerViewModel.cs" />
     <Compile Include="ViewModels\RepositoryModel.cs" />
     <Compile Include="ViewModels\RepositoryOptimizerViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
@@ -273,6 +274,9 @@
     </Compile>
     <Compile Include="Views\MergedTestInfoView.xaml.cs">
       <DependentUpon>MergedTestInfoView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\RepositoryAnalizerView.xaml.cs">
+      <DependentUpon>RepositoryAnalizerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\RepositoryOptimizerView.xaml.cs">
       <DependentUpon>RepositoryOptimizerView.xaml</DependentUpon>
@@ -310,6 +314,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\MergedTestInfoView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\RepositoryAnalizerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -456,44 +464,6 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="XmlConfigs\17.2_ThemedWindow.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="XmlConfigs\18.1_CoreAndEditors.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="XmlConfigs\18.1_GridControl.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="XmlConfigs\18.1_Navigation.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="XmlConfigs\18.1_PivotControl.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="XmlConfigs\18.1_Scheduler.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="XmlConfigs\18.1_Svg.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="XmlConfigs\18.1_TabControl.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="XmlConfigs\18.1_ThemedWindow.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="XmlConfigs\18.1_StandardControls.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="XmlConfigs\18.1_Bars.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="XmlConfigs\18.1_Editors.config">
-      <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

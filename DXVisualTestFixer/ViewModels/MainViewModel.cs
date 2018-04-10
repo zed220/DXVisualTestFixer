@@ -31,6 +31,16 @@ namespace DXVisualTestFixer.ViewModels {
         Loading,
     }
 
+    public class UnusedFiltesContainer {
+        public UnusedFiltesContainer(Dictionary<Repository, List<string>> usedFiles, Dictionary<Repository, List<Team>> teams) {
+            UsedFiles = usedFiles;
+            Teams = teams;
+        }
+
+        public Dictionary<Repository, List<string>> UsedFiles { get; }
+        public Dictionary<Repository, List<Team>> Teams { get; }
+    }
+
     public class MainViewModel : ViewModelBase, IMainViewModel {
         public Config Config { get; private set; }
 
@@ -77,6 +87,14 @@ namespace DXVisualTestFixer.ViewModels {
         public Dictionary<Repository, List<string>> UsedFiles {
             get { return GetProperty(() => UsedFiles); }
             set { SetProperty(() => UsedFiles, value); }
+        }
+        public Dictionary<Repository, List<Team>> Teams {
+            get { return GetProperty(() => Teams); }
+            set { SetProperty(() => Teams, value); }
+        }
+        public Dictionary<Repository, List<ElapsedTimeInfo>> ElapsedTimes {
+            get { return GetProperty(() => ElapsedTimes); }
+            set { SetProperty(() => ElapsedTimes, value); }
         }
 
         public MainViewModel() {
@@ -129,6 +147,8 @@ namespace DXVisualTestFixer.ViewModels {
             await App.Current.Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
                 Tests = tests;
                 UsedFiles = testInfoContainer.UsedFiles;
+                ElapsedTimes = testInfoContainer.ElapsedTimes;
+                Teams = testInfoContainer.Teams;
                 Status = ProgramStatus.Idle;
                 LoadingProgressController.Stop();
             }));
@@ -205,9 +225,13 @@ namespace DXVisualTestFixer.ViewModels {
             if(CheckHasUncommittedChanges() || CheckAlarmAdmin())
                 return;
             TestsToCommitCount = 0;
-            ModuleManager.DefaultWindowManager.Show(Regions.RepositoryOptimizer, Modules.RepositoryOptimizer, UsedFiles);
+            ModuleManager.DefaultWindowManager.Show(Regions.RepositoryOptimizer, Modules.RepositoryOptimizer, new UnusedFiltesContainer(UsedFiles, Teams));
             ModuleManager.DefaultWindowManager.Clear(Regions.RepositoryOptimizer);
             UpdateContent();
+        }
+        public void ShowRepositoryAnalyzer() {
+            ModuleManager.DefaultWindowManager.Show(Regions.RepositoryAnalyzer, Modules.RepositoryAnalyzer, ElapsedTimes);
+            ModuleManager.DefaultWindowManager.Clear(Regions.RepositoryAnalyzer);
         }
         public void ShowSettings() {
             if(CheckHasUncommittedChanges())

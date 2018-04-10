@@ -8,7 +8,7 @@ namespace DXVisualTestFixer.Core {
     public class Team {
         public string Name { get; set; }
         public string Version { get; set; }
-        public List<TeamInfo> TeamInfos { get; set; }
+        public List<TeamInfo> TeamInfos { get; set; } = new List<TeamInfo>();
     }
 
     public class TeamInfo {

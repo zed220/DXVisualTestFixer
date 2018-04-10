@@ -17,27 +17,35 @@ using System.Windows.Media.Imaging;
 
 namespace DXVisualTestFixer.Core {
     public class TestInfoCached {
-        public TestInfoCached(Repository repository, string realUrl, List<TestInfo> testList, List<string> usedFiles) {
+        public TestInfoCached(Repository repository, string realUrl, List<TestInfo> testList, CorpDirTestInfoContainer container) {
             Repository = repository;
             RealUrl = realUrl;
             TestList = testList;
-            UsedFiles = usedFiles;
+            UsedFiles = container.UsedFiles;
+            ElapsedTimes = container.ElapsedTimes;
+            Teams = container.Teams;
         }
 
         public Repository Repository { get; }
         public string RealUrl { get; }
         public List<TestInfo> TestList { get; }
         public List<string> UsedFiles { get; }
+        public List<ElapsedTimeInfo> ElapsedTimes { get; }
+        public List<Team> Teams { get; }
     }
 
     public class TestInfoContainer {
         public TestInfoContainer() {
             TestList = new List<TestInfo>();
             UsedFiles = new Dictionary<Repository, List<string>>();
+            ElapsedTimes = new Dictionary<Repository, List<ElapsedTimeInfo>>();
+            Teams = new Dictionary<Repository, List<Team>>();
         }
 
         public List<TestInfo> TestList { get; }
         public Dictionary<Repository, List<string>> UsedFiles { get; }
+        public Dictionary<Repository, List<ElapsedTimeInfo>> ElapsedTimes { get; }
+        public Dictionary<Repository, List<Team>> Teams { get; }
     }
 
     public class TestsService {
@@ -63,6 +71,8 @@ namespace DXVisualTestFixer.Core {
             foreach(TestInfoCached cached in await Task.WhenAll(allTasks.ToArray()).ConfigureAwait(false)) {
                 result.TestList.AddRange(cached.TestList);
                 result.UsedFiles[cached.Repository] = cached.UsedFiles;
+                result.ElapsedTimes[cached.Repository] = cached.ElapsedTimes;
+                result.Teams[cached.Repository] = cached.Teams;
             }
             return result;
         }
@@ -79,10 +89,10 @@ namespace DXVisualTestFixer.Core {
             foreach(var corpDirTestInfo in corpDirTestInfoContainer.FailedTests) {
                 loadingProgressController.IncreaseProgress(1);
                 CorpDirTestInfo info = corpDirTestInfo;
-                allTasks.Add(Task.Factory.StartNew<TestInfo>(() => LoadTestInfo(info)));
+                allTasks.Add(Task.Factory.StartNew<TestInfo>(() => LoadTestInfo(info, corpDirTestInfoContainer.Teams)));
             }
             List<TestInfo> result = (await Task.WhenAll(allTasks.ToArray()).ConfigureAwait(false)).ToList();
-            TestInfoCached cachedValue = new TestInfoCached(farmTaskInfo.Repository, realUrl, result, corpDirTestInfoContainer.UsedFiles);
+            TestInfoCached cachedValue = new TestInfoCached(farmTaskInfo.Repository, realUrl, result, corpDirTestInfoContainer);
             RealUrlCache[farmTaskInfo] = cachedValue;
             return cachedValue;
         }
@@ -109,9 +119,9 @@ namespace DXVisualTestFixer.Core {
             });
         }
 
-        TestInfo LoadTestInfo(CorpDirTestInfo corpDirTestInfo) {
+        TestInfo LoadTestInfo(CorpDirTestInfo corpDirTestInfo, List<Team> teams) {
             ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage($"Start load test v{corpDirTestInfo.FarmTaskInfo.Repository.Version} {corpDirTestInfo.TestName}.{corpDirTestInfo.ThemeName}");
-            TestInfo testInfo = TryCreateTestInfo(corpDirTestInfo);
+            TestInfo testInfo = TryCreateTestInfo(corpDirTestInfo, teams ?? TeamConfigsReader.GetAllTeams());
             ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage($"End load test v{corpDirTestInfo.FarmTaskInfo.Repository.Version} {corpDirTestInfo.TestName}.{corpDirTestInfo.ThemeName}");
             if(testInfo != null) {
                 UpdateTestStatus(testInfo);
@@ -122,7 +132,17 @@ namespace DXVisualTestFixer.Core {
             return null;
         }
 
-        static TestInfo TryCreateTestInfo(CorpDirTestInfo corpDirTestInfo) {
+        static Team GetTeam(List<Team> teams, string version, string serverFolderName, out TeamInfo info) {
+            foreach(var team in teams.Where(t => t.Version == version)) {
+                info = team.TeamInfos.FirstOrDefault(i => i.ServerFolderName == serverFolderName);
+                if(info != null)
+                    return team;
+            }
+            info = null;
+            return null;
+        }
+
+        static TestInfo TryCreateTestInfo(CorpDirTestInfo corpDirTestInfo, List<Team> teams) {
             TestInfo testInfo = new TestInfo();
             testInfo.Version = corpDirTestInfo.FarmTaskInfo.Repository.Version;
             testInfo.Name = corpDirTestInfo.TestName;
@@ -137,7 +157,15 @@ namespace DXVisualTestFixer.Core {
                 return testInfo;
             }
             TeamInfo info = null;
-            testInfo.Team = TeamConfigsReader.GetTeam(corpDirTestInfo.FarmTaskInfo.Repository.Version, corpDirTestInfo.ServerFolderName, out info);
+            Team team = testInfo.Team = GetTeam(teams, corpDirTestInfo.FarmTaskInfo.Repository.Version, corpDirTestInfo.ServerFolderName, out info);
+            if(team == null) {
+                testInfo.Valid = TestState.Error;
+                testInfo.TextDiff = "+" + testInfo.Name + Environment.NewLine + Environment.NewLine + corpDirTestInfo.ErrorText;
+                testInfo.Theme = "Error";
+                testInfo.Dpi = 0;
+                testInfo.Team = new Team() { Name = CorpDirTestInfo.ErrorTeamName, Version = corpDirTestInfo.FarmTaskInfo.Repository.Version };
+                return testInfo;
+            }
             testInfo.TeamInfo = info;
             testInfo.Dpi = info.Dpi;
             testInfo.Theme = corpDirTestInfo.ThemeName;
