@@ -52,9 +52,14 @@ namespace DXVisualTestFixer.ViewModels {
         public string Path { get; }
         public void OpenSolution() {
             var solutionFilePath = Directory.EnumerateFiles(Path, "*.sln", SearchOption.TopDirectoryOnly).FirstOrDefault();
-            if(solutionFilePath == null)
+            if(solutionFilePath == null || !File.Exists(solutionFilePath))
                 return;
-            Process.Start(solutionFilePath);
+            string openSolutionPath = @"C:\Program Files (x86)\Common Files\Microsoft Shared\MSEnv\VSLauncher.exe";
+            if(!File.Exists(openSolutionPath))
+                return;
+            ProcessStartInfo info = new ProcessStartInfo(openSolutionPath, solutionFilePath);
+            info.Verb = "runas";
+            Process.Start(info);
         }
         public void OpenFolder() {
             Process.Start(Path);
