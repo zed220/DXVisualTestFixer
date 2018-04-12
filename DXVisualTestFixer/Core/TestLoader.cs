@@ -51,8 +51,13 @@ namespace DXVisualTestFixer.Core {
                     return localRes;
                 }));
             }
-            Task.WaitAll(failedTestsTasks.ToArray());
-            failedTestsTasks.ForEach(t => failedTests.AddRange(t.Result));
+            if(failedTestsTasks.Count > 0) {
+                Task.WaitAll(failedTestsTasks.ToArray());
+                failedTestsTasks.ForEach(t => failedTests.AddRange(t.Result));
+            }
+            else {
+                failedTests.Add(CorpDirTestInfo.CreateError(taskInfo, "BuildError", "BuildError", "BuildError"));
+            }
             return new CorpDirTestInfoContainer(failedTests, FindUsedFiles(myXmlDocument).ToList(), FindElapsedTimes(myXmlDocument), FindTeams(taskInfo.Repository.Version, myXmlDocument));
         }
         static IEnumerable<XmlElement> FindFailedTests(XmlDocument myXmlDocument) {
