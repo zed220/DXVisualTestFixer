@@ -87,7 +87,6 @@ namespace DXVisualTestFixer.Core {
             List<Task<TestInfo>> allTasks = new List<Task<TestInfo>>();
             CorpDirTestInfoContainer corpDirTestInfoContainer = LoadFromFarmTaskInfo(farmTaskInfo, realUrl);
             foreach(var corpDirTestInfo in corpDirTestInfoContainer.FailedTests) {
-                loadingProgressController.IncreaseProgress(1);
                 CorpDirTestInfo info = corpDirTestInfo;
                 allTasks.Add(Task.Factory.StartNew<TestInfo>(() => LoadTestInfo(info, corpDirTestInfoContainer.Teams)));
             }

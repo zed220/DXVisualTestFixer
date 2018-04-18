@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -31,8 +31,8 @@
     <PublisherName>Zed220</PublisherName>
     <SuiteName>Visual Tests Tool</SuiteName>
     <MinimumRequiredVersion>1.0.1.0</MinimumRequiredVersion>
-    <ApplicationRevision>104</ApplicationRevision>
-    <ApplicationVersion>1.5.3.%2a</ApplicationVersion>
+    <ApplicationRevision>105</ApplicationRevision>
+    <ApplicationVersion>1.5.4.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -254,7 +254,7 @@
     <Compile Include="ViewModels\FilterPanelViewModel.cs" />
     <Compile Include="ViewModels\LoadingProgressController.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
-    <Compile Include="ViewModels\RepositoryAnalizerViewModel.cs" />
+    <Compile Include="ViewModels\RepositoryAnalyzerViewModel.cs" />
     <Compile Include="ViewModels\RepositoryModel.cs" />
     <Compile Include="ViewModels\RepositoryOptimizerViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
@@ -277,8 +277,8 @@
     <Compile Include="Views\MergedTestInfoView.xaml.cs">
       <DependentUpon>MergedTestInfoView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\RepositoryAnalizerView.xaml.cs">
-      <DependentUpon>RepositoryAnalizerView.xaml</DependentUpon>
+    <Compile Include="Views\RepositoryAnalyzerView.xaml.cs">
+      <DependentUpon>RepositoryAnalyzerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\RepositoryOptimizerView.xaml.cs">
       <DependentUpon>RepositoryOptimizerView.xaml</DependentUpon>
@@ -319,7 +319,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\RepositoryAnalizerView.xaml">
+    <Page Include="Views\RepositoryAnalyzerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
