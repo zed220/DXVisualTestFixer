@@ -308,6 +308,10 @@
                                                     </Binding>
                                                 </dxe:TextEdit.Visibility>
                                             </dxe:TextEdit>
+                                            <Border Background="Green" CornerRadius="3" BorderThickness="0" VerticalAlignment="Center" Padding="3" 
+                                                    Visibility="{Binding Path=RowData.Row.ImageEquals, Converter={dxmvvm:BooleanToVisibilityConverter}}">
+                                                <TextBlock Text="IMG EQ" Foreground="White" FontSize="8"/>
+                                            </Border>
                                         </StackPanel>
                                     </DataTemplate>
                                 </dxg:GridColumn.CellTemplate>
