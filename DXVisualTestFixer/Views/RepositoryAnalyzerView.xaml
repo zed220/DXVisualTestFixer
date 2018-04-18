@@ -17,12 +17,21 @@
                 </dxdo:LayoutControlItem>
             </dxdo:LayoutPanel>
             <dxdo:LayoutPanel ShowCaption="False" ItemHeight="*" ShowBorder="False">
-                <dxg:GridControl ItemsSource="{Binding CurrentTimings}" ShowBorder="False">
-                    <dxg:GridColumn FieldName="Name"/>
-                    <dxg:GridColumn FieldName="Time" SortOrder="Descending"/>
+                <dxg:GridControl ItemsSource="{Binding CurrentTimings}" ShowBorder="False" AutoGenerateColumns="AddNew">
+                    <dxg:GridColumn FieldName="Prefix" Visible="False"/>
+                    <dxg:GridColumn FieldName="Team" GroupIndex="0" ShowGroupedColumn="True"/>
+                    <dxg:GridColumn FieldName="Time" SortOrder="Descending" IsSmart="True"/>
+                    <dxg:GridControl.GroupSummary>
+                        <dxg:GridSummaryItem SummaryType="Sum" FieldName="Time"/>
+                        <dxg:GridSummaryItem SummaryType="Average" FieldName="Time"/>
+                        <dxg:GridSummaryItem SummaryType="Max" FieldName="Time"/>
+                        <dxg:GridSummaryItem SummaryType="Min" FieldName="Time"/>
+                    </dxg:GridControl.GroupSummary>
+                    <dxg:GridControl.View>
+                        <dxg:TableView AllowPartialGrouping="True"/>
+                    </dxg:GridControl.View>
                 </dxg:GridControl>
             </dxdo:LayoutPanel>
         </dxdo:LayoutGroup>
     </dxdo:DockLayoutManager>
-    <!--<dxg:GridControl/>-->
 </UserControl>
