@@ -1,8 +1,5 @@
-﻿using CommonServiceLocator;
-using DevExpress.Data.Filtering;
+﻿using DevExpress.Data.Filtering;
 using DevExpress.Logify.WPF;
-using DevExpress.Mvvm;
-using DevExpress.Mvvm.ModuleInjection;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.Grid;
 using DXVisualTestFixer.Configuration;
@@ -10,6 +7,8 @@ using DXVisualTestFixer.Core;
 using DXVisualTestFixer.Farm;
 using DXVisualTestFixer.Mif;
 using DXVisualTestFixer.Services;
+using Microsoft.Practices.ServiceLocation;
+using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.Deployment.Application;
@@ -70,64 +69,79 @@ namespace DXVisualTestFixer.ViewModels {
         }
     }
 
-    public class MainViewModel : ViewModelBase, IMainViewModel {
+    public class MainViewModel : BindableBase, IMainViewModel {
         public Config Config { get; private set; }
 
+        List<TestInfoWrapper> _Tests;
+        TestInfoWrapper _CurrentTest;
+        ProgramStatus _Status;
+        string _CurrentLogLine;
+        TestViewType _TestViewType;
+        MergerdTestViewType _MergerdTestViewType;
+        LoadingProgressController _LoadingProgressController;
+        int _TestsToCommitCount;
+        CriteriaOperator _CurrentFilter;
+        TestsService _TestService;
+        Dictionary<Repository, List<string>> _UsedFiles;
+        Dictionary<Repository, List<Team>> _Teams;
+        Dictionary<Repository, List<ElapsedTimeInfo>> _ElapsedTimes;
+        List<SolutionModel> _Solutions;
+
         public List<TestInfoWrapper> Tests {
-            get { return GetProperty(() => Tests); }
-            set { SetProperty(() => Tests, value, OnTestsChanged); }
+            get { return _Tests; }
+            set { SetProperty(ref _Tests, value, OnTestsChanged); }
         }
         public TestInfoWrapper CurrentTest {
-            get { return GetProperty(() => CurrentTest); }
-            set { SetProperty(() => CurrentTest, value, OnCurrentTestChanged); }
+            get { return _CurrentTest; }
+            set { SetProperty(ref _CurrentTest, value, OnCurrentTestChanged); }
         }
         public ProgramStatus Status {
-            get { return GetProperty(() => Status); }
-            set { SetProperty(() => Status, value); }
+            get { return _Status; }
+            set { SetProperty(ref _Status, value); }
         }
         public string CurrentLogLine {
-            get { return GetProperty(() => CurrentLogLine); }
-            set { SetProperty(() => CurrentLogLine, value); }
+            get { return _CurrentLogLine; }
+            set { SetProperty(ref _CurrentLogLine, value); }
         }
         public TestViewType TestViewType {
-            get { return GetProperty(() => TestViewType); }
-            set { SetProperty(() => TestViewType, value, OnTestViewTypeChanged); }
+            get { return _TestViewType; }
+            set { SetProperty(ref _TestViewType, value, OnTestViewTypeChanged); }
         }
         public MergerdTestViewType MergerdTestViewType {
-            get { return GetProperty(() => MergerdTestViewType); }
-            set { SetProperty(() => MergerdTestViewType, value); }
+            get { return _MergerdTestViewType; }
+            set { SetProperty(ref _MergerdTestViewType, value); }
         }
         public LoadingProgressController LoadingProgressController {
-            get { return GetProperty(() => LoadingProgressController); }
-            set { SetProperty(() => LoadingProgressController, value); }
+            get { return _LoadingProgressController; }
+            set { SetProperty(ref _LoadingProgressController, value); }
         }
         public int TestsToCommitCount {
-            get { return GetProperty(() => TestsToCommitCount); }
-            set { SetProperty(() => TestsToCommitCount, value); }
+            get { return _TestsToCommitCount; }
+            set { SetProperty(ref _TestsToCommitCount, value); }
         }
         public CriteriaOperator CurrentFilter {
-            get { return GetProperty(() => CurrentFilter); }
-            set { SetProperty(() => CurrentFilter, value); }
+            get { return _CurrentFilter; }
+            set { SetProperty(ref _CurrentFilter, value); }
         }
         public TestsService TestService {
-            get { return GetProperty(() => TestService); }
-            set { SetProperty(() => TestService, value); }
+            get { return _TestService; }
+            set { SetProperty(ref _TestService, value); }
         }
         public Dictionary<Repository, List<string>> UsedFiles {
-            get { return GetProperty(() => UsedFiles); }
-            set { SetProperty(() => UsedFiles, value); }
+            get { return _UsedFiles; }
+            set { SetProperty(ref _UsedFiles, value); }
         }
         public Dictionary<Repository, List<Team>> Teams {
-            get { return GetProperty(() => Teams); }
-            set { SetProperty(() => Teams, value); }
+            get { return _Teams; }
+            set { SetProperty(ref _Teams, value); }
         }
         public Dictionary<Repository, List<ElapsedTimeInfo>> ElapsedTimes {
-            get { return GetProperty(() => ElapsedTimes); }
-            set { SetProperty(() => ElapsedTimes, value); }
+            get { return _ElapsedTimes; }
+            set { SetProperty(ref _ElapsedTimes, value); }
         }
         public List<SolutionModel> Solutions {
-            get { return GetProperty(() => Solutions); }
-            set { SetProperty(() => Solutions, value); }
+            get { return _Solutions; }
+            set { SetProperty(ref _Solutions, value); }
         }
 
         public MainViewModel() {

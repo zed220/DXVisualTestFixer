@@ -8,8 +8,7 @@
              xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
              xmlns:behaviors="clr-namespace:DXVisualTestFixer.Behaviors"
              xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
-             xmlns:converters="clr-namespace:DXVisualTestFixer.Converters"
-             StartupUri="Shell.xaml">
+             xmlns:converters="clr-namespace:DXVisualTestFixer.Converters">
     <Application.Resources>
         <ResourceDictionary>
             <converters:ArrayToImageConverter x:Key="ArrayToImageConverter"/>

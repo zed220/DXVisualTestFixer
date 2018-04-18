@@ -21,7 +21,8 @@ namespace DXVisualTestFixer {
         }
 
         protected override void OnStartup(StartupEventArgs e) {
-            Bootstrapper.Run();
+            base.OnStartup(e);
+            new Bootstrapper().Run();
         }
     }
 }
