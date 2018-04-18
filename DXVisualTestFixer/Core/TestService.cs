@@ -189,6 +189,8 @@ namespace DXVisualTestFixer.Core {
             return testInfo;
         }
 
+        static object lockLoadFromDisk = new object();
+
         static void LoadTextFile(string path, Action<string> saveAction) {
             string pathWithExtension = Path.ChangeExtension(path, ".xml");
             if(!File.Exists(pathWithExtension)) {
@@ -196,7 +198,15 @@ namespace DXVisualTestFixer.Core {
                 //Debug.WriteLine("fire LoadTextFile");
                 return;
             }
-            saveAction(File.ReadAllText(pathWithExtension));
+            string text;
+            if(!path.StartsWith(@"\\corp")) {
+                lock(lockLoadFromDisk) {
+                    text = File.ReadAllText(pathWithExtension);
+                }
+            }
+            else
+                text = File.ReadAllText(pathWithExtension);
+            saveAction(text);
         }
         static void BuildTextDiff(TestInfo testInfo) {
             if(String.IsNullOrEmpty(testInfo.TextBefore) && String.IsNullOrEmpty(testInfo.TextCurrent))
@@ -306,7 +316,15 @@ namespace DXVisualTestFixer.Core {
                 //Debug.WriteLine("fire LoadImage");
                 return false;
             }
-            saveAction(File.ReadAllBytes(path));
+            byte[] bytes;
+            if(!path.StartsWith(@"\\corp")) {
+                lock(lockLoadFromDisk) {
+                    bytes = File.ReadAllBytes(path);
+                }
+            }
+            else
+                bytes = File.ReadAllBytes(path);
+            saveAction(bytes);
             return true;
         }
 
