@@ -1,6 +1,5 @@
 ﻿using DevExpress.Data.Filtering;
-using DevExpress.Mvvm;
-using DevExpress.Mvvm.ModuleInjection;
+using Prism.Mvvm;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,53 +9,46 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace DXVisualTestFixer.ViewModels {
-    public interface IFilterPanelViewModel : ISupportParameter { }
+    public interface IFilterPanelViewModel { }
 
-    public class FilterPanelViewModel : ViewModelBase, IFilterPanelViewModel {
-        public FilterPanelViewModel() {
-            ModuleManager.DefaultManager.GetEvents(this).ViewModelRemoving += FilterPanelViewModel_ViewModelRemoving;
-        }
-
-        void FilterPanelViewModel_ViewModelRemoving(object sender, ViewModelRemovingEventArgs e) {
-            ModuleManager.DefaultManager.GetEvents(this).ViewModelRemoving -= FilterPanelViewModel_ViewModelRemoving;
-            SetFilterAction = null;
-        }
+    public class FilterPanelViewModel : BindableBase, IFilterPanelViewModel {
+        Action<CriteriaOperator> SetFilterAction { get; }
+        List<int> _DpiList;
+        List<string> _TeamsList;
+        List<string> _VersionsList;
+        List<object> _SelectedDpis;
+        List<object> _SelectedTeams;
+        List<object> _SelectedVersions;
 
         public List<int> DpiList {
-            get { return GetProperty(() => DpiList); }
-            set { SetProperty(() => DpiList, value); }
+            get { return _DpiList; }
+            set { SetProperty(ref _DpiList, value); }
         }
         public List<string> TeamsList {
-            get { return GetProperty(() => TeamsList); }
-            set { SetProperty(() => TeamsList, value); }
+            get { return _TeamsList; }
+            set { SetProperty(ref _TeamsList, value); }
         }
         public List<string> VersionsList {
-            get { return GetProperty(() => VersionsList); }
-            set { SetProperty(() => VersionsList, value); }
+            get { return _VersionsList; }
+            set { SetProperty(ref _VersionsList, value); }
         }
-
         public List<object> SelectedDpis {
-            get { return GetProperty(() => SelectedDpis); }
-            set { SetProperty(() => SelectedDpis, value, OnFilterChanged); }
+            get { return _SelectedDpis; }
+            set { SetProperty(ref _SelectedDpis, value, OnFilterChanged); }
         }
         public List<object> SelectedTeams {
-            get { return GetProperty(() => SelectedTeams); }
-            set { SetProperty(() => SelectedTeams, value, OnFilterChanged); }
+            get { return _SelectedTeams; }
+            set { SetProperty(ref _SelectedTeams, value, OnFilterChanged); }
         }
         public List<object> SelectedVersions {
-            get { return GetProperty(() => SelectedVersions); }
-            set { SetProperty(() => SelectedVersions, value, OnFilterChanged); }
+            get { return _SelectedVersions; }
+            set { SetProperty(ref _SelectedVersions, value, OnFilterChanged); }
         }
 
-        Action<CriteriaOperator> SetFilterAction { get; set; }
 
-        protected override void OnParameterChanged(object parameter) {
-            base.OnParameterChanged(parameter);
-            FilterPanelViewModelParameter filterPanelViewModelParameter = parameter as FilterPanelViewModelParameter;
-            if(filterPanelViewModelParameter == null)
-                return;
-            BuildFilters(filterPanelViewModelParameter.Tests);
-            SetFilterAction = filterPanelViewModelParameter.SetFilterAction;
+        public FilterPanelViewModel(IMainViewModel mainViewModel) {
+            BuildFilters(mainViewModel.Tests);
+            SetFilterAction = mainViewModel.SetFilter;
             InitializeDefaultFilters();
         }
 
@@ -119,17 +111,6 @@ namespace DXVisualTestFixer.ViewModels {
             //foreach(var str in SelectedDpis ?? new List<object>()) {
             //    result += CriteriaOperator.Parse($"[Dpi] = {str}");
             //}
-
         }
-    }
-
-    public class FilterPanelViewModelParameter {
-        public FilterPanelViewModelParameter(List<TestInfoWrapper> tests, Action<CriteriaOperator> setFilterAction) {
-            Tests = tests;
-            SetFilterAction = setFilterAction;
-        }
-
-        public List<TestInfoWrapper> Tests { get; private set; }
-        public Action<CriteriaOperator> SetFilterAction { get; private set; }
     }
 }

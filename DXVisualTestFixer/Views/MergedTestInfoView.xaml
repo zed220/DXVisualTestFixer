@@ -18,6 +18,8 @@
              xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
              xmlns:root="clr-namespace:DXVisualTestFixer"
              xmlns:dxi="http://schemas.devexpress.com/winfx/2008/xaml/core/internal"
+             xmlns:prism="http://prismlibrary.com/"
+             prism:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
@@ -39,7 +41,7 @@
         <dxr:RibbonControl>
             <dxr:RibbonDefaultPageCategory>
                 <dxr:RibbonPage Caption="Main">
-                    <dxr:RibbonPageGroup Caption="Tools" DataContext="{Binding Path=TestInfoModel.TestInfo.TestInfo}">
+                    <dxr:RibbonPageGroup Caption="Tools" DataContext="{Binding Path=TestInfo.TestInfo}">
                         <dxb:BarButtonItem RibbonStyle="Large" Content="Copy Original" LargeGlyph="{dx:DXImageOffice2013 Image=Copy_32x32.png}" GlyphSize="Large"
                                            Command="{Binding ImageBeforeArr, Converter={StaticResource ImageToClipboardConverter}}"/>
                         <dxb:BarButtonItem RibbonStyle="Large" Content="Copy Current" LargeGlyph="{dx:DXImageOffice2013 Image=Copy_32x32.png}" GlyphSize="Large"
@@ -90,25 +92,25 @@
                     </dxe:ComboBoxEdit>
                 </dxdo:LayoutPanel.Caption>
                 <Grid>
-                    <ContentControl x:Name="before" Content="{Binding Path=TestInfoModel.TestInfo.TestInfo.ImageBeforeArr}" ContentTemplate="{StaticResource ResourceKey=DraggableScrollViewerDataTemplate}"
+                    <ContentControl x:Name="before" Content="{Binding Path=TestInfo.TestInfo.ImageBeforeArr}" ContentTemplate="{StaticResource ResourceKey=DraggableScrollViewerDataTemplate}"
                                     Visibility="{DXBinding Expr='MergerdTestViewType eq $root:MergerdTestViewType.Before', Converter={StaticResource VisibilityConverter}}"/>
-                    <ContentControl x:Name="current" Content="{Binding Path=TestInfoModel.TestInfo.TestInfo.ImageCurrentArr}" ContentTemplate="{StaticResource ResourceKey=DraggableScrollViewerDataTemplate}"
+                    <ContentControl x:Name="current" Content="{Binding Path=TestInfo.TestInfo.ImageCurrentArr}" ContentTemplate="{StaticResource ResourceKey=DraggableScrollViewerDataTemplate}"
                                     Visibility="{DXBinding Expr='MergerdTestViewType eq $root:MergerdTestViewType.Current', Converter={StaticResource VisibilityConverter}}"/>
-                    <ContentControl x:Name="diff" Content="{Binding Path=TestInfoModel.TestInfo.TestInfo.ImageDiffArr}" ContentTemplate="{StaticResource ResourceKey=DraggableScrollViewerDataTemplate}"
+                    <ContentControl x:Name="diff" Content="{Binding Path=TestInfo.TestInfo.ImageDiffArr}" ContentTemplate="{StaticResource ResourceKey=DraggableScrollViewerDataTemplate}"
                                     Visibility="{DXBinding Expr='MergerdTestViewType eq $root:MergerdTestViewType.Diff', Converter={StaticResource VisibilityConverter}}"/>
                 </Grid>
             </dxdo:LayoutPanel>
             <dxdo:LayoutPanel ItemHeight="150" ShowCaption="False">
                 <dx:DXTabControl Padding="1">
                     <dx:DXTabItem Header="Diff Compact">
-                        <avalonedit:TextEditor DataContext="{Binding TestInfoModel.TestInfo.TestInfo}" FontFamily="Consolas" IsReadOnly="True">
+                        <avalonedit:TextEditor DataContext="{Binding TestInfo.TestInfo}" FontFamily="Consolas" IsReadOnly="True">
                             <dxmvvm:Interaction.Behaviors>
                                 <behaviors:AvalonEditTextBindingBehavior Text="{Binding Path=TextDiff}"/>
                             </dxmvvm:Interaction.Behaviors>
                         </avalonedit:TextEditor>
                     </dx:DXTabItem>
                     <dx:DXTabItem Header="Diff Full">
-                        <avalonedit:TextEditor DataContext="{Binding TestInfoModel.TestInfo.TestInfo}" FontFamily="Consolas" IsReadOnly="True">
+                        <avalonedit:TextEditor DataContext="{Binding TestInfo.TestInfo}" FontFamily="Consolas" IsReadOnly="True">
                             <dxmvvm:Interaction.Behaviors>
                                 <behaviors:AvalonEditTextBindingBehavior Text="{Binding Path=TextDiffFull}"/>
                             </dxmvvm:Interaction.Behaviors>
@@ -116,29 +118,29 @@
                     </dx:DXTabItem>
                 </dx:DXTabControl>
             </dxdo:LayoutPanel>
-            <dxdo:LayoutPanel Background="#55FF0000" ItemWidth="*" ItemHeight="Auto" ShowBorder="False" ShowCaption="False" Visibility="{Binding Path='TestInfoModel.TestInfo.Valid', Converter={StaticResource InvalidToVisibilityConverter}}">
+            <dxdo:LayoutPanel Background="#55FF0000" ItemWidth="*" ItemHeight="Auto" ShowBorder="False" ShowCaption="False" Visibility="{Binding Path='TestInfo.Valid', Converter={StaticResource InvalidToVisibilityConverter}}">
                 <StackPanel>
-                    <TextBlock Margin="4" VerticalAlignment="Center" Text="{DXBinding Expr='`Test Info wrong. Update the ` + @c.TestInfoModel.TestInfo.TestInfo.Version + ` repostiroy to last version. Error log:`'}"/>
-                    <TextBlock Margin="4" VerticalAlignment="Center" Text="{DXBinding Expr='@c.TestInfoModel.TestInfo.TestInfo.InvalidLog'}"/>
+                    <TextBlock Margin="4" VerticalAlignment="Center" Text="{DXBinding Expr='`Test Info wrong. Update the ` + @c.TestInfo.TestInfo.Version + ` repostiroy to last version. Error log:`'}"/>
+                    <TextBlock Margin="4" VerticalAlignment="Center" Text="{DXBinding Expr='@c.TestInfo.TestInfo.InvalidLog'}"/>
                 </StackPanel>
             </dxdo:LayoutPanel>
-            <dxdo:LayoutPanel Background="#5500FF00" ItemWidth="*" ItemHeight="Auto" ShowBorder="False" ShowCaption="False" Visibility="{Binding Path='TestInfoModel.TestInfo.Valid', Converter={StaticResource FixedToVisibilityConverter}}">
+            <dxdo:LayoutPanel Background="#5500FF00" ItemWidth="*" ItemHeight="Auto" ShowBorder="False" ShowCaption="False" Visibility="{Binding Path='TestInfo.Valid', Converter={StaticResource FixedToVisibilityConverter}}">
                 <StackPanel>
                     <TextBlock Margin="4" VerticalAlignment="Center" Text="Test already fixed."/>
                 </StackPanel>
             </dxdo:LayoutPanel>
             <dxdo:LayoutGroup Orientation="Horizontal" ItemHeight="Auto">
                 <dxdo:LayoutPanel ItemWidth="*" ShowBorder="False" ShowCaption="False">
-                    <dxe:TextEdit Margin="4" VerticalAlignment="Center" EditValue="{DXBinding Expr='TestInfoModel.TestInfo.ToLog()', Mode=OneWay}" IsReadOnly="True" ShowBorder="False"/>
+                    <dxe:TextEdit Margin="4" VerticalAlignment="Center" EditValue="{DXBinding Expr='TestInfo.ToLog()', Mode=OneWay}" IsReadOnly="True" ShowBorder="False"/>
                 </dxdo:LayoutPanel>
                 <dxdo:LayoutPanel ShowBorder="False" ShowCaption="False" ItemWidth="Auto">
                     <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Button Content="Prev" Click="{DXEvent Handler='TestInfoModel.MovePrevRow.Invoke()'}" Width="100"/>
-                        <Button Content="Next" Click="{DXEvent Handler='TestInfoModel.MoveNextRow.Invoke()'}" Width="100"/>
-                        <Button Content="Valid And Next" Click="{DXEvent Handler='Valid()'}" IsEnabled="{DXBinding Expr='TestInfoModel.TestInfo.Valid == $root:TestState.Valid'}"/>
-                        <Button Content="Commit New Test" Click="{DXEvent Handler='Valid()'}" IsEnabled="{DXBinding Expr='TestInfoModel.TestInfo.Valid == $root:TestState.Invalid'}"
-                                Visibility="{DXBinding Expr='TestInfoModel.TestInfo.Valid == $root:TestState.Invalid', Converter={dxmvvm:BooleanToVisibilityConverter}}"/>
-                        <Button Content="Wrong And Next" Click="{DXEvent Handler='Invalid()'}" IsEnabled="{DXBinding Expr='TestInfoModel.TestInfo.Valid != $root:TestState.Fixed'}"/>
+                        <Button Content="Prev" Click="{DXEvent Handler='MovePrevRow.Invoke()'}" Width="100"/>
+                        <Button Content="Next" Click="{DXEvent Handler='MoveNextRow.Invoke()'}" Width="100"/>
+                        <Button Content="Valid And Next" Click="{DXEvent Handler='Valid()'}" IsEnabled="{DXBinding Expr='TestInfo.Valid == $root:TestState.Valid'}"/>
+                        <Button Content="Commit New Test" Click="{DXEvent Handler='Valid()'}" IsEnabled="{DXBinding Expr='TestInfo.Valid == $root:TestState.Invalid'}"
+                                Visibility="{DXBinding Expr='TestInfo.Valid == $root:TestState.Invalid', Converter={dxmvvm:BooleanToVisibilityConverter}}"/>
+                        <Button Content="Wrong And Next" Click="{DXEvent Handler='Invalid()'}" IsEnabled="{DXBinding Expr='TestInfo.Valid != $root:TestState.Fixed'}"/>
                     </StackPanel>
                 </dxdo:LayoutPanel>
             </dxdo:LayoutGroup>

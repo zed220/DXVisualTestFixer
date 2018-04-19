@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Practices.Unity;
+using Prism.Regions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,7 +20,7 @@ namespace DXVisualTestFixer.Views {
     /// Interaction logic for MainView.xaml
     /// </summary>
     public partial class MainView : UserControl {
-        public MainView() {
+        public MainView(IUnityContainer container, IRegionManager regionManager) {
             InitializeComponent();
         }
     }

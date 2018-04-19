@@ -21,6 +21,9 @@
              xmlns:dxgt="http://schemas.devexpress.com/winfx/2008/xaml/grid/themekeys"
              xmlns:sys="clr-namespace:System.Collections;assembly=mscorlib"
              xmlns:sys1="clr-namespace:System;assembly=mscorlib"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:regions="clr-namespace:DXVisualTestFixer.Regions"
+             prism:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
@@ -256,7 +259,7 @@
             <dxdo:LayoutGroup AllowDrag="False">
                 <dxdo:LayoutGroup AllowDrag="False" Orientation="Vertical" ItemWidth="300" AllowSplitters="False">
                     <dxdo:LayoutPanel ShowCaption="False" ItemHeight="Auto" Caption="Filters"
-                                      dxmvvm:UIRegion.Region="{x:Static mif:Regions.FilterPanel}"/>
+                                      prism:RegionManager.RegionName="{x:Static regions:Regions.FilterPanel}"/>
                     <dxdo:LayoutPanel ShowCaption="False" ItemHeight="*">
                         <dxg:GridControl ItemsSource="{Binding Tests}" CurrentItem="{Binding CurrentTest, Mode=TwoWay}" AutoExpandAllGroups="True" ShowBorder="False" 
                                          ShowLoadingPanel="{DXBinding Expr='Status != $viewModels:ProgramStatus.Idle'}" FixedFilter="{Binding CurrentFilter}">
@@ -342,7 +345,7 @@
                         </dxg:GridControl>
                     </dxdo:LayoutPanel>
                 </dxdo:LayoutGroup>
-                <dxdo:LayoutPanel x:Name="TestInfo" dxmvvm:UIRegion.Region="{x:Static mif:Regions.TestInfo}" ShowCaption="False" dxb:MergingProperties.ElementMergingBehavior="All"/>
+                <dxdo:LayoutPanel x:Name="TestInfo" prism:RegionManager.RegionName="{x:Static regions:Regions.TestInfo}" ShowCaption="False" dxb:MergingProperties.ElementMergingBehavior="All"/>
             </dxdo:LayoutGroup>
         </dxdo:DockLayoutManager>
         <dxr:RibbonStatusBarControl Grid.Row="2" IsSizeGripVisible="True">

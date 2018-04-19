@@ -7,8 +7,11 @@ using DXVisualTestFixer.Core;
 using DXVisualTestFixer.Farm;
 using DXVisualTestFixer.Mif;
 using DXVisualTestFixer.Services;
+using DXVisualTestFixer.Views;
 using Microsoft.Practices.ServiceLocation;
+using Microsoft.Practices.Unity;
 using Prism.Mvvm;
+using Prism.Regions;
 using System;
 using System.Collections.Generic;
 using System.Deployment.Application;
@@ -23,7 +26,13 @@ using ThoughtWorks.CruiseControl.Remote;
 
 namespace DXVisualTestFixer.ViewModels {
     public interface IMainViewModel {
+        List<TestInfoWrapper> Tests { get; }
+        MergerdTestViewType MergerdTestViewType { get; set; }
+        TestInfoWrapper CurrentTest { get; } 
 
+        void SetFilter(CriteriaOperator op);
+        void RaiseMoveNext();
+        void RaiseMovePrev();
     }
 
     public enum ProgramStatus {
@@ -72,6 +81,10 @@ namespace DXVisualTestFixer.ViewModels {
     public class MainViewModel : BindableBase, IMainViewModel {
         public Config Config { get; private set; }
 
+        readonly IUnityContainer unityContainer;
+        readonly IRegionManager regionManager;
+
+        #region private properties
         List<TestInfoWrapper> _Tests;
         TestInfoWrapper _CurrentTest;
         ProgramStatus _Status;
@@ -86,6 +99,7 @@ namespace DXVisualTestFixer.ViewModels {
         Dictionary<Repository, List<Team>> _Teams;
         Dictionary<Repository, List<ElapsedTimeInfo>> _ElapsedTimes;
         List<SolutionModel> _Solutions;
+        #endregion
 
         public List<TestInfoWrapper> Tests {
             get { return _Tests; }
@@ -144,7 +158,9 @@ namespace DXVisualTestFixer.ViewModels {
             set { SetProperty(ref _Solutions, value); }
         }
 
-        public MainViewModel() {
+        public MainViewModel(IUnityContainer container, IRegionManager regionManager) {
+            unityContainer = container;
+            this.regionManager = regionManager;
             LoadingProgressController = new LoadingProgressController();
             TestService = new TestsService(LoadingProgressController);
             UpdateConfig();
@@ -223,7 +239,7 @@ namespace DXVisualTestFixer.ViewModels {
         void UpdateContent() {
             if(Config.Repositories == null || Config.Repositories.Length == 0) {
                 Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
-                    GetService<IMessageBoxService>()?.ShowMessage("Add repositories in settings", "Add repositories in settings", MessageButton.OK, MessageIcon.Information);
+                    //GetService<IMessageBoxService>()?.ShowMessage("Add repositories in settings", "Add repositories in settings", MessageButton.OK, MessageIcon.Information);
                     ShowSettings();
                 }));
                 return;
@@ -231,7 +247,7 @@ namespace DXVisualTestFixer.ViewModels {
             foreach(var repoModel in Config.Repositories.Select(rep => new RepositoryModel(rep))) {
                 if(!repoModel.IsValid()) {
                     Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
-                        GetService<IMessageBoxService>()?.ShowMessage("Some repositories has wrong settings", "Modify repositories in settings", MessageButton.OK, MessageIcon.Information);
+                        //GetService<IMessageBoxService>()?.ShowMessage("Some repositories has wrong settings", "Modify repositories in settings", MessageButton.OK, MessageIcon.Information);
                         ShowSettings();
                     }));
                     return;
@@ -242,37 +258,25 @@ namespace DXVisualTestFixer.ViewModels {
 
         void OnCurrentTestChanged() {
             if(CurrentTest == null) {
-                ModuleManager.DefaultManager.Clear(Regions.TestInfo);
+                regionManager.Regions[Regions.Regions.TestInfo].RemoveAll();
                 return;
             }
-            TestInfoModel testInfoModel = new TestInfoModel(MergerdTestViewType) {
-                TestInfo = CurrentTest,
-                MoveNextRow = new Action(MoveNextCore),
-                MovePrevRow = new Action(MovePrevCore),
-                SetMergerdTestViewType = vt => MergerdTestViewType = vt
-            };
-            var vm = ModuleManager.DefaultManager.GetRegion(Regions.TestInfo).GetViewModel(Modules.TestInfo);
-            if(vm == null) {
-                ModuleManager.DefaultManager.InjectOrNavigate(Regions.TestInfo, Modules.TestInfo, testInfoModel);
-                return;
-            }
-            ((ISupportParameter)ModuleManager.DefaultManager.GetRegion(Regions.TestInfo).GetViewModel(Modules.TestInfo)).Parameter = testInfoModel;
+            regionManager.AddToRegion(Regions.Regions.TestInfo, TestViewType == TestViewType.Split ? unityContainer.Resolve(typeof(TestInfoView)) : unityContainer.Resolve(typeof(MergedTestInfoView)));
         }
         void OnTestsChanged() {
             if(Tests == null) {
                 TestsToCommitCount = 0;
                 CurrentTest = null;
                 CurrentFilter = null;
-                ModuleManager.DefaultManager.Clear(Regions.FilterPanel);
+                regionManager.Regions[Regions.Regions.FilterPanel].RemoveAll();
             }
             else {
+                regionManager.AddToRegion(Regions.Regions.FilterPanel, unityContainer.Resolve<FilterPanelView>());
                 CurrentTest = Tests.FirstOrDefault();
-                ModuleManager.DefaultManager.InjectOrNavigate(Regions.FilterPanel, Modules.FilterPanel,
-                    new FilterPanelViewModelParameter(Tests, SetFilter));
             }
         }
 
-        void SetFilter(CriteriaOperator op) {
+        public void SetFilter(CriteriaOperator op) {
             CurrentFilter = op;
         }
 
@@ -280,61 +284,61 @@ namespace DXVisualTestFixer.ViewModels {
             if(CheckHasUncommittedChanges() || CheckAlarmAdmin())
                 return;
             TestsToCommitCount = 0;
-            ModuleManager.DefaultWindowManager.Show(Regions.RepositoryOptimizer, Modules.RepositoryOptimizer, new UnusedFiltesContainer(UsedFiles, Teams));
-            ModuleManager.DefaultWindowManager.Clear(Regions.RepositoryOptimizer);
+            //ModuleManager.DefaultWindowManager.Show(Regions.RepositoryOptimizer, Modules.RepositoryOptimizer, new UnusedFiltesContainer(UsedFiles, Teams));
+            //ModuleManager.DefaultWindowManager.Clear(Regions.RepositoryOptimizer);
             UpdateContent();
         }
         public void ShowRepositoryAnalyzer() {
-            ModuleManager.DefaultWindowManager.Show(Regions.RepositoryAnalyzer, Modules.RepositoryAnalyzer, ElapsedTimes);
-            ModuleManager.DefaultWindowManager.Clear(Regions.RepositoryAnalyzer);
+            //ModuleManager.DefaultWindowManager.Show(Regions.RepositoryAnalyzer, Modules.RepositoryAnalyzer, ElapsedTimes);
+            //ModuleManager.DefaultWindowManager.Clear(Regions.RepositoryAnalyzer);
         }
         public void ShowSettings() {
             if(CheckHasUncommittedChanges())
                 return;
             TestsToCommitCount = 0;
-            ModuleManager.DefaultWindowManager.Show(Regions.Settings, Modules.Settings);
-            ModuleManager.DefaultWindowManager.Clear(Regions.Settings);
+            //ModuleManager.DefaultWindowManager.Show(Regions.Settings, Modules.Settings);
+            //ModuleManager.DefaultWindowManager.Clear(Regions.Settings);
             UpdateConfig();
         }
         public void ApplyChanges() {
             if(TestsToCommitCount == 0) {
-                GetService<IMessageBoxService>()?.ShowMessage("Nothing to commit", "Nothing to commit", MessageButton.OK, MessageIcon.Information);
+                //GetService<IMessageBoxService>()?.ShowMessage("Nothing to commit", "Nothing to commit", MessageButton.OK, MessageIcon.Information);
                 return;
             }
             List<TestInfoWrapper> changedTests = Tests.Where(t => t.CommitChange).ToList();
             if(changedTests.Count == 0) {
-                GetService<IMessageBoxService>()?.ShowMessage("Nothing to commit", "Nothing to commit", MessageButton.OK, MessageIcon.Information);
+                //GetService<IMessageBoxService>()?.ShowMessage("Nothing to commit", "Nothing to commit", MessageButton.OK, MessageIcon.Information);
                 return;
             }
             ChangedTestsModel changedTestsModel = new ChangedTestsModel() { Tests = changedTests };
-            ModuleManager.DefaultWindowManager.Show(Regions.ApplyChanges, Modules.ApplyChanges, changedTestsModel);
-            ModuleManager.DefaultWindowManager.Clear(Regions.ApplyChanges);
+            //ModuleManager.DefaultWindowManager.Show(Regions.ApplyChanges, Modules.ApplyChanges, changedTestsModel);
+            //ModuleManager.DefaultWindowManager.Clear(Regions.ApplyChanges);
             if(!changedTestsModel.Apply)
                 return;
             changedTests.ForEach(ApplyTest);
             TestsToCommitCount = 0;
             UpdateContent();
         }
-        bool ShowCheckOutMessageBox(string text) {
-            MessageResult? result = GetService<IMessageBoxService>()?.ShowMessage("Please checkout file in DXVCS \n" + text, "Please checkout file in DXVCS", MessageButton.OKCancel, MessageIcon.Information);
-            return result.HasValue && result.Value == MessageResult.OK;
-        }
+        //bool ShowCheckOutMessageBox(string text) {
+        //    MessageResult? result = GetService<IMessageBoxService>()?.ShowMessage("Please checkout file in DXVCS \n" + text, "Please checkout file in DXVCS", MessageButton.OKCancel, MessageIcon.Information);
+        //    return result.HasValue && result.Value == MessageResult.OK;
+        //}
         void ApplyTest(TestInfoWrapper testWrapper) {
-            if(!TestsService.ApplyTest(testWrapper.TestInfo, ShowCheckOutMessageBox))
-                GetService<IMessageBoxService>()?.ShowMessage("Test not fixed \n" + testWrapper.ToLog(), "Test not fixed", MessageButton.OK, MessageIcon.Information);
+            //if(!TestsService.ApplyTest(testWrapper.TestInfo, ShowCheckOutMessageBox))
+            //    GetService<IMessageBoxService>()?.ShowMessage("Test not fixed \n" + testWrapper.ToLog(), "Test not fixed", MessageButton.OK, MessageIcon.Information);
         }
         bool CheckHasUncommittedChanges() {
             if(TestsToCommitCount == 0)
                 return false;
-            MessageResult? result = GetService<IMessageBoxService>()?.ShowMessage("You has uncommitted tests! Do you want to refresh tests list and flush all uncommitted tests?", "Uncommitted tests", MessageButton.OKCancel, MessageIcon.Information);
-            if(!result.HasValue || result.Value != MessageResult.OK)
-                return true;
+            //MessageResult? result = GetService<IMessageBoxService>()?.ShowMessage("You has uncommitted tests! Do you want to refresh tests list and flush all uncommitted tests?", "Uncommitted tests", MessageButton.OKCancel, MessageIcon.Information);
+            //if(!result.HasValue || result.Value != MessageResult.OK)
+            //    return true;
             return false;
         }
         bool CheckAlarmAdmin() {
-            MessageResult? result = GetService<IMessageBoxService>()?.ShowMessage("Warning! This tool is powerful and dangerous. Unbridled using may cause repository errors! Are you really sure?", "Warning", MessageButton.OKCancel, MessageIcon.Warning);
-            if(!result.HasValue || result.Value != MessageResult.OK)
-                return true;
+            //MessageResult? result = GetService<IMessageBoxService>()?.ShowMessage("Warning! This tool is powerful and dangerous. Unbridled using may cause repository errors! Are you really sure?", "Warning", MessageButton.OKCancel, MessageIcon.Warning);
+            //if(!result.HasValue || result.Value != MessageResult.OK)
+            //    return true;
             return false;
         }
         public void RefreshTestList() {
@@ -344,6 +348,13 @@ namespace DXVisualTestFixer.ViewModels {
             Tests = null;
             Status = ProgramStatus.Loading;
             FarmIntegrator.Start(FarmRefreshed);
+        }
+
+        public void RaiseMoveNext() {
+            MoveNext?.Invoke(this, EventArgs.Empty);
+        }
+        public void RaiseMovePrev() {
+            MovePrev?.Invoke(this, EventArgs.Empty);
         }
 
         void MoveNextCore() {
@@ -363,8 +374,8 @@ namespace DXVisualTestFixer.ViewModels {
             TestViewType = testViewType;
         }
         void OnTestViewTypeChanged() {
-            ModuleManager.DefaultManager.Clear(Regions.TestInfo);
-            MifRegistrator.InitializeTestInfo(TestViewType);
+            //ModuleManager.DefaultManager.Clear(Regions.TestInfo);
+            //MifRegistrator.InitializeTestInfo(TestViewType);
             OnCurrentTestChanged();
         }
 

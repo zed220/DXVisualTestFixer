@@ -1,5 +1,5 @@
-﻿using CommonServiceLocator;
-using DevExpress.Mvvm;
+﻿using DevExpress.Mvvm;
+using Microsoft.Practices.ServiceLocation;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

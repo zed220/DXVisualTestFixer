@@ -5,10 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DXVisualTestFixer"
         xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
-        xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+        xmlns:regions="clr-namespace:DXVisualTestFixer.Regions"
         xmlns:dxr="http://schemas.devexpress.com/winfx/2008/xaml/ribbon"
         xmlns:configuration="clr-namespace:DXVisualTestFixer.Configuration"
         xmlns:mif="clr-namespace:DXVisualTestFixer.Mif"
+        xmlns:prism="http://prismlibrary.com/"
         dx:ScrollBarExtensions.ScrollBarMode="TouchOverlap"
         UseLayoutRounding="True"
         ShowActivated="True"
@@ -29,5 +30,5 @@
             </Setter>
         </Style>
     </dx:ThemedWindow.Resources>
-    <ContentControl x:Name="content" dxmvvm:UIRegion.Region="{x:Static mif:Regions.Main}"/>
+    <ContentControl prism:RegionManager.RegionName="{x:Static regions:Regions.Main}"/>
 </dx:ThemedWindow>

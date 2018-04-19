@@ -1,6 +1,5 @@
-﻿using DevExpress.Mvvm;
-using DXVisualTestFixer.Core;
-using DXVisualTestFixer.Mif;
+﻿using DXVisualTestFixer.Core;
+using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,47 +7,37 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace DXVisualTestFixer.ViewModels {
-    public interface ITestInfoViewModel : ISupportParameter { }
+    public interface ITestInfoViewModel { }
 
-    public class TestInfoModel {
-        public TestInfoModel(MergerdTestViewType mergerdTestViewType) {
-            MergerdTestViewType = mergerdTestViewType;
-        }
+    public class TestInfoViewModel : BindableBase, ITestInfoViewModel {
+        readonly IMainViewModel mainViewModel;
 
-        public TestInfoWrapper TestInfo { get; set; }
-        public Action MoveNextRow { get; set; }
-        public Action MovePrevRow { get; set; }
-        public MergerdTestViewType MergerdTestViewType { get; }
-        public Action<MergerdTestViewType> SetMergerdTestViewType;
-    }
+        MergerdTestViewType _MergerdTestViewType;
 
-    public class TestInfoViewModel : ViewModelBase, ITestInfoViewModel {
-        public TestInfoModel TestInfoModel {
-            get { return GetProperty(() => TestInfoModel); }
-            private set { SetProperty(() => TestInfoModel, value); }
-        }
         public MergerdTestViewType MergerdTestViewType {
-            get { return GetProperty(() => MergerdTestViewType); }
-            set { SetProperty(() => MergerdTestViewType, value, OnMergerdTestViewTypeChanged); }
+            get { return _MergerdTestViewType; }
+            set { SetProperty(ref _MergerdTestViewType, value, OnMergerdTestViewTypeChanged); }
+        }
+        public Action MoveNextRow { get { return mainViewModel.RaiseMoveNext; } }
+        public Action MovePrevRow { get { return mainViewModel.RaiseMovePrev; } }
+        public TestInfoWrapper TestInfo { get { return mainViewModel.CurrentTest; } }
+
+        public TestInfoViewModel(IMainViewModel mainViewModel) {
+            this.mainViewModel = mainViewModel;
+            MergerdTestViewType = mainViewModel.MergerdTestViewType;
         }
 
         void OnMergerdTestViewTypeChanged() {
-            TestInfoModel?.SetMergerdTestViewType(MergerdTestViewType);
-        }
-
-        protected override void OnParameterChanged(object parameter) {
-            base.OnParameterChanged(parameter);
-            TestInfoModel = (TestInfoModel)parameter;
-            MergerdTestViewType = TestInfoModel.MergerdTestViewType;
+            mainViewModel.MergerdTestViewType = MergerdTestViewType;
         }
 
         public void Valid() {
-            TestInfoModel.TestInfo.CommitChange = true;
-            TestInfoModel.MoveNextRow();
+            TestInfo.CommitChange = true;
+            MoveNextRow();
         }
         public void Invalid() {
-            TestInfoModel.TestInfo.CommitChange = false;
-            TestInfoModel.MoveNextRow();
+            TestInfo.CommitChange = false;
+            MoveNextRow();
         }
     }
 }

@@ -8,6 +8,8 @@
              xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
              xmlns:dxmmvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
              xmlns:converters="clr-namespace:DXVisualTestFixer.Converters"
+             xmlns:prism="http://prismlibrary.com/"
+             prism:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>

@@ -3,6 +3,11 @@ using System.Windows;
 using Prism.Unity;
 using Microsoft.Practices.Unity;
 using Prism.Mvvm;
+using DXVisualTestFixer.ViewModels;
+using Prism.Regions;
+using DXVisualTestFixer.Views;
+using DevExpress.Xpf.Docking;
+using DXVisualTestFixer.RegionAdapters;
 
 namespace DXVisualTestFixer {
     public class Bootstrapper : UnityBootstrapper {
@@ -16,6 +21,22 @@ namespace DXVisualTestFixer {
             base.ConfigureContainer();
             RegisterTypeIfMissing(typeof(IShell), typeof(Shell), true);
             RegisterTypeIfMissing(typeof(ILoggingService), typeof(LoggingService), true);
+            RegisterTypeIfMissing(typeof(IMainViewModel), typeof(MainViewModel), true);
+            RegisterTypeIfMissing(typeof(ITestInfoViewModel), typeof(TestInfoViewModel), false);
+            RegisterTypeIfMissing(typeof(IAppearanceService), typeof(AppearanceService), true);
+            RegisterTypeIfMissing(typeof(IUpdateService), typeof(UpdateService), true);
+            RegisterTypeIfMissing(typeof(IFilterPanelViewModel), typeof(FilterPanelViewModel), false);
+        }
+
+        protected override RegionAdapterMappings ConfigureRegionAdapterMappings() {
+            var mappings = base.ConfigureRegionAdapterMappings();
+            mappings.RegisterMapping(typeof(LayoutPanel), Container.Resolve<LayoutPanelRegionAdapter>());
+            return mappings;
+        }
+
+        protected override void ConfigureViewModelLocator() {
+            base.ConfigureViewModelLocator();
+            ViewModelLocationProvider.Register(typeof(MergedTestInfoView).FullName, typeof(ITestInfoViewModel));
         }
     }
 
@@ -30,14 +51,10 @@ namespace DXVisualTestFixer {
 
     //    static void RegisterTypes() {
     //        RootContainer.RegisterType<IMifRegistrator, RepositoriesViewMifRegistrator>(new ContainerControlledLifetimeManager());
-    //        RootContainer.RegisterType<ILoggingService, LoggingService>(new ContainerControlledLifetimeManager());
-    //        RootContainer.RegisterType<IMainViewModel, MainViewModel>(new ContainerControlledLifetimeManager());
-    //        RootContainer.RegisterType<IAppearanceService, AppearanceService>(new ContainerControlledLifetimeManager());
     //        RootContainer.RegisterType<ITestInfoViewModel, TestInfoViewModel>(new TransientLifetimeManager());
     //        RootContainer.RegisterType<ISettingsViewModel, SettingsViewModel>(new TransientLifetimeManager());
     //        RootContainer.RegisterType<IRepositoryOptimizerViewModel, RepositoryOptimizerViewModel>(new TransientLifetimeManager());
     //        RootContainer.RegisterType<IRepositoryAnalyzerViewModel, RepositoryAnalyzerViewModel>(new TransientLifetimeManager());
-    //        RootContainer.RegisterType<IUpdateService, UpdateService>(new ContainerControlledLifetimeManager());
     //        RootContainer.RegisterType<IApplyChangesViewModel, ApplyChangesViewModel>(new TransientLifetimeManager());
     //        RootContainer.RegisterType<IFilterPanelViewModel, FilterPanelViewModel>(new TransientLifetimeManager());
     //    }

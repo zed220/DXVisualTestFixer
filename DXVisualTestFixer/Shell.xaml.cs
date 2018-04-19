@@ -1,6 +1,9 @@
 ﻿using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Ribbon;
 using DXVisualTestFixer.Services;
+using DXVisualTestFixer.Views;
+using Microsoft.Practices.Unity;
+using Prism.Regions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,8 +25,9 @@ namespace DXVisualTestFixer {
     /// </summary>
     /// 
     public partial class Shell : ThemedWindow, IShell {
-        public Shell() {
+        public Shell(IUnityContainer container, IRegionManager regionManager) {
             InitializeComponent();
+            regionManager.RegisterViewWithRegion(Regions.Regions.Main, typeof(MainView));
         }
 
         IButton headerItem;

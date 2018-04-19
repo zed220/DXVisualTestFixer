@@ -246,6 +246,8 @@
     <Compile Include="Farm\FarmHelper.cs" />
     <Compile Include="Farm\ProjectI.cs" />
     <Compile Include="Log.cs" />
+    <Compile Include="RegionAdapters\LayoutPanelRegionAdapter.cs" />
+    <Compile Include="Regions.cs" />
     <Compile Include="Services\LoggingService.cs" />
     <Compile Include="Native\DiffLineBackgroundRenderer.cs" />
     <Compile Include="Native\ImageComparer.cs" />
@@ -255,7 +257,7 @@
     <Compile Include="ViewModels\FilterPanelViewModel.cs" />
     <Compile Include="ViewModels\LoadingProgressController.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
-    <Compile Include="ViewModels\RepositoryAnalizerViewModel.cs" />
+    <Compile Include="ViewModels\RepositoryAnalyzerViewModel.cs" />
     <Compile Include="ViewModels\RepositoryModel.cs" />
     <Compile Include="ViewModels\RepositoryOptimizerViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
@@ -278,8 +280,8 @@
     <Compile Include="Views\MergedTestInfoView.xaml.cs">
       <DependentUpon>MergedTestInfoView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\RepositoryAnalizerView.xaml.cs">
-      <DependentUpon>RepositoryAnalizerView.xaml</DependentUpon>
+    <Compile Include="Views\RepositoryAnalyzerView.xaml.cs">
+      <DependentUpon>RepositoryAnalyzerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\RepositoryOptimizerView.xaml.cs">
       <DependentUpon>RepositoryOptimizerView.xaml</DependentUpon>
@@ -320,9 +322,9 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\RepositoryAnalizerView.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="Views\RepositoryAnalyzerView.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\RepositoryOptimizerView.xaml">
       <SubType>Designer</SubType>
