@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DXVisualTestFixer.RegionAdapters {
+namespace DXVisualTestFixer.PrismCommon {
     public class LayoutPanelRegionAdapter : RegionAdapterBase<LayoutPanel> {
         public LayoutPanelRegionAdapter(IRegionBehaviorFactory regionBehaviorFactory) : base(regionBehaviorFactory) {
         }

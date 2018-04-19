@@ -7,7 +7,7 @@ using DXVisualTestFixer.ViewModels;
 using Prism.Regions;
 using DXVisualTestFixer.Views;
 using DevExpress.Xpf.Docking;
-using DXVisualTestFixer.RegionAdapters;
+using DXVisualTestFixer.PrismCommon;
 
 namespace DXVisualTestFixer {
     public class Bootstrapper : UnityBootstrapper {

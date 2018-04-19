@@ -22,7 +22,10 @@
              xmlns:sys="clr-namespace:System.Collections;assembly=mscorlib"
              xmlns:sys1="clr-namespace:System;assembly=mscorlib"
              xmlns:prism="http://prismlibrary.com/"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:regions="clr-namespace:DXVisualTestFixer.Regions"
+             xmlns:prismcommon="clr-namespace:DXVisualTestFixer.PrismCommon"
+             xmlns:dxt="http://schemas.devexpress.com/winfx/2008/xaml/core/themekeys"
              prism:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
@@ -55,7 +58,52 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <Style x:Key="NotificationWindowStyle" TargetType="{x:Type dx:DXDialogWindow}">
+            <Setter Property="Width" Value="500"/>
+            <Setter Property="Height" Value="400"/>
+            <Setter Property="ResizeMode" Value="NoResize"/>
+            <Setter Property="SizeToContent" Value="WidthAndHeight"/>
+            <Setter Property="CommandsSource" Value="{Binding Path=Commands}"/>
+        </Style>
+        <DataTemplate x:Key="NotificationWindowTemplate">
+            <Grid Margin="24,16,24,22">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <dx:DXImage x:Name="PART_MessageBoxImage" Width="48" Height="48"
+                    VerticalAlignment="Top"
+                    SnapsToDevicePixels="True"
+                    Stretch="UniformToFill"
+                    Margin="-6,-1,4,-4"
+                    Source="{Binding Path=ImageSource}"/>
+                <TextBlock MaxWidth="{x:Static SystemParameters.MaximizedPrimaryScreenWidth}" 
+                    Focusable="False" 
+                    Background="Transparent" 
+                    TextWrapping="Wrap" 
+                    VerticalAlignment="Center" 
+                    Grid.Column="1" 
+                    Text="{Binding Path=Content}" 
+                    Foreground="{DynamicResource ResourceKey= {dxt:ThemeColorsThemeKey ResourceKey=DXMessageBoxForegroundColor}}"/>
+            </Grid>
+        </DataTemplate>
     </UserControl.Resources>
+    <i:Interaction.Triggers>
+        <prism:InteractionRequestTrigger SourceObject="{Binding ConfirmationRequest}">
+            <prismcommon:PopupDXDialogWindowAction IsModal="True" CenterOverAssociatedObject="True" WindowStyle="{StaticResource NotificationWindowStyle}">
+                <prismcommon:PopupDXDialogWindowAction.WindowContent>
+                    <ContentControl Content="{Binding Converter={prismcommon:NotificationContentConverter}}" ContentTemplate="{StaticResource NotificationWindowTemplate}"/>
+                </prismcommon:PopupDXDialogWindowAction.WindowContent>
+            </prismcommon:PopupDXDialogWindowAction>
+        </prism:InteractionRequestTrigger>
+        <prism:InteractionRequestTrigger SourceObject="{Binding NotificationRequest}">
+            <prismcommon:PopupDXDialogWindowAction IsModal="True" CenterOverAssociatedObject="True" WindowStyle="{StaticResource NotificationWindowStyle}">
+                <prismcommon:PopupDXDialogWindowAction.WindowContent>
+                    <ContentControl Content="{Binding Converter={prismcommon:NotificationContentConverter}}" ContentTemplate="{StaticResource NotificationWindowTemplate}"/>
+                </prismcommon:PopupDXDialogWindowAction.WindowContent>
+            </prismcommon:PopupDXDialogWindowAction>
+        </prism:InteractionRequestTrigger>
+    </i:Interaction.Triggers>
     <dxmvvm:Interaction.Behaviors>
         <dxmvvm:UIWindowRegion x:Name="settingsService" RegionName="{x:Static mif:Regions.Settings}" WindowShowMode="Dialog" SetWindowOwner="True">
             <dxmvvm:UIWindowRegion.WindowFactory>
@@ -72,7 +120,6 @@
                 </Style>
             </dxmvvm:UIWindowRegion.WindowStyle>
         </dxmvvm:UIWindowRegion>
-        <dx:DXMessageBoxService x:Name="messageBoxService"/>
         <dxmvvm:UIWindowRegion x:Name="applyChangesService" RegionName="{x:Static mif:Regions.ApplyChanges}" WindowShowMode="Dialog" SetWindowOwner="True">
             <dxmvvm:UIWindowRegion.WindowFactory>
                 <DataTemplate>

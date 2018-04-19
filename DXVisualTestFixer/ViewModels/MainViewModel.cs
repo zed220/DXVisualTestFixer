@@ -6,10 +6,13 @@ using DXVisualTestFixer.Configuration;
 using DXVisualTestFixer.Core;
 using DXVisualTestFixer.Farm;
 using DXVisualTestFixer.Mif;
+using DXVisualTestFixer.PrismCommon;
 using DXVisualTestFixer.Services;
 using DXVisualTestFixer.Views;
 using Microsoft.Practices.ServiceLocation;
 using Microsoft.Practices.Unity;
+using Prism.Commands;
+using Prism.Interactivity.InteractionRequest;
 using Prism.Mvvm;
 using Prism.Regions;
 using System;
@@ -20,7 +23,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Forms;
+using System.Windows.Input;
 using System.Windows.Threading;
 using ThoughtWorks.CruiseControl.Remote;
 
@@ -91,7 +96,6 @@ namespace DXVisualTestFixer.ViewModels {
         string _CurrentLogLine;
         TestViewType _TestViewType;
         MergerdTestViewType _MergerdTestViewType;
-        LoadingProgressController _LoadingProgressController;
         int _TestsToCommitCount;
         CriteriaOperator _CurrentFilter;
         TestsService _TestService;
@@ -125,10 +129,6 @@ namespace DXVisualTestFixer.ViewModels {
             get { return _MergerdTestViewType; }
             set { SetProperty(ref _MergerdTestViewType, value); }
         }
-        public LoadingProgressController LoadingProgressController {
-            get { return _LoadingProgressController; }
-            set { SetProperty(ref _LoadingProgressController, value); }
-        }
         public int TestsToCommitCount {
             get { return _TestsToCommitCount; }
             set { SetProperty(ref _TestsToCommitCount, value); }
@@ -158,14 +158,17 @@ namespace DXVisualTestFixer.ViewModels {
             set { SetProperty(ref _Solutions, value); }
         }
 
-        public MainViewModel(IUnityContainer container, IRegionManager regionManager) {
+        public LoadingProgressController LoadingProgressController { get; } = new LoadingProgressController();
+        public InteractionRequest<IConfirmation> ConfirmationRequest { get; } = new InteractionRequest<IConfirmation>();
+        public InteractionRequest<INotification> NotificationRequest { get; } = new InteractionRequest<INotification>();
+
+        public MainViewModel(IUnityContainer container, IRegionManager regionManager, ILoggingService loggingService, IUpdateService updateService) {
             unityContainer = container;
             this.regionManager = regionManager;
-            LoadingProgressController = new LoadingProgressController();
             TestService = new TestsService(LoadingProgressController);
             UpdateConfig();
-            ServiceLocator.Current.GetInstance<ILoggingService>().MessageReserved += OnLoggingMessageReserved;
-            ServiceLocator.Current.GetInstance<IUpdateService>().Start();
+            loggingService.MessageReserved += OnLoggingMessageReserved;
+            updateService.Start();
         }
 
         void OnLoggingMessageReserved(object sender, IMessageEventArgs args) {
@@ -239,7 +242,7 @@ namespace DXVisualTestFixer.ViewModels {
         void UpdateContent() {
             if(Config.Repositories == null || Config.Repositories.Length == 0) {
                 Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
-                    //GetService<IMessageBoxService>()?.ShowMessage("Add repositories in settings", "Add repositories in settings", MessageButton.OK, MessageIcon.Information);
+                    NotificationRequest.Raise(new DXNotification(MessageBoxImage.Information) { Title = "Add repositories in settings", Content = "Add repositories in settings" });
                     ShowSettings();
                 }));
                 return;
@@ -247,7 +250,7 @@ namespace DXVisualTestFixer.ViewModels {
             foreach(var repoModel in Config.Repositories.Select(rep => new RepositoryModel(rep))) {
                 if(!repoModel.IsValid()) {
                     Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
-                        //GetService<IMessageBoxService>()?.ShowMessage("Some repositories has wrong settings", "Modify repositories in settings", MessageButton.OK, MessageIcon.Information);
+                        NotificationRequest.Raise(new DXNotification(MessageBoxImage.Warning) { Title = "Invalid Settings", Content = "Modify repositories in settings" });
                         ShowSettings();
                     }));
                     return;
@@ -330,16 +333,14 @@ namespace DXVisualTestFixer.ViewModels {
         bool CheckHasUncommittedChanges() {
             if(TestsToCommitCount == 0)
                 return false;
-            //MessageResult? result = GetService<IMessageBoxService>()?.ShowMessage("You has uncommitted tests! Do you want to refresh tests list and flush all uncommitted tests?", "Uncommitted tests", MessageButton.OKCancel, MessageIcon.Information);
-            //if(!result.HasValue || result.Value != MessageResult.OK)
-            //    return true;
-            return false;
+            Confirmation confirmation = new DXConfirmation(MessageBoxImage.Warning) { Title = "Uncommitted tests", Content = "You has uncommitted tests! Do you want to refresh tests list and flush all uncommitted tests?" };
+            ConfirmationRequest.Raise(confirmation);
+            return !confirmation.Confirmed;
         }
         bool CheckAlarmAdmin() {
-            //MessageResult? result = GetService<IMessageBoxService>()?.ShowMessage("Warning! This tool is powerful and dangerous. Unbridled using may cause repository errors! Are you really sure?", "Warning", MessageButton.OKCancel, MessageIcon.Warning);
-            //if(!result.HasValue || result.Value != MessageResult.OK)
-            //    return true;
-            return false;
+            Confirmation confirmation = new DXConfirmation(MessageBoxImage.Warning) { Title = "Warning", Content = "This tool is powerful and dangerous. Unbridled using may cause repository errors! Are you really sure?" };
+            NotificationRequest.Raise(confirmation);
+            return !confirmation.Confirmed;
         }
         public void RefreshTestList() {
             if(CheckHasUncommittedChanges())
