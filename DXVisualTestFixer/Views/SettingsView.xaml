@@ -10,12 +10,31 @@
              xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
              xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
              xmlns:dxdi="http://schemas.devexpress.com/winfx/2008/xaml/dialogs"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:behaviors="clr-namespace:DXVisualTestFixer.Behaviors"
              xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:prismcommon="clr-namespace:DXVisualTestFixer.PrismCommon"
+             prism:ViewModelLocator.AutoWireViewModel="False"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/DXVisualTestFixer;component/Resources/Services.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <i:Interaction.Triggers>
+        <prism:InteractionRequestTrigger SourceObject="{Binding ConfirmationRequest}">
+            <prismcommon:PopupDXDialogWindowAction IsModal="True" CenterOverAssociatedObject="True" WindowStyle="{StaticResource NotificationWindowStyle}">
+                <prismcommon:PopupDXDialogWindowAction.WindowContent>
+                    <ContentControl Content="{Binding Converter={prismcommon:NotificationContentConverter}}" ContentTemplate="{StaticResource NotificationWindowTemplate}"/>
+                </prismcommon:PopupDXDialogWindowAction.WindowContent>
+            </prismcommon:PopupDXDialogWindowAction>
+        </prism:InteractionRequestTrigger>
+    </i:Interaction.Triggers>
     <dxmvvm:Interaction.Behaviors>
-        <dx:DXMessageBoxService x:Name="messageBoxService"/>
         <dxdi:DXFolderBrowserDialogService x:Name="folderBrowserDialogService"/>
     </dxmvvm:Interaction.Behaviors>
     <dx:DXTabControl>

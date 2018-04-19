@@ -30,63 +30,39 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
-        <converters:TestViewTypeConverter x:Key="TestViewTypeConverterSplit" TrueValue="{x:Static root:TestViewType.Split}" FalseValue="{x:Static root:TestViewType.Merged}"/>
-        <converters:TestViewTypeConverter x:Key="TestViewTypeConverterMerged" TrueValue="{x:Static root:TestViewType.Merged}" FalseValue="{x:Static root:TestViewType.Split}"/>
-        <converters:StackPanelToTooltipConverter x:Key="StackPanelToTooltipConverter"/>
-        <Style TargetType="{x:Type dxe:ComboBoxEdit}">
-            <Setter Property="Margin" Value="4"/>
-        </Style>
-        <Style TargetType="{x:Type Button}">
-            <Setter Property="Margin" Value="4"/>
-        </Style>
-        <Style TargetType="dxg:GroupValuePresenter">
-            <Setter Property="Margin" Value="{DynamicResource {dxgt:GroupRowThemeKey ResourceKey=GroupValuePresenterMargin}}" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="ToolTip">
-                <Setter.Value>
-                    <MultiBinding Converter="{StaticResource StackPanelToTooltipConverter}">
-                        <Binding Path="."/>
-                        <Binding Path="IsMouseOver" RelativeSource="{RelativeSource Self}"/>
-                    </MultiBinding>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="dxg:GroupValuePresenter">
-                        <StackPanel x:Name="PART_GroupValuesPanel" Orientation="Horizontal" Margin="{DynamicResource {dxgt:GroupRowThemeKey ResourceKey=GroupRowContentMargin}}"/>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style x:Key="NotificationWindowStyle" TargetType="{x:Type dx:DXDialogWindow}">
-            <Setter Property="Width" Value="500"/>
-            <Setter Property="Height" Value="400"/>
-            <Setter Property="ResizeMode" Value="NoResize"/>
-            <Setter Property="SizeToContent" Value="WidthAndHeight"/>
-            <Setter Property="CommandsSource" Value="{Binding Path=Commands}"/>
-        </Style>
-        <DataTemplate x:Key="NotificationWindowTemplate">
-            <Grid Margin="24,16,24,22">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <dx:DXImage x:Name="PART_MessageBoxImage" Width="48" Height="48"
-                    VerticalAlignment="Top"
-                    SnapsToDevicePixels="True"
-                    Stretch="UniformToFill"
-                    Margin="-6,-1,4,-4"
-                    Source="{Binding Path=ImageSource}"/>
-                <TextBlock MaxWidth="{x:Static SystemParameters.MaximizedPrimaryScreenWidth}" 
-                    Focusable="False" 
-                    Background="Transparent" 
-                    TextWrapping="Wrap" 
-                    VerticalAlignment="Center" 
-                    Grid.Column="1" 
-                    Text="{Binding Path=Content}" 
-                    Foreground="{DynamicResource ResourceKey= {dxt:ThemeColorsThemeKey ResourceKey=DXMessageBoxForegroundColor}}"/>
-            </Grid>
-        </DataTemplate>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/DXVisualTestFixer;component/Resources/Services.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <converters:TestViewTypeConverter x:Key="TestViewTypeConverterSplit" TrueValue="{x:Static root:TestViewType.Split}" FalseValue="{x:Static root:TestViewType.Merged}"/>
+            <converters:TestViewTypeConverter x:Key="TestViewTypeConverterMerged" TrueValue="{x:Static root:TestViewType.Merged}" FalseValue="{x:Static root:TestViewType.Split}"/>
+            <converters:StackPanelToTooltipConverter x:Key="StackPanelToTooltipConverter"/>
+            <Style TargetType="{x:Type dxe:ComboBoxEdit}">
+                <Setter Property="Margin" Value="4"/>
+            </Style>
+            <Style TargetType="{x:Type Button}">
+                <Setter Property="Margin" Value="4"/>
+            </Style>
+            <Style TargetType="dxg:GroupValuePresenter">
+                <Setter Property="Margin" Value="{DynamicResource {dxgt:GroupRowThemeKey ResourceKey=GroupValuePresenterMargin}}" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="ToolTip">
+                    <Setter.Value>
+                        <MultiBinding Converter="{StaticResource StackPanelToTooltipConverter}">
+                            <Binding Path="."/>
+                            <Binding Path="IsMouseOver" RelativeSource="{RelativeSource Self}"/>
+                        </MultiBinding>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="dxg:GroupValuePresenter">
+                            <StackPanel x:Name="PART_GroupValuesPanel" Orientation="Horizontal" Margin="{DynamicResource {dxgt:GroupRowThemeKey ResourceKey=GroupRowContentMargin}}"/>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </ResourceDictionary>
     </UserControl.Resources>
     <i:Interaction.Triggers>
         <prism:InteractionRequestTrigger SourceObject="{Binding ConfirmationRequest}">
@@ -103,23 +79,21 @@
                 </prismcommon:PopupDXDialogWindowAction.WindowContent>
             </prismcommon:PopupDXDialogWindowAction>
         </prism:InteractionRequestTrigger>
+        <prism:InteractionRequestTrigger SourceObject="{Binding SettingsRequest}">
+            <prismcommon:PopupDXDialogWindowAction IsModal="True" CenterOverAssociatedObject="True" WindowStyle="{StaticResource DialogWindowStyle}">
+                <prismcommon:PopupDXDialogWindowAction.WindowContent>
+                    <ContentControl Content="{Binding Converter={prismcommon:NotificationContentConverter}}">
+                        <ContentControl.ContentTemplate>
+                            <DataTemplate>
+                                <local:SettingsView/>
+                            </DataTemplate>
+                        </ContentControl.ContentTemplate>
+                    </ContentControl>
+                </prismcommon:PopupDXDialogWindowAction.WindowContent>
+            </prismcommon:PopupDXDialogWindowAction>
+        </prism:InteractionRequestTrigger>
     </i:Interaction.Triggers>
     <dxmvvm:Interaction.Behaviors>
-        <dxmvvm:UIWindowRegion x:Name="settingsService" RegionName="{x:Static mif:Regions.Settings}" WindowShowMode="Dialog" SetWindowOwner="True">
-            <dxmvvm:UIWindowRegion.WindowFactory>
-                <DataTemplate>
-                    <dx:DXDialogWindow/>
-                </DataTemplate>
-            </dxmvvm:UIWindowRegion.WindowFactory>
-            <dxmvvm:UIWindowRegion.WindowStyle>
-                <Style TargetType="dx:DXDialogWindow">
-                    <Setter Property="Width" Value="1000"/>
-                    <Setter Property="Height" Value="800"/>
-                    <Setter Property="Title" Value="Settings"/>
-                    <Setter Property="CommandsSource" Value="{Binding DialogCommands}"/>
-                </Style>
-            </dxmvvm:UIWindowRegion.WindowStyle>
-        </dxmvvm:UIWindowRegion>
         <dxmvvm:UIWindowRegion x:Name="applyChangesService" RegionName="{x:Static mif:Regions.ApplyChanges}" WindowShowMode="Dialog" SetWindowOwner="True">
             <dxmvvm:UIWindowRegion.WindowFactory>
                 <DataTemplate>

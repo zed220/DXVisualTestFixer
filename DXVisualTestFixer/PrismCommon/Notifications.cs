@@ -13,8 +13,11 @@ using System.Windows.Markup;
 using System.Windows.Media;
 
 namespace DXVisualTestFixer.PrismCommon {
-    public interface IDXNotification {
+    public interface IDXCommands {
         IEnumerable<UICommand> Commands { get; }
+    }
+
+    public interface IDXNotification : IDXCommands {
         ImageSource ImageSource { get; }
     }
 

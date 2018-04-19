@@ -160,6 +160,7 @@ namespace DXVisualTestFixer.ViewModels {
 
         public LoadingProgressController LoadingProgressController { get; } = new LoadingProgressController();
         public InteractionRequest<IConfirmation> ConfirmationRequest { get; } = new InteractionRequest<IConfirmation>();
+        public InteractionRequest<IConfirmation> SettingsRequest { get; } = new InteractionRequest<IConfirmation>();
         public InteractionRequest<INotification> NotificationRequest { get; } = new InteractionRequest<INotification>();
 
         public MainViewModel(IUnityContainer container, IRegionManager regionManager, ILoggingService loggingService, IUpdateService updateService) {
@@ -298,9 +299,12 @@ namespace DXVisualTestFixer.ViewModels {
         public void ShowSettings() {
             if(CheckHasUncommittedChanges())
                 return;
+            ISettingsViewModel confirmation = unityContainer.Resolve<ISettingsViewModel>();
+            SettingsRequest.Raise(confirmation);
+            if(!confirmation.Confirmed)
+                return;
             TestsToCommitCount = 0;
-            //ModuleManager.DefaultWindowManager.Show(Regions.Settings, Modules.Settings);
-            //ModuleManager.DefaultWindowManager.Clear(Regions.Settings);
+            ConfigSerializer.SaveConfig(confirmation.Config);
             UpdateConfig();
         }
         public void ApplyChanges() {

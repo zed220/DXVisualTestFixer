@@ -292,6 +292,10 @@
     <Compile Include="Views\TestInfoView.xaml.cs">
       <DependentUpon>TestInfoView.xaml</DependentUpon>
     </Compile>
+    <Page Include="Resources\Services.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Shell.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

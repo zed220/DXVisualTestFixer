@@ -1,8 +1,10 @@
 ﻿using DevExpress.Mvvm;
-using DevExpress.Mvvm.ModuleInjection;
 using DevExpress.Xpf.Core;
 using DXVisualTestFixer.Configuration;
 using DXVisualTestFixer.Core;
+using DXVisualTestFixer.PrismCommon;
+using DXVisualTestFixer.ViewModels;
+using Prism.Interactivity.InteractionRequest;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,11 +12,15 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Media;
 
 namespace DXVisualTestFixer.ViewModels {
-    public interface ISettingsViewModel { }
+    public interface ISettingsViewModel : IConfirmation {
+        Config Config { get; }
+    }
 
-    public class SettingsViewModel : ViewModelBase, ISettingsViewModel {
+    public class SettingsViewModel : BindableBase, ISettingsViewModel {
         public Config Config {
             get { return GetProperty(() => Config); }
             private set { SetProperty(() => Config, value, OnConfigChanged); }
@@ -28,19 +34,19 @@ namespace DXVisualTestFixer.ViewModels {
             set { SetProperty(() => ThemeName, value, () => Config.ThemeName = ThemeName); }
         }
 
-        public IEnumerable<UICommand> DialogCommands { get; private set; }
+        public IEnumerable<UICommand> Commands { get; }
+        public InteractionRequest<IConfirmation> ConfirmationRequest { get; } = new InteractionRequest<IConfirmation>();
+
+        public bool Confirmed { get; set; }
+        public string Title { get; set; }
+        public object Content { get; set; }
 
         public SettingsViewModel() {
-            ModuleManager.DefaultManager.GetEvents(this).ViewModelRemoving += SettingsViewModel_ViewModelRemoving;
-            CreateCommands();
+            Title = "Settings";
             Config = ConfigSerializer.GetConfig();
-        }
-
-        void CreateCommands() {
-            List<UICommand> dialogCommands = new List<UICommand>();
-            dialogCommands.Add(new UICommand() { IsDefault = true, Command = new DelegateCommand(Save), Caption = DXMessageBoxLocalizer.GetString(DXMessageBoxStringId.Ok) });
-            dialogCommands.Add(new UICommand() { IsCancel = true, Caption = DXMessageBoxLocalizer.GetString(DXMessageBoxStringId.Cancel) });
-            DialogCommands = dialogCommands;
+            Commands = UICommand.GenerateFromMessageButton(MessageButton.OKCancel, new DialogService(), MessageResult.OK, MessageResult.Cancel);
+            Commands.Where(c => c.IsDefault).Single().Command = new DelegateCommand(Save);
+            Commands.Where(c => c.IsCancel).Single().Command = new DelegateCommand(Cancel);
         }
 
         void OnConfigChanged() {
@@ -63,64 +69,50 @@ namespace DXVisualTestFixer.ViewModels {
             return !ConfigSerializer.IsConfigEquals(ConfigSerializer.GetConfig(), Config);
         }
         void Save() {
-            ConfigSerializer.SaveConfig(Config);
-        }
-
-        void SettingsViewModel_ViewModelRemoving(object sender, ViewModelRemovingEventArgs e) {
-            ModuleManager.DefaultManager.GetEvents(this).ViewModelRemoving -= SettingsViewModel_ViewModelRemoving;
             if(!IsChanged())
                 return;
-            MessageResult? result = GetService<IMessageBoxService>()?.ShowMessage("Save changes?", "Save changes?", MessageButton.YesNoCancel);
-            if(!result.HasValue || result.Value == MessageResult.Cancel || result.Value == MessageResult.None) {
-                e.Cancel = true;
-                ModuleManager.DefaultManager.GetEvents(this).ViewModelRemoving += SettingsViewModel_ViewModelRemoving;
+            Confirmed = true;
+        }
+        void Cancel() {
+            if(!IsChanged())
                 return;
-            }
-            if(result.Value == MessageResult.Yes)
+            DXConfirmation confirmation = new DXConfirmation(MessageBoxImage.Warning) { Title = "Save changes?", Content = "Save changes?" };
+            ConfirmationRequest.Raise(confirmation);
+            if(confirmation.Confirmed)
                 Save();
         }
 
         public void LoadFromWorkingFolder() {
-            IFolderBrowserDialogService service = GetService<IFolderBrowserDialogService>();
-            bool? result = service?.ShowDialog();
-            if(!result.HasValue || !(bool)result)
-                return;
-            if(!Directory.Exists(service.ResultPath))
-                return;
-            List<string> savedVersions = Repositories.Select(r => r.Version).ToList();
-            foreach(var ver in Repository.Versions.Where(v => !savedVersions.Contains(v))) {
-                //if(Repository.InNewVersion(ver))
-                string verDir = String.Format("20{0}", ver);
-                //string verPath = Path.Combine(service.ResultPath, verDir);
-                foreach(var directoryPath in Directory.GetDirectories(service.ResultPath)) {
-                    string dirName = Path.GetFileName(directoryPath);
-                    if(dirName.Contains(String.Format("20{0}", ver)) || dirName.Contains(ver)) {
-                        if(Repository.InNewVersion(ver)) {
-                            if(!File.Exists(directoryPath + "\\VisualTestsConfig.xml"))
-                                continue;
-                            Repositories.Add(new RepositoryModel(new Repository() { Version = ver, Path = directoryPath + "\\" }));
-                            continue;
-                        }
-                        string visualTestsPathVar = Path.Combine(directoryPath, "XPF\\");
-                        if(!Directory.Exists(visualTestsPathVar)) {
-                            visualTestsPathVar = Path.Combine(directoryPath, "common\\XPF\\");
-                            if(!Directory.Exists(visualTestsPathVar))
-                                continue;
-                        }
-                        Repositories.Add(new RepositoryModel(new Repository() { Version = ver, Path = visualTestsPathVar }));
-                    }
-                }
-                //if(!Directory.Exists(verPath))
-                //    continue;
-
-                //string visualTestsPathVar = Path.Combine(verPath, "XPF\\");
-                //if(!Directory.Exists(visualTestsPathVar)) {
-                //    visualTestsPathVar = Path.Combine(verPath, "common\\XPF\\");
-                //    if(!Directory.Exists(visualTestsPathVar))
-                //        continue;
-                //}
-                //Repositories.Add(new RepositoryModel(new Repository() { Version = ver, Path = visualTestsPathVar }));
-            }
+            //IFolderBrowserDialogService service = GetService<IFolderBrowserDialogService>();
+            //bool? result = service?.ShowDialog();
+            //if(!result.HasValue || !(bool)result)
+            //    return;
+            //if(!Directory.Exists(service.ResultPath))
+            //    return;
+            //List<string> savedVersions = Repositories.Select(r => r.Version).ToList();
+            //foreach(var ver in Repository.Versions.Where(v => !savedVersions.Contains(v))) {
+            //    //if(Repository.InNewVersion(ver))
+            //    string verDir = String.Format("20{0}", ver);
+            //    //string verPath = Path.Combine(service.ResultPath, verDir);
+            //    foreach(var directoryPath in Directory.GetDirectories(service.ResultPath)) {
+            //        string dirName = Path.GetFileName(directoryPath);
+            //        if(dirName.Contains(String.Format("20{0}", ver)) || dirName.Contains(ver)) {
+            //            if(Repository.InNewVersion(ver)) {
+            //                if(!File.Exists(directoryPath + "\\VisualTestsConfig.xml"))
+            //                    continue;
+            //                Repositories.Add(new RepositoryModel(new Repository() { Version = ver, Path = directoryPath + "\\" }));
+            //                continue;
+            //            }
+            //            string visualTestsPathVar = Path.Combine(directoryPath, "XPF\\");
+            //            if(!Directory.Exists(visualTestsPathVar)) {
+            //                visualTestsPathVar = Path.Combine(directoryPath, "common\\XPF\\");
+            //                if(!Directory.Exists(visualTestsPathVar))
+            //                    continue;
+            //            }
+            //            Repositories.Add(new RepositoryModel(new Repository() { Version = ver, Path = visualTestsPathVar }));
+            //        }
+            //    }
+            //}
         }
     }
 }
