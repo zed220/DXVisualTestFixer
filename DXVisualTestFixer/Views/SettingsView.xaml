@@ -9,6 +9,7 @@
              xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
              xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
              xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+             xmlns:dxc="http://schemas.devexpress.com/winfx/2008/xaml/controls"
              xmlns:dxdi="http://schemas.devexpress.com/winfx/2008/xaml/dialogs"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:behaviors="clr-namespace:DXVisualTestFixer.Behaviors"
@@ -34,9 +35,6 @@
             </prismcommon:PopupDXDialogWindowAction>
         </prism:InteractionRequestTrigger>
     </i:Interaction.Triggers>
-    <dxmvvm:Interaction.Behaviors>
-        <dxdi:DXFolderBrowserDialogService x:Name="folderBrowserDialogService"/>
-    </dxmvvm:Interaction.Behaviors>
     <dx:DXTabControl>
         <dx:DXTabItem Header="Repositories">
             <Grid>

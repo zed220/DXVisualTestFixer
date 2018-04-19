@@ -8,6 +8,8 @@ using Prism.Regions;
 using DXVisualTestFixer.Views;
 using DevExpress.Xpf.Docking;
 using DXVisualTestFixer.PrismCommon;
+using DevExpress.Mvvm.UI;
+using DevExpress.Xpf.Dialogs;
 
 namespace DXVisualTestFixer {
     public class Bootstrapper : UnityBootstrapper {
@@ -24,6 +26,7 @@ namespace DXVisualTestFixer {
             RegisterTypeIfMissing(typeof(IMainViewModel), typeof(MainViewModel), true);
             RegisterTypeIfMissing(typeof(ISettingsViewModel), typeof(SettingsViewModel), false);
             RegisterTypeIfMissing(typeof(ITestInfoViewModel), typeof(TestInfoViewModel), false);
+            RegisterTypeIfMissing(typeof(IFolderBrowserDialog), typeof(DXFolderBrowserDialog), false);
             RegisterTypeIfMissing(typeof(IAppearanceService), typeof(AppearanceService), true);
             RegisterTypeIfMissing(typeof(IUpdateService), typeof(UpdateService), true);
             RegisterTypeIfMissing(typeof(IFilterPanelViewModel), typeof(FilterPanelViewModel), false);

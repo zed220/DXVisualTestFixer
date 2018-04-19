@@ -1,9 +1,12 @@
 ﻿using DevExpress.Mvvm;
+using DevExpress.Mvvm.UI;
 using DevExpress.Xpf.Core;
+using DevExpress.Xpf.Dialogs;
 using DXVisualTestFixer.Configuration;
 using DXVisualTestFixer.Core;
 using DXVisualTestFixer.PrismCommon;
 using DXVisualTestFixer.ViewModels;
+using Microsoft.Practices.Unity;
 using Prism.Interactivity.InteractionRequest;
 using System;
 using System.Collections.Generic;
@@ -13,6 +16,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Media;
 
 namespace DXVisualTestFixer.ViewModels {
@@ -21,6 +25,8 @@ namespace DXVisualTestFixer.ViewModels {
     }
 
     public class SettingsViewModel : BindableBase, ISettingsViewModel {
+        readonly IUnityContainer unityContainer;
+
         public Config Config {
             get { return GetProperty(() => Config); }
             private set { SetProperty(() => Config, value, OnConfigChanged); }
@@ -41,7 +47,8 @@ namespace DXVisualTestFixer.ViewModels {
         public string Title { get; set; }
         public object Content { get; set; }
 
-        public SettingsViewModel() {
+        public SettingsViewModel(IUnityContainer container) {
+            unityContainer = container;
             Title = "Settings";
             Config = ConfigSerializer.GetConfig();
             Commands = UICommand.GenerateFromMessageButton(MessageButton.OKCancel, new DialogService(), MessageResult.OK, MessageResult.Cancel);
@@ -83,36 +90,13 @@ namespace DXVisualTestFixer.ViewModels {
         }
 
         public void LoadFromWorkingFolder() {
-            //IFolderBrowserDialogService service = GetService<IFolderBrowserDialogService>();
-            //bool? result = service?.ShowDialog();
-            //if(!result.HasValue || !(bool)result)
-            //    return;
-            //if(!Directory.Exists(service.ResultPath))
-            //    return;
-            //List<string> savedVersions = Repositories.Select(r => r.Version).ToList();
-            //foreach(var ver in Repository.Versions.Where(v => !savedVersions.Contains(v))) {
-            //    //if(Repository.InNewVersion(ver))
-            //    string verDir = String.Format("20{0}", ver);
-            //    //string verPath = Path.Combine(service.ResultPath, verDir);
-            //    foreach(var directoryPath in Directory.GetDirectories(service.ResultPath)) {
-            //        string dirName = Path.GetFileName(directoryPath);
-            //        if(dirName.Contains(String.Format("20{0}", ver)) || dirName.Contains(ver)) {
-            //            if(Repository.InNewVersion(ver)) {
-            //                if(!File.Exists(directoryPath + "\\VisualTestsConfig.xml"))
-            //                    continue;
-            //                Repositories.Add(new RepositoryModel(new Repository() { Version = ver, Path = directoryPath + "\\" }));
-            //                continue;
-            //            }
-            //            string visualTestsPathVar = Path.Combine(directoryPath, "XPF\\");
-            //            if(!Directory.Exists(visualTestsPathVar)) {
-            //                visualTestsPathVar = Path.Combine(directoryPath, "common\\XPF\\");
-            //                if(!Directory.Exists(visualTestsPathVar))
-            //                    continue;
-            //            }
-            //            Repositories.Add(new RepositoryModel(new Repository() { Version = ver, Path = visualTestsPathVar }));
-            //        }
-            //    }
-            //}
+            var dialog = unityContainer.Resolve<IFolderBrowserDialog>();
+            var result = dialog.ShowDialog();
+            if(result != DialogResult.OK)
+                return;
+            if(!Directory.Exists(dialog.SelectedPath))
+                return;
+            RepositoryModel.ActualizeRepositories(Repositories, dialog.SelectedPath);
         }
     }
 }

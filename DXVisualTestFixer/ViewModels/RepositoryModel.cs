@@ -73,5 +73,30 @@ namespace DXVisualTestFixer.ViewModels {
             }
             return true;
         }
+
+        public static void ActualizeRepositories(ICollection<RepositoryModel> Repositories, string filePath) {
+            List<string> savedVersions = Repositories.Select(r => r.Version).ToList();
+            foreach(var ver in Repository.Versions.Where(v => !savedVersions.Contains(v))) {
+                string verDir = String.Format("20{0}", ver);
+                foreach(var directoryPath in Directory.GetDirectories(filePath)) {
+                    string dirName = System.IO.Path.GetFileName(directoryPath);
+                    if(dirName.Contains(String.Format("20{0}", ver)) || dirName.Contains(ver)) {
+                        if(Repository.InNewVersion(ver)) {
+                            if(!File.Exists(directoryPath + "\\VisualTestsConfig.xml"))
+                                continue;
+                            Repositories.Add(new RepositoryModel(new Repository() { Version = ver, Path = directoryPath + "\\" }));
+                            continue;
+                        }
+                        string visualTestsPathVar = System.IO.Path.Combine(directoryPath, "XPF\\");
+                        if(!Directory.Exists(visualTestsPathVar)) {
+                            visualTestsPathVar = System.IO.Path.Combine(directoryPath, "common\\XPF\\");
+                            if(!Directory.Exists(visualTestsPathVar))
+                                continue;
+                        }
+                        Repositories.Add(new RepositoryModel(new Repository() { Version = ver, Path = visualTestsPathVar }));
+                    }
+                }
+            }
+        }
     }
 }

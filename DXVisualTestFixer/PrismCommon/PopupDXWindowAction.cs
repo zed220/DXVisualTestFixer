@@ -1,4 +1,5 @@
 ﻿using DevExpress.Xpf.Core;
+using DevExpress.Xpf.Dialogs;
 using DXVisualTestFixer.ViewModels;
 using Prism.Interactivity;
 using Prism.Interactivity.InteractionRequest;
