@@ -1,8 +1,10 @@
 ﻿using DevExpress.Mvvm;
-using DevExpress.Mvvm.ModuleInjection;
 using DevExpress.Xpf.Core;
 using DXVisualTestFixer.Configuration;
 using DXVisualTestFixer.Core;
+using Microsoft.Practices.Unity;
+using Prism.Interactivity.InteractionRequest;
+using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,11 +13,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Threading;
+using BindableBase = Prism.Mvvm.BindableBase;
 
 namespace DXVisualTestFixer.ViewModels {
-    public interface IRepositoryOptimizerViewModel : ISupportParameter { }
+    public interface IRepositoryOptimizerViewModel : IConfirmation { }
 
-    public class UnusedFileModel : BindableBase {
+    public class UnusedFileModel {
         public UnusedFileModel(string path, string version) {
             Path = path;
             Version = version;
@@ -31,73 +34,58 @@ namespace DXVisualTestFixer.ViewModels {
         }
     }
 
-    public class RepositoryOptimizerViewModel : ViewModelBase, IRepositoryOptimizerViewModel {
+    public class RepositoryOptimizerViewModel : BindableBase, IRepositoryOptimizerViewModel {
         Dictionary<Repository, List<string>> usedFilesByRep;
         readonly Dispatcher Dispatcher;
 
+        ObservableCollection<UnusedFileModel> _UnusedFiles;
+        ObservableCollection<UnusedFileModel> _RemovedFiles;
+        ProgramStatus _Status;
+
         public ObservableCollection<UnusedFileModel> UnusedFiles {
-            get { return GetProperty(() => UnusedFiles); }
-            set { SetProperty(() => UnusedFiles, value); }
+            get { return _UnusedFiles; }
+            set { SetProperty(ref _UnusedFiles, value); }
         }
         public ObservableCollection<UnusedFileModel> RemovedFiles {
-            get { return GetProperty(() => RemovedFiles); }
-            set { SetProperty(() => RemovedFiles, value); }
+            get { return _RemovedFiles; }
+            set { SetProperty(ref _RemovedFiles, value); }
         }
         public ProgramStatus Status {
-            get { return GetProperty(() => Status); }
-            set { SetProperty(() => Status, value); }
+            get { return _Status; }
+            set { SetProperty(ref _Status, value); }
         }
 
-        public IEnumerable<UICommand> DialogCommands { get; private set; }
+        public IEnumerable<UICommand> Commands { get; }
+        public InteractionRequest<IConfirmation> ConfirmationRequest { get; } = new InteractionRequest<IConfirmation>();
 
-        public RepositoryOptimizerViewModel() {
+        public bool Confirmed { get; set; }
+        public string Title { get; set; }
+        public object Content { get; set; }
+
+        public RepositoryOptimizerViewModel(IUnityContainer container, IMainViewModel viewModel) {
+            Title = "Repository Optimizer";
             Dispatcher = Dispatcher.CurrentDispatcher;
             RemovedFiles = new ObservableCollection<UnusedFileModel>();
-            ModuleManager.DefaultManager.GetEvents(this).ViewModelRemoving += RepositoryOptimizerViewModel_ViewModelRemoving;
-            CreateCommands();
-        }
-
-        void CreateCommands() {
-            List<UICommand> dialogCommands = new List<UICommand>();
-            dialogCommands.Add(new UICommand() { IsDefault = false, Command = new DelegateCommand(SaveButNotClose, () => Status == ProgramStatus.Idle), Caption = "Apply" });
-            dialogCommands.Add(new UICommand() { IsDefault = true, Command = new DelegateCommand(() => Commit(), () => Status == ProgramStatus.Idle), Caption = DXMessageBoxLocalizer.GetString(DXMessageBoxStringId.Ok) });
-            dialogCommands.Add(new UICommand() { IsCancel = true, Caption = DXMessageBoxLocalizer.GetString(DXMessageBoxStringId.Cancel) });
-            DialogCommands = dialogCommands;
-        }
-
-        void RepositoryOptimizerViewModel_ViewModelRemoving(object sender, ViewModelRemovingEventArgs e) {
-            if(Status == ProgramStatus.Loading) {
-                e.Cancel = true;
-                return;
-            }
-            ModuleManager.DefaultManager.GetEvents(this).ViewModelRemoving -= RepositoryOptimizerViewModel_ViewModelRemoving;
-            if(RemovedFiles.Count == 0)
-                return;
-            MessageResult? result = GetService<IMessageBoxService>()?.ShowMessage("Save changes?", "Save changes?", MessageButton.YesNoCancel);
-            if(!result.HasValue || result.Value == MessageResult.Cancel || result.Value == MessageResult.None) {
-                e.Cancel = true;
-                ModuleManager.DefaultManager.GetEvents(this).ViewModelRemoving += RepositoryOptimizerViewModel_ViewModelRemoving;
-                return;
-            }
-            if(result.Value == MessageResult.Yes)
-                Commit();
-        }
-
-        void SaveButNotClose() {
+            Commands = UICommand.GenerateFromMessageButton(MessageButton.OKCancel, new DialogService(), MessageResult.OK, MessageResult.Cancel);
+            Commands.Where(c => c.IsDefault).Single().Command = new DelegateCommand(() => Commit());
             Status = ProgramStatus.Loading;
-            Task.Factory.StartNew(SaveButNotCloseCore);
-
+            Task.Factory.StartNew(() => UpdateUnusedFiles(viewModel.UsedFiles, viewModel.Teams)).ConfigureAwait(false);
         }
-        void SaveButNotCloseCore() {
-            var removedFiles = Commit();
-            Dispatcher.BeginInvoke(new Action(() => {
-                foreach(var removedFile in removedFiles) {
-                    RemovedFiles.Remove(removedFile);
-                    UnusedFiles.Remove(removedFile);
-                }
-                Status = ProgramStatus.Idle;
-            }));
-        }
+        
+        //void SaveButNotClose() {
+        //    Status = ProgramStatus.Loading;
+        //    Task.Factory.StartNew(SaveButNotCloseCore);
+        //}
+        //void SaveButNotCloseCore() {
+        //    var removedFiles = Commit();
+        //    Dispatcher.BeginInvoke(new Action(() => {
+        //        foreach(var removedFile in removedFiles) {
+        //            RemovedFiles.Remove(removedFile);
+        //            UnusedFiles.Remove(removedFile);
+        //        }
+        //        Status = ProgramStatus.Idle;
+        //    }));
+        //}
 
         List<UnusedFileModel> Commit() {
             List<UnusedFileModel> removedFiltes = new List<UnusedFileModel>();
@@ -107,14 +95,8 @@ namespace DXVisualTestFixer.ViewModels {
                     removedFiltes.Add(fileToRemove);
                 }
             }
+            Confirmed = true;
             return removedFiltes;
-        }
-
-        protected override void OnParameterChanged(object parameter) {
-            base.OnParameterChanged(parameter);
-            Status = ProgramStatus.Loading;
-            var typedParam = (UnusedFiltesContainer)parameter;
-            Task.Factory.StartNew(() => UpdateUnusedFiles(typedParam.UsedFiles, typedParam.Teams)).ConfigureAwait(false);
         }
 
         void UpdateUnusedFiles(Dictionary<Repository, List<string>> usedFilesByRep, Dictionary<Repository, List<Team>> teams) {

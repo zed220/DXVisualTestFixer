@@ -9,8 +9,28 @@
              xmlns:viewModels="clr-namespace:DXVisualTestFixer.ViewModels"
              xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
              xmlns:behaviors="clr-namespace:DXVisualTestFixer.Behaviors"
+             xmlns:prismcommon="clr-namespace:DXVisualTestFixer.PrismCommon"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:prism="http://www.codeplex.com/prism"
+             prism:ViewModelLocator.AutoWireViewModel="False"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/DXVisualTestFixer;component/Resources/Services.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <i:Interaction.Triggers>
+        <prism:InteractionRequestTrigger SourceObject="{Binding ConfirmationRequest}">
+            <prismcommon:PopupDXDialogWindowAction IsModal="True" CenterOverAssociatedObject="True" WindowStyle="{StaticResource NotificationWindowStyle}">
+                <prismcommon:PopupDXDialogWindowAction.WindowContent>
+                    <ContentControl Content="{Binding Converter={prismcommon:NotificationContentConverter}}" ContentTemplate="{StaticResource NotificationWindowTemplate}"/>
+                </prismcommon:PopupDXDialogWindowAction.WindowContent>
+            </prismcommon:PopupDXDialogWindowAction>
+        </prism:InteractionRequestTrigger>
+    </i:Interaction.Triggers>
     <dxdo:LayoutGroup Orientation="Horizontal" ShowCaption="False">
         <dxdo:LayoutPanel Caption="Unused Files" ShowCloseButton="False" ShowPinButton="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False">
             <dxg:GridControl ItemsSource="{Binding UnusedFiles}" AutoExpandAllGroups="True" ShowBorder="False"

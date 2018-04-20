@@ -9,6 +9,7 @@ using DXVisualTestFixer.PrismCommon;
 using DXVisualTestFixer.ViewModels;
 using Microsoft.Practices.Unity;
 using Prism.Interactivity.InteractionRequest;
+using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -19,6 +20,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Media;
+using BindableBase = Prism.Mvvm.BindableBase;
 
 namespace DXVisualTestFixer.ViewModels {
     public interface ISettingsViewModel : IConfirmation {
@@ -28,17 +30,21 @@ namespace DXVisualTestFixer.ViewModels {
     public class SettingsViewModel : BindableBase, ISettingsViewModel {
         readonly IUnityContainer unityContainer;
 
+        Config _Config;
+        ObservableCollection<RepositoryModel> _Repositories;
+        string _ThemeName;
+
         public Config Config {
-            get { return GetProperty(() => Config); }
-            private set { SetProperty(() => Config, value, OnConfigChanged); }
+            get { return _Config; }
+            private set { SetProperty(ref _Config, value, OnConfigChanged); }
         }
         public ObservableCollection<RepositoryModel> Repositories {
-            get { return GetProperty(() => Repositories); }
-            set { SetProperty(() => Repositories, value); }
+            get { return _Repositories; }
+            set { SetProperty(ref _Repositories, value); }
         }
         public string ThemeName {
-            get { return GetProperty(() => ThemeName); }
-            set { SetProperty(() => ThemeName, value, () => Config.ThemeName = ThemeName); }
+            get { return _ThemeName; }
+            set { SetProperty(ref _ThemeName, value, () => Config.ThemeName = ThemeName); }
         }
 
         public IEnumerable<UICommand> Commands { get; }

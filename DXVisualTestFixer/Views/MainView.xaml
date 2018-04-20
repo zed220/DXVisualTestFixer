@@ -105,54 +105,33 @@
                 </prismcommon:PopupDXDialogWindowAction.WindowContent>
             </prismcommon:PopupDXDialogWindowAction>
         </prism:InteractionRequestTrigger>
+        <prism:InteractionRequestTrigger SourceObject="{Binding RepositoryOptimizerRequest}">
+            <prismcommon:PopupDXDialogWindowAction IsModal="True" CenterOverAssociatedObject="True" WindowStyle="{StaticResource DialogWindowStyle}">
+                <prismcommon:PopupDXDialogWindowAction.WindowContent>
+                    <ContentControl Content="{Binding Converter={prismcommon:NotificationContentConverter}}">
+                        <ContentControl.ContentTemplate>
+                            <DataTemplate>
+                                <local:RepositoryOptimizerView/>
+                            </DataTemplate>
+                        </ContentControl.ContentTemplate>
+                    </ContentControl>
+                </prismcommon:PopupDXDialogWindowAction.WindowContent>
+            </prismcommon:PopupDXDialogWindowAction>
+        </prism:InteractionRequestTrigger>
+        <prism:InteractionRequestTrigger SourceObject="{Binding RepositoryAnalyzerRequest}">
+            <prismcommon:PopupDXDialogWindowAction IsModal="True" CenterOverAssociatedObject="True" WindowStyle="{StaticResource DialogWindowStyle}">
+                <prismcommon:PopupDXDialogWindowAction.WindowContent>
+                    <ContentControl Content="{Binding Converter={prismcommon:NotificationContentConverter}}">
+                        <ContentControl.ContentTemplate>
+                            <DataTemplate>
+                                <local:RepositoryAnalyzerView/>
+                            </DataTemplate>
+                        </ContentControl.ContentTemplate>
+                    </ContentControl>
+                </prismcommon:PopupDXDialogWindowAction.WindowContent>
+            </prismcommon:PopupDXDialogWindowAction>
+        </prism:InteractionRequestTrigger>
     </i:Interaction.Triggers>
-    <!--<dxmvvm:Interaction.Behaviors>
-        <dxmvvm:UIWindowRegion x:Name="applyChangesService" RegionName="{x:Static mif:Regions.ApplyChanges}" WindowShowMode="Dialog" SetWindowOwner="True">
-            <dxmvvm:UIWindowRegion.WindowFactory>
-                <DataTemplate>
-                    <dx:DXDialogWindow/>
-                </DataTemplate>
-            </dxmvvm:UIWindowRegion.WindowFactory>
-            <dxmvvm:UIWindowRegion.WindowStyle>
-                <Style TargetType="dx:DXDialogWindow">
-                    <Setter Property="Width" Value="1000"/>
-                    <Setter Property="Height" Value="800"/>
-                    <Setter Property="Title" Value="Changed Tests"/>
-                    <Setter Property="CommandsSource" Value="{Binding DialogCommands}"/>
-                </Style>
-            </dxmvvm:UIWindowRegion.WindowStyle>
-        </dxmvvm:UIWindowRegion>
-        <dxmvvm:UIWindowRegion x:Name="repositoryOptimizerService" RegionName="{x:Static mif:Regions.RepositoryOptimizer}" WindowShowMode="Dialog" SetWindowOwner="True">
-            <dxmvvm:UIWindowRegion.WindowFactory>
-                <DataTemplate>
-                    <dx:DXDialogWindow/>
-                </DataTemplate>
-            </dxmvvm:UIWindowRegion.WindowFactory>
-            <dxmvvm:UIWindowRegion.WindowStyle>
-                <Style TargetType="dx:DXDialogWindow">
-                    <Setter Property="Width" Value="1000"/>
-                    <Setter Property="Height" Value="800"/>
-                    <Setter Property="Title" Value="Repository Optimizer"/>
-                    <Setter Property="CommandsSource" Value="{Binding DialogCommands}"/>
-                </Style>
-            </dxmvvm:UIWindowRegion.WindowStyle>
-        </dxmvvm:UIWindowRegion>
-        <dxmvvm:UIWindowRegion x:Name="repositoryAnalyzerService" RegionName="{x:Static mif:Regions.RepositoryAnalyzer}" WindowShowMode="Dialog" SetWindowOwner="True">
-            <dxmvvm:UIWindowRegion.WindowFactory>
-                <DataTemplate>
-                    <dx:DXDialogWindow/>
-                </DataTemplate>
-            </dxmvvm:UIWindowRegion.WindowFactory>
-            <dxmvvm:UIWindowRegion.WindowStyle>
-                <Style TargetType="dx:DXDialogWindow">
-                    <Setter Property="Width" Value="1000"/>
-                    <Setter Property="Height" Value="800"/>
-                    <Setter Property="Title" Value="Repository Analyzer"/>
-                    <Setter Property="CommandsSource" Value="{Binding DialogCommands}"/>
-                </Style>
-            </dxmvvm:UIWindowRegion.WindowStyle>
-        </dxmvvm:UIWindowRegion>
-    </dxmvvm:Interaction.Behaviors>-->
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

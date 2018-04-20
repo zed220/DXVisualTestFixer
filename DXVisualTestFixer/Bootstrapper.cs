@@ -33,6 +33,8 @@ namespace DXVisualTestFixer {
             RegisterTypeIfMissing(typeof(IUpdateService), typeof(UpdateService), true);
             RegisterTypeIfMissing(typeof(IFilterPanelViewModel), typeof(FilterPanelViewModel), false);
             RegisterTypeIfMissing(typeof(IApplyChangesViewModel), typeof(ApplyChangesViewModel), false);
+            RegisterTypeIfMissing(typeof(IRepositoryOptimizerViewModel), typeof(RepositoryOptimizerViewModel), false);
+            RegisterTypeIfMissing(typeof(IRepositoryAnalyzerViewModel), typeof(RepositoryAnalyzerViewModel), false);
             Container.RegisterTypeForNavigation<TestInfoView>();
             Container.RegisterTypeForNavigation<MergedTestInfoView>();
         }
@@ -54,9 +56,7 @@ namespace DXVisualTestFixer {
     //        RegisterTypes();
     //    }
     //    static void RegisterTypes() {
-    //        RootContainer.RegisterType<IRepositoryOptimizerViewModel, RepositoryOptimizerViewModel>(new TransientLifetimeManager());
     //        RootContainer.RegisterType<IRepositoryAnalyzerViewModel, RepositoryAnalyzerViewModel>(new TransientLifetimeManager());
-    //        RootContainer.RegisterType<IApplyChangesViewModel, ApplyChangesViewModel>(new TransientLifetimeManager());
     //    }
     //}
 }

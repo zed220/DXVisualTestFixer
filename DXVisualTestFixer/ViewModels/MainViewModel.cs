@@ -35,6 +35,9 @@ namespace DXVisualTestFixer.ViewModels {
         MergerdTestViewType MergerdTestViewType { get; set; }
         TestViewType TestViewType { get; }
         TestInfoWrapper CurrentTest { get; }
+        Dictionary<Repository, List<string>> UsedFiles { get; }
+        Dictionary<Repository, List<Team>> Teams { get; }
+        Dictionary<Repository, List<ElapsedTimeInfo>> ElapsedTimes { get; }
 
         void SetFilter(CriteriaOperator op);
         void RaiseMoveNext();
@@ -45,16 +48,6 @@ namespace DXVisualTestFixer.ViewModels {
     public enum ProgramStatus {
         Idle,
         Loading,
-    }
-
-    public class UnusedFiltesContainer {
-        public UnusedFiltesContainer(Dictionary<Repository, List<string>> usedFiles, Dictionary<Repository, List<Team>> teams) {
-            UsedFiles = usedFiles;
-            Teams = teams;
-        }
-
-        public Dictionary<Repository, List<string>> UsedFiles { get; }
-        public Dictionary<Repository, List<Team>> Teams { get; }
     }
 
     public class SolutionModel {
@@ -162,9 +155,12 @@ namespace DXVisualTestFixer.ViewModels {
 
         public LoadingProgressController LoadingProgressController { get; } = new LoadingProgressController();
         public InteractionRequest<IConfirmation> ConfirmationRequest { get; } = new InteractionRequest<IConfirmation>();
+        public InteractionRequest<INotification> NotificationRequest { get; } = new InteractionRequest<INotification>();
+
         public InteractionRequest<IConfirmation> SettingsRequest { get; } = new InteractionRequest<IConfirmation>();
         public InteractionRequest<IConfirmation> ApplyChangesRequest { get; } = new InteractionRequest<IConfirmation>();
-        public InteractionRequest<INotification> NotificationRequest { get; } = new InteractionRequest<INotification>();
+        public InteractionRequest<IConfirmation> RepositoryOptimizerRequest { get; } = new InteractionRequest<IConfirmation>();
+        public InteractionRequest<INotification> RepositoryAnalyzerRequest { get; } = new InteractionRequest<INotification>();
 
         public MainViewModel(IUnityContainer container, IRegionManager regionManager, ILoggingService loggingService, IUpdateService updateService) {
             unityContainer = container;
@@ -292,14 +288,15 @@ namespace DXVisualTestFixer.ViewModels {
         public void ShowRepositoryOptimizer() {
             if(CheckHasUncommittedChanges() || CheckAlarmAdmin())
                 return;
+            IRepositoryOptimizerViewModel confirmation = unityContainer.Resolve<IRepositoryOptimizerViewModel>();
+            RepositoryOptimizerRequest.Raise(confirmation);
+            if(!confirmation.Confirmed)
+                return;
             TestsToCommitCount = 0;
-            //ModuleManager.DefaultWindowManager.Show(Regions.RepositoryOptimizer, Modules.RepositoryOptimizer, new UnusedFiltesContainer(UsedFiles, Teams));
-            //ModuleManager.DefaultWindowManager.Clear(Regions.RepositoryOptimizer);
             UpdateContent();
         }
         public void ShowRepositoryAnalyzer() {
-            //ModuleManager.DefaultWindowManager.Show(Regions.RepositoryAnalyzer, Modules.RepositoryAnalyzer, ElapsedTimes);
-            //ModuleManager.DefaultWindowManager.Clear(Regions.RepositoryAnalyzer);
+            RepositoryAnalyzerRequest.Raise(unityContainer.Resolve<IRepositoryAnalyzerViewModel>());
         }
         public void ShowSettings() {
             if(CheckHasUncommittedChanges())
