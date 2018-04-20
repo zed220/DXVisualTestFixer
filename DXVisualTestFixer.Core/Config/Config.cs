@@ -1,4 +1,5 @@
 ﻿using DXVisualTestFixer.Core;
+using Microsoft.Practices.ServiceLocation;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,7 +8,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DXVisualTestFixer.Configuration {
+namespace DXVisualTestFixer.Core.Configuration {
     public class Config {
         public const string ConfigFileName = "ui.config";
         public Repository[] Repositories { get; set; }
@@ -24,7 +25,7 @@ namespace DXVisualTestFixer.Configuration {
 
         public static Config Validate(Config config) {
             if(string.IsNullOrEmpty(config.LastVersion))
-                config.LastVersion = VersionInfo.Version.ToString();
+                config.LastVersion = ServiceLocator.Current.GetInstance<IVersionService>().Version.ToString();
             if(string.IsNullOrEmpty(config.InstallPath))
                 config.InstallPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             return config;

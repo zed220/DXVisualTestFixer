@@ -22,6 +22,7 @@ namespace DXVisualTestFixer.Views {
     public partial class MainView : UserControl {
         public MainView(IUnityContainer container, IRegionManager regionManager) {
             InitializeComponent();
+
         }
     }
 }

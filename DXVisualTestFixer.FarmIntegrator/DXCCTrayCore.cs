@@ -10,9 +10,8 @@ using System.IO;
 using System.IO.Compression;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Net.Sockets;
-using DXVisualTestFixer;
 
-namespace DevExpress.DXCCTray {
+namespace DXVisualTestFixer.Farm {
     public class ServerInfo {
         public string Name;
         public string Host;

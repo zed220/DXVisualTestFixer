@@ -8,7 +8,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using DevExpress.CCNetSmart.Lib;
 using ThoughtWorks.CruiseControl.Remote;
-using DevExpress.DXCCTray;
 
 namespace DXVisualTestFixer.Farm {
     public class FarmIntegrator {

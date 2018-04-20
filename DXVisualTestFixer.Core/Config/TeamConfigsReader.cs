@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DXVisualTestFixer.Configuration {
+namespace DXVisualTestFixer.Core.Configuration {
     public static class TeamConfigsReader {
         const string ConfigFolder = "XmlConfigs";
         static List<Team> configs = null;

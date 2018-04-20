@@ -4,6 +4,7 @@ using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Dialogs;
 using DXVisualTestFixer.Configuration;
 using DXVisualTestFixer.Core;
+using DXVisualTestFixer.Core.Configuration;
 using DXVisualTestFixer.PrismCommon;
 using DXVisualTestFixer.ViewModels;
 using Microsoft.Practices.Unity;
@@ -73,7 +74,7 @@ namespace DXVisualTestFixer.ViewModels {
         }
 
         bool IsChanged() {
-            return !ConfigSerializer.IsConfigEquals(ConfigSerializer.GetConfig(), Config);
+            return !ConfigSerializer.IsConfigEquals(ConfigSerializer.GetConfig(false), Config);
         }
         void Save() {
             if(!IsChanged())

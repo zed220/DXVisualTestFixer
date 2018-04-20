@@ -1,4 +1,5 @@
 ﻿using DevExpress.Xpf.Grid;
+using DXVisualTestFixer.Core;
 using DXVisualTestFixer.ViewModels;
 using System;
 using System.Collections.Generic;

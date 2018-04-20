@@ -1,7 +1,5 @@
-﻿using DXVisualTestFixer.Configuration;
+﻿using DXVisualTestFixer.Core.Configuration;
 using DXVisualTestFixer.Native;
-using DXVisualTestFixer.Services;
-using DXVisualTestFixer.ViewModels;
 using HtmlAgilityPack;
 using Microsoft.Practices.ServiceLocation;
 using System;
@@ -12,8 +10,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace DXVisualTestFixer.Core {
     public class TestInfoCached {
@@ -51,9 +47,9 @@ namespace DXVisualTestFixer.Core {
     public class TestsService {
         Dictionary<FarmTaskInfo, TestInfoCached> RealUrlCache = new Dictionary<FarmTaskInfo, TestInfoCached>();
 
-        readonly LoadingProgressController loadingProgressController;
+        readonly ILoadingProgressController loadingProgressController;
 
-        public TestsService(LoadingProgressController loadingProgressController) {
+        public TestsService(ILoadingProgressController loadingProgressController) {
             this.loadingProgressController = loadingProgressController;
         }
 

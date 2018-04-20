@@ -4,8 +4,8 @@ using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.Grid;
 using DXVisualTestFixer.Configuration;
 using DXVisualTestFixer.Core;
+using DXVisualTestFixer.Core.Configuration;
 using DXVisualTestFixer.Farm;
-using DXVisualTestFixer.Mif;
 using DXVisualTestFixer.PrismCommon;
 using DXVisualTestFixer.Services;
 using DXVisualTestFixer.Views;
@@ -33,11 +33,13 @@ namespace DXVisualTestFixer.ViewModels {
     public interface IMainViewModel {
         List<TestInfoWrapper> Tests { get; }
         MergerdTestViewType MergerdTestViewType { get; set; }
-        TestInfoWrapper CurrentTest { get; } 
+        TestViewType TestViewType { get; }
+        TestInfoWrapper CurrentTest { get; }
 
         void SetFilter(CriteriaOperator op);
         void RaiseMoveNext();
         void RaiseMovePrev();
+        List<TestInfoWrapper> GetChangedTests();
     }
 
     public enum ProgramStatus {
@@ -161,6 +163,7 @@ namespace DXVisualTestFixer.ViewModels {
         public LoadingProgressController LoadingProgressController { get; } = new LoadingProgressController();
         public InteractionRequest<IConfirmation> ConfirmationRequest { get; } = new InteractionRequest<IConfirmation>();
         public InteractionRequest<IConfirmation> SettingsRequest { get; } = new InteractionRequest<IConfirmation>();
+        public InteractionRequest<IConfirmation> ApplyChangesRequest { get; } = new InteractionRequest<IConfirmation>();
         public InteractionRequest<INotification> NotificationRequest { get; } = new InteractionRequest<INotification>();
 
         public MainViewModel(IUnityContainer container, IRegionManager regionManager, ILoggingService loggingService, IUpdateService updateService) {
@@ -260,12 +263,14 @@ namespace DXVisualTestFixer.ViewModels {
             RefreshTestList();
         }
 
+        void OnTestViewTypeChanged() {
+            regionManager.Regions[Regions.Regions.TestInfo].RemoveAll();
+            OnCurrentTestChanged();
+        }
         void OnCurrentTestChanged() {
-            if(CurrentTest == null) {
-                regionManager.Regions[Regions.Regions.TestInfo].RemoveAll();
+            if(CurrentTest == null)
                 return;
-            }
-            regionManager.AddToRegion(Regions.Regions.TestInfo, TestViewType == TestViewType.Split ? unityContainer.Resolve(typeof(TestInfoView)) : unityContainer.Resolve(typeof(MergedTestInfoView)));
+            regionManager.RequestNavigate(Regions.Regions.TestInfo, TestViewType == TestViewType.Split ? "TestInfoView" : "MergedTestInfoView");
         }
         void OnTestsChanged() {
             if(Tests == null) {
@@ -307,20 +312,22 @@ namespace DXVisualTestFixer.ViewModels {
             ConfigSerializer.SaveConfig(confirmation.Config);
             UpdateConfig();
         }
+        public List<TestInfoWrapper> GetChangedTests() {
+            return Tests.Where(t => t.CommitChange).ToList();
+        }
         public void ApplyChanges() {
             if(TestsToCommitCount == 0) {
-                //GetService<IMessageBoxService>()?.ShowMessage("Nothing to commit", "Nothing to commit", MessageButton.OK, MessageIcon.Information);
+                NotificationRequest.Raise(new DXNotification(MessageBoxImage.Information) { Title = "Nothing to commit", Content = "Nothing to commit" });
                 return;
             }
-            List<TestInfoWrapper> changedTests = Tests.Where(t => t.CommitChange).ToList();
+            List<TestInfoWrapper> changedTests = GetChangedTests();
             if(changedTests.Count == 0) {
-                //GetService<IMessageBoxService>()?.ShowMessage("Nothing to commit", "Nothing to commit", MessageButton.OK, MessageIcon.Information);
+                NotificationRequest.Raise(new DXNotification(MessageBoxImage.Information) { Title = "Nothing to commit", Content = "Nothing to commit" });
                 return;
             }
-            ChangedTestsModel changedTestsModel = new ChangedTestsModel() { Tests = changedTests };
-            //ModuleManager.DefaultWindowManager.Show(Regions.ApplyChanges, Modules.ApplyChanges, changedTestsModel);
-            //ModuleManager.DefaultWindowManager.Clear(Regions.ApplyChanges);
-            if(!changedTestsModel.Apply)
+            IApplyChangesViewModel confirmation = unityContainer.Resolve<IApplyChangesViewModel>();
+            ApplyChangesRequest.Raise(confirmation);
+            if(!confirmation.Confirmed)
                 return;
             changedTests.ForEach(ApplyTest);
             TestsToCommitCount = 0;
@@ -343,7 +350,7 @@ namespace DXVisualTestFixer.ViewModels {
         }
         bool CheckAlarmAdmin() {
             Confirmation confirmation = new DXConfirmation(MessageBoxImage.Warning) { Title = "Warning", Content = "This tool is powerful and dangerous. Unbridled using may cause repository errors! Are you really sure?" };
-            NotificationRequest.Raise(confirmation);
+            ConfirmationRequest.Raise(confirmation);
             return !confirmation.Confirmed;
         }
         public void RefreshTestList() {
@@ -377,11 +384,6 @@ namespace DXVisualTestFixer.ViewModels {
         }
         public void ChangeTestViewType(TestViewType testViewType) {
             TestViewType = testViewType;
-        }
-        void OnTestViewTypeChanged() {
-            //ModuleManager.DefaultManager.Clear(Regions.TestInfo);
-            //MifRegistrator.InitializeTestInfo(TestViewType);
-            OnCurrentTestChanged();
         }
 
         public event EventHandler MoveNext;

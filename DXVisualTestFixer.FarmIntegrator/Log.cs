@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DXVisualTestFixer {
+namespace DXVisualTestFixer.Farm {
     public interface ILog { }
 
     public static class Log {

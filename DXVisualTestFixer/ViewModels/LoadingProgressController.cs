@@ -1,4 +1,5 @@
 ﻿using DevExpress.Mvvm;
+using DXVisualTestFixer.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ using System.Windows;
 using System.Windows.Threading;
 
 namespace DXVisualTestFixer.ViewModels {
-    public class LoadingProgressController : BindableBase {
+    public class LoadingProgressController : BindableBase, ILoadingProgressController {
         public int Maximum {
             get { return GetProperty(() => Maximum); }
             private set { SetProperty(() => Maximum, value); }

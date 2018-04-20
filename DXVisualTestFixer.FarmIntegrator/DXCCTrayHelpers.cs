@@ -7,10 +7,8 @@ using System.Runtime.InteropServices;
 using System.Reflection;
 using DevExpress.CCNetSmart.Lib;
 using System.Text.RegularExpressions;
-using DXVisualTestFixer.Farm;
-using DXVisualTestFixer;
 
-namespace DevExpress.DXCCTray {
+namespace DXVisualTestFixer.Farm {
     class DXCCTrayConfiguration {
         static public void ShowError(string text) {
             //            DXMessageBox.Show(text);

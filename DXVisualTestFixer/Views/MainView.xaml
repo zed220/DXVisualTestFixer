@@ -4,7 +4,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:DXVisualTestFixer.Views"
-             xmlns:mif="clr-namespace:DXVisualTestFixer.Mif"
              xmlns:dxr="http://schemas.devexpress.com/winfx/2008/xaml/ribbon"
              xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
              xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
@@ -16,7 +15,6 @@
              xmlns:controls="clr-namespace:DXVisualTestFixer.Controls"
              xmlns:viewModels="clr-namespace:DXVisualTestFixer.ViewModels"
              xmlns:behaviors="clr-namespace:DXVisualTestFixer.Behaviors"
-             xmlns:root="clr-namespace:DXVisualTestFixer"
              xmlns:converters="clr-namespace:DXVisualTestFixer.Converters"
              xmlns:dxgt="http://schemas.devexpress.com/winfx/2008/xaml/grid/themekeys"
              xmlns:sys="clr-namespace:System.Collections;assembly=mscorlib"
@@ -26,6 +24,8 @@
              xmlns:regions="clr-namespace:DXVisualTestFixer.Regions"
              xmlns:prismcommon="clr-namespace:DXVisualTestFixer.PrismCommon"
              xmlns:dxt="http://schemas.devexpress.com/winfx/2008/xaml/core/themekeys"
+             xmlns:core="http://schemas.dxvisualtests.com/winfx/2008/xaml/core"
+             xmlns:root="clr-namespace:DXVisualTestFixer"
              prism:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
@@ -92,8 +92,21 @@
                 </prismcommon:PopupDXDialogWindowAction.WindowContent>
             </prismcommon:PopupDXDialogWindowAction>
         </prism:InteractionRequestTrigger>
+        <prism:InteractionRequestTrigger SourceObject="{Binding ApplyChangesRequest}">
+            <prismcommon:PopupDXDialogWindowAction IsModal="True" CenterOverAssociatedObject="True" WindowStyle="{StaticResource DialogWindowStyle}">
+                <prismcommon:PopupDXDialogWindowAction.WindowContent>
+                    <ContentControl Content="{Binding Converter={prismcommon:NotificationContentConverter}}">
+                        <ContentControl.ContentTemplate>
+                            <DataTemplate>
+                                <local:ApplyChangesView/>
+                            </DataTemplate>
+                        </ContentControl.ContentTemplate>
+                    </ContentControl>
+                </prismcommon:PopupDXDialogWindowAction.WindowContent>
+            </prismcommon:PopupDXDialogWindowAction>
+        </prism:InteractionRequestTrigger>
     </i:Interaction.Triggers>
-    <dxmvvm:Interaction.Behaviors>
+    <!--<dxmvvm:Interaction.Behaviors>
         <dxmvvm:UIWindowRegion x:Name="applyChangesService" RegionName="{x:Static mif:Regions.ApplyChanges}" WindowShowMode="Dialog" SetWindowOwner="True">
             <dxmvvm:UIWindowRegion.WindowFactory>
                 <DataTemplate>
@@ -139,7 +152,7 @@
                 </Style>
             </dxmvvm:UIWindowRegion.WindowStyle>
         </dxmvvm:UIWindowRegion>
-    </dxmvvm:Interaction.Behaviors>
+    </dxmvvm:Interaction.Behaviors>-->
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -279,7 +292,7 @@
         <dxdo:DockLayoutManager Grid.Row="1">
             <dxdo:LayoutGroup AllowDrag="False">
                 <dxdo:LayoutGroup AllowDrag="False" Orientation="Vertical" ItemWidth="300" AllowSplitters="False">
-                    <dxdo:LayoutPanel ShowCaption="False" ItemHeight="Auto" Caption="Filters"
+                    <dxdo:LayoutPanel ShowCaption="False" ItemHeight="Auto" Caption="Filters" Visibility="{Binding Tests, Converter={dx:NullableToVisibilityConverter}}"
                                       prism:RegionManager.RegionName="{x:Static regions:Regions.FilterPanel}"/>
                     <dxdo:LayoutPanel ShowCaption="False" ItemHeight="*">
                         <dxg:GridControl ItemsSource="{Binding Tests}" CurrentItem="{Binding CurrentTest, Mode=TwoWay}" AutoExpandAllGroups="True" ShowBorder="False" 
@@ -358,15 +371,16 @@
                                     </dxmvvm:Interaction.Behaviors>
                                     <controls:TableViewAdvNavigation.FormatConditions>
                                         <dxg:FormatCondition FieldName="CommitChange" ValueRule="Equal" Value1="True" PredefinedFormatName="YellowFillWithDarkYellowText" ApplyToRow="True"/>
-                                        <dxg:FormatCondition FieldName="Valid" ValueRule="Equal" Value1="{x:Static root:TestState.Invalid}" PredefinedFormatName="LightRedFillWithDarkRedText" ApplyToRow="True"/>
-                                        <dxg:FormatCondition FieldName="Valid" ValueRule="Equal" Value1="{x:Static root:TestState.Fixed}" PredefinedFormatName="GreenFillWithDarkGreenText" ApplyToRow="True"/>
+                                        <dxg:FormatCondition FieldName="Valid" ValueRule="Equal" Value1="{x:Static core:TestState.Invalid}" PredefinedFormatName="LightRedFillWithDarkRedText" ApplyToRow="True"/>
+                                        <dxg:FormatCondition FieldName="Valid" ValueRule="Equal" Value1="{x:Static core:TestState.Fixed}" PredefinedFormatName="GreenFillWithDarkGreenText" ApplyToRow="True"/>
                                     </controls:TableViewAdvNavigation.FormatConditions>
                                 </controls:TableViewAdvNavigation>
                             </dxg:GridControl.View>
                         </dxg:GridControl>
                     </dxdo:LayoutPanel>
                 </dxdo:LayoutGroup>
-                <dxdo:LayoutPanel x:Name="TestInfo" prism:RegionManager.RegionName="{x:Static regions:Regions.TestInfo}" ShowCaption="False" dxb:MergingProperties.ElementMergingBehavior="All"/>
+                <dxdo:LayoutPanel x:Name="TestInfo" prism:RegionManager.RegionName="{x:Static regions:Regions.TestInfo}" ShowCaption="False" dxb:MergingProperties.ElementMergingBehavior="All"
+                                  Visibility="{Binding CurrentTest, Converter={dx:NullableToVisibilityConverter}}"/>
             </dxdo:LayoutGroup>
         </dxdo:DockLayoutManager>
         <dxr:RibbonStatusBarControl Grid.Row="2" IsSizeGripVisible="True">

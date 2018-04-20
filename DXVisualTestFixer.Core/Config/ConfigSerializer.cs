@@ -6,10 +6,11 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DXVisualTestFixer.Configuration {
+namespace DXVisualTestFixer.Core.Configuration {
     public static class ConfigSerializer {
-        public static readonly string AppPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-        public static readonly string SettingsPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\DXVisualTestFixer\\";
+        static Config cached;
+
+        static readonly string SettingsPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\DXVisualTestFixer\\";
         static readonly string SettingsFile = "ui_settings.config";
         static string SettingsFilePath {
             get { return SettingsPath + SettingsFile; }
@@ -17,7 +18,12 @@ namespace DXVisualTestFixer.Configuration {
 
         public static int Version { get; set; } = 0;
 
-        public static Config GetConfig() {
+        public static Config GetConfig(bool useCache = true) {
+            if(useCache && cached != null)
+                return cached;
+            return cached = GetConfigCore();
+        }
+        static Config GetConfigCore() {
             if(!File.Exists(SettingsFilePath))
                 return Config.GenerateDefault();
             try {
@@ -27,7 +33,9 @@ namespace DXVisualTestFixer.Configuration {
                 return Config.GenerateDefault();
             }
         }
+
         public static void SaveConfig(Config options) {
+            cached = null;
             try {
                 Serializer.Serialize(SettingsFilePath, options);
             }

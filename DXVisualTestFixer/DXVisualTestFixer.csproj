@@ -73,9 +73,6 @@
     <ApplicationIcon>89.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ccnet.smart.plugin">
-      <HintPath>..\lib\DXFarm\ccnet.smart.plugin.dll</HintPath>
-    </Reference>
     <Reference Include="DevExpress.CodeParser.v17.2, Version=17.2.207.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
       <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.79\lib\net40\DevExpress.CodeParser.v17.2.dll</HintPath>
     </Reference>
@@ -145,8 +142,13 @@
     <Reference Include="DevExpress.Xpf.Themes.Office2016White.v17.2, Version=17.2.207.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
       <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.79\lib\net40\DevExpress.Xpf.Themes.Office2016White.v17.2.dll</HintPath>
     </Reference>
-    <Reference Include="HtmlAgilityPack, Version=1.7.2.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
-      <HintPath>..\packages\HtmlAgilityPack.1.7.2\lib\Net45\HtmlAgilityPack.dll</HintPath>
+    <Reference Include="DXVisualTestFixer.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=eb6f4fdcbc58ae33, processorArchitecture=MSIL">
+      <HintPath>..\bin\Debug\DXVisualTestFixer.Core.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="DXVisualTestFixer.FarmIntegrator, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\bin\Debug\DXVisualTestFixer.FarmIntegrator.dll</HintPath>
     </Reference>
     <Reference Include="ICSharpCode.AvalonEdit, Version=5.0.3.0, Culture=neutral, PublicKeyToken=9cc39be672370310, processorArchitecture=MSIL">
       <HintPath>..\packages\AvalonEdit.5.0.4\lib\Net40\ICSharpCode.AvalonEdit.dll</HintPath>
@@ -217,9 +219,6 @@
     <Compile Include="Behaviors\MergedTestInfoButtonBehavior.cs" />
     <Compile Include="Behaviors\ScrollVIewerDragBehavior.cs" />
     <Compile Include="Behaviors\UnusedFilesDragDropBehavior.cs" />
-    <Compile Include="Config\ConfigSerializer.cs" />
-    <Compile Include="Config\Serializer.cs" />
-    <Compile Include="Config\TeamConfigsReader.cs" />
     <Compile Include="Config\VersionInfo.cs" />
     <Compile Include="Controls\DraggableScrollViewer.cs" />
     <Compile Include="Controls\TableViewAdvNavigation.cs" />
@@ -228,32 +227,16 @@
     <Compile Include="Converters\ImageToClipboardConverter.cs" />
     <Compile Include="Converters\StackPanelToTooltipConverter.cs" />
     <Compile Include="Converters\TestViewTypeConverter.cs" />
-    <Compile Include="Core\CorpDirTestInfo.cs" />
-    <Compile Include="Core\FarmTaskInfo.cs" />
-    <Compile Include="Core\Repository.cs" />
-    <Compile Include="Config\Config.cs" />
-    <Compile Include="Core\Team.cs" />
-    <Compile Include="Core\TestInfo.cs" />
-    <Compile Include="Core\TestLoader.cs" />
-    <Compile Include="Core\TestLoader_Old.cs" />
-    <Compile Include="Core\TestService.cs" />
     <Compile Include="Enums.cs" />
-    <Compile Include="Farm\BuildNotificationViewInfo.cs" />
-    <Compile Include="Farm\DXCCTrayCore.cs" />
-    <Compile Include="Farm\DXCCTrayHelpers.cs" />
-    <Compile Include="Farm\FarmHelper.cs" />
-    <Compile Include="Farm\ProjectI.cs" />
-    <Compile Include="Log.cs" />
     <Compile Include="PrismCommon\LayoutPanelRegionAdapter.cs" />
     <Compile Include="PrismCommon\Notifications.cs" />
     <Compile Include="PrismCommon\PopupDXWindowAction.cs" />
     <Compile Include="Regions.cs" />
     <Compile Include="Services\LoggingService.cs" />
     <Compile Include="Native\DiffLineBackgroundRenderer.cs" />
-    <Compile Include="Native\ImageComparer.cs" />
     <Compile Include="Services\UpdateService.cs" />
+    <Compile Include="Services\VersionService.cs" />
     <Compile Include="ViewModels\ApplyChangesViewModel.cs" />
-    <Compile Include="ViewModels\ChangedTestsModel.cs" />
     <Compile Include="ViewModels\FilterPanelViewModel.cs" />
     <Compile Include="ViewModels\LoadingProgressController.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
@@ -344,9 +327,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Mif\Constants.cs" />
-    <Compile Include="Mif\MifRegistrator.cs" />
-    <Compile Include="Mif\RepositoriesViewMifRegistrator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -372,109 +352,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <Content Include="XmlConfigs\16.1_CoreAndEditors.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="XmlConfigs\16.1_GridControl.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="XmlConfigs\16.1_Navigation.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="XmlConfigs\16.1_PivotControl.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="XmlConfigs\16.1_Scheduler.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="XmlConfigs\16.1_Svg.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="XmlConfigs\16.1_TabControl.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="XmlConfigs\16.1_ThemedWindow.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="XmlConfigs\16.2_CoreAndEditors.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="XmlConfigs\16.2_GridControl.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="XmlConfigs\16.2_Navigation.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="XmlConfigs\16.2_PivotControl.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="XmlConfigs\16.2_Scheduler.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="XmlConfigs\16.2_Svg.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="XmlConfigs\16.2_TabControl.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="XmlConfigs\16.2_ThemedWindow.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="XmlConfigs\17.1_CoreAndEditors.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="XmlConfigs\17.1_GridControl.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="XmlConfigs\17.1_Navigation.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="XmlConfigs\17.1_PivotControl.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="XmlConfigs\17.1_Scheduler.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="XmlConfigs\17.1_Svg.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="XmlConfigs\17.1_TabControl.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="XmlConfigs\17.1_ThemedWindow.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="XmlConfigs\17.2_CoreAndEditors.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="XmlConfigs\17.2_GridControl.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="XmlConfigs\17.2_Navigation.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="XmlConfigs\17.2_PivotControl.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="XmlConfigs\17.2_Scheduler.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="XmlConfigs\17.2_Svg.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="XmlConfigs\17.2_TabControl.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="XmlConfigs\17.2_ThemedWindow.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

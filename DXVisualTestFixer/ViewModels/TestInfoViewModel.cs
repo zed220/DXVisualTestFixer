@@ -1,5 +1,6 @@
 ﻿using DXVisualTestFixer.Core;
 using Prism.Mvvm;
+using Prism.Regions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace DXVisualTestFixer.ViewModels {
-    public interface ITestInfoViewModel { }
+    public interface ITestInfoViewModel : INavigationAware { }
 
     public class TestInfoViewModel : BindableBase, ITestInfoViewModel {
         readonly IMainViewModel mainViewModel;
@@ -38,6 +39,19 @@ namespace DXVisualTestFixer.ViewModels {
         public void Invalid() {
             TestInfo.CommitChange = false;
             MoveNextRow();
+        }
+
+        public void OnNavigatedTo(NavigationContext navigationContext) {
+            MergerdTestViewType = mainViewModel.MergerdTestViewType;
+            RaisePropertyChanged(nameof(TestInfo));
+        }
+
+        public bool IsNavigationTarget(NavigationContext navigationContext) {
+            return true;
+        }
+
+        public void OnNavigatedFrom(NavigationContext navigationContext) {
+            
         }
     }
 }

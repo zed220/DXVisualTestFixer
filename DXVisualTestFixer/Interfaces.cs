@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace DXVisualTestFixer {
-    public interface IMifRegistrator : IDisposable {
-        void RegisterUI();
-        bool LoadState(string logicalstate, string visualState);
-        void Reset();
-    }
+    //public interface IMifRegistrator : IDisposable {
+    //    void RegisterUI();
+    //    bool LoadState(string logicalstate, string visualState);
+    //    void Reset();
+    //}
 }

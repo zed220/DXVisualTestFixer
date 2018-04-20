@@ -5,9 +5,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:DXVisualTestFixer.Views"
              xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+             xmlns:prism="http://prismlibrary.com/"
+             prism:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <dxg:GridControl ItemsSource="{Binding ChangedTestsModel.Tests}" AutoExpandAllGroups="True" ShowBorder="False">
+    <dxg:GridControl ItemsSource="{Binding ChangedTests}" AutoExpandAllGroups="True" ShowBorder="False">
         <dxg:GridColumn FieldName="TestInfo.Version" GroupIndex="0" MergeWithPreviousGroup="True"/>
         <dxg:GridColumn FieldName="TestInfo.Team.Name" GroupIndex="1" MergeWithPreviousGroup="True"/>
         <dxg:GridColumn FieldName="TestInfo.Name" GroupIndex="2" MergeWithPreviousGroup="True"/>

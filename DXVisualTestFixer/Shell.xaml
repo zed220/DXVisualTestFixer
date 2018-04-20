@@ -8,7 +8,6 @@
         xmlns:regions="clr-namespace:DXVisualTestFixer.Regions"
         xmlns:dxr="http://schemas.devexpress.com/winfx/2008/xaml/ribbon"
         xmlns:configuration="clr-namespace:DXVisualTestFixer.Configuration"
-        xmlns:mif="clr-namespace:DXVisualTestFixer.Mif"
         xmlns:prism="http://prismlibrary.com/"
         dx:ScrollBarExtensions.ScrollBarMode="TouchOverlap"
         UseLayoutRounding="True"

@@ -10,6 +10,7 @@ using DevExpress.Xpf.Docking;
 using DXVisualTestFixer.PrismCommon;
 using DevExpress.Mvvm.UI;
 using DevExpress.Xpf.Dialogs;
+using DXVisualTestFixer.Core;
 
 namespace DXVisualTestFixer {
     public class Bootstrapper : UnityBootstrapper {
@@ -23,6 +24,7 @@ namespace DXVisualTestFixer {
             base.ConfigureContainer();
             RegisterTypeIfMissing(typeof(IShell), typeof(Shell), true);
             RegisterTypeIfMissing(typeof(ILoggingService), typeof(LoggingService), true);
+            RegisterTypeIfMissing(typeof(IVersionService), typeof(VersionService), true);
             RegisterTypeIfMissing(typeof(IMainViewModel), typeof(MainViewModel), true);
             RegisterTypeIfMissing(typeof(ISettingsViewModel), typeof(SettingsViewModel), false);
             RegisterTypeIfMissing(typeof(ITestInfoViewModel), typeof(TestInfoViewModel), false);
@@ -30,6 +32,9 @@ namespace DXVisualTestFixer {
             RegisterTypeIfMissing(typeof(IAppearanceService), typeof(AppearanceService), true);
             RegisterTypeIfMissing(typeof(IUpdateService), typeof(UpdateService), true);
             RegisterTypeIfMissing(typeof(IFilterPanelViewModel), typeof(FilterPanelViewModel), false);
+            RegisterTypeIfMissing(typeof(IApplyChangesViewModel), typeof(ApplyChangesViewModel), false);
+            Container.RegisterTypeForNavigation<TestInfoView>();
+            Container.RegisterTypeForNavigation<MergedTestInfoView>();
         }
 
         protected override RegionAdapterMappings ConfigureRegionAdapterMappings() {
@@ -45,38 +50,13 @@ namespace DXVisualTestFixer {
     }
 
     //public static class Bootstrapper {
-    //    static IUnityContainer RootContainer { get; } = new UnityContainer();
-
     //    static Bootstrapper() {
     //        RegisterTypes();
-    //        RegisterServiceLocator();
-    //        BuildMif();
     //    }
-
     //    static void RegisterTypes() {
-    //        RootContainer.RegisterType<IMifRegistrator, RepositoriesViewMifRegistrator>(new ContainerControlledLifetimeManager());
-    //        RootContainer.RegisterType<ITestInfoViewModel, TestInfoViewModel>(new TransientLifetimeManager());
-    //        RootContainer.RegisterType<ISettingsViewModel, SettingsViewModel>(new TransientLifetimeManager());
     //        RootContainer.RegisterType<IRepositoryOptimizerViewModel, RepositoryOptimizerViewModel>(new TransientLifetimeManager());
     //        RootContainer.RegisterType<IRepositoryAnalyzerViewModel, RepositoryAnalyzerViewModel>(new TransientLifetimeManager());
     //        RootContainer.RegisterType<IApplyChangesViewModel, ApplyChangesViewModel>(new TransientLifetimeManager());
-    //        RootContainer.RegisterType<IFilterPanelViewModel, FilterPanelViewModel>(new TransientLifetimeManager());
-    //    }
-    //    static void RegisterServiceLocator() {
-    //        ServiceLocator.SetLocatorProvider(() => new UnityServiceLocator(RootContainer));
-    //    }
-    //    static void BuildMif() {
-    //        MifRegistrator.Register();
-    //    }
-
-    //    public static void RegisterExplicit<TFrom>(TFrom instance, LifetimeManager manager) {
-    //        RootContainer.RegisterInstance<TFrom>(instance, manager);
-    //    }
-
-    //    public static void Run() {
-    //        ServiceLocator.Current.GetInstance<IMifRegistrator>().RegisterUI();
-    //        Application.Current.MainWindow = new Shell();
-    //        Application.Current.MainWindow.Show();
     //    }
     //}
 }

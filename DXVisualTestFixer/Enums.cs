@@ -5,8 +5,4 @@
         Before,
         Current,
     }
-    public enum TestState {
-        Valid, Invalid, Fixed, Error
-    }
-
 }

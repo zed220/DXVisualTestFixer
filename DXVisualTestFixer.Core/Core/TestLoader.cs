@@ -106,7 +106,7 @@ namespace DXVisualTestFixer.Core {
             Dictionary<string, Team> result = new Dictionary<string, Team>();
             XmlNode buildNode = FindBuildNode(myXmlDocument);
             if(buildNode == null)
-                return new List<Team>();
+                return null;
             foreach(var teamNode in buildNode.FindAllByName("Project")) {
                 int dpi;
                 if(!teamNode.TryGetAttibute("Dpi", out dpi))
@@ -135,7 +135,7 @@ namespace DXVisualTestFixer.Core {
                     team.TeamInfos.Add(new TeamInfo() { Dpi = dpi, Optimized = optimized, ServerFolderName = serverFolderName, TestResourcesPath = Path.Combine(resourcesFolder, testResourcesPath) });
                 }
             }
-            return result.Values.ToList();
+            return result.Values.Count == 0 ? null : result.Values.ToList();
         }
 
         static bool TryGetAttibute<T>(this XmlNode node, string name, out T value) {
