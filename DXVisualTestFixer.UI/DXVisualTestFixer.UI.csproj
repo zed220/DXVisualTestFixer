@@ -30,7 +30,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <SignAssembly>false</SignAssembly>
+    <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>DXVisualTestFixer_TemporaryKey.pfx</AssemblyOriginatorKeyFile>
@@ -112,9 +112,6 @@
     <Reference Include="DXVisualTestFixer.Core">
       <HintPath>..\DXVisualTestFixer.Core\obj\Debug\DXVisualTestFixer.Core.dll</HintPath>
     </Reference>
-    <Reference Include="DXVisualTestFixer.FarmIntegrator">
-      <HintPath>..\bin\Debug\DXVisualTestFixer.FarmIntegrator.dll</HintPath>
-    </Reference>
     <Reference Include="ICSharpCode.AvalonEdit, Version=5.0.3.0, Culture=neutral, PublicKeyToken=9cc39be672370310, processorArchitecture=MSIL">
       <HintPath>..\packages\AvalonEdit.5.0.4\lib\Net40\ICSharpCode.AvalonEdit.dll</HintPath>
     </Reference>
@@ -152,10 +149,6 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="ThoughtWorks.CruiseControl.Remote, Version=1.4.0.3524, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\bin\Debug\ThoughtWorks.CruiseControl.Remote.dll</HintPath>
-    </Reference>
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>

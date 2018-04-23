@@ -7,22 +7,36 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using DevExpress.CCNetSmart.Lib;
+using DXVisualTestFixer.Common;
 using ThoughtWorks.CruiseControl.Remote;
 
 namespace DXVisualTestFixer.Farm {
-    public class FarmIntegrator {
+    public class FarmIntegrator : IFarmIntegrator {
         static readonly FarmHelper Instance;
-        static Action<FarmRefreshedEventArgs> InvalidateCallback { get; set; }
+        static Action<IFarmRefreshedEventArgs> InvalidateCallback { get; set; }
+
+        void IFarmIntegrator.Stop() {
+            Stop();
+        }
+        void IFarmIntegrator.Start(Action<IFarmRefreshedEventArgs> invalidateCallback) {
+            Start(invalidateCallback);
+        }
+        IFarmStatus IFarmIntegrator.GetTaskStatus(string task) {
+            return GetTaskStatus(task);
+        }
+        string IFarmIntegrator.GetTaskUrl(string task) {
+            return GetTaskUrl(task);
+        }
 
         static FarmIntegrator() {
             Instance = new FarmHelper();
         }
-        public static void Start(Action<FarmRefreshedEventArgs> invalidateCallback) {
+        public static void Start(Action<IFarmRefreshedEventArgs> invalidateCallback) {
             InvalidateCallback = invalidateCallback ?? (x => { });
             Instance.Refreshed += InstanceOnRefreshed;
             Instance.StartIntegrator();
         }
-        static void InstanceOnRefreshed(object sender, FarmRefreshedEventArgs eventArgs) {
+        static void InstanceOnRefreshed(object sender, IFarmRefreshedEventArgs eventArgs) {
             InvalidateCallback(eventArgs);
         }
         public static void Stop() {
@@ -72,7 +86,7 @@ namespace DXVisualTestFixer.Farm {
         public string HyperHost { get; set; }
     }
 
-    public class FarmStatus {
+    public class FarmStatus : IFarmStatus {
         protected bool Equals(FarmStatus other) {
             return BuildStatus == other.BuildStatus && ActivityStatus == other.ActivityStatus;
         }
@@ -91,18 +105,18 @@ namespace DXVisualTestFixer.Farm {
             }
         }
         public FarmStatus() {
-            BuildStatus = IntegrationStatus.Unknown;
+            BuildStatus = (FarmIntegrationStatus)IntegrationStatus.Unknown;
             ActivityStatus = ActivityStatus.Unknown;
         }
 
-        public IntegrationStatus BuildStatus { get; set; }
+        public FarmIntegrationStatus BuildStatus { get; set; }
         public ActivityStatus ActivityStatus { get; set; }
         public string ActivityMessage { get; set; }
     }
     public class FarmHelper {
-        public event EventHandler<FarmRefreshedEventArgs> Refreshed;
+        public event EventHandler<IFarmRefreshedEventArgs> Refreshed;
 
-        void RaiseRefreshed(FarmRefreshedEventArgs args = null) {
+        void RaiseRefreshed(IFarmRefreshedEventArgs args = null) {
             var refreshed = Refreshed;
             refreshed?.Invoke(this, args);
         }
@@ -142,12 +156,12 @@ namespace DXVisualTestFixer.Farm {
         FarmStatus CalcTaskStatus(string task) {
             var farmStatus = new FarmStatus() {
                 ActivityStatus = ActivityStatus.Unknown,
-                BuildStatus = IntegrationStatus.Unknown,
+                BuildStatus = (FarmIntegrationStatus)IntegrationStatus.Unknown,
             };
             ProjectTagI tag = FindTask(task);
             if(tag == null)
                 return farmStatus;
-            farmStatus.BuildStatus = tag.buildstatus;
+            farmStatus.BuildStatus = (FarmIntegrationStatus)tag.buildstatus;
             farmStatus.ActivityStatus = CalcActivityStatus(tag);
             farmStatus.ActivityMessage = tag.activity;
             return farmStatus;
@@ -860,11 +874,7 @@ namespace DXVisualTestFixer.Farm {
         #endregion
 
     }
-
-    public enum FarmRefreshType {
-        notification,
-    }
-    public abstract class FarmRefreshedEventArgs : EventArgs {
+    public abstract class FarmRefreshedEventArgs : EventArgs, IFarmRefreshedEventArgs {
         public abstract FarmRefreshType RefreshType { get; }
 
         public abstract void Parse();

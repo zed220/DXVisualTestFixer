@@ -89,7 +89,6 @@
     <Compile Include="Config\VersionInfo.cs" />
     <Compile Include="Core\CorpDirTestInfo.cs" />
     <Compile Include="Core\FarmTaskInfo.cs" />
-    <Compile Include="Interfaces.cs" />
     <Compile Include="Native\ImageComparer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Core\TestLoader.cs" />

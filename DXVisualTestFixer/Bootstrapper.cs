@@ -14,6 +14,7 @@ using DXVisualTestFixer.Common;
 using DXVisualTestFixer.UI.PrismCommon;
 using DXVisualTestFixer.UI.ViewModels;
 using DXVisualTestFixer.UI.Services;
+using DXVisualTestFixer.Farm;
 
 namespace DXVisualTestFixer {
     public class Bootstrapper : UnityBootstrapper {
@@ -27,6 +28,7 @@ namespace DXVisualTestFixer {
         protected override void ConfigureContainer() {
             base.ConfigureContainer();
             RegisterTypeIfMissing(typeof(ILoggingService), typeof(LoggingService), true);
+            RegisterTypeIfMissing(typeof(IFarmIntegrator), typeof(FarmIntegrator), true);
             RegisterTypeIfMissing(typeof(IVersionService), typeof(VersionService), true);
             RegisterTypeIfMissing(typeof(IShellViewModel), typeof(ShellViewModel), true);
             RegisterTypeIfMissing(typeof(IMainViewModel), typeof(MainViewModel), true);

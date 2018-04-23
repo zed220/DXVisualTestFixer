@@ -1,7 +1,6 @@
 ﻿using DevExpress.Data.Filtering;
 using DXVisualTestFixer.Core.Configuration;
 using DXVisualTestFixer.Core;
-using DXVisualTestFixer.Farm;
 using DXVisualTestFixer.UI.Views;
 using Microsoft.Practices.ServiceLocation;
 using Microsoft.Practices.Unity;
@@ -18,8 +17,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 using DXVisualTestFixer.Common;
-using ThoughtWorks.CruiseControl.Remote;
-using Regions = DXVisualTestFixer.Common.Regions;
 
 namespace DXVisualTestFixer.UI.ViewModels {
     public enum ProgramStatus {
@@ -87,6 +84,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
         readonly IRegionManager regionManager;
         readonly ILoggingService loggingService;
         readonly Dispatcher Dispatcher;
+        readonly IFarmIntegrator farmIntegrator;
 
         #region private properties
         IConfig Config;
@@ -167,11 +165,12 @@ namespace DXVisualTestFixer.UI.ViewModels {
         public InteractionRequest<IConfirmation> RepositoryOptimizerRequest { get; } = new InteractionRequest<IConfirmation>();
         public InteractionRequest<INotification> RepositoryAnalyzerRequest { get; } = new InteractionRequest<INotification>();
 
-        public MainViewModel(IUnityContainer container, IRegionManager regionManager, ILoggingService loggingService)
+        public MainViewModel(IUnityContainer container, IRegionManager regionManager, ILoggingService loggingService, IFarmIntegrator farmIntegrator)
             : base(container) {
             Dispatcher = Dispatcher.CurrentDispatcher;
             this.regionManager = regionManager;
             this.loggingService = loggingService;
+            this.farmIntegrator = farmIntegrator;
             TestService = new TestsService(LoadingProgressController);
             UpdateConfig();
             loggingService.MessageReserved += OnLoggingMessageReserved;
@@ -181,10 +180,10 @@ namespace DXVisualTestFixer.UI.ViewModels {
             CurrentLogLine = args.Message;
         }
 
-        async void FarmRefreshed(FarmRefreshedEventArgs args) {
+        async void FarmRefreshed(IFarmRefreshedEventArgs args) {
             if(args == null) {
                 await Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(async () => {
-                    FarmIntegrator.Stop();
+                    farmIntegrator.Stop();
                     loggingService.SendMessage("Farm integrator succes");
                     await UpdateAllTests().ConfigureAwait(false);
                 }));
@@ -194,16 +193,16 @@ namespace DXVisualTestFixer.UI.ViewModels {
             List<FarmTaskInfo> result = new List<FarmTaskInfo>();
             foreach(var repository in Config.Repositories) {
                 if(Repository.InNewVersion(repository.Version)) {
-                    if(FarmIntegrator.GetTaskStatus(repository.GetTaskName_New()).BuildStatus == IntegrationStatus.Failure) {
-                        result.Add(new FarmTaskInfo(repository, FarmIntegrator.GetTaskUrl(repository.GetTaskName_New())));
+                    if(farmIntegrator.GetTaskStatus(repository.GetTaskName_New()).BuildStatus == FarmIntegrationStatus.Failure) {
+                        result.Add(new FarmTaskInfo(repository, farmIntegrator.GetTaskUrl(repository.GetTaskName_New())));
                     }
                     continue;
                 }
-                if(FarmIntegrator.GetTaskStatus(repository.GetTaskName()).BuildStatus == IntegrationStatus.Failure) {
-                    result.Add(new FarmTaskInfo(repository, FarmIntegrator.GetTaskUrl(repository.GetTaskName())));
+                if(farmIntegrator.GetTaskStatus(repository.GetTaskName()).BuildStatus == FarmIntegrationStatus.Failure) {
+                    result.Add(new FarmTaskInfo(repository, farmIntegrator.GetTaskUrl(repository.GetTaskName())));
                 }
-                if(FarmIntegrator.GetTaskStatus(repository.GetTaskName_Optimized()).BuildStatus == IntegrationStatus.Failure) {
-                    result.Add(new FarmTaskInfo(repository, FarmIntegrator.GetTaskUrl(repository.GetTaskName_Optimized())));
+                if(farmIntegrator.GetTaskStatus(repository.GetTaskName_Optimized()).BuildStatus == FarmIntegrationStatus.Failure) {
+                    result.Add(new FarmTaskInfo(repository, farmIntegrator.GetTaskUrl(repository.GetTaskName_Optimized())));
                 }
             }
             return result;
@@ -358,7 +357,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
             loggingService.SendMessage("Waiting response from farm integrator");
             Tests = null;
             Status = ProgramStatus.Loading;
-            FarmIntegrator.Start(FarmRefreshed);
+            farmIntegrator.Start(FarmRefreshed);
         }
 
         public void RaiseMoveNext() {

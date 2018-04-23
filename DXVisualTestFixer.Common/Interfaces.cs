@@ -92,4 +92,17 @@ namespace DXVisualTestFixer.Common {
         IEnumerable<ICommand> Commands { get; }
     }
     public interface ITestInfoViewModel : INavigationAware { }
+    public interface IFarmRefreshedEventArgs {
+        FarmRefreshType RefreshType { get; }
+        void Parse();
+    }
+    public interface IFarmStatus {
+        FarmIntegrationStatus BuildStatus { get; }
+    }
+    public interface IFarmIntegrator {
+        void Start(Action<IFarmRefreshedEventArgs> invalidateCallback);
+        void Stop();
+        IFarmStatus GetTaskStatus(string task);
+        string GetTaskUrl(string task);
+    }
 }

@@ -43,6 +43,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\DXFarm\ccnet.smart.plugin.dll</HintPath>
     </Reference>
+    <Reference Include="DXVisualTestFixer.Common, Version=1.0.0.0, Culture=neutral, PublicKeyToken=eb6f4fdcbc58ae33, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\bin\Debug\DXVisualTestFixer.Common.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />

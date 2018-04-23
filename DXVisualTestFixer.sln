@@ -6,9 +6,13 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DXVisualTestFixer", "DXVisualTestFixer\DXVisualTestFixer.csproj", "{7BA74650-A045-4FA3-A1F9-2D7FBAD50A4F}"
 	ProjectSection(ProjectDependencies) = postProject
 		{6E5E8BC1-A7A3-4DED-AD5E-4C8A09870875} = {6E5E8BC1-A7A3-4DED-AD5E-4C8A09870875}
+		{71F9005B-5CFF-40AA-BDE8-14CF4ED621B2} = {71F9005B-5CFF-40AA-BDE8-14CF4ED621B2}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DXVisualTestFixer.FarmIntegrator", "DXVisualTestFixer.FarmIntegrator\DXVisualTestFixer.FarmIntegrator.csproj", "{71F9005B-5CFF-40AA-BDE8-14CF4ED621B2}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BCEC7D6C-B798-4DC7-A803-EBC75B0EFBBD} = {BCEC7D6C-B798-4DC7-A803-EBC75B0EFBBD}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DXVisualTestFixer.Core", "DXVisualTestFixer.Core\DXVisualTestFixer.Core.csproj", "{A3D50801-F65F-4201-8AEE-7254DAE4732F}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -17,7 +21,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DXVisualTestFixer.Core", "D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DXVisualTestFixer.UI", "DXVisualTestFixer.UI\DXVisualTestFixer.UI.csproj", "{6E5E8BC1-A7A3-4DED-AD5E-4C8A09870875}"
 	ProjectSection(ProjectDependencies) = postProject
-		{71F9005B-5CFF-40AA-BDE8-14CF4ED621B2} = {71F9005B-5CFF-40AA-BDE8-14CF4ED621B2}
 		{A3D50801-F65F-4201-8AEE-7254DAE4732F} = {A3D50801-F65F-4201-8AEE-7254DAE4732F}
 	EndProjectSection
 EndProject
