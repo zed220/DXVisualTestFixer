@@ -16,7 +16,6 @@ using System.Windows.Threading;
 namespace DXVisualTestFixer.Services {
     public class UpdateService : BindableBase, IUpdateService {
         DispatcherTimer Timer;
-        bool isNetworkDeployment;
         bool isInUpdate = false;
 
         bool _HasUpdate;
@@ -43,13 +42,13 @@ namespace DXVisualTestFixer.Services {
         }
 
         public void Start() {
-            if(!isNetworkDeployment)
+            if(!IsNetworkDeployment)
                 return;
             Timer.Start();
         }
 
         public void Stop() {
-            if(!isNetworkDeployment)
+            if(!IsNetworkDeployment)
                 return;
             Timer.Stop();
         }

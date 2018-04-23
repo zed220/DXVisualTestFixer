@@ -59,6 +59,7 @@ namespace DXVisualTestFixer.Common {
         string Version { get; }
         TestInfo TestInfo { get; }
         string ToLog();
+        TestState Valid { get; }
     }
     public interface IElapsedTimeInfo {
         string Name { get; }
