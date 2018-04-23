@@ -20,30 +20,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace DXVisualTestFixer {
+namespace DXVisualTestFixer.Views {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     /// 
-    public partial class Shell : ThemedWindow, IShell {
-        public Shell(IUnityContainer container, IRegionManager regionManager) {
+    public partial class Shell : ThemedWindow {
+        public Shell() {
             InitializeComponent();
         }
-
-        ICommand headerItem;
-        public ICommand UpdateAppCommand {
-            get { return headerItem; }
-            set {
-                headerItem = value;
-                OnHeaderItemChanged();
-            }
-        }
-
-        void OnHeaderItemChanged() {
-            HeaderItemsSource = new List<ICommand>() { UpdateAppCommand };
-        }
-    }
-    public interface IShell {
-        ICommand UpdateAppCommand { get; set; }
     }
 }

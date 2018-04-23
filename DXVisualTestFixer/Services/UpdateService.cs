@@ -13,11 +13,11 @@ using System.Windows.Input;
 using System.Windows.Threading;
 
 namespace DXVisualTestFixer.Services {
-    public interface IUpdateService {
-        void Update();
+    public interface IUpdateService : INotifyPropertyChanged {
         void Start();
         void Stop();
         bool HasUpdate { get; }
+        bool IsNetworkDeployment { get; }
     }
 
     public class UpdateService : BindableBase, IUpdateService {
@@ -29,23 +29,13 @@ namespace DXVisualTestFixer.Services {
 
         public bool HasUpdate {
             get { return _HasUpdate; }
-            private set { SetProperty(ref _HasUpdate, value, OnHasUpdateChanged); }
+            private set { SetProperty(ref _HasUpdate, value); }
         }
-        
-        void OnHasUpdateChanged() {
-            var shell = ServiceLocator.Current.GetInstance<IShell>();
-            if(!HasUpdate) {
-                shell.UpdateAppCommand = null;
-                return;
-            }
-            if(HasUpdate) {
-                shell.UpdateAppCommand = new DelegateCommand(Update);
-            }
-        }
+        public bool IsNetworkDeployment { get; }
 
         public UpdateService() {
-            isNetworkDeployment = ApplicationDeployment.IsNetworkDeployed;
-            if(!isNetworkDeployment) {
+            IsNetworkDeployment = ApplicationDeployment.IsNetworkDeployed;
+            if(!IsNetworkDeployment) {
                 HasUpdate = true;
                 return;
             }
@@ -68,13 +58,6 @@ namespace DXVisualTestFixer.Services {
             if(!isNetworkDeployment)
                 return;
             Timer.Stop();
-        }
-
-        public void Update() {
-            if(!HasUpdate)
-                return;
-            System.Windows.Application.Current.Shutdown();
-            System.Windows.Forms.Application.Restart();
         }
 
         async Task CheckUpdate() {

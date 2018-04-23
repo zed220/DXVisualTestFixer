@@ -244,6 +244,7 @@
     <Compile Include="ViewModels\RepositoryModel.cs" />
     <Compile Include="ViewModels\RepositoryOptimizerViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
+    <Compile Include="ViewModels\ShellViewModel.cs" />
     <Compile Include="ViewModels\TestInfoWrapper.cs" />
     <Compile Include="ViewModels\TestInfoViewModel.cs" />
     <Resource Include="Images\CSS.png" />
@@ -279,7 +280,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Shell.xaml">
+    <Page Include="Views\Shell.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -289,7 +290,7 @@
     </Compile>
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Interfaces.cs" />
-    <Compile Include="Shell.xaml.cs">
+    <Compile Include="Views\Shell.xaml.cs">
       <DependentUpon>Shell.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>

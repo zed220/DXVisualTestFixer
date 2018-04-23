@@ -15,18 +15,17 @@ using DXVisualTestFixer.Core;
 namespace DXVisualTestFixer {
     public class Bootstrapper : UnityBootstrapper {
         protected override DependencyObject CreateShell() {
-            return Container.TryResolve(typeof(IShell)) as DependencyObject;
+            return new Shell();
         }
         protected override void InitializeShell() {
             Application.Current.MainWindow.Show();
-            Container.Resolve<IUpdateService>().Start();
         }
 
         protected override void ConfigureContainer() {
             base.ConfigureContainer();
-            RegisterTypeIfMissing(typeof(IShell), typeof(Shell), true);
             RegisterTypeIfMissing(typeof(ILoggingService), typeof(LoggingService), true);
             RegisterTypeIfMissing(typeof(IVersionService), typeof(VersionService), true);
+            RegisterTypeIfMissing(typeof(IShellViewModel), typeof(ShellViewModel), true);
             RegisterTypeIfMissing(typeof(IMainViewModel), typeof(MainViewModel), true);
             RegisterTypeIfMissing(typeof(ISettingsViewModel), typeof(SettingsViewModel), false);
             RegisterTypeIfMissing(typeof(ITestInfoViewModel), typeof(TestInfoViewModel), false);
@@ -53,6 +52,7 @@ namespace DXVisualTestFixer {
         protected override void ConfigureViewModelLocator() {
             base.ConfigureViewModelLocator();
             ViewModelLocationProvider.Register(typeof(MergedTestInfoView).FullName, typeof(ITestInfoViewModel));
+            ViewModelLocationProvider.Register(typeof(Shell).FullName, typeof(IShellViewModel));
 
             Container.Resolve<IRegionManager>().RegisterViewWithRegion(Regions.Regions.Main, typeof(MainView));
         }
