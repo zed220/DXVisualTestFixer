@@ -78,10 +78,36 @@ namespace DXVisualTestFixer.ViewModels {
         }
     }
 
-    public class MainViewModel : BindableBase, IMainViewModel {
+    public class ViewModelBase : BindableBase {
+        protected readonly IUnityContainer unityContainer;
+
+        public InteractionRequest<INotification> NotificationRequest { get; } = new InteractionRequest<INotification>();
+
+        public ViewModelBase(IUnityContainer unityContainer) {
+            this.unityContainer = unityContainer;
+        }
+
+        protected bool CheckConfirmation(InteractionRequest<IConfirmation> service, string title, string content, MessageBoxImage image = MessageBoxImage.Warning) {
+            IDXConfirmation confirmation = unityContainer.Resolve<IDXConfirmation>();
+            SetupNotification(confirmation, title, content, image);
+            service.Raise(confirmation);
+            return confirmation.Confirmed;
+        }
+        protected void DoNotification(string title, string content, MessageBoxImage image = MessageBoxImage.Information) {
+            IDXNotification confirmation = unityContainer.Resolve<IDXNotification>();
+            SetupNotification(confirmation, title, content, image);
+            NotificationRequest.Raise(confirmation);
+        }
+        void SetupNotification(IDXNotification notification, string title, string content, MessageBoxImage image) {
+            notification.Title = title;
+            notification.Content = content;
+            notification.ImageType = image;
+        }
+    }
+
+    public class MainViewModel : ViewModelBase, IMainViewModel {
         public Config Config { get; private set; }
 
-        readonly IUnityContainer unityContainer;
         readonly IRegionManager regionManager;
 
         #region private properties
@@ -155,15 +181,14 @@ namespace DXVisualTestFixer.ViewModels {
 
         public LoadingProgressController LoadingProgressController { get; } = new LoadingProgressController();
         public InteractionRequest<IConfirmation> ConfirmationRequest { get; } = new InteractionRequest<IConfirmation>();
-        public InteractionRequest<INotification> NotificationRequest { get; } = new InteractionRequest<INotification>();
 
         public InteractionRequest<IConfirmation> SettingsRequest { get; } = new InteractionRequest<IConfirmation>();
         public InteractionRequest<IConfirmation> ApplyChangesRequest { get; } = new InteractionRequest<IConfirmation>();
         public InteractionRequest<IConfirmation> RepositoryOptimizerRequest { get; } = new InteractionRequest<IConfirmation>();
         public InteractionRequest<INotification> RepositoryAnalyzerRequest { get; } = new InteractionRequest<INotification>();
 
-        public MainViewModel(IUnityContainer container, IRegionManager regionManager, ILoggingService loggingService, IUpdateService updateService) {
-            unityContainer = container;
+        public MainViewModel(IUnityContainer container, IRegionManager regionManager, ILoggingService loggingService, IUpdateService updateService)
+            : base(container) {
             this.regionManager = regionManager;
             TestService = new TestsService(LoadingProgressController);
             UpdateConfig();
@@ -242,7 +267,7 @@ namespace DXVisualTestFixer.ViewModels {
         void UpdateContent() {
             if(Config.Repositories == null || Config.Repositories.Length == 0) {
                 Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
-                    NotificationRequest.Raise(new DXNotification(MessageBoxImage.Information) { Title = "Add repositories in settings", Content = "Add repositories in settings" });
+                    DoNotification("Add repositories in settings", "Add repositories in settings");
                     ShowSettings();
                 }));
                 return;
@@ -250,7 +275,7 @@ namespace DXVisualTestFixer.ViewModels {
             foreach(var repoModel in Config.Repositories.Select(rep => new RepositoryModel(rep))) {
                 if(!repoModel.IsValid()) {
                     Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
-                        NotificationRequest.Raise(new DXNotification(MessageBoxImage.Warning) { Title = "Invalid Settings", Content = "Modify repositories in settings" });
+                        DoNotification("Invalid Settings", "Modify repositories in settings", MessageBoxImage.Warning);
                         ShowSettings();
                     }));
                     return;
@@ -314,12 +339,12 @@ namespace DXVisualTestFixer.ViewModels {
         }
         public void ApplyChanges() {
             if(TestsToCommitCount == 0) {
-                NotificationRequest.Raise(new DXNotification(MessageBoxImage.Information) { Title = "Nothing to commit", Content = "Nothing to commit" });
+                DoNotification("Nothing to commit", "Nothing to commit");
                 return;
             }
             List<TestInfoWrapper> changedTests = GetChangedTests();
             if(changedTests.Count == 0) {
-                NotificationRequest.Raise(new DXNotification(MessageBoxImage.Information) { Title = "Nothing to commit", Content = "Nothing to commit" });
+                DoNotification("Nothing to commit", "Nothing to commit");
                 return;
             }
             IApplyChangesViewModel confirmation = unityContainer.Resolve<IApplyChangesViewModel>();
@@ -330,25 +355,21 @@ namespace DXVisualTestFixer.ViewModels {
             TestsToCommitCount = 0;
             UpdateContent();
         }
-        //bool ShowCheckOutMessageBox(string text) {
-        //    MessageResult? result = GetService<IMessageBoxService>()?.ShowMessage("Please checkout file in DXVCS \n" + text, "Please checkout file in DXVCS", MessageButton.OKCancel, MessageIcon.Information);
-        //    return result.HasValue && result.Value == MessageResult.OK;
-        //}
+        bool ShowCheckOutMessageBox(string text) {
+            return CheckConfirmation(ConfirmationRequest, "Readonly file detected", "Please checkout file in DXVCS \n" + text);
+        }
         void ApplyTest(TestInfoWrapper testWrapper) {
-            //if(!TestsService.ApplyTest(testWrapper.TestInfo, ShowCheckOutMessageBox))
-            //    GetService<IMessageBoxService>()?.ShowMessage("Test not fixed \n" + testWrapper.ToLog(), "Test not fixed", MessageButton.OK, MessageIcon.Information);
+            if(TestsService.ApplyTest(testWrapper.TestInfo, ShowCheckOutMessageBox))
+                return;
+            DoNotification("Test not fixed", "Test not fixed \n" + testWrapper.ToLog(), MessageBoxImage.Error);
         }
         bool CheckHasUncommittedChanges() {
             if(TestsToCommitCount == 0)
                 return false;
-            Confirmation confirmation = new DXConfirmation(MessageBoxImage.Warning) { Title = "Uncommitted tests", Content = "You has uncommitted tests! Do you want to refresh tests list and flush all uncommitted tests?" };
-            ConfirmationRequest.Raise(confirmation);
-            return !confirmation.Confirmed;
+            return !CheckConfirmation(ConfirmationRequest, "Uncommitted tests", "You has uncommitted tests! Do you want to refresh tests list and flush all uncommitted tests?");
         }
         bool CheckAlarmAdmin() {
-            Confirmation confirmation = new DXConfirmation(MessageBoxImage.Warning) { Title = "Warning", Content = "This tool is powerful and dangerous. Unbridled using may cause repository errors! Are you really sure?" };
-            ConfirmationRequest.Raise(confirmation);
-            return !confirmation.Confirmed;
+            return !CheckConfirmation(ConfirmationRequest, "Warning", "This tool is powerful and dangerous. Unbridled using may cause repository errors! Are you really sure?");
         }
         public void RefreshTestList() {
             if(CheckHasUncommittedChanges())

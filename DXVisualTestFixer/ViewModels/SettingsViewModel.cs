@@ -27,9 +27,7 @@ namespace DXVisualTestFixer.ViewModels {
         Config Config { get; }
     }
 
-    public class SettingsViewModel : BindableBase, ISettingsViewModel {
-        readonly IUnityContainer unityContainer;
-
+    public class SettingsViewModel : ViewModelBase, ISettingsViewModel {
         Config _Config;
         ObservableCollection<RepositoryModel> _Repositories;
         string _ThemeName;
@@ -54,8 +52,8 @@ namespace DXVisualTestFixer.ViewModels {
         public string Title { get; set; }
         public object Content { get; set; }
 
-        public SettingsViewModel(IUnityContainer container) {
-            unityContainer = container;
+        public SettingsViewModel(IUnityContainer container) 
+            : base(container) {
             Title = "Settings";
             Config = ConfigSerializer.GetConfig();
             Commands = UICommand.GenerateFromMessageButton(MessageButton.OKCancel, new DialogService(), MessageResult.OK, MessageResult.Cancel);
@@ -90,9 +88,7 @@ namespace DXVisualTestFixer.ViewModels {
         void Cancel() {
             if(!IsChanged())
                 return;
-            DXConfirmation confirmation = new DXConfirmation(MessageBoxImage.Warning) { Title = "Save changes?", Content = "Save changes?" };
-            ConfirmationRequest.Raise(confirmation);
-            if(confirmation.Confirmed)
+            if(CheckConfirmation(ConfirmationRequest, "Save changes?", "Save changes?"))
                 Save();
         }
 

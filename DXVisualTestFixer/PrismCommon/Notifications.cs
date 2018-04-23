@@ -13,33 +13,31 @@ using System.Windows.Markup;
 using System.Windows.Media;
 
 namespace DXVisualTestFixer.PrismCommon {
-    public interface IDXCommands {
-        IEnumerable<UICommand> Commands { get; }
-    }
-
-    public interface IDXNotification : IDXCommands {
-        ImageSource ImageSource { get; }
-    }
-
     public class DXNotification : Notification, IDXNotification {
-        public DXNotification(MessageBoxImage imageType) {
-            Commands = UICommand.GenerateFromMessageButton(MessageButton.OK, new DialogService());
-            ImageSource = DXMessageBoxHelper.GetImage(imageType);
+        public DXNotification() {
+            Commands = CreateCommands();
         }
 
+        protected virtual IEnumerable<UICommand> CreateCommands() {
+            return UICommand.GenerateFromMessageButton(MessageButton.OK, new DialogService());
+        }
+
+        public MessageBoxImage ImageType { get; set; }
         public IEnumerable<UICommand> Commands { get; }
-        public ImageSource ImageSource { get; }
+        public ImageSource ImageSource { get { return DXMessageBoxHelper.GetImage(ImageType); } }
     }
 
-    public class DXConfirmation : Confirmation, IDXNotification {
-        public DXConfirmation(MessageBoxImage imageType) {
-            Commands = UICommand.GenerateFromMessageButton(MessageButton.OKCancel, new DialogService(), MessageResult.OK, MessageResult.Cancel);
-            Commands.Where(c => c.IsDefault).Single().Command = new DelegateCommand(() => Confirmed = true);
-            ImageSource = DXMessageBoxHelper.GetImage(imageType);
+    public class DXConfirmation : DXNotification, IDXConfirmation {
+        public DXConfirmation() {
         }
 
-        public IEnumerable<UICommand> Commands { get; }
-        public ImageSource ImageSource { get; }
+        public bool Confirmed { get; set; }
+
+        protected override IEnumerable<UICommand> CreateCommands() {
+            var commands = UICommand.GenerateFromMessageButton(MessageButton.OKCancel, new DialogService(), MessageResult.OK, MessageResult.Cancel);
+            commands.Where(c => c.IsDefault).Single().Command = new DelegateCommand(() => Confirmed = true);
+            return commands;
+        }
     }
 
     public static class DXMessageBoxHelper {

@@ -28,15 +28,7 @@ namespace DXVisualTestFixer {
     public partial class Shell : ThemedWindow, IShell {
         public Shell(IUnityContainer container, IRegionManager regionManager) {
             InitializeComponent();
-            regionManager.RegisterViewWithRegion(Regions.Regions.Main, typeof(MainView));
-            //regionManager.RegisterViewWithRegion(Regions.Regions.TestInfo, () => GetTestInfoView(container));
         }
-
-        //static object GetTestInfoView(IUnityContainer container) {
-        //    if(container.Resolve<IMainViewModel>().TestViewType == TestViewType.Split)
-        //        return new TestInfoView();
-        //    return new MergedTestInfoView();
-        //}
 
         IButton headerItem;
         public IButton HeaderItem {

@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace DXVisualTestFixer.ViewModels {
     public interface IApplyChangesViewModel : IConfirmation { }
 
-    public class ApplyChangesViewModel : ViewModelBase, IApplyChangesViewModel {
+    public class ApplyChangesViewModel : BindableBase, IApplyChangesViewModel {
         public IEnumerable<UICommand> DialogCommands { get; private set; }
 
         public List<TestInfoWrapper> ChangedTests { get; }

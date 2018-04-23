@@ -35,8 +35,13 @@ namespace DXVisualTestFixer {
             RegisterTypeIfMissing(typeof(IApplyChangesViewModel), typeof(ApplyChangesViewModel), false);
             RegisterTypeIfMissing(typeof(IRepositoryOptimizerViewModel), typeof(RepositoryOptimizerViewModel), false);
             RegisterTypeIfMissing(typeof(IRepositoryAnalyzerViewModel), typeof(RepositoryAnalyzerViewModel), false);
+            RegisterTypeIfMissing(typeof(IDXNotification), typeof(DXNotification), false);
+            RegisterTypeIfMissing(typeof(IDXConfirmation), typeof(DXConfirmation), false);
+
             Container.RegisterTypeForNavigation<TestInfoView>();
             Container.RegisterTypeForNavigation<MergedTestInfoView>();
+
+            Container.Resolve<IRegionManager>().RegisterViewWithRegion(Regions.Regions.Main, typeof(MainView));
         }
 
         protected override RegionAdapterMappings ConfigureRegionAdapterMappings() {
@@ -50,13 +55,4 @@ namespace DXVisualTestFixer {
             ViewModelLocationProvider.Register(typeof(MergedTestInfoView).FullName, typeof(ITestInfoViewModel));
         }
     }
-
-    //public static class Bootstrapper {
-    //    static Bootstrapper() {
-    //        RegisterTypes();
-    //    }
-    //    static void RegisterTypes() {
-    //        RootContainer.RegisterType<IRepositoryAnalyzerViewModel, RepositoryAnalyzerViewModel>(new TransientLifetimeManager());
-    //    }
-    //}
 }
