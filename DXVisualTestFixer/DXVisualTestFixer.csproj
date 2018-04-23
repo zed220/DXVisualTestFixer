@@ -211,7 +211,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="AppearanceService.cs" />
+    <Compile Include="Services\AppearanceService.cs" />
     <Compile Include="Behaviors\AvalonEditTextBindingBehavior.cs" />
     <Compile Include="Behaviors\BarItemIndicatorBehavior.cs" />
     <Compile Include="Behaviors\BrowseDirBehavior.cs" />
