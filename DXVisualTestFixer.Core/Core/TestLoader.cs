@@ -1,4 +1,5 @@
-﻿using HtmlAgilityPack;
+﻿using DXVisualTestFixer.Common;
+using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,7 +10,7 @@ using System.Xml;
 
 namespace DXVisualTestFixer.Core {
     public class CorpDirTestInfoContainer {
-        public CorpDirTestInfoContainer(List<CorpDirTestInfo> failedTests, List<string> usedFiles, List<ElapsedTimeInfo> elapsedTimes, List<Team> teams) {
+        public CorpDirTestInfoContainer(List<CorpDirTestInfo> failedTests, List<string> usedFiles, List<IElapsedTimeInfo> elapsedTimes, List<Team> teams) {
             FailedTests = failedTests;
             UsedFiles = usedFiles;
             ElapsedTimes = elapsedTimes;
@@ -18,10 +19,10 @@ namespace DXVisualTestFixer.Core {
 
         public List<CorpDirTestInfo> FailedTests { get; }
         public List<string> UsedFiles { get; }
-        public List<ElapsedTimeInfo> ElapsedTimes { get; }
+        public List<IElapsedTimeInfo> ElapsedTimes { get; }
         public List<Team> Teams { get; }
     }
-    public class ElapsedTimeInfo {
+    class ElapsedTimeInfo : IElapsedTimeInfo {
         public ElapsedTimeInfo(string name, TimeSpan time) {
             Name = name;
             Time = time;
@@ -85,8 +86,8 @@ namespace DXVisualTestFixer.Core {
                 }
             }
         }
-        static List<ElapsedTimeInfo> FindElapsedTimes(XmlDocument myXmlDocument) {
-            List<ElapsedTimeInfo> result = new List<ElapsedTimeInfo>();
+        static List<IElapsedTimeInfo> FindElapsedTimes(XmlDocument myXmlDocument) {
+            List<IElapsedTimeInfo> result = new List<IElapsedTimeInfo>();
             XmlNode buildNode = FindBuildNode(myXmlDocument);
             if(buildNode == null)
                 return result;

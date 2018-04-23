@@ -1,4 +1,5 @@
-﻿using Polenter.Serialization;
+﻿using DXVisualTestFixer.Common;
+using Polenter.Serialization;
 using Polenter.Serialization.Advanced;
 using Polenter.Serialization.Advanced.Serializing;
 using System;

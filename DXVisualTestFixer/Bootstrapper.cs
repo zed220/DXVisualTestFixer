@@ -3,14 +3,17 @@ using System.Windows;
 using Prism.Unity;
 using Microsoft.Practices.Unity;
 using Prism.Mvvm;
-using DXVisualTestFixer.ViewModels;
 using Prism.Regions;
-using DXVisualTestFixer.Views;
 using DevExpress.Xpf.Docking;
 using DXVisualTestFixer.PrismCommon;
 using DevExpress.Mvvm.UI;
 using DevExpress.Xpf.Dialogs;
 using DXVisualTestFixer.Core;
+using DXVisualTestFixer.UI.Views;
+using DXVisualTestFixer.Common;
+using DXVisualTestFixer.UI.PrismCommon;
+using DXVisualTestFixer.UI.ViewModels;
+using DXVisualTestFixer.UI.Services;
 
 namespace DXVisualTestFixer {
     public class Bootstrapper : UnityBootstrapper {
@@ -54,7 +57,7 @@ namespace DXVisualTestFixer {
             ViewModelLocationProvider.Register(typeof(MergedTestInfoView).FullName, typeof(ITestInfoViewModel));
             ViewModelLocationProvider.Register(typeof(Shell).FullName, typeof(IShellViewModel));
 
-            Container.Resolve<IRegionManager>().RegisterViewWithRegion(Regions.Regions.Main, typeof(MainView));
+            Container.Resolve<IRegionManager>().RegisterViewWithRegion(Regions.Main, typeof(MainView));
         }
     }
 }

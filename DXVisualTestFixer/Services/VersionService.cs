@@ -1,4 +1,5 @@
-﻿using DXVisualTestFixer.Configuration;
+﻿using DXVisualTestFixer.Common;
+using DXVisualTestFixer.Configuration;
 using DXVisualTestFixer.Core;
 using System;
 using System.Collections.Generic;

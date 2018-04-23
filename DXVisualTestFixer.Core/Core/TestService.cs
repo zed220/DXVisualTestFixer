@@ -1,4 +1,5 @@
-﻿using DXVisualTestFixer.Core.Configuration;
+﻿using DXVisualTestFixer.Common;
+using DXVisualTestFixer.Core.Configuration;
 using DXVisualTestFixer.Native;
 using HtmlAgilityPack;
 using Microsoft.Practices.ServiceLocation;
@@ -26,7 +27,7 @@ namespace DXVisualTestFixer.Core {
         public string RealUrl { get; }
         public List<TestInfo> TestList { get; }
         public List<string> UsedFiles { get; }
-        public List<ElapsedTimeInfo> ElapsedTimes { get; }
+        public List<IElapsedTimeInfo> ElapsedTimes { get; }
         public List<Team> Teams { get; }
     }
 
@@ -34,13 +35,13 @@ namespace DXVisualTestFixer.Core {
         public TestInfoContainer() {
             TestList = new List<TestInfo>();
             UsedFiles = new Dictionary<Repository, List<string>>();
-            ElapsedTimes = new Dictionary<Repository, List<ElapsedTimeInfo>>();
+            ElapsedTimes = new Dictionary<Repository, List<IElapsedTimeInfo>>();
             Teams = new Dictionary<Repository, List<Team>>();
         }
 
         public List<TestInfo> TestList { get; }
         public Dictionary<Repository, List<string>> UsedFiles { get; }
-        public Dictionary<Repository, List<ElapsedTimeInfo>> ElapsedTimes { get; }
+        public Dictionary<Repository, List<IElapsedTimeInfo>> ElapsedTimes { get; }
         public Dictionary<Repository, List<Team>> Teams { get; }
     }
 
@@ -67,7 +68,7 @@ namespace DXVisualTestFixer.Core {
             foreach(TestInfoCached cached in await Task.WhenAll(allTasks.ToArray()).ConfigureAwait(false)) {
                 result.TestList.AddRange(cached.TestList);
                 result.UsedFiles[cached.Repository] = cached.UsedFiles;
-                result.ElapsedTimes[cached.Repository] = cached.ElapsedTimes;
+                result.ElapsedTimes[cached.Repository] = cached.ElapsedTimes.Cast<IElapsedTimeInfo>().ToList();
                 result.Teams[cached.Repository] = cached.Teams;
             }
             return result;

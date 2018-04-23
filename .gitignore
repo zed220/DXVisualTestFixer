@@ -7,3 +7,5 @@ bin/
 DXVisualTestFixer/DXVisualTestFixer_TemporaryKey.pfx
 *.user
 DXVisualTestFixer.Core/obj/
+DXVisualTestFixer.UI/obj
+DXVisualTestFixer.Common/obj

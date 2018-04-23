@@ -1,4 +1,5 @@
-﻿using DXVisualTestFixer.Core;
+﻿using DXVisualTestFixer.Common;
+using DXVisualTestFixer.Core;
 using Microsoft.Practices.ServiceLocation;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace DXVisualTestFixer.Core.Configuration {
-    public class Config {
+    class Config : IConfig {
         public const string ConfigFileName = "ui.config";
         public Repository[] Repositories { get; set; }
         public string LastVersion { get; set; }

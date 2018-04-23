@@ -1,4 +1,5 @@
-﻿using Microsoft.Practices.ServiceLocation;
+﻿using DXVisualTestFixer.Common;
+using Microsoft.Practices.ServiceLocation;
 using Prism.Commands;
 using Prism.Mvvm;
 using System;
@@ -13,13 +14,6 @@ using System.Windows.Input;
 using System.Windows.Threading;
 
 namespace DXVisualTestFixer.Services {
-    public interface IUpdateService : INotifyPropertyChanged {
-        void Start();
-        void Stop();
-        bool HasUpdate { get; }
-        bool IsNetworkDeployment { get; }
-    }
-
     public class UpdateService : BindableBase, IUpdateService {
         DispatcherTimer Timer;
         bool isNetworkDeployment;

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DXVisualTestFixer.Common;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -18,7 +19,7 @@ namespace DXVisualTestFixer.Core.Configuration {
 
         public static int Version { get; set; } = 0;
 
-        public static Config GetConfig(bool useCache = true) {
+        public static IConfig GetConfig(bool useCache = true) {
             if(useCache && cached != null)
                 return cached;
             return cached = GetConfigCore();
@@ -34,7 +35,7 @@ namespace DXVisualTestFixer.Core.Configuration {
             }
         }
 
-        public static void SaveConfig(Config options) {
+        public static void SaveConfig(IConfig options) {
             cached = null;
             try {
                 Serializer.Serialize(SettingsFilePath, options);
@@ -42,10 +43,10 @@ namespace DXVisualTestFixer.Core.Configuration {
             catch {
             }
         }
-        public static bool IsConfigEquals(Config left, Config right) {
+        public static bool IsConfigEquals(IConfig left, IConfig right) {
             return GetConfigAsString(left) == GetConfigAsString(right);
         }
-        static string GetConfigAsString(Config config) {
+        static string GetConfigAsString(IConfig config) {
             using(MemoryStream stream = new MemoryStream()) {
                 Serializer.Serialize(stream, config);
                 stream.Seek(0, SeekOrigin.Begin);

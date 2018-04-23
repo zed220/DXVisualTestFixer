@@ -1,0 +1,101 @@
+﻿<UserControl x:Class="DXVisualTestFixer.UI.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:DXVisualTestFixer.UI.Views"
+             xmlns:core="http://schemas.dxvisualtests.com/winfx/2008/xaml/core"
+             xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+             xmlns:dxc="http://schemas.devexpress.com/winfx/2008/xaml/controls"
+             xmlns:dxdi="http://schemas.devexpress.com/winfx/2008/xaml/dialogs"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:behaviors="clr-namespace:DXVisualTestFixer.UI.Behaviors"
+             xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:prismcommon="clr-namespace:DXVisualTestFixer.UI.PrismCommon"
+             xmlns:converters="clr-namespace:DXVisualTestFixer.UI.Converters"
+             xmlns:common="clr-namespace:DXVisualTestFixer.Common;assembly=DXVisualTestFixer.Common"
+             prism:ViewModelLocator.AutoWireViewModel="False"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/DXVisualTestFixer.UI;component/Resources/Services.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <i:Interaction.Triggers>
+        <prism:InteractionRequestTrigger SourceObject="{Binding ConfirmationRequest}">
+            <prismcommon:PopupDXDialogWindowAction IsModal="True" CenterOverAssociatedObject="True" WindowStyle="{StaticResource NotificationWindowStyle}">
+                <prismcommon:PopupDXDialogWindowAction.WindowContent>
+                    <ContentControl Content="{Binding Converter={converters:NotificationContentConverter}}" ContentTemplate="{StaticResource NotificationWindowTemplate}"/>
+                </prismcommon:PopupDXDialogWindowAction.WindowContent>
+            </prismcommon:PopupDXDialogWindowAction>
+        </prism:InteractionRequestTrigger>
+    </i:Interaction.Triggers>
+    <dx:DXTabControl>
+        <dx:DXTabItem Header="Repositories">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <GroupBox Header="Auto loader" Margin="5">
+                    <dx:BackgroundPanel>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Margin="10">
+                        <Run>Select work directory. For example:</Run>
+                        <Run FontWeight="Bold">"c:\work" what contains "c:\work\2017.1" or "c:\work\2017.1\common", "c:\work\2018.1", etc</Run>
+                            </TextBlock>
+                            <Button Grid.Row="1" Padding="5" Margin="5" Content="Auto Load Repositories From Work Directory" Click="{DXEvent Handler='LoadFromWorkingFolder()'}"/>
+                        </Grid>
+                    </dx:BackgroundPanel>
+                </GroupBox>
+                <dxg:GridControl Grid.Row="2" ItemsSource="{Binding Repositories}">
+                    <dxg:GridColumn FieldName="Version">
+                        <dxg:GridColumn.EditSettings>
+                            <dxe:ComboBoxEditSettings ItemsSource="{x:Static common:Repository.Versions}"/>
+                        </dxg:GridColumn.EditSettings>
+                    </dxg:GridColumn>
+                    <dxg:GridColumn FieldName="Path" Width="*">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dxe:ButtonEdit x:Name="PART_Editor">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <behaviors:BrowseDirBehavior/>
+                                    </dxmvvm:Interaction.Behaviors>
+                                </dxe:ButtonEdit>
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+                    <dxg:GridControl.View>
+                        <dxg:TableView NewItemRowPosition="Bottom" ShowDataNavigator="True" />
+                    </dxg:GridControl.View>
+                </dxg:GridControl>
+            </Grid>
+        </dx:DXTabItem>
+        <!--<dx:DXTabItem Header="Application">
+            <dxlc:LayoutControl Orientation="Vertical" VerticalAlignment="Top">
+                <dxlc:LayoutItem Label="Default theme: " VerticalAlignment="Center">
+                    <dxe:ComboBoxEdit 
+                            EditValue="{Binding Path=ThemeName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                            IsTextEditable="False"
+                            ItemsSource="{x:Static dx:Theme.Themes}" 
+                            DisplayMember="FullName" 
+                            ValueMember="Name">
+                    </dxe:ComboBoxEdit>
+                </dxlc:LayoutItem>
+            </dxlc:LayoutControl>
+        </dx:DXTabItem>-->
+    </dx:DXTabControl>
+
+</UserControl>

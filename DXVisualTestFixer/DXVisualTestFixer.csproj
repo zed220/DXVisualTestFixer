@@ -142,6 +142,10 @@
     <Reference Include="DevExpress.Xpf.Themes.Office2016White.v17.2, Version=17.2.207.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
       <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.79\lib\net40\DevExpress.Xpf.Themes.Office2016White.v17.2.dll</HintPath>
     </Reference>
+    <Reference Include="DXVisualTestFixer.Common, Version=1.0.0.0, Culture=neutral, PublicKeyToken=eb6f4fdcbc58ae33, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\bin\Debug\DXVisualTestFixer.Common.dll</HintPath>
+    </Reference>
     <Reference Include="DXVisualTestFixer.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=eb6f4fdcbc58ae33, processorArchitecture=MSIL">
       <HintPath>..\bin\Debug\DXVisualTestFixer.Core.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
@@ -149,6 +153,10 @@
     <Reference Include="DXVisualTestFixer.FarmIntegrator, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\bin\Debug\DXVisualTestFixer.FarmIntegrator.dll</HintPath>
+    </Reference>
+    <Reference Include="DXVisualTestFixer.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=eb6f4fdcbc58ae33, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\bin\Debug\DXVisualTestFixer.UI.dll</HintPath>
     </Reference>
     <Reference Include="ICSharpCode.AvalonEdit, Version=5.0.3.0, Culture=neutral, PublicKeyToken=9cc39be672370310, processorArchitecture=MSIL">
       <HintPath>..\packages\AvalonEdit.5.0.4\lib\Net40\ICSharpCode.AvalonEdit.dll</HintPath>
@@ -211,121 +219,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Services\AppearanceService.cs" />
-    <Compile Include="Behaviors\AvalonEditTextBindingBehavior.cs" />
-    <Compile Include="Behaviors\BarItemIndicatorBehavior.cs" />
-    <Compile Include="Behaviors\BrowseDirBehavior.cs" />
-    <Compile Include="Behaviors\ImageScaleBehavior.cs" />
-    <Compile Include="Behaviors\MergedTestInfoButtonBehavior.cs" />
-    <Compile Include="Behaviors\ScrollVIewerDragBehavior.cs" />
-    <Compile Include="Behaviors\UnusedFilesDragDropBehavior.cs" />
     <Compile Include="Config\VersionInfo.cs" />
-    <Compile Include="Controls\DraggableScrollViewer.cs" />
-    <Compile Include="Controls\TableViewAdvNavigation.cs" />
-    <Compile Include="Converters\ArrayToImageConverter.cs" />
-    <Compile Include="Converters\DpiErrorConverter.cs" />
-    <Compile Include="Converters\ImageToClipboardConverter.cs" />
-    <Compile Include="Converters\StackPanelToTooltipConverter.cs" />
-    <Compile Include="Converters\TestViewTypeConverter.cs" />
-    <Compile Include="Enums.cs" />
-    <Compile Include="PrismCommon\LayoutPanelRegionAdapter.cs" />
-    <Compile Include="PrismCommon\Notifications.cs" />
-    <Compile Include="PrismCommon\PopupDXWindowAction.cs" />
-    <Compile Include="Regions.cs" />
     <Compile Include="Services\LoggingService.cs" />
-    <Compile Include="Native\DiffLineBackgroundRenderer.cs" />
     <Compile Include="Services\UpdateService.cs" />
     <Compile Include="Services\VersionService.cs" />
-    <Compile Include="ViewModels\ApplyChangesViewModel.cs" />
-    <Compile Include="ViewModels\FilterPanelViewModel.cs" />
-    <Compile Include="ViewModels\LoadingProgressController.cs" />
-    <Compile Include="ViewModels\MainViewModel.cs" />
-    <Compile Include="ViewModels\RepositoryAnalyzerViewModel.cs" />
-    <Compile Include="ViewModels\RepositoryModel.cs" />
-    <Compile Include="ViewModels\RepositoryOptimizerViewModel.cs" />
-    <Compile Include="ViewModels\SettingsViewModel.cs" />
-    <Compile Include="ViewModels\ShellViewModel.cs" />
-    <Compile Include="ViewModels\TestInfoWrapper.cs" />
-    <Compile Include="ViewModels\TestInfoViewModel.cs" />
-    <Resource Include="Images\CSS.png" />
-    <Resource Include="Images\CSS_Small.png" />
     <Content Include="PublishVersionSynchronizer.targets">
       <SubType>Designer</SubType>
     </Content>
-    <Compile Include="Views\ApplyChangesView.xaml.cs">
-      <DependentUpon>ApplyChangesView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\FilterPanelView.xaml.cs">
-      <DependentUpon>FilterPanelView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\MainView.xaml.cs">
-      <DependentUpon>MainView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\MergedTestInfoView.xaml.cs">
-      <DependentUpon>MergedTestInfoView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\RepositoryAnalyzerView.xaml.cs">
-      <DependentUpon>RepositoryAnalyzerView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\RepositoryOptimizerView.xaml.cs">
-      <DependentUpon>RepositoryOptimizerView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\SettingsView.xaml.cs">
-      <DependentUpon>SettingsView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\TestInfoView.xaml.cs">
-      <DependentUpon>TestInfoView.xaml</DependentUpon>
-    </Compile>
-    <Page Include="Resources\Services.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Shell.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Bootstrapper.cs" />
-    <Compile Include="Interfaces.cs" />
-    <Compile Include="Views\Shell.xaml.cs">
-      <DependentUpon>Shell.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Page Include="Views\ApplyChangesView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\FilterPanelView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\MainView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\MergedTestInfoView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\RepositoryAnalyzerView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\RepositoryOptimizerView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\SettingsView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\TestInfoView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

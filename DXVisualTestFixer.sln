@@ -5,13 +5,23 @@ VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DXVisualTestFixer", "DXVisualTestFixer\DXVisualTestFixer.csproj", "{7BA74650-A045-4FA3-A1F9-2D7FBAD50A4F}"
 	ProjectSection(ProjectDependencies) = postProject
-		{71F9005B-5CFF-40AA-BDE8-14CF4ED621B2} = {71F9005B-5CFF-40AA-BDE8-14CF4ED621B2}
-		{A3D50801-F65F-4201-8AEE-7254DAE4732F} = {A3D50801-F65F-4201-8AEE-7254DAE4732F}
+		{6E5E8BC1-A7A3-4DED-AD5E-4C8A09870875} = {6E5E8BC1-A7A3-4DED-AD5E-4C8A09870875}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DXVisualTestFixer.FarmIntegrator", "DXVisualTestFixer.FarmIntegrator\DXVisualTestFixer.FarmIntegrator.csproj", "{71F9005B-5CFF-40AA-BDE8-14CF4ED621B2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DXVisualTestFixer.Core", "DXVisualTestFixer.Core\DXVisualTestFixer.Core.csproj", "{A3D50801-F65F-4201-8AEE-7254DAE4732F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BCEC7D6C-B798-4DC7-A803-EBC75B0EFBBD} = {BCEC7D6C-B798-4DC7-A803-EBC75B0EFBBD}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DXVisualTestFixer.UI", "DXVisualTestFixer.UI\DXVisualTestFixer.UI.csproj", "{6E5E8BC1-A7A3-4DED-AD5E-4C8A09870875}"
+	ProjectSection(ProjectDependencies) = postProject
+		{71F9005B-5CFF-40AA-BDE8-14CF4ED621B2} = {71F9005B-5CFF-40AA-BDE8-14CF4ED621B2}
+		{A3D50801-F65F-4201-8AEE-7254DAE4732F} = {A3D50801-F65F-4201-8AEE-7254DAE4732F}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DXVisualTestFixer.Common", "DXVisualTestFixer.Common\DXVisualTestFixer.Common.csproj", "{BCEC7D6C-B798-4DC7-A803-EBC75B0EFBBD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,6 +41,14 @@ Global
 		{A3D50801-F65F-4201-8AEE-7254DAE4732F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A3D50801-F65F-4201-8AEE-7254DAE4732F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A3D50801-F65F-4201-8AEE-7254DAE4732F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E5E8BC1-A7A3-4DED-AD5E-4C8A09870875}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E5E8BC1-A7A3-4DED-AD5E-4C8A09870875}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E5E8BC1-A7A3-4DED-AD5E-4C8A09870875}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E5E8BC1-A7A3-4DED-AD5E-4C8A09870875}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BCEC7D6C-B798-4DC7-A803-EBC75B0EFBBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCEC7D6C-B798-4DC7-A803-EBC75B0EFBBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BCEC7D6C-B798-4DC7-A803-EBC75B0EFBBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BCEC7D6C-B798-4DC7-A803-EBC75B0EFBBD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

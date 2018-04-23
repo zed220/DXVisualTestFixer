@@ -45,6 +45,10 @@
     <Reference Include="DevExpress.Xpf.Core.v17.2, Version=17.2.207.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
       <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.79\lib\net40\DevExpress.Xpf.Core.v17.2.dll</HintPath>
     </Reference>
+    <Reference Include="DXVisualTestFixer.Common, Version=1.0.0.0, Culture=neutral, PublicKeyToken=eb6f4fdcbc58ae33, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\bin\Debug\DXVisualTestFixer.Common.dll</HintPath>
+    </Reference>
     <Reference Include="HtmlAgilityPack, Version=1.8.0.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
       <HintPath>..\packages\HtmlAgilityPack.1.8.0\lib\Net45\HtmlAgilityPack.dll</HintPath>
     </Reference>
@@ -84,14 +88,10 @@
     <Compile Include="Config\TeamConfigsReader.cs" />
     <Compile Include="Config\VersionInfo.cs" />
     <Compile Include="Core\CorpDirTestInfo.cs" />
-    <Compile Include="Enums.cs" />
     <Compile Include="Core\FarmTaskInfo.cs" />
     <Compile Include="Interfaces.cs" />
     <Compile Include="Native\ImageComparer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Core\Repository.cs" />
-    <Compile Include="Core\Team.cs" />
-    <Compile Include="Core\TestInfo.cs" />
     <Compile Include="Core\TestLoader.cs" />
     <Compile Include="Core\TestLoader_Old.cs" />
     <Compile Include="Core\TestService.cs" />
