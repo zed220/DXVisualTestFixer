@@ -18,7 +18,7 @@
         Title="{DXBinding Expr='`Visual Tests Tool v` + $configuration:VersionInfo.VersionString'}" MinHeight="768" MinWidth="1024">
     <dx:ThemedWindow.Resources>
         <Style TargetType="{x:Type dx:HeaderItemControl}">
-            <Setter Property="Command" Value="{Binding Command}"/>
+            <Setter Property="Command" Value="{Binding}"/>
             <Setter Property="ToolTip" Value="Update application"/>
             <Setter Property="ContentTemplate">
                 <Setter.Value>

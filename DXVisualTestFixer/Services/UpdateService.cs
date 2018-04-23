@@ -1,5 +1,6 @@
-﻿using DevExpress.Mvvm;
-using Microsoft.Practices.ServiceLocation;
+﻿using Microsoft.Practices.ServiceLocation;
+using Prism.Commands;
+using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -18,54 +19,27 @@ namespace DXVisualTestFixer.Services {
         void Stop();
         bool HasUpdate { get; }
     }
-    public interface IButton {
-        bool IsEnabled { get; set; }
-        ICommand Command { get; set; }
-    }
-
-    public class UpdateButtonModel : BindableBase, IButton {
-        public bool IsEnabled {
-            get { return GetProperty(() => IsEnabled); }
-            set { SetProperty(() => IsEnabled, value); }
-        }
-        public ICommand Command {
-            get { return GetProperty(() => Command); }
-            set { SetProperty(() => Command, value); }
-        }
-    }
 
     public class UpdateService : BindableBase, IUpdateService {
         DispatcherTimer Timer;
         bool isNetworkDeployment;
         bool isInUpdate = false;
 
-        public UpdateButtonModel UpdateButton {
-            get { return GetProperty(() => UpdateButton); }
-            private set { SetProperty(() => UpdateButton, value, OnUpdateButtonChanged); }
-        }
+        bool _HasUpdate;
+
         public bool HasUpdate {
-            get { return GetProperty(() => HasUpdate); }
-            private set { SetProperty(() => HasUpdate, value, OnHasUpdateChanged); }
+            get { return _HasUpdate; }
+            private set { SetProperty(ref _HasUpdate, value, OnHasUpdateChanged); }
         }
-
-        void OnUpdateButtonChanged() {
-            ServiceLocator.Current.GetInstance<IShell>().HeaderItem = UpdateButton;
-        }
-
+        
         void OnHasUpdateChanged() {
-            if(HasUpdate && UpdateButton != null)
-                return;
-            if(!HasUpdate && UpdateButton == null)
-                return;
-            if(!HasUpdate && UpdateButton != null) {
-                UpdateButton = null;
+            var shell = ServiceLocator.Current.GetInstance<IShell>();
+            if(!HasUpdate) {
+                shell.UpdateAppCommand = null;
                 return;
             }
-            if(HasUpdate && UpdateButton == null) {
-                var updateButton = new UpdateButtonModel();
-                updateButton.Command = new DelegateCommand(Update);
-                updateButton.IsEnabled = true;
-                UpdateButton = updateButton;
+            if(HasUpdate) {
+                shell.UpdateAppCommand = new DelegateCommand(Update);
             }
         }
 

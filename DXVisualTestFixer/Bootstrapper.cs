@@ -19,7 +19,9 @@ namespace DXVisualTestFixer {
         }
         protected override void InitializeShell() {
             Application.Current.MainWindow.Show();
+            Container.Resolve<IUpdateService>().Start();
         }
+
         protected override void ConfigureContainer() {
             base.ConfigureContainer();
             RegisterTypeIfMissing(typeof(IShell), typeof(Shell), true);
@@ -40,8 +42,6 @@ namespace DXVisualTestFixer {
 
             Container.RegisterTypeForNavigation<TestInfoView>();
             Container.RegisterTypeForNavigation<MergedTestInfoView>();
-
-            Container.Resolve<IRegionManager>().RegisterViewWithRegion(Regions.Regions.Main, typeof(MainView));
         }
 
         protected override RegionAdapterMappings ConfigureRegionAdapterMappings() {
@@ -53,6 +53,8 @@ namespace DXVisualTestFixer {
         protected override void ConfigureViewModelLocator() {
             base.ConfigureViewModelLocator();
             ViewModelLocationProvider.Register(typeof(MergedTestInfoView).FullName, typeof(ITestInfoViewModel));
+
+            Container.Resolve<IRegionManager>().RegisterViewWithRegion(Regions.Regions.Main, typeof(MainView));
         }
     }
 }

@@ -109,6 +109,7 @@ namespace DXVisualTestFixer.ViewModels {
         public Config Config { get; private set; }
 
         readonly IRegionManager regionManager;
+        readonly ILoggingService loggingService;
 
         #region private properties
         List<TestInfoWrapper> _Tests;
@@ -187,13 +188,13 @@ namespace DXVisualTestFixer.ViewModels {
         public InteractionRequest<IConfirmation> RepositoryOptimizerRequest { get; } = new InteractionRequest<IConfirmation>();
         public InteractionRequest<INotification> RepositoryAnalyzerRequest { get; } = new InteractionRequest<INotification>();
 
-        public MainViewModel(IUnityContainer container, IRegionManager regionManager, ILoggingService loggingService, IUpdateService updateService)
+        public MainViewModel(IUnityContainer container, IRegionManager regionManager, ILoggingService loggingService)
             : base(container) {
             this.regionManager = regionManager;
+            this.loggingService = loggingService;
             TestService = new TestsService(LoadingProgressController);
             UpdateConfig();
             loggingService.MessageReserved += OnLoggingMessageReserved;
-            updateService.Start();
         }
 
         void OnLoggingMessageReserved(object sender, IMessageEventArgs args) {
@@ -204,7 +205,7 @@ namespace DXVisualTestFixer.ViewModels {
             if(args == null) {
                 await App.Current.Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(async () => {
                     FarmIntegrator.Stop();
-                    ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage("Farm integrator succes");
+                    loggingService.SendMessage("Farm integrator succes");
                     await UpdateAllTests().ConfigureAwait(false);
                 }));
             }
@@ -229,12 +230,12 @@ namespace DXVisualTestFixer.ViewModels {
         }
 
         async Task UpdateAllTests() {
-            ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage("Refreshing tests");
+            loggingService.SendMessage("Refreshing tests");
             LoadingProgressController.Start();
             List<FarmTaskInfo> failedTasks = GetAllTasks();
             var testInfoContainer = await TestService.LoadTestsAsync(failedTasks).ConfigureAwait(false);
             var tests = testInfoContainer.TestList.Where(t => t != null).Select(t => new TestInfoWrapper(this, t)).ToList();
-            ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage("");
+            loggingService.SendMessage("");
             await App.Current.Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
                 Tests = tests;
                 UsedFiles = testInfoContainer.UsedFiles;
@@ -253,14 +254,14 @@ namespace DXVisualTestFixer.ViewModels {
         }
 
         void UpdateConfig() {
-            ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage("Checking config");
+            loggingService.SendMessage("Checking config");
             var config = ConfigSerializer.GetConfig();
             if(Config != null && ConfigSerializer.IsConfigEquals(config, Config))
                 return;
             Config = config;
             FillSolutions();
             ServiceLocator.Current.GetInstance<IAppearanceService>()?.SetTheme(Config.ThemeName);
-            ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage("Config loaded");
+            loggingService.SendMessage("Config loaded");
             UpdateContent();
         }
 
@@ -374,7 +375,7 @@ namespace DXVisualTestFixer.ViewModels {
         public void RefreshTestList() {
             if(CheckHasUncommittedChanges())
                 return;
-            ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage("Waiting response from farm integrator");
+            loggingService.SendMessage("Waiting response from farm integrator");
             Tests = null;
             Status = ProgramStatus.Loading;
             FarmIntegrator.Start(FarmRefreshed);

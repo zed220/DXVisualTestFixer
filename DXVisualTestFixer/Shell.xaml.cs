@@ -30,8 +30,8 @@ namespace DXVisualTestFixer {
             InitializeComponent();
         }
 
-        IButton headerItem;
-        public IButton HeaderItem {
+        ICommand headerItem;
+        public ICommand UpdateAppCommand {
             get { return headerItem; }
             set {
                 headerItem = value;
@@ -40,10 +40,10 @@ namespace DXVisualTestFixer {
         }
 
         void OnHeaderItemChanged() {
-            HeaderItemsSource = new List<IButton>() { HeaderItem };
+            HeaderItemsSource = new List<ICommand>() { UpdateAppCommand };
         }
     }
     public interface IShell {
-        IButton HeaderItem { get; set; }
+        ICommand UpdateAppCommand { get; set; }
     }
 }
