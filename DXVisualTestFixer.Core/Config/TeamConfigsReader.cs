@@ -47,9 +47,6 @@ namespace DXVisualTestFixer.Core.Configuration {
         public static List<Team> GetAllTeams() {
             return new List<Team>(configs);
         }
-        //public bool HasConfig(string name) {
-        //    return configs.ContainsKey(name);
-        //}
         public static string SaveConfig(Team team) {
             using(MemoryStream s = new MemoryStream()) {
                 Serializer.Serialize(s, team);
