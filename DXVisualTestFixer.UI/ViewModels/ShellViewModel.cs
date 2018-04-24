@@ -34,8 +34,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
         }
 
         void Update() {
-            System.Windows.Application.Current.Shutdown();
-            System.Windows.Forms.Application.Restart();
+            updateService.Update();
         }
 
         public IEnumerable<ICommand> Commands { get; }

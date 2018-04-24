@@ -16,7 +16,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\bin\Debug\</OutputPath>
+    <OutputPath>..\bin\Build\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -24,7 +24,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\bin\Build\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -104,13 +104,6 @@
     </Reference>
     <Reference Include="DevExpress.Xpf.Themes.Office2016White.v17.2, Version=17.2.207.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
       <HintPath>..\packages\GitTools_UI_Addin_Dependencies.17.2.0.79\lib\net40\DevExpress.Xpf.Themes.Office2016White.v17.2.dll</HintPath>
-    </Reference>
-    <Reference Include="DXVisualTestFixer.Common, Version=1.0.0.0, Culture=neutral, PublicKeyToken=eb6f4fdcbc58ae33, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\bin\Debug\DXVisualTestFixer.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="DXVisualTestFixer.Core">
-      <HintPath>..\DXVisualTestFixer.Core\obj\Debug\DXVisualTestFixer.Core.dll</HintPath>
     </Reference>
     <Reference Include="ICSharpCode.AvalonEdit, Version=5.0.3.0, Culture=neutral, PublicKeyToken=9cc39be672370310, processorArchitecture=MSIL">
       <HintPath>..\packages\AvalonEdit.5.0.4\lib\Net40\ICSharpCode.AvalonEdit.dll</HintPath>
@@ -275,6 +268,16 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="89.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DXVisualTestFixer.Common\DXVisualTestFixer.Common.csproj">
+      <Project>{bcec7d6c-b798-4dc7-a803-ebc75b0efbbd}</Project>
+      <Name>DXVisualTestFixer.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DXVisualTestFixer.Core\DXVisualTestFixer.Core.csproj">
+      <Project>{a3d50801-f65f-4201-8aee-7254dae4732f}</Project>
+      <Name>DXVisualTestFixer.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -24,6 +24,7 @@ namespace DXVisualTestFixer.Common {
         void Stop();
         bool HasUpdate { get; }
         bool IsNetworkDeployment { get; }
+        void Update();
     }
     public interface IAppearanceService {
         void SetTheme(string themeName);

@@ -226,6 +226,10 @@ namespace DXVisualTestFixer.UI.ViewModels {
         }
 
         void FillSolutions() {
+            if(Config.Repositories == null) {
+                Solutions = new List<SolutionModel>();
+                return;
+            }
             List<SolutionModel> newSolutions = new List<SolutionModel>();
             foreach(var repository in Config.Repositories)
                 newSolutions.Add(new SolutionModel(repository.Version, repository.Path));
