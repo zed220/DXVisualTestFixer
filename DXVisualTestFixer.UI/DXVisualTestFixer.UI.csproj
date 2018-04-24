@@ -161,6 +161,7 @@
     <Compile Include="Converters\StackPanelToTooltipConverter.cs" />
     <Compile Include="Converters\TestViewTypeConverter.cs" />
     <Compile Include="Native\DiffLineBackgroundRenderer.cs" />
+    <Compile Include="Native\FarmTaskInfo.cs" />
     <Compile Include="PrismCommon\LayoutPanelRegionAdapter.cs" />
     <Compile Include="PrismCommon\PopupDXWindowAction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -273,10 +274,6 @@
     <ProjectReference Include="..\DXVisualTestFixer.Common\DXVisualTestFixer.Common.csproj">
       <Project>{bcec7d6c-b798-4dc7-a803-ebc75b0efbbd}</Project>
       <Name>DXVisualTestFixer.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DXVisualTestFixer.Core\DXVisualTestFixer.Core.csproj">
-      <Project>{a3d50801-f65f-4201-8aee-7254dae4732f}</Project>
-      <Name>DXVisualTestFixer.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

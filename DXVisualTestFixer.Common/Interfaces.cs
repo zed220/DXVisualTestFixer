@@ -106,4 +106,24 @@ namespace DXVisualTestFixer.Common {
         IFarmStatus GetTaskStatus(string task);
         string GetTaskUrl(string task);
     }
+    public interface ITestsService {
+        bool ApplyTest(TestInfo test, Func<string, bool> checkoutFunc);
+        Task<ITestInfoContainer> LoadTestsAsync(List<IFarmTaskInfo> farmTasks);
+        string GetResourcePath(Repository repository, string relativePath);
+    }
+    public interface IFarmTaskInfo {
+        Repository Repository { get; }
+        string Url { get; }
+    }
+    public interface ITestInfoContainer {
+        List<TestInfo> TestList { get; }
+        Dictionary<Repository, List<string>> UsedFiles { get; }
+        Dictionary<Repository, List<IElapsedTimeInfo>> ElapsedTimes { get; }
+        Dictionary<Repository, List<Team>> Teams { get; }
+    }
+    public interface IConfigSerializer {
+        IConfig GetConfig(bool useCache = true);
+        bool IsConfigEquals(IConfig left, IConfig right);
+        void SaveConfig(IConfig options);
+    }
 }

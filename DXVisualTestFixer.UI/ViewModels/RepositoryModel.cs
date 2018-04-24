@@ -1,7 +1,6 @@
 ﻿using DevExpress.Mvvm;
 using DevExpress.XtraEditors.DXErrorProvider;
 using DXVisualTestFixer.Common;
-using DXVisualTestFixer.Core;
 using System;
 using System.Collections.Generic;
 using System.IO;

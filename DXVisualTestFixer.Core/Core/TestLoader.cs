@@ -33,7 +33,7 @@ namespace DXVisualTestFixer.Core {
     }
 
     public static class TestLoader {
-        public static CorpDirTestInfoContainer LoadFromInfo(FarmTaskInfo taskInfo, string realUrl) {
+        public static CorpDirTestInfoContainer LoadFromInfo(IFarmTaskInfo taskInfo, string realUrl) {
             List<CorpDirTestInfo> failedTests = new List<CorpDirTestInfo>();
             if(realUrl == null || !realUrl.Contains("ViewBuildReport.aspx")) {
                 throw new NotSupportedException("Contact Petr Zinovyev, please.");
@@ -187,7 +187,7 @@ namespace DXVisualTestFixer.Core {
                 }
             }
         }
-        public static void ParseMessage(FarmTaskInfo farmTaskInfo, string testNameAndNamespace, string message, string stackTrace, List<CorpDirTestInfo> resultList) {
+        public static void ParseMessage(IFarmTaskInfo farmTaskInfo, string testNameAndNamespace, string message, string stackTrace, List<CorpDirTestInfo> resultList) {
             if(!message.StartsWith("Exception - NUnit.Framework.AssertionException")) {
                 resultList.Add(CorpDirTestInfo.CreateError(farmTaskInfo, testNameAndNamespace, message, stackTrace));
                 return;
@@ -197,7 +197,7 @@ namespace DXVisualTestFixer.Core {
                 ParseMessagePart(farmTaskInfo, testNameAndNamespace, part, resultList);
             }
         }
-        static void ParseMessagePart(FarmTaskInfo farmTaskInfo, string testNameAndNamespace, string message, List<CorpDirTestInfo> resultList) {
+        static void ParseMessagePart(IFarmTaskInfo farmTaskInfo, string testNameAndNamespace, string message, List<CorpDirTestInfo> resultList) {
             List<string> paths = message.Split(new[] { @"\\corp" }, StringSplitOptions.RemoveEmptyEntries).ToList();
             List<string> resultPaths = PatchPaths(paths);
             CorpDirTestInfo info = null;

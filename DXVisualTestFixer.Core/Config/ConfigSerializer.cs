@@ -8,7 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace DXVisualTestFixer.Core.Configuration {
-    public static class ConfigSerializer {
+    public class ConfigSerializer : IConfigSerializer {
+        static readonly ConfigSerializer Instance = new ConfigSerializer();
+
         static Config cached;
 
         static readonly string SettingsPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\DXVisualTestFixer\\";
@@ -19,23 +21,23 @@ namespace DXVisualTestFixer.Core.Configuration {
 
         public static int Version { get; set; } = 0;
 
-        public static IConfig GetConfig(bool useCache = true) {
+        public IConfig GetConfig(bool useCache = true) {
             if(useCache && cached != null)
                 return cached;
             return cached = GetConfigCore();
         }
-        static Config GetConfigCore() {
+        Config GetConfigCore() {
             if(!File.Exists(SettingsFilePath))
-                return Config.GenerateDefault();
+                return Config.GenerateDefault(this);
             try {
                 return Config.Validate(Serializer.Deserialize<Config>(SettingsFilePath));
             }
             catch {
-                return Config.GenerateDefault();
+                return Config.GenerateDefault(this);
             }
         }
 
-        public static void SaveConfig(IConfig options) {
+        public void SaveConfig(IConfig options) {
             cached = null;
             try {
                 Serializer.Serialize(SettingsFilePath, options);
@@ -43,10 +45,10 @@ namespace DXVisualTestFixer.Core.Configuration {
             catch {
             }
         }
-        public static bool IsConfigEquals(IConfig left, IConfig right) {
+        public bool IsConfigEquals(IConfig left, IConfig right) {
             return GetConfigAsString(left) == GetConfigAsString(right);
         }
-        static string GetConfigAsString(IConfig config) {
+        string GetConfigAsString(IConfig config) {
             using(MemoryStream stream = new MemoryStream()) {
                 Serializer.Serialize(stream, config);
                 stream.Seek(0, SeekOrigin.Begin);

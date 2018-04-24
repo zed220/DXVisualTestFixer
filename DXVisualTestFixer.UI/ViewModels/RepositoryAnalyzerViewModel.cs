@@ -1,5 +1,6 @@
-﻿using DXVisualTestFixer.Common;
-using DXVisualTestFixer.Core;
+﻿using DevExpress.Mvvm;
+using DevExpress.Xpf.Core;
+using DXVisualTestFixer.Common;
 using Prism.Interactivity.InteractionRequest;
 using System;
 using System.Collections.Generic;
@@ -59,7 +60,10 @@ namespace DXVisualTestFixer.UI.ViewModels {
             set { SetProperty(ref _CurrentTimings, value); }
         }
 
+        public IEnumerable<UICommand> Commands { get; }
+
         public RepositoryAnalyzerViewModel(IMainViewModel mainViewModel) {
+            Commands = UICommand.GenerateFromMessageButton(MessageButton.OK, new DialogService(), MessageResult.OK);
             ElapsedTimes = new Dictionary<string, List<TimingModel>>();
             Versions = new List<string>();
             if(mainViewModel.ElapsedTimes == null || mainViewModel.ElapsedTimes.Count == 0)

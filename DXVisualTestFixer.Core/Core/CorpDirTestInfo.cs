@@ -1,4 +1,5 @@
 ﻿using DevExpress.Xpf.Core;
+using DXVisualTestFixer.Common;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,7 +11,7 @@ namespace DXVisualTestFixer.Core {
     public class CorpDirTestInfo {
         public const string ErrorTeamName = "Error";
 
-        public FarmTaskInfo FarmTaskInfo { get; private set; }
+        public IFarmTaskInfo FarmTaskInfo { get; private set; }
 
         public string CurrentTextEditPath { get; private set; }
         public string InstantTextEditPath { get; private set; }
@@ -37,7 +38,7 @@ namespace DXVisualTestFixer.Core {
             return GetTestName(firstTestNamePart) + testNameAndNamespace.Remove(0, firstTestNamePart.Length);
         }
 
-        public static CorpDirTestInfo CreateError(FarmTaskInfo farmTaskInfo, string testNameAndNamespace, string errorText, string stackTrace) {
+        public static CorpDirTestInfo CreateError(IFarmTaskInfo farmTaskInfo, string testNameAndNamespace, string errorText, string stackTrace) {
             CorpDirTestInfo result = new CorpDirTestInfo();
             result.FarmTaskInfo = farmTaskInfo;
             result.ErrorText = errorText;
@@ -47,7 +48,7 @@ namespace DXVisualTestFixer.Core {
             result.TestNameWithNamespace = testNameAndNamespace;
             return result;
         }
-        public static bool TryCreate(FarmTaskInfo farmTaskInfo, string testNameAndNamespace, List<string> corpPaths, out CorpDirTestInfo result) {
+        public static bool TryCreate(IFarmTaskInfo farmTaskInfo, string testNameAndNamespace, List<string> corpPaths, out CorpDirTestInfo result) {
             result = null;
             CorpDirTestInfo temp = new CorpDirTestInfo();
             temp.FarmTaskInfo = farmTaskInfo;

@@ -88,11 +88,9 @@
     <Compile Include="Config\TeamConfigsReader.cs" />
     <Compile Include="Config\VersionInfo.cs" />
     <Compile Include="Core\CorpDirTestInfo.cs" />
-    <Compile Include="Core\FarmTaskInfo.cs" />
     <Compile Include="Native\ImageComparer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Core\TestLoader.cs" />
-    <Compile Include="Core\TestLoader_Old.cs" />
     <Compile Include="Core\TestService.cs" />
   </ItemGroup>
   <ItemGroup>

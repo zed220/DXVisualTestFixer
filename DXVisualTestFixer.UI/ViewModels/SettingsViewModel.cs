@@ -3,8 +3,6 @@ using DevExpress.Mvvm.UI;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Dialogs;
 using DXVisualTestFixer.Common;
-using DXVisualTestFixer.Core;
-using DXVisualTestFixer.Core.Configuration;
 using Microsoft.Practices.Unity;
 using Prism.Interactivity.InteractionRequest;
 using Prism.Mvvm;
@@ -17,6 +15,8 @@ using System.Windows.Forms;
 
 namespace DXVisualTestFixer.UI.ViewModels {
     public class SettingsViewModel : ViewModelBase, ISettingsViewModel {
+        readonly IConfigSerializer configSerializer;
+
         IConfig _Config;
         ObservableCollection<RepositoryModel> _Repositories;
         string _ThemeName;
@@ -41,10 +41,11 @@ namespace DXVisualTestFixer.UI.ViewModels {
         public string Title { get; set; }
         public object Content { get; set; }
 
-        public SettingsViewModel(IUnityContainer container) 
+        public SettingsViewModel(IUnityContainer container, IConfigSerializer configSerializer)
             : base(container) {
             Title = "Settings";
-            Config = ConfigSerializer.GetConfig();
+            this.configSerializer = configSerializer;
+            Config = configSerializer.GetConfig();
             Commands = UICommand.GenerateFromMessageButton(MessageButton.OKCancel, new DialogService(), MessageResult.OK, MessageResult.Cancel);
             Commands.Where(c => c.IsDefault).Single().Command = new DelegateCommand(Save);
             Commands.Where(c => c.IsCancel).Single().Command = new DelegateCommand(Cancel);
@@ -67,7 +68,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
         }
 
         bool IsChanged() {
-            return !ConfigSerializer.IsConfigEquals(ConfigSerializer.GetConfig(false), Config);
+            return !configSerializer.IsConfigEquals(configSerializer.GetConfig(false), Config);
         }
         void Save() {
             if(!IsChanged())

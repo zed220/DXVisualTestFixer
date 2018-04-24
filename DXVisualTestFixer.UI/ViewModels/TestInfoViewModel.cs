@@ -1,5 +1,4 @@
 ﻿using DXVisualTestFixer.Common;
-using DXVisualTestFixer.Core;
 using Prism.Mvvm;
 using Prism.Regions;
 using System;

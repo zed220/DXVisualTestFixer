@@ -1,7 +1,6 @@
 ﻿using DevExpress.Mvvm;
 using DevExpress.Xpf.Core;
 using DXVisualTestFixer.Common;
-using DXVisualTestFixer.Core;
 using Microsoft.Practices.Unity;
 using Prism.Interactivity.InteractionRequest;
 using Prism.Mvvm;
@@ -33,8 +32,8 @@ namespace DXVisualTestFixer.UI.ViewModels {
     }
 
     public class RepositoryOptimizerViewModel : BindableBase, IRepositoryOptimizerViewModel {
-        Dictionary<Repository, List<string>> usedFilesByRep;
         readonly Dispatcher Dispatcher;
+        readonly ITestsService testsService;
 
         ObservableCollection<UnusedFileModel> _UnusedFiles;
         ObservableCollection<UnusedFileModel> _RemovedFiles;
@@ -60,9 +59,10 @@ namespace DXVisualTestFixer.UI.ViewModels {
         public string Title { get; set; }
         public object Content { get; set; }
 
-        public RepositoryOptimizerViewModel(IUnityContainer container, IMainViewModel viewModel) {
+        public RepositoryOptimizerViewModel(IUnityContainer container, IMainViewModel viewModel, ITestsService testsService) {
             Title = "Repository Optimizer";
             Dispatcher = Dispatcher.CurrentDispatcher;
+            this.testsService = testsService;
             RemovedFiles = new ObservableCollection<UnusedFileModel>();
             Commands = UICommand.GenerateFromMessageButton(MessageButton.OKCancel, new DialogService(), MessageResult.OK, MessageResult.Cancel);
             Commands.Where(c => c.IsDefault).Single().Command = new DelegateCommand(() => Commit());
@@ -109,7 +109,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
                 foreach(Team team in teams[repository]) {
                     if(!usedVersions.Contains(team.Version))
                         continue;
-                    foreach(string teamPath in team.TeamInfos.Select(i => TestsService.GetResourcePath(repository, i.TestResourcesPath)).Distinct()) {
+                    foreach(string teamPath in team.TeamInfos.Select(i => testsService.GetResourcePath(repository, i.TestResourcesPath)).Distinct()) {
                         List<string> unUsedFiles = new List<string>();
                         foreach(string file in Directory.EnumerateFiles(teamPath, "*", SearchOption.AllDirectories)) {
                             if(!usedFiles.Contains(file.ToLower()))
@@ -124,7 +124,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
             HashSet<string> usedFiles = new HashSet<string>();
             foreach(var usedFileByRep in usedFilesByRep) {
                 foreach(string fileRelPath in usedFileByRep.Value) {
-                    string filePath = TestsService.GetResourcePath(usedFileByRep.Key, fileRelPath);
+                    string filePath = testsService.GetResourcePath(usedFileByRep.Key, fileRelPath);
                     if(File.Exists(filePath))
                         usedFiles.Add(filePath.ToLower());
                 }

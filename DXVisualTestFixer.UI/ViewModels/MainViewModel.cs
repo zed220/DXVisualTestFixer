@@ -1,6 +1,4 @@
 ﻿using DevExpress.Data.Filtering;
-using DXVisualTestFixer.Core.Configuration;
-using DXVisualTestFixer.Core;
 using DXVisualTestFixer.UI.Views;
 using Microsoft.Practices.ServiceLocation;
 using Microsoft.Practices.Unity;
@@ -17,6 +15,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 using DXVisualTestFixer.Common;
+using DXVisualTestFixer.UI.Native;
 
 namespace DXVisualTestFixer.UI.ViewModels {
     public enum ProgramStatus {
@@ -85,6 +84,9 @@ namespace DXVisualTestFixer.UI.ViewModels {
         readonly ILoggingService loggingService;
         readonly Dispatcher Dispatcher;
         readonly IFarmIntegrator farmIntegrator;
+        readonly IConfigSerializer configSerializer;
+        readonly ILoadingProgressController loadingProgressController;
+        readonly ITestsService testsService;
 
         #region private properties
         IConfig Config;
@@ -97,7 +99,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
         MergerdTestViewType _MergerdTestViewType;
         int _TestsToCommitCount;
         CriteriaOperator _CurrentFilter;
-        TestsService _TestService;
+        ITestsService _TestService;
         Dictionary<Repository, List<string>> _UsedFiles;
         Dictionary<Repository, List<Team>> _Teams;
         Dictionary<Repository, List<IElapsedTimeInfo>> _ElapsedTimes;
@@ -136,7 +138,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
             get { return _CurrentFilter; }
             set { SetProperty(ref _CurrentFilter, value); }
         }
-        public TestsService TestService {
+        public ITestsService TestService {
             get { return _TestService; }
             set { SetProperty(ref _TestService, value); }
         }
@@ -156,8 +158,8 @@ namespace DXVisualTestFixer.UI.ViewModels {
             get { return _Solutions; }
             set { SetProperty(ref _Solutions, value); }
         }
+        public ILoadingProgressController LoadingProgressController { get { return loadingProgressController; } }
 
-        public LoadingProgressController LoadingProgressController { get; } = new LoadingProgressController();
         public InteractionRequest<IConfirmation> ConfirmationRequest { get; } = new InteractionRequest<IConfirmation>();
 
         public InteractionRequest<IConfirmation> SettingsRequest { get; } = new InteractionRequest<IConfirmation>();
@@ -165,13 +167,16 @@ namespace DXVisualTestFixer.UI.ViewModels {
         public InteractionRequest<IConfirmation> RepositoryOptimizerRequest { get; } = new InteractionRequest<IConfirmation>();
         public InteractionRequest<INotification> RepositoryAnalyzerRequest { get; } = new InteractionRequest<INotification>();
 
-        public MainViewModel(IUnityContainer container, IRegionManager regionManager, ILoggingService loggingService, IFarmIntegrator farmIntegrator)
+        public MainViewModel(IUnityContainer container, IRegionManager regionManager, ILoggingService loggingService, IFarmIntegrator farmIntegrator, IConfigSerializer configSerializer, ILoadingProgressController loadingProgressController, ITestsService testsService)
             : base(container) {
             Dispatcher = Dispatcher.CurrentDispatcher;
             this.regionManager = regionManager;
             this.loggingService = loggingService;
             this.farmIntegrator = farmIntegrator;
-            TestService = new TestsService(LoadingProgressController);
+            this.configSerializer = configSerializer;
+            this.testsService = testsService;
+            this.loadingProgressController = loadingProgressController;
+            TestService = container.Resolve<ITestsService>();
             UpdateConfig();
             loggingService.MessageReserved += OnLoggingMessageReserved;
         }
@@ -189,8 +194,8 @@ namespace DXVisualTestFixer.UI.ViewModels {
                 }));
             }
         }
-        List<FarmTaskInfo> GetAllTasks() {
-            List<FarmTaskInfo> result = new List<FarmTaskInfo>();
+        List<IFarmTaskInfo> GetAllTasks() {
+            List<IFarmTaskInfo> result = new List<IFarmTaskInfo>();
             foreach(var repository in Config.Repositories) {
                 if(Repository.InNewVersion(repository.Version)) {
                     if(farmIntegrator.GetTaskStatus(repository.GetTaskName_New()).BuildStatus == FarmIntegrationStatus.Failure) {
@@ -210,8 +215,8 @@ namespace DXVisualTestFixer.UI.ViewModels {
 
         async Task UpdateAllTests() {
             loggingService.SendMessage("Refreshing tests");
-            LoadingProgressController.Start();
-            List<FarmTaskInfo> failedTasks = GetAllTasks();
+            loadingProgressController.Start();
+            List<IFarmTaskInfo> failedTasks = GetAllTasks();
             var testInfoContainer = await TestService.LoadTestsAsync(failedTasks).ConfigureAwait(false);
             var tests = testInfoContainer.TestList.Where(t => t != null).Select(t => new TestInfoWrapper(this, t)).Cast<ITestInfoWrapper>().ToList();
             loggingService.SendMessage("");
@@ -221,7 +226,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
                 ElapsedTimes = testInfoContainer.ElapsedTimes;
                 Teams = testInfoContainer.Teams;
                 Status = ProgramStatus.Idle;
-                LoadingProgressController.Stop();
+                loadingProgressController.Stop();
             }));
         }
 
@@ -238,8 +243,8 @@ namespace DXVisualTestFixer.UI.ViewModels {
 
         void UpdateConfig() {
             loggingService.SendMessage("Checking config");
-            var config = ConfigSerializer.GetConfig();
-            if(Config != null && ConfigSerializer.IsConfigEquals(config, Config))
+            var config = configSerializer.GetConfig();
+            if(Config != null && configSerializer.IsConfigEquals(config, Config))
                 return;
             Config = config;
             FillSolutions();
@@ -315,7 +320,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
             if(!confirmation.Confirmed)
                 return;
             TestsToCommitCount = 0;
-            ConfigSerializer.SaveConfig(confirmation.Config);
+            configSerializer.SaveConfig(confirmation.Config);
             UpdateConfig();
         }
         public List<ITestInfoWrapper> GetChangedTests() {
@@ -343,7 +348,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
             return CheckConfirmation(ConfirmationRequest, "Readonly file detected", "Please checkout file in DXVCS \n" + text);
         }
         void ApplyTest(ITestInfoWrapper testWrapper) {
-            if(TestsService.ApplyTest(testWrapper.TestInfo, ShowCheckOutMessageBox))
+            if(testsService.ApplyTest(testWrapper.TestInfo, ShowCheckOutMessageBox))
                 return;
             DoNotification("Test not fixed", "Test not fixed \n" + testWrapper.ToLog(), MessageBoxImage.Error);
         }

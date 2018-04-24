@@ -15,6 +15,7 @@ using DXVisualTestFixer.UI.PrismCommon;
 using DXVisualTestFixer.UI.ViewModels;
 using DXVisualTestFixer.UI.Services;
 using DXVisualTestFixer.Farm;
+using DXVisualTestFixer.Core.Configuration;
 
 namespace DXVisualTestFixer {
     public class Bootstrapper : UnityBootstrapper {
@@ -27,7 +28,10 @@ namespace DXVisualTestFixer {
 
         protected override void ConfigureContainer() {
             base.ConfigureContainer();
+            RegisterTypeIfMissing(typeof(IConfigSerializer), typeof(ConfigSerializer), true);
+            RegisterTypeIfMissing(typeof(ILoadingProgressController), typeof(LoadingProgressController), true);
             RegisterTypeIfMissing(typeof(ILoggingService), typeof(LoggingService), true);
+            RegisterTypeIfMissing(typeof(ITestsService), typeof(TestsService), true);
             RegisterTypeIfMissing(typeof(IFarmIntegrator), typeof(FarmIntegrator), true);
             RegisterTypeIfMissing(typeof(IVersionService), typeof(VersionService), true);
             RegisterTypeIfMissing(typeof(IShellViewModel), typeof(ShellViewModel), true);

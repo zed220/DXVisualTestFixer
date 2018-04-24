@@ -17,9 +17,9 @@ namespace DXVisualTestFixer.Core.Configuration {
         public string InstallPath { get; set; }
         public string ThemeName { get; set; } = "Office2016White";
 
-        public static Config GenerateDefault() {
+        public static Config GenerateDefault(IConfigSerializer configSerializer) {
             var result = Validate(new Config());
-            ConfigSerializer.SaveConfig(result);
+            configSerializer.SaveConfig(result);
             return result;
         }
 

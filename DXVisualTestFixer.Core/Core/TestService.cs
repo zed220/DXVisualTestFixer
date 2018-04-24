@@ -30,8 +30,7 @@ namespace DXVisualTestFixer.Core {
         public List<IElapsedTimeInfo> ElapsedTimes { get; }
         public List<Team> Teams { get; }
     }
-
-    public class TestInfoContainer {
+    class TestInfoContainer : ITestInfoContainer {
         public TestInfoContainer() {
             TestList = new List<TestInfo>();
             UsedFiles = new Dictionary<Repository, List<string>>();
@@ -44,23 +43,24 @@ namespace DXVisualTestFixer.Core {
         public Dictionary<Repository, List<IElapsedTimeInfo>> ElapsedTimes { get; }
         public Dictionary<Repository, List<Team>> Teams { get; }
     }
-
-    public class TestsService {
-        Dictionary<FarmTaskInfo, TestInfoCached> RealUrlCache = new Dictionary<FarmTaskInfo, TestInfoCached>();
+    public class TestsService : ITestsService {
+        Dictionary<IFarmTaskInfo, TestInfoCached> RealUrlCache = new Dictionary<IFarmTaskInfo, TestInfoCached>();
 
         readonly ILoadingProgressController loadingProgressController;
+        readonly IConfigSerializer configSerializer;
 
-        public TestsService(ILoadingProgressController loadingProgressController) {
+        public TestsService(ILoadingProgressController loadingProgressController, IConfigSerializer configSerializer) {
             this.loadingProgressController = loadingProgressController;
+            this.configSerializer = configSerializer;
         }
 
-        public async Task<TestInfoContainer> LoadTestsAsync(List<FarmTaskInfo> farmTasks) {
+        public async Task<ITestInfoContainer> LoadTestsAsync(List<IFarmTaskInfo> farmTasks) {
             loadingProgressController.Flush();
             loadingProgressController.Enlarge(farmTasks.Count);
             ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage($"Collecting tests information from farm");
             List<Task<TestInfoCached>> allTasks = new List<Task<TestInfoCached>>();
-            foreach(FarmTaskInfo farmTaskInfo in farmTasks) {
-                FarmTaskInfo info = farmTaskInfo;
+            foreach(IFarmTaskInfo farmTaskInfo in farmTasks) {
+                IFarmTaskInfo info = farmTaskInfo;
                 var task = LoadTestsCoreAsync(info);
                 allTasks.Add(task);
             }
@@ -73,7 +73,7 @@ namespace DXVisualTestFixer.Core {
             }
             return result;
         }
-        async Task<TestInfoCached> LoadTestsCoreAsync(FarmTaskInfo farmTaskInfo) {
+        async Task<TestInfoCached> LoadTestsCoreAsync(IFarmTaskInfo farmTaskInfo) {
             string realUrl = await CapureRealUrl(farmTaskInfo.Url).ConfigureAwait(false);
             if(RealUrlCache.TryGetValue(farmTaskInfo, out TestInfoCached cache)) {
                 if(cache.RealUrl == realUrl) {
@@ -97,12 +97,12 @@ namespace DXVisualTestFixer.Core {
             List<Task> allTasks = new List<Task>();
             foreach(TestInfo test in testList) {
                 TestInfo t = test;
-                allTasks.Add(Task.Factory.StartNew(() => TestsService.UpdateTestStatus(test)));
+                allTasks.Add(Task.Factory.StartNew(() => UpdateTestStatus(test)));
             }
             Task.WaitAll(allTasks.ToArray());
         }
 
-        CorpDirTestInfoContainer LoadFromFarmTaskInfo(FarmTaskInfo farmTaskInfo, string realUrl) {
+        CorpDirTestInfoContainer LoadFromFarmTaskInfo(IFarmTaskInfo farmTaskInfo, string realUrl) {
             CorpDirTestInfoContainer corpDirTestInfoContainer = TestLoader.LoadFromInfo(farmTaskInfo, realUrl);
             loadingProgressController.Enlarge(corpDirTestInfoContainer.FailedTests.Count);
             return corpDirTestInfoContainer;
@@ -324,7 +324,7 @@ namespace DXVisualTestFixer.Core {
             return true;
         }
 
-        public static void UpdateTestStatus(TestInfo test) {
+        void UpdateTestStatus(TestInfo test) {
             if(test.Valid == TestState.Error)
                 return;
             string actualTestResourceName = GetTestResourceName(test, true);
@@ -357,13 +357,13 @@ namespace DXVisualTestFixer.Core {
                 return;
             }
         }
-        public static string GetResourcePath(Repository repository, string relativePath) {
+        public string GetResourcePath(Repository repository, string relativePath) {
             return Path.Combine(repository.Path, relativePath);
         }
-        public static Repository GetRepository(string version) {
-            return ConfigSerializer.GetConfig().Repositories.Where(r => r.Version == version).FirstOrDefault();
+        public Repository GetRepository(string version) {
+            return configSerializer.GetConfig().Repositories.Where(r => r.Version == version).FirstOrDefault();
         }
-        static string GetTestResourceName(TestInfo test, bool checkDirectoryExists) {
+        string GetTestResourceName(TestInfo test, bool checkDirectoryExists) {
             var repository = GetRepository(test.Version);
             if(repository == null) {
                 test.LogCustomError($"Config not found for version \"{test.Version}\"");
@@ -398,7 +398,7 @@ namespace DXVisualTestFixer.Core {
             return imagePath;
         }
 
-        public static bool ApplyTest(TestInfo test, Func<string, bool> checkoutFunc) {
+        public bool ApplyTest(TestInfo test, Func<string, bool> checkoutFunc) {
             string actualTestResourceName = GetTestResourceName(test, false);
             string xmlPath = GetXmlFilePath(actualTestResourceName, test, false);
             string imagePath = GetImageFilePath(actualTestResourceName, test, false);
