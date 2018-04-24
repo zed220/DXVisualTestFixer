@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace DXVisualTestFixer.UI.ViewModels {
     public class FilterPanelViewModel : BindableBase, IFilterPanelViewModel {
+        string _DpiNullText, _TeamsNullText, _VersionsNullText;
         Action<CriteriaOperator> SetFilterAction { get; }
         List<int> _DpiList;
         List<string> _TeamsList;
@@ -43,12 +44,33 @@ namespace DXVisualTestFixer.UI.ViewModels {
             get { return _SelectedVersions; }
             set { SetProperty(ref _SelectedVersions, value, OnFilterChanged); }
         }
-
+        public string DpiNullText {
+            get { return _DpiNullText; }
+            set { SetProperty(ref _DpiNullText, value); }
+        }
+        public string TeamsNullText {
+            get { return _TeamsNullText; }
+            set { SetProperty(ref _TeamsNullText, value); }
+        }
+        public string VersionsNullText {
+            get { return _VersionsNullText; }
+            set { SetProperty(ref _VersionsNullText, value); }
+        }
 
         public FilterPanelViewModel(IMainViewModel mainViewModel) {
             BuildFilters(mainViewModel.Tests);
             SetFilterAction = mainViewModel.SetFilter;
             InitializeDefaultFilters();
+            InitializeNullTexts();
+        }
+
+        void InitializeNullTexts() {
+            DpiNullText = BuildNullText(DpiList);
+            TeamsNullText = BuildNullText(TeamsList);
+            VersionsNullText = BuildNullText(VersionsList);
+        }
+        static string BuildNullText<T>(IEnumerable<T> source) {
+            return $"({string.Join(", ", source)})";
         }
 
         private void InitializeDefaultFilters() {

@@ -14,34 +14,33 @@
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
         <converters:DpiErrorConverter x:Key="DpiErrorConverter"/>
+        <Style TargetType="{x:Type dxe:ComboBoxEdit}">
+            <Setter Property="IsTextEditable" Value="False"/>
+            <Setter Property="IncrementalFiltering" Value="True"/>
+            <Setter Property="AllowDefaultButton" Value="True"/>
+            <Setter Property="ValidateOnTextInput" Value="True"/>
+            <Setter Property="StyleSettings">
+                <Setter.Value>
+                    <dxe:TokenComboBoxStyleSettings AllowEditTokens="False" EnableTokenWrapping="True" VerticalAlignment="Center"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </UserControl.Resources>
     <dxdo:LayoutGroup ShowCaption="False" AllowDrag="False" Orientation="Vertical">
         <dxdo:LayoutControlItem Caption="Dpi">
-            <dxe:ComboBoxEdit ItemsSource="{Binding DpiList}" EditValue="{Binding SelectedDpis, UpdateSourceTrigger=PropertyChanged}" IsTextEditable="False" IncrementalFiltering="True" AllowDefaultButton="True" ValidateOnTextInput="True"
-                              DisplayTextConverter="{StaticResource DpiErrorConverter}">
+            <dxe:ComboBoxEdit ItemsSource="{Binding DpiList}" EditValue="{Binding SelectedDpis, UpdateSourceTrigger=PropertyChanged}" DisplayTextConverter="{StaticResource DpiErrorConverter}" NullText="{Binding DpiNullText}">
                 <dxe:ComboBoxEdit.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding Converter={StaticResource DpiErrorConverter}}"/>
                     </DataTemplate>
                 </dxe:ComboBoxEdit.ItemTemplate>
-                <dxe:ComboBoxEdit.StyleSettings>
-                    <dxe:TokenComboBoxStyleSettings AllowEditTokens="False" EnableTokenWrapping="True" VerticalAlignment="Center"/>
-                </dxe:ComboBoxEdit.StyleSettings>
             </dxe:ComboBoxEdit>
         </dxdo:LayoutControlItem>
         <dxdo:LayoutControlItem Caption="Teams">
-            <dxe:ComboBoxEdit ItemsSource="{Binding TeamsList}" EditValue="{Binding SelectedTeams, UpdateSourceTrigger=PropertyChanged}" IsTextEditable="False" IncrementalFiltering="True" AllowDefaultButton="True" ValidateOnTextInput="True">
-                <dxe:ComboBoxEdit.StyleSettings>
-                    <dxe:TokenComboBoxStyleSettings AllowEditTokens="False" EnableTokenWrapping="True" VerticalAlignment="Center"/>
-                </dxe:ComboBoxEdit.StyleSettings>
-            </dxe:ComboBoxEdit>
+            <dxe:ComboBoxEdit ItemsSource="{Binding TeamsList}" EditValue="{Binding SelectedTeams, UpdateSourceTrigger=PropertyChanged}" NullText="{Binding TeamsNullText}"/>
         </dxdo:LayoutControlItem>
         <dxdo:LayoutControlItem Caption="Versions">
-            <dxe:ComboBoxEdit ItemsSource="{Binding VersionsList}" EditValue="{Binding SelectedVersions, UpdateSourceTrigger=PropertyChanged}" IsTextEditable="False" IncrementalFiltering="True" AllowDefaultButton="True" ValidateOnTextInput="True">
-                <dxe:ComboBoxEdit.StyleSettings>
-                    <dxe:TokenComboBoxStyleSettings AllowEditTokens="False" EnableTokenWrapping="True" VerticalAlignment="Center"/>
-                </dxe:ComboBoxEdit.StyleSettings>
-            </dxe:ComboBoxEdit>
+            <dxe:ComboBoxEdit ItemsSource="{Binding VersionsList}" EditValue="{Binding SelectedVersions, UpdateSourceTrigger=PropertyChanged}" NullText="{Binding VersionsNullText}"/>
         </dxdo:LayoutControlItem>
     </dxdo:LayoutGroup>
 </UserControl>
