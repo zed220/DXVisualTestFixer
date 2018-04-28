@@ -243,7 +243,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 
         void UpdateConfig() {
             loggingService.SendMessage("Checking config");
-            var config = configSerializer.GetConfig();
+            var config = configSerializer.GetConfig(false);
             if(Config != null && configSerializer.IsConfigEquals(config, Config))
                 return;
             Config = config;
