@@ -297,8 +297,8 @@ namespace DXVisualTestFixer.UI.ViewModels {
             }
         }
 
-        public void SetFilter(CriteriaOperator op) {
-            CurrentFilter = op;
+        public void SetFilter(string op) {
+            CurrentFilter = CriteriaOperator.Parse(op);
         }
 
         public void ShowRepositoryOptimizer() {

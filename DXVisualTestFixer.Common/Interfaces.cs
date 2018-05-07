@@ -1,6 +1,4 @@
-﻿using DevExpress.Data.Filtering;
-using DevExpress.Mvvm;
-using Prism.Interactivity.InteractionRequest;
+﻿using Prism.Interactivity.InteractionRequest;
 using Prism.Regions;
 using System;
 using System.Collections.Generic;
@@ -13,9 +11,12 @@ using System.Windows.Input;
 using System.Windows.Media;
 
 namespace DXVisualTestFixer.Common {
+    public interface IUICommand {
+
+    }
     public interface IDXNotification : Prism.Interactivity.InteractionRequest.INotification {
         MessageBoxImage ImageType { get; set; }
-        IEnumerable<UICommand> Commands { get; }
+        IEnumerable<IUICommand> Commands { get; }
     }
     public interface IDXConfirmation : IDXNotification, IConfirmation {
     }
@@ -75,7 +76,7 @@ namespace DXVisualTestFixer.Common {
         Dictionary<Repository, List<Team>> Teams { get; }
         Dictionary<Repository, List<IElapsedTimeInfo>> ElapsedTimes { get; }
 
-        void SetFilter(CriteriaOperator op);
+        void SetFilter(string op);
         void RaiseMoveNext();
         void RaiseMovePrev();
         List<ITestInfoWrapper> GetChangedTests();

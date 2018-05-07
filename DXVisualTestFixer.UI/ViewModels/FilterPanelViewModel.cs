@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace DXVisualTestFixer.UI.ViewModels {
     public class FilterPanelViewModel : BindableBase, IFilterPanelViewModel {
         string _DpiNullText, _TeamsNullText, _VersionsNullText;
-        Action<CriteriaOperator> SetFilterAction { get; }
+        Action<string> SetFilterAction { get; }
         List<int> _DpiList;
         List<string> _TeamsList;
         List<string> _VersionsList;
@@ -122,7 +122,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
                 resultList.Add(CriteriaOperator.Or(versions));
             }
             if(resultList.Count > 0) {
-                SetFilterAction(CriteriaOperator.And(resultList));
+                SetFilterAction(CriteriaOperator.And(resultList).ToString());
             }
             else
                 SetFilterAction(null);

@@ -15,8 +15,10 @@ using System.Windows.Media;
 
 namespace DXVisualTestFixer.PrismCommon {
     public class DXNotification : Notification, IDXNotification {
+        class MyUICommand : UICommand, IUICommand { }
+
         public DXNotification() {
-            Commands = CreateCommands();
+            Commands = ConvertCommands(CreateCommands());
         }
 
         protected virtual IEnumerable<UICommand> CreateCommands() {
@@ -24,8 +26,21 @@ namespace DXVisualTestFixer.PrismCommon {
         }
 
         public MessageBoxImage ImageType { get; set; }
-        public IEnumerable<UICommand> Commands { get; }
+        public IEnumerable<IUICommand> Commands { get; }
         public ImageSource ImageSource { get { return DXMessageBoxHelper.GetImage(ImageType); } }
+
+        static IEnumerable<IUICommand> ConvertCommands(IEnumerable<UICommand> commands) {
+            foreach(var command in commands) {
+                MyUICommand myUICommand = new MyUICommand();
+                myUICommand.Caption = command.Caption;
+                myUICommand.Command = command.Command;
+                myUICommand.Id = command.Id;
+                myUICommand.IsCancel = command.IsCancel;
+                myUICommand.IsDefault = command.IsDefault;
+                myUICommand.Tag = command.Tag;
+                yield return myUICommand;
+            }
+        }
     }
 
     public class DXConfirmation : DXNotification, IDXConfirmation {

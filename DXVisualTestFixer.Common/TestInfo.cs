@@ -1,11 +1,4 @@
-﻿using DevExpress.Mvvm;
-using DXVisualTestFixer.Common;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 
 namespace DXVisualTestFixer.Common {
     public class TestInfo {
