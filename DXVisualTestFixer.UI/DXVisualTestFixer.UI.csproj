@@ -171,6 +171,7 @@
     <Compile Include="Converters\TestViewTypeConverter.cs" />
     <Compile Include="Native\DiffLineBackgroundRenderer.cs" />
     <Compile Include="Native\FarmTaskInfo.cs" />
+    <Compile Include="Native\ThemesProvider.cs" />
     <Compile Include="PrismCommon\LayoutPanelRegionAdapter.cs" />
     <Compile Include="PrismCommon\PopupDXWindowAction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

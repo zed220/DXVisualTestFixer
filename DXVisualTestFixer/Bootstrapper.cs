@@ -16,6 +16,7 @@ using DXVisualTestFixer.UI.ViewModels;
 using DXVisualTestFixer.UI.Services;
 using DXVisualTestFixer.Farm;
 using DXVisualTestFixer.Core.Configuration;
+using DXVisualTestFixer.UI.Native;
 
 namespace DXVisualTestFixer {
     public class Bootstrapper : UnityBootstrapper {
@@ -29,6 +30,7 @@ namespace DXVisualTestFixer {
         protected override void ConfigureContainer() {
             base.ConfigureContainer();
             RegisterTypeIfMissing(typeof(IConfigSerializer), typeof(ConfigSerializer), true);
+            RegisterTypeIfMissing(typeof(IThemesProvider), typeof(ThemesProvider), true);
             RegisterTypeIfMissing(typeof(ILoadingProgressController), typeof(LoadingProgressController), true);
             RegisterTypeIfMissing(typeof(ILoggingService), typeof(LoggingService), true);
             RegisterTypeIfMissing(typeof(ITestsService), typeof(TestsService), true);

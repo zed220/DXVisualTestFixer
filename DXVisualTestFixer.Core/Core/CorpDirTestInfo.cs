@@ -1,5 +1,5 @@
-﻿using DevExpress.Xpf.Core;
-using DXVisualTestFixer.Common;
+﻿using DXVisualTestFixer.Common;
+using Microsoft.Practices.ServiceLocation;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -103,7 +103,7 @@ namespace DXVisualTestFixer.Core {
             return false;
         }
         static bool TryUpdateThemeAndFolderName(string folderNameAndTheme, CorpDirTestInfo result) {
-            List<string> allThemes = Theme.Themes.Select(t => t.Name).ToList();
+            List<string> allThemes = ServiceLocator.Current.GetInstance<IThemesProvider>().AllThemes.ToList();
             allThemes.Add("Base");
             allThemes.Add("Super");
             allThemes.Sort(new ThemeNameComparer());
