@@ -166,6 +166,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
         public InteractionRequest<IConfirmation> ApplyChangesRequest { get; } = new InteractionRequest<IConfirmation>();
         public InteractionRequest<IConfirmation> RepositoryOptimizerRequest { get; } = new InteractionRequest<IConfirmation>();
         public InteractionRequest<INotification> RepositoryAnalyzerRequest { get; } = new InteractionRequest<INotification>();
+        public InteractionRequest<INotification> ViewImagesRequest { get; } = new InteractionRequest<INotification>();
 
         public MainViewModel(IUnityContainer container, IRegionManager regionManager, ILoggingService loggingService, IFarmIntegrator farmIntegrator, IConfigSerializer configSerializer, ILoadingProgressController loadingProgressController, ITestsService testsService)
             : base(container) {
@@ -313,6 +314,9 @@ namespace DXVisualTestFixer.UI.ViewModels {
         }
         public void ShowRepositoryAnalyzer() {
             RepositoryAnalyzerRequest.Raise(unityContainer.Resolve<IRepositoryAnalyzerViewModel>());
+        }
+        public void ShowViewImages() {
+            ViewImagesRequest.Raise(unityContainer.Resolve<IViewResourcesViewModel>());
         }
         public void ShowSettings() {
             if(CheckHasUncommittedChanges())

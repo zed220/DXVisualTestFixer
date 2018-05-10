@@ -47,6 +47,7 @@ namespace DXVisualTestFixer {
             RegisterTypeIfMissing(typeof(IApplyChangesViewModel), typeof(ApplyChangesViewModel), false);
             RegisterTypeIfMissing(typeof(IRepositoryOptimizerViewModel), typeof(RepositoryOptimizerViewModel), false);
             RegisterTypeIfMissing(typeof(IRepositoryAnalyzerViewModel), typeof(RepositoryAnalyzerViewModel), false);
+            RegisterTypeIfMissing(typeof(IViewResourcesViewModel), typeof(ViewResourcesViewModel), false);
             RegisterTypeIfMissing(typeof(IDXNotification), typeof(DXNotification), false);
             RegisterTypeIfMissing(typeof(IDXConfirmation), typeof(DXConfirmation), false);
 

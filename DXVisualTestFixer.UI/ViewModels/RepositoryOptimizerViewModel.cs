@@ -15,8 +15,8 @@ using System.Windows.Threading;
 using BindableBase = Prism.Mvvm.BindableBase;
 
 namespace DXVisualTestFixer.UI.ViewModels {
-    public class UnusedFileModel {
-        public UnusedFileModel(string path, string version) {
+    public class RepositoryFileModel {
+        public RepositoryFileModel(string path, string version) {
             Path = path;
             Version = version;
         }
@@ -35,15 +35,15 @@ namespace DXVisualTestFixer.UI.ViewModels {
         readonly Dispatcher Dispatcher;
         readonly ITestsService testsService;
 
-        ObservableCollection<UnusedFileModel> _UnusedFiles;
-        ObservableCollection<UnusedFileModel> _RemovedFiles;
+        ObservableCollection<RepositoryFileModel> _UnusedFiles;
+        ObservableCollection<RepositoryFileModel> _RemovedFiles;
         ProgramStatus _Status;
 
-        public ObservableCollection<UnusedFileModel> UnusedFiles {
+        public ObservableCollection<RepositoryFileModel> UnusedFiles {
             get { return _UnusedFiles; }
             set { SetProperty(ref _UnusedFiles, value); }
         }
-        public ObservableCollection<UnusedFileModel> RemovedFiles {
+        public ObservableCollection<RepositoryFileModel> RemovedFiles {
             get { return _RemovedFiles; }
             set { SetProperty(ref _RemovedFiles, value); }
         }
@@ -63,31 +63,16 @@ namespace DXVisualTestFixer.UI.ViewModels {
             Title = "Repository Optimizer";
             Dispatcher = Dispatcher.CurrentDispatcher;
             this.testsService = testsService;
-            RemovedFiles = new ObservableCollection<UnusedFileModel>();
+            RemovedFiles = new ObservableCollection<RepositoryFileModel>();
             Commands = UICommand.GenerateFromMessageButton(MessageButton.OKCancel, new DialogService(), MessageResult.OK, MessageResult.Cancel);
             Commands.Where(c => c.IsDefault).Single().Command = new DelegateCommand(() => Commit());
             Status = ProgramStatus.Loading;
             Task.Factory.StartNew(() => UpdateUnusedFiles(viewModel.UsedFiles, viewModel.Teams)).ConfigureAwait(false);
         }
-        
-        //void SaveButNotClose() {
-        //    Status = ProgramStatus.Loading;
-        //    Task.Factory.StartNew(SaveButNotCloseCore);
-        //}
-        //void SaveButNotCloseCore() {
-        //    var removedFiles = Commit();
-        //    Dispatcher.BeginInvoke(new Action(() => {
-        //        foreach(var removedFile in removedFiles) {
-        //            RemovedFiles.Remove(removedFile);
-        //            UnusedFiles.Remove(removedFile);
-        //        }
-        //        Status = ProgramStatus.Idle;
-        //    }));
-        //}
 
-        List<UnusedFileModel> Commit() {
-            List<UnusedFileModel> removedFiltes = new List<UnusedFileModel>();
-            foreach(UnusedFileModel fileToRemove in RemovedFiles.ToArray()) {
+        List<RepositoryFileModel> Commit() {
+            List<RepositoryFileModel> removedFiltes = new List<RepositoryFileModel>();
+            foreach(RepositoryFileModel fileToRemove in RemovedFiles.ToArray()) {
                 if(File.Exists(fileToRemove.Path) && (File.GetAttributes(fileToRemove.Path) & FileAttributes.ReadOnly) != FileAttributes.ReadOnly) {
                     File.Delete(fileToRemove.Path);
                     removedFiltes.Add(fileToRemove);
@@ -98,29 +83,28 @@ namespace DXVisualTestFixer.UI.ViewModels {
         }
 
         void UpdateUnusedFiles(Dictionary<Repository, List<string>> usedFilesByRep, Dictionary<Repository, List<Team>> teams) {
-            HashSet<string> usedFiles = GetUsedFiles(usedFilesByRep);
+            HashSet<string> usedFiles = GetUsedFiles(usedFilesByRep, testsService);
             UnusedFiles = GetActualFiles(usedFilesByRep.Keys.Select(rep => rep.Version).Distinct().Where(v => Repository.InNewVersion(v)).ToList(), usedFiles, teams);
             Status = ProgramStatus.Idle;
         }
 
-        ObservableCollection<UnusedFileModel> GetActualFiles(List<string> usedVersions, HashSet<string> usedFiles, Dictionary<Repository, List<Team>> teams) {
-            ObservableCollection<UnusedFileModel> result = new ObservableCollection<UnusedFileModel>();
+        ObservableCollection<RepositoryFileModel> GetActualFiles(List<string> usedVersions, HashSet<string> usedFiles, Dictionary<Repository, List<Team>> teams) {
+            ObservableCollection<RepositoryFileModel> result = new ObservableCollection<RepositoryFileModel>();
             foreach(var repository in teams.Keys) {
                 foreach(Team team in teams[repository]) {
                     if(!usedVersions.Contains(team.Version))
                         continue;
                     foreach(string teamPath in team.TeamInfos.Select(i => testsService.GetResourcePath(repository, i.TestResourcesPath)).Distinct()) {
-                        List<string> unUsedFiles = new List<string>();
                         foreach(string file in Directory.EnumerateFiles(teamPath, "*", SearchOption.AllDirectories)) {
                             if(!usedFiles.Contains(file.ToLower()))
-                                result.Add(new UnusedFileModel(file, team.Version));
+                                result.Add(new RepositoryFileModel(file, team.Version));
                         }
                     }
                 }
             }
             return result;
         }
-        HashSet<string> GetUsedFiles(Dictionary<Repository, List<string>> usedFilesByRep) {
+        public static HashSet<string> GetUsedFiles(Dictionary<Repository, List<string>> usedFilesByRep, ITestsService testsService) {
             HashSet<string> usedFiles = new HashSet<string>();
             foreach(var usedFileByRep in usedFilesByRep) {
                 foreach(string fileRelPath in usedFileByRep.Value) {

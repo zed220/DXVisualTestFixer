@@ -131,6 +131,19 @@
                 </prismcommon:PopupDXDialogWindowAction.WindowContent>
             </prismcommon:PopupDXDialogWindowAction>
         </prism:InteractionRequestTrigger>
+        <prism:InteractionRequestTrigger SourceObject="{Binding ViewImagesRequest}">
+            <prismcommon:PopupDXDialogWindowAction IsModal="True" CenterOverAssociatedObject="True" WindowStyle="{StaticResource DialogWindowStyle}">
+                <prismcommon:PopupDXDialogWindowAction.WindowContent>
+                    <ContentControl Content="{Binding Converter={converters:NotificationContentConverter}}">
+                        <ContentControl.ContentTemplate>
+                            <DataTemplate>
+                                <local:ViewResourcesView/>
+                            </DataTemplate>
+                        </ContentControl.ContentTemplate>
+                    </ContentControl>
+                </prismcommon:PopupDXDialogWindowAction.WindowContent>
+            </prismcommon:PopupDXDialogWindowAction>
+        </prism:InteractionRequestTrigger>
     </i:Interaction.Triggers>
     <Grid>
         <Grid.RowDefinitions>
@@ -212,6 +225,12 @@
                                            Content="Analyze Timings"
                                            Command="{DXCommand Execute='ShowRepositoryAnalyzer()'}"
                                            LargeGlyph="{dx:DXImageOffice2013 Image=Chart_32x32.png}">
+                        </dxb:BarButtonItem>
+                        <dxb:BarButtonItem RibbonStyle="Large" 
+                                           GlyphSize="Large" 
+                                           Content="View Resources"
+                                           Command="{DXCommand Execute='ShowViewImages()'}"
+                                           LargeGlyph="{dx:DXImageOffice2013 Image=Image_32x32.png}">
                         </dxb:BarButtonItem>
                     </dxr:RibbonPageGroup>
                     <dxr:RibbonPageGroup Caption="Settings">

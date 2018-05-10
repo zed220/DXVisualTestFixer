@@ -80,7 +80,7 @@ namespace DXVisualTestFixer.Common {
         void RaiseMovePrev();
         List<ITestInfoWrapper> GetChangedTests();
     }
-    public interface IRepositoryAnalyzerViewModel : Prism.Interactivity.InteractionRequest.INotification { }
+    public interface IRepositoryAnalyzerViewModel : INotification { }
     public interface IRepositoryOptimizerViewModel : IConfirmation { }
     public interface IConfig {
         string ThemeName { get; set; }
@@ -126,4 +126,5 @@ namespace DXVisualTestFixer.Common {
         bool IsConfigEquals(IConfig left, IConfig right);
         void SaveConfig(IConfig options);
     }
+    public interface IViewResourcesViewModel : INotification { }
 }
