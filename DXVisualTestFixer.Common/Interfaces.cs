@@ -11,13 +11,11 @@ using System.Windows.Input;
 using System.Windows.Media;
 
 namespace DXVisualTestFixer.Common {
-    public interface IUICommand { }
     public interface IThemesProvider {
         List<string> AllThemes { get; }
     }
     public interface IDXNotification : Prism.Interactivity.InteractionRequest.INotification {
         MessageBoxImage ImageType { get; set; }
-        IEnumerable<IUICommand> Commands { get; }
     }
     public interface IDXConfirmation : IDXNotification, IConfirmation {
     }
