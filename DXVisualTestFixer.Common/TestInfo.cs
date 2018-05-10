@@ -27,6 +27,7 @@ namespace DXVisualTestFixer.Common {
         public string TextDiff { get; set; }
         public string TextDiffFull { get; set; }
         public TestState Valid { get; set; }
+        public bool ImageEquals { get; set; }
         public string InvalidLog { get { return InvalidLogBuilder.ToString(); } }
 
         public void LogCustomError(string text) {

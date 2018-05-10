@@ -342,6 +342,8 @@ namespace DXVisualTestFixer.Core {
             }
             if(test.Valid == TestState.Invalid)
                 return;
+            if(IsImageEquals(test.ImageCurrentArr, test.ImageBeforeArr))
+                test.ImageEquals = true;
             if(!IsTextEquals(test.TextCurrent, File.ReadAllText(xmlPath), out _, out _)) {
                 test.Valid = TestState.Valid;
                 return;
