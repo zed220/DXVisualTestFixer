@@ -52,22 +52,16 @@ namespace DXVisualTestFixer.UI.ViewModels {
     }
 
     public class ViewModelBase : BindableBase {
-        protected readonly IUnityContainer unityContainer;
-
         public InteractionRequest<INotification> NotificationRequest { get; } = new InteractionRequest<INotification>();
 
-        public ViewModelBase(IUnityContainer unityContainer) {
-            this.unityContainer = unityContainer;
-        }
-
         protected bool CheckConfirmation(InteractionRequest<IConfirmation> service, string title, string content, MessageBoxImage image = MessageBoxImage.Warning) {
-            IDXConfirmation confirmation = unityContainer.Resolve<IDXConfirmation>();
+            IDXConfirmation confirmation = ServiceLocator.Current.TryResolve<IDXConfirmation>();
             SetupNotification(confirmation, title, content, image);
             service.Raise(confirmation);
             return confirmation.Confirmed;
         }
         protected void DoNotification(string title, string content, MessageBoxImage image = MessageBoxImage.Information) {
-            IDXNotification confirmation = unityContainer.Resolve<IDXNotification>();
+            IDXNotification confirmation = ServiceLocator.Current.TryResolve<IDXNotification>();
             SetupNotification(confirmation, title, content, image);
             NotificationRequest.Raise(confirmation);
         }
@@ -86,7 +80,6 @@ namespace DXVisualTestFixer.UI.ViewModels {
         readonly IFarmIntegrator farmIntegrator;
         readonly IConfigSerializer configSerializer;
         readonly ILoadingProgressController loadingProgressController;
-        readonly ITestsService testsService;
 
         #region private properties
         IConfig Config;
@@ -168,16 +161,14 @@ namespace DXVisualTestFixer.UI.ViewModels {
         public InteractionRequest<INotification> RepositoryAnalyzerRequest { get; } = new InteractionRequest<INotification>();
         public InteractionRequest<INotification> ViewImagesRequest { get; } = new InteractionRequest<INotification>();
 
-        public MainViewModel(IUnityContainer container, IRegionManager regionManager, ILoggingService loggingService, IFarmIntegrator farmIntegrator, IConfigSerializer configSerializer, ILoadingProgressController loadingProgressController, ITestsService testsService)
-            : base(container) {
+        public MainViewModel(IRegionManager regionManager, ILoggingService loggingService, IFarmIntegrator farmIntegrator, IConfigSerializer configSerializer, ILoadingProgressController loadingProgressController, ITestsService testsService) {
             Dispatcher = Dispatcher.CurrentDispatcher;
             this.regionManager = regionManager;
             this.loggingService = loggingService;
             this.farmIntegrator = farmIntegrator;
             this.configSerializer = configSerializer;
-            this.testsService = testsService;
             this.loadingProgressController = loadingProgressController;
-            TestService = container.Resolve<ITestsService>();
+            TestService = testsService;
             UpdateConfig();
             loggingService.MessageReserved += OnLoggingMessageReserved;
         }
@@ -293,7 +284,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
                 regionManager.Regions[Regions.FilterPanel].RemoveAll();
             }
             else {
-                regionManager.AddToRegion(Regions.FilterPanel, unityContainer.Resolve<FilterPanelView>());
+                regionManager.AddToRegion(Regions.FilterPanel, ServiceLocator.Current.TryResolve<FilterPanelView>());
                 CurrentTest = Tests.FirstOrDefault();
             }
         }
@@ -305,7 +296,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
         public void ShowRepositoryOptimizer() {
             if(CheckHasUncommittedChanges() || CheckAlarmAdmin())
                 return;
-            IRepositoryOptimizerViewModel confirmation = unityContainer.Resolve<IRepositoryOptimizerViewModel>();
+            IRepositoryOptimizerViewModel confirmation = ServiceLocator.Current.TryResolve<IRepositoryOptimizerViewModel>();
             RepositoryOptimizerRequest.Raise(confirmation);
             if(!confirmation.Confirmed)
                 return;
@@ -313,15 +304,15 @@ namespace DXVisualTestFixer.UI.ViewModels {
             UpdateContent();
         }
         public void ShowRepositoryAnalyzer() {
-            RepositoryAnalyzerRequest.Raise(unityContainer.Resolve<IRepositoryAnalyzerViewModel>());
+            RepositoryAnalyzerRequest.Raise(ServiceLocator.Current.TryResolve<IRepositoryAnalyzerViewModel>());
         }
         public void ShowViewImages() {
-            ViewImagesRequest.Raise(unityContainer.Resolve<IViewResourcesViewModel>());
+            ViewImagesRequest.Raise(ServiceLocator.Current.TryResolve<IViewResourcesViewModel>());
         }
         public void ShowSettings() {
             if(CheckHasUncommittedChanges())
                 return;
-            ISettingsViewModel confirmation = unityContainer.Resolve<ISettingsViewModel>();
+            ISettingsViewModel confirmation = ServiceLocator.Current.TryResolve<ISettingsViewModel>();
             SettingsRequest.Raise(confirmation);
             if(!confirmation.Confirmed)
                 return;
@@ -342,7 +333,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
                 DoNotification("Nothing to commit", "Nothing to commit");
                 return;
             }
-            IApplyChangesViewModel confirmation = unityContainer.Resolve<IApplyChangesViewModel>();
+            IApplyChangesViewModel confirmation = ServiceLocator.Current.TryResolve<IApplyChangesViewModel>();
             ApplyChangesRequest.Raise(confirmation);
             if(!confirmation.Confirmed)
                 return;
@@ -354,7 +345,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
             return CheckConfirmation(ConfirmationRequest, "Readonly file detected", "Please checkout file in DXVCS \n" + text);
         }
         void ApplyTest(ITestInfoWrapper testWrapper) {
-            if(testsService.ApplyTest(testWrapper.TestInfo, ShowCheckOutMessageBox))
+            if(TestService.ApplyTest(testWrapper.TestInfo, ShowCheckOutMessageBox))
                 return;
             DoNotification("Test not fixed", "Test not fixed \n" + testWrapper.ToLog(), MessageBoxImage.Error);
         }

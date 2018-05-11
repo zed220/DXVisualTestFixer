@@ -2,7 +2,9 @@
 using DevExpress.Mvvm.UI;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Dialogs;
+using DevExpress.Xpf.Layout.Core;
 using DXVisualTestFixer.Common;
+using Microsoft.Practices.ServiceLocation;
 using Microsoft.Practices.Unity;
 using Prism.Interactivity.InteractionRequest;
 using Prism.Mvvm;
@@ -41,8 +43,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
         public string Title { get; set; }
         public object Content { get; set; }
 
-        public SettingsViewModel(IUnityContainer container, IConfigSerializer configSerializer)
-            : base(container) {
+        public SettingsViewModel(IConfigSerializer configSerializer)  {
             Title = "Settings";
             this.configSerializer = configSerializer;
             Config = configSerializer.GetConfig();
@@ -83,7 +84,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
         }
 
         public void LoadFromWorkingFolder() {
-            var dialog = unityContainer.Resolve<IFolderBrowserDialog>();
+            var dialog = ServiceLocator.Current.TryResolve<IFolderBrowserDialog>();
             var result = dialog.ShowDialog();
             if(result != DialogResult.OK)
                 return;
