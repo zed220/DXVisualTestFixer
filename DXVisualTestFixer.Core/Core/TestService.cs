@@ -48,16 +48,18 @@ namespace DXVisualTestFixer.Core {
 
         readonly ILoadingProgressController loadingProgressController;
         readonly IConfigSerializer configSerializer;
+        readonly ILoggingService loggingService;
 
-        public TestsService(ILoadingProgressController loadingProgressController, IConfigSerializer configSerializer) {
+        public TestsService(ILoadingProgressController loadingProgressController, IConfigSerializer configSerializer, ILoggingService loggingService) {
             this.loadingProgressController = loadingProgressController;
             this.configSerializer = configSerializer;
+            this.loggingService = loggingService;
         }
 
         public async Task<ITestInfoContainer> LoadTestsAsync(List<IFarmTaskInfo> farmTasks) {
             loadingProgressController.Flush();
             loadingProgressController.Enlarge(farmTasks.Count);
-            ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage($"Collecting tests information from farm");
+            loggingService.SendMessage($"Collecting tests information from farm");
             List<Task<TestInfoCached>> allTasks = new List<Task<TestInfoCached>>();
             foreach(IFarmTaskInfo farmTaskInfo in farmTasks) {
                 IFarmTaskInfo info = farmTaskInfo;
@@ -116,9 +118,9 @@ namespace DXVisualTestFixer.Core {
         }
 
         TestInfo LoadTestInfo(CorpDirTestInfo corpDirTestInfo, List<Team> teams) {
-            ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage($"Start load test v{corpDirTestInfo.FarmTaskInfo.Repository.Version} {corpDirTestInfo.TestName}.{corpDirTestInfo.ThemeName}");
+            loggingService.SendMessage($"Start load test v{corpDirTestInfo.FarmTaskInfo.Repository.Version} {corpDirTestInfo.TestName}.{corpDirTestInfo.ThemeName}");
             TestInfo testInfo = TryCreateTestInfo(corpDirTestInfo, teams ?? TeamConfigsReader.GetAllTeams());
-            ServiceLocator.Current.GetInstance<ILoggingService>().SendMessage($"End load test v{corpDirTestInfo.FarmTaskInfo.Repository.Version} {corpDirTestInfo.TestName}.{corpDirTestInfo.ThemeName}");
+            loggingService.SendMessage($"End load test v{corpDirTestInfo.FarmTaskInfo.Repository.Version} {corpDirTestInfo.TestName}.{corpDirTestInfo.ThemeName}");
             if(testInfo != null) {
                 UpdateTestStatus(testInfo);
                 loadingProgressController.IncreaseProgress(1);

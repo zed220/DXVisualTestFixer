@@ -169,8 +169,8 @@ namespace DXVisualTestFixer.UI.ViewModels {
             this.configSerializer = configSerializer;
             this.loadingProgressController = loadingProgressController;
             TestService = testsService;
-            UpdateConfig();
             loggingService.MessageReserved += OnLoggingMessageReserved;
+            UpdateConfig();
         }
 
         void OnLoggingMessageReserved(object sender, IMessageEventArgs args) {
