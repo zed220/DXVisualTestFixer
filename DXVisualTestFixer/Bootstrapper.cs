@@ -51,7 +51,7 @@ namespace DXVisualTestFixer {
             RegisterTypeIfMissing(typeof(IDXNotification), typeof(DXNotification), false);
             RegisterTypeIfMissing(typeof(IDXConfirmation), typeof(DXConfirmation), false);
 
-            Container.RegisterTypeForNavigation<TestInfoView>();
+            Container.RegisterTypeForNavigation<SplitTestInfoView>();
             Container.RegisterTypeForNavigation<MergedTestInfoView>();
         }
 
@@ -63,6 +63,7 @@ namespace DXVisualTestFixer {
 
         protected override void ConfigureViewModelLocator() {
             base.ConfigureViewModelLocator();
+            ViewModelLocationProvider.Register(typeof(SplitTestInfoView).FullName, typeof(ITestInfoViewModel));
             ViewModelLocationProvider.Register(typeof(MergedTestInfoView).FullName, typeof(ITestInfoViewModel));
             ViewModelLocationProvider.Register(typeof(Shell).FullName, typeof(IShellViewModel));
 

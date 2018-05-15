@@ -52,7 +52,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
                 info.ErrorType = ErrorType.Default;
                 return false;
             }
-            if(Repository.InNewVersion(Version)) {
+            if(Repository.IsNewVersion(Version)) {
                 string configPath = System.IO.Path.Combine(Path, "VisualTestsConfig.xml");
                 if(!File.Exists(configPath)) {
                     info.ErrorText = $"File \"VisualTestsConfig.xml\" does not exists in directory \"{Path}\".\nSince the 18.1 version you must use specific git repository:\n" +
@@ -81,7 +81,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
                 foreach(var directoryPath in Directory.GetDirectories(filePath)) {
                     string dirName = System.IO.Path.GetFileName(directoryPath);
                     if(dirName.Contains(String.Format("20{0}", ver)) || dirName.Contains(ver)) {
-                        if(Repository.InNewVersion(ver)) {
+                        if(Repository.IsNewVersion(ver)) {
                             if(!File.Exists(directoryPath + "\\VisualTestsConfig.xml"))
                                 continue;
                             Repositories.Add(new RepositoryModel(new Repository() { Version = ver, Path = directoryPath + "\\" }));

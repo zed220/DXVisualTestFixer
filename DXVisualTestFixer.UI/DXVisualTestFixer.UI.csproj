@@ -139,6 +139,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Prism.Wpf.6.3.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
@@ -169,11 +170,11 @@
     <Compile Include="Converters\FilePathToTextConverter.cs" />
     <Compile Include="Converters\FilePathToImageSourceConverter.cs" />
     <Compile Include="Converters\ImageToClipboardConverter.cs" />
+    <Compile Include="Converters\MultiImageToClipboardConverter.cs" />
     <Compile Include="Converters\NotificationContentConverter.cs" />
     <Compile Include="Converters\StackPanelToTooltipConverter.cs" />
     <Compile Include="Converters\TestViewTypeConverter.cs" />
     <Compile Include="Native\DiffLineBackgroundRenderer.cs" />
-    <Compile Include="Native\FarmTaskInfo.cs" />
     <Compile Include="Native\ThemesProvider.cs" />
     <Compile Include="PrismCommon\LayoutPanelRegionAdapter.cs" />
     <Compile Include="PrismCommon\PopupDXWindowAction.cs" />
@@ -190,8 +191,10 @@
     <Compile Include="ViewModels\RepositoryOptimizerViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModels\ShellViewModel.cs" />
+    <Compile Include="ViewModels\SolutionModel.cs" />
     <Compile Include="ViewModels\TestInfoViewModel.cs" />
     <Compile Include="ViewModels\TestInfoWrapper.cs" />
+    <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="ViewModels\ViewResourcesViewModel.cs" />
     <Compile Include="Views\ApplyChangesView.xaml.cs">
       <DependentUpon>ApplyChangesView.xaml</DependentUpon>
@@ -217,8 +220,8 @@
     <Compile Include="Views\Shell.xaml.cs">
       <DependentUpon>Shell.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\TestInfoView.xaml.cs">
-      <DependentUpon>TestInfoView.xaml</DependentUpon>
+    <Compile Include="Views\SplitTestInfoView.xaml.cs">
+      <DependentUpon>SplitTestInfoView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ViewRecourcesView.xaml.cs">
       <DependentUpon>ViewRecourcesView.xaml</DependentUpon>
@@ -269,7 +272,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\TestInfoView.xaml">
+    <Page Include="Views\SplitTestInfoView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

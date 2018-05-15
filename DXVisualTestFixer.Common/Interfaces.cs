@@ -29,7 +29,7 @@ namespace DXVisualTestFixer.Common {
     public interface IAppearanceService {
         void SetTheme(string themeName);
     }
-    public interface ILoadingProgressController {
+    public interface ILoadingProgressController : INotifyPropertyChanged {
         void Enlarge(int delta);
         void Flush();
         void IncreaseProgress(int delta);
@@ -103,8 +103,7 @@ namespace DXVisualTestFixer.Common {
     public interface IFarmIntegrator {
         void Start(Action<IFarmRefreshedEventArgs> invalidateCallback);
         void Stop();
-        IFarmStatus GetTaskStatus(string task);
-        string GetTaskUrl(string task);
+        List<IFarmTaskInfo> GetAllTasks(Repository[] repositories);
     }
     public interface ITestsService {
         bool ApplyTest(TestInfo test, Func<string, bool> checkoutFunc);

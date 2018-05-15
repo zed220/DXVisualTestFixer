@@ -21,11 +21,23 @@ namespace DXVisualTestFixer.Farm {
         void IFarmIntegrator.Start(Action<IFarmRefreshedEventArgs> invalidateCallback) {
             Start(invalidateCallback);
         }
-        IFarmStatus IFarmIntegrator.GetTaskStatus(string task) {
-            return GetTaskStatus(task);
-        }
-        string IFarmIntegrator.GetTaskUrl(string task) {
-            return GetTaskUrl(task);
+        List<IFarmTaskInfo> IFarmIntegrator.GetAllTasks(Repository[] repositories) {
+            List<IFarmTaskInfo> result = new List<IFarmTaskInfo>();
+            foreach(var repository in repositories) {
+                if(Repository.IsNewVersion(repository.Version)) {
+                    if(GetTaskStatus(repository.GetTaskName_New()).BuildStatus == FarmIntegrationStatus.Failure) {
+                        result.Add(new FarmTaskInfo(repository, GetTaskUrl(repository.GetTaskName_New())));
+                    }
+                    continue;
+                }
+                if(GetTaskStatus(repository.GetTaskName()).BuildStatus == FarmIntegrationStatus.Failure) {
+                    result.Add(new FarmTaskInfo(repository, GetTaskUrl(repository.GetTaskName())));
+                }
+                if(GetTaskStatus(repository.GetTaskName_Optimized()).BuildStatus == FarmIntegrationStatus.Failure) {
+                    result.Add(new FarmTaskInfo(repository, GetTaskUrl(repository.GetTaskName_Optimized())));
+                }
+            }
+            return result;
         }
 
         static FarmIntegrator() {

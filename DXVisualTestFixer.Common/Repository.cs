@@ -6,7 +6,7 @@ namespace DXVisualTestFixer.Common {
 
         public string Version { get; set; }
         public string Path { get; set; }
-        public static bool InNewVersion(string version) {
+        public static bool IsNewVersion(string version) {
             return Convert.ToInt32(version.Split('.')[0]) >= 18;
         }
 

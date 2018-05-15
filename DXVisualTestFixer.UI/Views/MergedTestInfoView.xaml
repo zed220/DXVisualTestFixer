@@ -42,6 +42,7 @@
             <dxmvvm:ObjectToObjectConverter x:Key="VisibilityConverter" DefaultSource="False" DefaultTarget="Hidden">
                 <dxmvvm:MapItem Source="True" Target="Visible"/>
             </dxmvvm:ObjectToObjectConverter>
+            <converters:MultiImageToClipboardConverter x:Key="MultiImageToClipboardConverter"/>
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
@@ -55,6 +56,15 @@
                                            Command="{Binding ImageCurrentArr, Converter={StaticResource ImageToClipboardConverter}}"/>
                         <dxb:BarButtonItem RibbonStyle="Large" Content="Copy Diff" LargeGlyph="{dx:DXImageOffice2013 Image=Copy_32x32.png}" GlyphSize="Large"
                                            Command="{Binding ImageDiffArr, Converter={StaticResource ImageToClipboardConverter}}"/>
+                        <dxb:BarButtonItem RibbonStyle="Large" Content="Copy Split" LargeGlyph="{dx:DXImageOffice2013 Image=Copy_32x32.png}" GlyphSize="Large">
+                            <dxb:BarButtonItem.Command>
+                                <MultiBinding Converter="{StaticResource MultiImageToClipboardConverter}">
+                                    <Binding Path="ImageBeforeArr"/>
+                                    <Binding Path="ImageCurrentArr"/>
+                                    <Binding Path="ImageDiffArr"/>
+                                </MultiBinding>
+                            </dxb:BarButtonItem.Command>
+                        </dxb:BarButtonItem>
                     </dxr:RibbonPageGroup>
                     <dxr:RibbonPageGroup Caption="Zoom">
                         <dxb:BarButtonItem RibbonStyle="Large" Content="Zoom -10%" LargeGlyph="{dx:DXImageOffice2013 Image=ZoomOut_32x32.png}" GlyphSize="Large"

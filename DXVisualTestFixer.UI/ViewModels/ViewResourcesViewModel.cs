@@ -22,7 +22,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
         List<RepositoryFileModel> _UsedFiles = new List<RepositoryFileModel>();
         RepositoryFileModel _CurrentFile;
 
-        public string Title { get; set; } = "Images Viewer";
+        public string Title { get; set; } = "Resources Viewer";
         public object Content { get; set; }
 
         public IEnumerable<UICommand> Commands { get; }
@@ -41,8 +41,6 @@ namespace DXVisualTestFixer.UI.ViewModels {
             set { SetProperty(ref _CurrentFile, value); }
         }
 
-
-
         public ViewResourcesViewModel(IUnityContainer container, IMainViewModel viewModel, ITestsService testsService) {
             Commands = UICommand.GenerateFromMessageButton(MessageButton.OK, new DialogService(), MessageResult.OK);
             Dispatcher = Dispatcher.CurrentDispatcher;
@@ -53,7 +51,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 
         void UpdateUsedFiles(Dictionary<Repository, List<string>> usedFilesByRep, Dictionary<Repository, List<Team>> teams) {
             HashSet<string> usedFiles = RepositoryOptimizerViewModel.GetUsedFiles(usedFilesByRep, testsService);
-            UsedFiles = GetActualFiles(usedFilesByRep.Keys.Select(rep => rep.Version).Distinct().Where(v => Repository.InNewVersion(v)).ToList(), usedFiles, teams);
+            UsedFiles = GetActualFiles(usedFilesByRep.Keys.Select(rep => rep.Version).Distinct().Where(v => Repository.IsNewVersion(v)).ToList(), usedFiles, teams);
             if(UsedFiles.Count > 0)
                 CurrentFile = UsedFiles[0];
             Status = ProgramStatus.Idle;

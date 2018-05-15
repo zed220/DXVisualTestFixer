@@ -131,7 +131,7 @@
                 </prismcommon:PopupDXDialogWindowAction.WindowContent>
             </prismcommon:PopupDXDialogWindowAction>
         </prism:InteractionRequestTrigger>
-        <prism:InteractionRequestTrigger SourceObject="{Binding ViewImagesRequest}">
+        <prism:InteractionRequestTrigger SourceObject="{Binding ViewResourcesRequest}">
             <prismcommon:PopupDXDialogWindowAction IsModal="True" CenterOverAssociatedObject="True" WindowStyle="{StaticResource DialogWindowStyle}">
                 <prismcommon:PopupDXDialogWindowAction.WindowContent>
                     <ContentControl Content="{Binding Converter={converters:NotificationContentConverter}}">
@@ -213,26 +213,6 @@
                             </dxb:BarSubItem.ItemTemplate>
                         </dxb:BarSubItem>
                     </dxr:RibbonPageGroup>
-                    <dxr:RibbonPageGroup Caption="Service">
-                        <dxb:BarButtonItem RibbonStyle="Large" 
-                                           GlyphSize="Large" 
-                                           Content="Check Unused Files"
-                                           Command="{DXCommand Execute='ShowRepositoryOptimizer()'}"
-                                           LargeGlyph="{dx:DXImageOffice2013 Image=RemoveItem_32x32.png}">
-                        </dxb:BarButtonItem>
-                        <dxb:BarButtonItem RibbonStyle="Large" 
-                                           GlyphSize="Large" 
-                                           Content="Analyze Timings"
-                                           Command="{DXCommand Execute='ShowRepositoryAnalyzer()'}"
-                                           LargeGlyph="{dx:DXImageOffice2013 Image=Chart_32x32.png}">
-                        </dxb:BarButtonItem>
-                        <dxb:BarButtonItem RibbonStyle="Large" 
-                                           GlyphSize="Large" 
-                                           Content="View Resources"
-                                           Command="{DXCommand Execute='ShowViewImages()'}"
-                                           LargeGlyph="{dx:DXImageOffice2013 Image=Image_32x32.png}">
-                        </dxb:BarButtonItem>
-                    </dxr:RibbonPageGroup>
                     <dxr:RibbonPageGroup Caption="Settings">
                         <dxb:BarButtonItem
                             RibbonStyle="Large" 
@@ -270,19 +250,34 @@
                             <dxb:BarItemSelector.ItemTemplate>
                                 <DataTemplate>
                                     <ContentControl>
-                                        <dxb:BarCheckItem RibbonStyle="SmallWithText">
-                                            <dxb:BarCheckItem.Content>
-                                                <Binding Path=".">
-                                                    <Binding.Converter>
-                                                        <dxmvvm:BooleanToObjectConverter TrueValue="Draggable" FalseValue="Legacy"/>
-                                                    </Binding.Converter>
-                                                </Binding>
-                                            </dxb:BarCheckItem.Content>
-                                        </dxb:BarCheckItem>
+                                        <dxb:BarCheckItem RibbonStyle="SmallWithText" 
+                                                          Content="{Binding Converter={dxmvvm:BooleanToObjectConverter TrueValue=Draggable, FalseValue=Legacy}}"/>
                                     </ContentControl>
                                 </DataTemplate>
                             </dxb:BarItemSelector.ItemTemplate>
                         </dxb:BarItemSelector>
+                    </dxr:RibbonPageGroup>
+                </dxr:RibbonPage>
+                <dxr:RibbonPage Caption="Service">
+                    <dxr:RibbonPageGroup Caption="Service">
+                        <dxb:BarButtonItem RibbonStyle="Large" 
+                                           GlyphSize="Large" 
+                                           Content="Check Unused Files"
+                                           Command="{DXCommand Execute='ShowRepositoryOptimizer()'}"
+                                           LargeGlyph="{dx:DXImageOffice2013 Image=RemoveItem_32x32.png}">
+                        </dxb:BarButtonItem>
+                        <dxb:BarButtonItem RibbonStyle="Large" 
+                                           GlyphSize="Large" 
+                                           Content="Analyze Timings"
+                                           Command="{DXCommand Execute='ShowRepositoryAnalyzer()'}"
+                                           LargeGlyph="{dx:DXImageOffice2013 Image=Chart_32x32.png}">
+                        </dxb:BarButtonItem>
+                        <dxb:BarButtonItem RibbonStyle="Large" 
+                                           GlyphSize="Large" 
+                                           Content="View Resources"
+                                           Command="{DXCommand Execute='ShowViewResources()'}"
+                                           LargeGlyph="{dx:DXImageOffice2013 Image=Image_32x32.png}">
+                        </dxb:BarButtonItem>
                     </dxr:RibbonPageGroup>
                 </dxr:RibbonPage>
             </dxr:RibbonDefaultPageCategory>

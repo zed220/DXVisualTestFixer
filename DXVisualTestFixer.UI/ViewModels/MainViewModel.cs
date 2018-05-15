@@ -4,12 +4,9 @@ using Microsoft.Practices.ServiceLocation;
 using Microsoft.Practices.Unity;
 using Prism.Commands;
 using Prism.Interactivity.InteractionRequest;
-using Prism.Mvvm;
 using Prism.Regions;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -22,64 +19,12 @@ namespace DXVisualTestFixer.UI.ViewModels {
         Idle,
         Loading,
     }
-
-    public class SolutionModel {
-        public SolutionModel(string version, string path) {
-            Version = version;
-            Path = GetRealPath(path);
-        }
-
-        public string Version { get; }
-        public string Path { get; }
-        public void OpenSolution() {
-            var solutionFilePath = Directory.EnumerateFiles(Path, "*.sln", SearchOption.TopDirectoryOnly).FirstOrDefault();
-            if(solutionFilePath == null || !File.Exists(solutionFilePath))
-                return;
-            string openSolutionPath = @"C:\Program Files (x86)\Common Files\Microsoft Shared\MSEnv\VSLauncher.exe";
-            if(!File.Exists(openSolutionPath))
-                return;
-            ProcessStartInfo info = new ProcessStartInfo(openSolutionPath, solutionFilePath);
-            info.Verb = "runas";
-            Process.Start(info);
-        }
-        public void OpenFolder() {
-            Process.Start(Path);
-        }
-        string GetRealPath(string path) {
-            string folderName = Repository.InNewVersion(Version) ? "VisualTests" : "DevExpress.Xpf.VisualTests";
-            return System.IO.Path.Combine(path, folderName);
-        }
-    }
-
-    public class ViewModelBase : BindableBase {
-        public InteractionRequest<INotification> NotificationRequest { get; } = new InteractionRequest<INotification>();
-
-        protected bool CheckConfirmation(InteractionRequest<IConfirmation> service, string title, string content, MessageBoxImage image = MessageBoxImage.Warning) {
-            IDXConfirmation confirmation = ServiceLocator.Current.TryResolve<IDXConfirmation>();
-            SetupNotification(confirmation, title, content, image);
-            service.Raise(confirmation);
-            return confirmation.Confirmed;
-        }
-        protected void DoNotification(string title, string content, MessageBoxImage image = MessageBoxImage.Information) {
-            IDXNotification confirmation = ServiceLocator.Current.TryResolve<IDXNotification>();
-            SetupNotification(confirmation, title, content, image);
-            NotificationRequest.Raise(confirmation);
-        }
-        void SetupNotification(IDXNotification notification, string title, string content, MessageBoxImage image) {
-            notification.Title = title;
-            notification.Content = content;
-            notification.ImageType = image;
-        }
-    }
-
     public class MainViewModel : ViewModelBase, IMainViewModel {
-
         readonly IRegionManager regionManager;
         readonly ILoggingService loggingService;
         readonly Dispatcher Dispatcher;
         readonly IFarmIntegrator farmIntegrator;
         readonly IConfigSerializer configSerializer;
-        readonly ILoadingProgressController loadingProgressController;
 
         #region private properties
         IConfig Config;
@@ -151,15 +96,14 @@ namespace DXVisualTestFixer.UI.ViewModels {
             get { return _Solutions; }
             set { SetProperty(ref _Solutions, value); }
         }
-        public ILoadingProgressController LoadingProgressController { get { return loadingProgressController; } }
+        public ILoadingProgressController LoadingProgressController { get; }
 
         public InteractionRequest<IConfirmation> ConfirmationRequest { get; } = new InteractionRequest<IConfirmation>();
-
         public InteractionRequest<IConfirmation> SettingsRequest { get; } = new InteractionRequest<IConfirmation>();
         public InteractionRequest<IConfirmation> ApplyChangesRequest { get; } = new InteractionRequest<IConfirmation>();
         public InteractionRequest<IConfirmation> RepositoryOptimizerRequest { get; } = new InteractionRequest<IConfirmation>();
         public InteractionRequest<INotification> RepositoryAnalyzerRequest { get; } = new InteractionRequest<INotification>();
-        public InteractionRequest<INotification> ViewImagesRequest { get; } = new InteractionRequest<INotification>();
+        public InteractionRequest<INotification> ViewResourcesRequest { get; } = new InteractionRequest<INotification>();
 
         public MainViewModel(IRegionManager regionManager, ILoggingService loggingService, IFarmIntegrator farmIntegrator, IConfigSerializer configSerializer, ILoadingProgressController loadingProgressController, ITestsService testsService) {
             Dispatcher = Dispatcher.CurrentDispatcher;
@@ -167,7 +111,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
             this.loggingService = loggingService;
             this.farmIntegrator = farmIntegrator;
             this.configSerializer = configSerializer;
-            this.loadingProgressController = loadingProgressController;
+            LoadingProgressController = loadingProgressController;
             TestService = testsService;
             loggingService.MessageReserved += OnLoggingMessageReserved;
             UpdateConfig();
@@ -186,30 +130,11 @@ namespace DXVisualTestFixer.UI.ViewModels {
                 }));
             }
         }
-        List<IFarmTaskInfo> GetAllTasks() {
-            List<IFarmTaskInfo> result = new List<IFarmTaskInfo>();
-            foreach(var repository in Config.Repositories) {
-                if(Repository.InNewVersion(repository.Version)) {
-                    if(farmIntegrator.GetTaskStatus(repository.GetTaskName_New()).BuildStatus == FarmIntegrationStatus.Failure) {
-                        result.Add(new FarmTaskInfo(repository, farmIntegrator.GetTaskUrl(repository.GetTaskName_New())));
-                    }
-                    continue;
-                }
-                if(farmIntegrator.GetTaskStatus(repository.GetTaskName()).BuildStatus == FarmIntegrationStatus.Failure) {
-                    result.Add(new FarmTaskInfo(repository, farmIntegrator.GetTaskUrl(repository.GetTaskName())));
-                }
-                if(farmIntegrator.GetTaskStatus(repository.GetTaskName_Optimized()).BuildStatus == FarmIntegrationStatus.Failure) {
-                    result.Add(new FarmTaskInfo(repository, farmIntegrator.GetTaskUrl(repository.GetTaskName_Optimized())));
-                }
-            }
-            return result;
-        }
 
         async Task UpdateAllTests() {
             loggingService.SendMessage("Refreshing tests");
-            loadingProgressController.Start();
-            List<IFarmTaskInfo> failedTasks = GetAllTasks();
-            var testInfoContainer = await TestService.LoadTestsAsync(failedTasks).ConfigureAwait(false);
+            LoadingProgressController.Start();
+            var testInfoContainer = await TestService.LoadTestsAsync(farmIntegrator.GetAllTasks(Config.Repositories)).ConfigureAwait(false);
             var tests = testInfoContainer.TestList.Where(t => t != null).Select(t => new TestInfoWrapper(this, t)).Cast<ITestInfoWrapper>().ToList();
             loggingService.SendMessage("");
             await Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
@@ -218,7 +143,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
                 ElapsedTimes = testInfoContainer.ElapsedTimes;
                 Teams = testInfoContainer.Teams;
                 Status = ProgramStatus.Idle;
-                loadingProgressController.Stop();
+                LoadingProgressController.Stop();
             }));
         }
 
@@ -227,10 +152,10 @@ namespace DXVisualTestFixer.UI.ViewModels {
                 Solutions = new List<SolutionModel>();
                 return;
             }
-            List<SolutionModel> newSolutions = new List<SolutionModel>();
+            List<SolutionModel> actualSolutions = new List<SolutionModel>();
             foreach(var repository in Config.Repositories)
-                newSolutions.Add(new SolutionModel(repository.Version, repository.Path));
-            Solutions = newSolutions;
+                actualSolutions.Add(new SolutionModel(repository.Version, repository.Path));
+            Solutions = actualSolutions;
         }
 
         void UpdateConfig() {
@@ -274,7 +199,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
         void OnCurrentTestChanged() {
             if(CurrentTest == null)
                 return;
-            regionManager.RequestNavigate(Regions.TestInfo, TestViewType == TestViewType.Split ? "TestInfoView" : "MergedTestInfoView");
+            regionManager.RequestNavigate(Regions.TestInfo, TestViewType == TestViewType.Split ? nameof(SplitTestInfoView) : nameof(MergedTestInfoView));
         }
         void OnTestsChanged() {
             if(Tests == null) {
@@ -306,9 +231,10 @@ namespace DXVisualTestFixer.UI.ViewModels {
         public void ShowRepositoryAnalyzer() {
             RepositoryAnalyzerRequest.Raise(ServiceLocator.Current.TryResolve<IRepositoryAnalyzerViewModel>());
         }
-        public void ShowViewImages() {
-            ViewImagesRequest.Raise(ServiceLocator.Current.TryResolve<IViewResourcesViewModel>());
+        public void ShowViewResources() {
+            ViewResourcesRequest.Raise(ServiceLocator.Current.TryResolve<IViewResourcesViewModel>());
         }
+
         public void ShowSettings() {
             if(CheckHasUncommittedChanges())
                 return;

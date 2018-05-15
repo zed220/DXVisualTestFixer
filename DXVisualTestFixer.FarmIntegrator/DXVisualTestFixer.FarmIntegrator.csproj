@@ -71,6 +71,7 @@
     <Compile Include="DXCCTrayCore.cs" />
     <Compile Include="DXCCTrayHelpers.cs" />
     <Compile Include="FarmHelper.cs" />
+    <Compile Include="FarmTaskInfo.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="ProjectI.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
