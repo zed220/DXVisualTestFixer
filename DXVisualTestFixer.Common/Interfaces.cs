@@ -67,15 +67,10 @@ namespace DXVisualTestFixer.Common {
         TimeSpan Time { get; }
     }
     public interface IMainViewModel {
-        List<ITestInfoWrapper> Tests { get; }
         MergerdTestViewType MergerdTestViewType { get; set; }
         TestViewType TestViewType { get; }
         ITestInfoWrapper CurrentTest { get; }
-        Dictionary<Repository, List<string>> UsedFiles { get; }
-        Dictionary<Repository, List<Team>> Teams { get; }
-        Dictionary<Repository, List<IElapsedTimeInfo>> ElapsedTimes { get; }
 
-        void SetFilter(string op);
         void RaiseMoveNext();
         void RaiseMovePrev();
         List<ITestInfoWrapper> GetChangedTests();
@@ -105,9 +100,12 @@ namespace DXVisualTestFixer.Common {
         void Stop();
         List<IFarmTaskInfo> GetAllTasks(Repository[] repositories);
     }
-    public interface ITestsService {
+    public interface ITestsService : INotifyPropertyChanged {
+        ITestInfoContainer ActualState { get; }
+        string CurrentFilter { get; set; }
+
         bool ApplyTest(TestInfo test, Func<string, bool> checkoutFunc);
-        Task<ITestInfoContainer> LoadTestsAsync(List<IFarmTaskInfo> farmTasks);
+        Task UpdateTests();
         string GetResourcePath(Repository repository, string relativePath);
     }
     public interface IFarmTaskInfo {

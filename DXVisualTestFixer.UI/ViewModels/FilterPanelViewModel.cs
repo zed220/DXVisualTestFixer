@@ -11,8 +11,9 @@ using System.Threading.Tasks;
 
 namespace DXVisualTestFixer.UI.ViewModels {
     public class FilterPanelViewModel : BindableBase, IFilterPanelViewModel {
+        readonly ITestsService testsService;
+
         string _DpiNullText, _TeamsNullText, _VersionsNullText;
-        Action<string> SetFilterAction { get; }
         List<int> _DpiList;
         List<string> _TeamsList;
         List<string> _VersionsList;
@@ -57,9 +58,9 @@ namespace DXVisualTestFixer.UI.ViewModels {
             set { SetProperty(ref _VersionsNullText, value); }
         }
 
-        public FilterPanelViewModel(IMainViewModel mainViewModel) {
-            BuildFilters(mainViewModel.Tests);
-            SetFilterAction = mainViewModel.SetFilter;
+        public FilterPanelViewModel(ITestsService testsService) {
+            this.testsService = testsService;
+            BuildFilters(testsService.ActualState.TestList);
             InitializeDefaultFilters();
             InitializeNullTexts();
         }
@@ -75,19 +76,14 @@ namespace DXVisualTestFixer.UI.ViewModels {
 
         private void InitializeDefaultFilters() {
             List<string> actualTeamsList = TeamsList != null ? TeamsList.ToList() : new List<string>();
-            //if(actualTeamsList.Contains("Editors"))
-            //    actualTeamsList.Remove("Editors");
             SelectedTeams = new List<object>(actualTeamsList);
-            //TeamsList.ForEach(SelectedTeams.Add);
             SelectedVersions = new List<object>(VersionsList ?? new List<string>());
-            //VersionsList.ForEach(SelectedVersions.Add);
             SelectedDpis = new List<object>();
             DpiList.ForEach(dpi => SelectedDpis.Add(dpi));
-            //SelectedDpis.Add(96);
         }
 
-        void BuildFilters(List<ITestInfoWrapper> tests) {
-            TeamsList = tests.Select(t => t.TeamName).Distinct().OrderBy(t => t).ToList();
+        void BuildFilters(List<TestInfo> tests) {
+            TeamsList = tests.Select(t => t.Team.Name).Distinct().OrderBy(t => t).ToList();
             DpiList = tests.Select(t => t.Dpi).Distinct().OrderBy(d => d).ToList();
             if(!DpiList.Contains(96)) {
                 DpiList.Add(96);
@@ -97,8 +93,6 @@ namespace DXVisualTestFixer.UI.ViewModels {
         }
 
         void OnFilterChanged() {
-            if(SetFilterAction == null)
-                return;
             List<CriteriaOperator> resultList = new List<CriteriaOperator>();
             if(SelectedDpis != null && SelectedDpis.Count > 0) {
                 List<CriteriaOperator> dpis = new List<CriteriaOperator>();
@@ -121,17 +115,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
                 }
                 resultList.Add(CriteriaOperator.Or(versions));
             }
-            if(resultList.Count > 0) {
-                SetFilterAction(CriteriaOperator.And(resultList).ToString());
-            }
-            else
-                SetFilterAction(null);
-            //CriteriaOperator.Or()
-            //CriteriaOperator.And()
-            //CriteriaOperator result = null;
-            //foreach(var str in SelectedDpis ?? new List<object>()) {
-            //    result += CriteriaOperator.Parse($"[Dpi] = {str}");
-            //}
+            testsService.CurrentFilter = resultList.Count > 0 ? CriteriaOperator.And(resultList).ToString() : null;
         }
     }
 }

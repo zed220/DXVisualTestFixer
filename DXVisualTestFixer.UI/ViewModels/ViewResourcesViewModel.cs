@@ -41,12 +41,12 @@ namespace DXVisualTestFixer.UI.ViewModels {
             set { SetProperty(ref _CurrentFile, value); }
         }
 
-        public ViewResourcesViewModel(IUnityContainer container, IMainViewModel viewModel, ITestsService testsService) {
+        public ViewResourcesViewModel(IUnityContainer container, ITestsService testsService) {
             Commands = UICommand.GenerateFromMessageButton(MessageButton.OK, new DialogService(), MessageResult.OK);
             Dispatcher = Dispatcher.CurrentDispatcher;
             this.testsService = testsService;
             Status = ProgramStatus.Loading;
-            Task.Factory.StartNew(() => UpdateUsedFiles(viewModel.UsedFiles, viewModel.Teams)).ConfigureAwait(false);
+            Task.Factory.StartNew(() => UpdateUsedFiles(testsService.ActualState.UsedFiles, testsService.ActualState.Teams)).ConfigureAwait(false);
         }
 
         void UpdateUsedFiles(Dictionary<Repository, List<string>> usedFilesByRep, Dictionary<Repository, List<Team>> teams) {

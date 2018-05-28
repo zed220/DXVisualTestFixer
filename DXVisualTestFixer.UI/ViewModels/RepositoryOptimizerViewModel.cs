@@ -59,7 +59,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
         public string Title { get; set; }
         public object Content { get; set; }
 
-        public RepositoryOptimizerViewModel(IUnityContainer container, IMainViewModel viewModel, ITestsService testsService) {
+        public RepositoryOptimizerViewModel(ITestsService testsService) {
             Title = "Repository Optimizer";
             Dispatcher = Dispatcher.CurrentDispatcher;
             this.testsService = testsService;
@@ -67,7 +67,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
             Commands = UICommand.GenerateFromMessageButton(MessageButton.OKCancel, new DialogService(), MessageResult.OK, MessageResult.Cancel);
             Commands.Where(c => c.IsDefault).Single().Command = new DelegateCommand(() => Commit());
             Status = ProgramStatus.Loading;
-            Task.Factory.StartNew(() => UpdateUnusedFiles(viewModel.UsedFiles, viewModel.Teams)).ConfigureAwait(false);
+            Task.Factory.StartNew(() => UpdateUnusedFiles(testsService.ActualState.UsedFiles, testsService.ActualState.Teams)).ConfigureAwait(false);
         }
 
         List<RepositoryFileModel> Commit() {

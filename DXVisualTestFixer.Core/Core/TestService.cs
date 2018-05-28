@@ -3,8 +3,10 @@ using DXVisualTestFixer.Core.Configuration;
 using DXVisualTestFixer.Native;
 using HtmlAgilityPack;
 using Microsoft.Practices.ServiceLocation;
+using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -13,7 +15,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace DXVisualTestFixer.Core {
-    public class TestInfoCached {
+    class TestInfoCached {
         public TestInfoCached(Repository repository, string realUrl, List<TestInfo> testList, CorpDirTestInfoContainer container) {
             Repository = repository;
             RealUrl = realUrl;
@@ -43,20 +45,36 @@ namespace DXVisualTestFixer.Core {
         public Dictionary<Repository, List<IElapsedTimeInfo>> ElapsedTimes { get; }
         public Dictionary<Repository, List<Team>> Teams { get; }
     }
-    public class TestsService : ITestsService {
-        Dictionary<IFarmTaskInfo, TestInfoCached> RealUrlCache = new Dictionary<IFarmTaskInfo, TestInfoCached>();
-
+    public class TestsService : BindableBase, ITestsService {
         readonly ILoadingProgressController loadingProgressController;
         readonly IConfigSerializer configSerializer;
         readonly ILoggingService loggingService;
+        readonly IFarmIntegrator farmIntegrator;
 
-        public TestsService(ILoadingProgressController loadingProgressController, IConfigSerializer configSerializer, ILoggingService loggingService) {
+        Dictionary<IFarmTaskInfo, TestInfoCached> RealUrlCache = new Dictionary<IFarmTaskInfo, TestInfoCached>();
+
+        string _CurrentFilter = null;
+
+        public TestsService(ILoadingProgressController loadingProgressController, IConfigSerializer configSerializer, ILoggingService loggingService, IFarmIntegrator farmIntegrator) {
             this.loadingProgressController = loadingProgressController;
             this.configSerializer = configSerializer;
             this.loggingService = loggingService;
+            this.farmIntegrator = farmIntegrator;
         }
 
-        public async Task<ITestInfoContainer> LoadTestsAsync(List<IFarmTaskInfo> farmTasks) {
+        public ITestInfoContainer ActualState { get; private set; }
+
+        public string CurrentFilter {
+            get { return _CurrentFilter; }
+            set { SetProperty(ref _CurrentFilter, value); }
+        }
+
+        public async Task UpdateTests() {
+            CurrentFilter = null;
+            ActualState = await LoadTestsAsync(farmIntegrator.GetAllTasks(configSerializer.GetConfig().Repositories));
+        }
+
+        async Task<ITestInfoContainer> LoadTestsAsync(List<IFarmTaskInfo> farmTasks) {
             loadingProgressController.Flush();
             loadingProgressController.Enlarge(farmTasks.Count);
             loggingService.SendMessage($"Collecting tests information from farm");
@@ -188,6 +206,8 @@ namespace DXVisualTestFixer.Core {
         }
 
         static object lockLoadFromDisk = new object();
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         static void LoadTextFile(string path, Action<string> saveAction) {
             string pathWithExtension = Path.ChangeExtension(path, ".xml");

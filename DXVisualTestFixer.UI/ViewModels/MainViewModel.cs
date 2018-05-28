@@ -80,18 +80,6 @@ namespace DXVisualTestFixer.UI.ViewModels {
             get { return _TestService; }
             set { SetProperty(ref _TestService, value); }
         }
-        public Dictionary<Repository, List<string>> UsedFiles {
-            get { return _UsedFiles; }
-            set { SetProperty(ref _UsedFiles, value); }
-        }
-        public Dictionary<Repository, List<Team>> Teams {
-            get { return _Teams; }
-            set { SetProperty(ref _Teams, value); }
-        }
-        public Dictionary<Repository, List<IElapsedTimeInfo>> ElapsedTimes {
-            get { return _ElapsedTimes; }
-            set { SetProperty(ref _ElapsedTimes, value); }
-        }
         public List<SolutionModel> Solutions {
             get { return _Solutions; }
             set { SetProperty(ref _Solutions, value); }
@@ -113,8 +101,14 @@ namespace DXVisualTestFixer.UI.ViewModels {
             this.configSerializer = configSerializer;
             LoadingProgressController = loadingProgressController;
             TestService = testsService;
+            TestService.PropertyChanged += TestService_PropertyChanged;
             loggingService.MessageReserved += OnLoggingMessageReserved;
             UpdateConfig();
+        }
+
+        void TestService_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
+            if(e.PropertyName == nameof(ITestsService.CurrentFilter))
+                CurrentFilter = CriteriaOperator.Parse(TestService.CurrentFilter);
         }
 
         void OnLoggingMessageReserved(object sender, IMessageEventArgs args) {
@@ -134,14 +128,12 @@ namespace DXVisualTestFixer.UI.ViewModels {
         async Task UpdateAllTests() {
             loggingService.SendMessage("Refreshing tests");
             LoadingProgressController.Start();
-            var testInfoContainer = await TestService.LoadTestsAsync(farmIntegrator.GetAllTasks(Config.Repositories)).ConfigureAwait(false);
+            await TestService.UpdateTests().ConfigureAwait(false);
+            var testInfoContainer = TestService.ActualState;
             var tests = testInfoContainer.TestList.Where(t => t != null).Select(t => new TestInfoWrapper(this, t)).Cast<ITestInfoWrapper>().ToList();
             loggingService.SendMessage("");
             await Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
                 Tests = tests;
-                UsedFiles = testInfoContainer.UsedFiles;
-                ElapsedTimes = testInfoContainer.ElapsedTimes;
-                Teams = testInfoContainer.Teams;
                 Status = ProgramStatus.Idle;
                 LoadingProgressController.Stop();
             }));
@@ -212,10 +204,6 @@ namespace DXVisualTestFixer.UI.ViewModels {
                 regionManager.AddToRegion(Regions.FilterPanel, ServiceLocator.Current.TryResolve<FilterPanelView>());
                 CurrentTest = Tests.FirstOrDefault();
             }
-        }
-
-        public void SetFilter(string op) {
-            CurrentFilter = CriteriaOperator.Parse(op);
         }
 
         public void ShowRepositoryOptimizer() {

@@ -62,13 +62,13 @@ namespace DXVisualTestFixer.UI.ViewModels {
 
         public IEnumerable<UICommand> Commands { get; }
 
-        public RepositoryAnalyzerViewModel(IMainViewModel mainViewModel) {
+        public RepositoryAnalyzerViewModel(ITestsService testsService) {
             Commands = UICommand.GenerateFromMessageButton(MessageButton.OK, new DialogService(), MessageResult.OK);
             ElapsedTimes = new Dictionary<string, List<TimingModel>>();
             Versions = new List<string>();
-            if(mainViewModel.ElapsedTimes == null || mainViewModel.ElapsedTimes.Count == 0)
+            if(testsService.ActualState.ElapsedTimes == null || testsService.ActualState.ElapsedTimes.Count == 0)
                 return;
-            foreach(var et in mainViewModel.ElapsedTimes) {
+            foreach(var et in testsService.ActualState.ElapsedTimes) {
                 ElapsedTimes.Add(et.Key.Version, et.Value.Select(eti => new TimingModel(eti.Name, eti.Time)).ToList());
                 Versions.Add(et.Key.Version);
             }
