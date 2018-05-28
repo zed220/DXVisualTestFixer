@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace DXVisualTestFixer.UI.Controls {
     public class TableViewAdvNavigation : TableView {
@@ -29,7 +30,7 @@ namespace DXVisualTestFixer.UI.Controls {
                 FocusedRowHandle = focusedRowHandleCandidate;
         }
 
-        public void DoubleClick(RowDoubleClickEventArgs e) {
+        public void ProcessDoubleClick(RowDoubleClickEventArgs e) {
             if(!e.HitInfo.InRow)
                 return;
             if(Grid.IsGroupRowHandle(e.HitInfo.RowHandle))
@@ -37,23 +38,29 @@ namespace DXVisualTestFixer.UI.Controls {
             if(e.HitInfo.Column.FieldName != "TestInfo.Theme")
                 return;
             e.Handled = true;
-            TestInfoWrapper testInfoWrapper = Grid.GetRow(e.HitInfo.RowHandle) as TestInfoWrapper;
+            SetCommitChange(e.HitInfo.RowHandle, true);
+        }
+
+        void SetCommitChange(int rowHandle, bool makeInverse) {
+            if(!Grid.IsValidRowHandle(rowHandle) || Grid.IsGroupRowHandle(rowHandle))
+                return;
+            TestInfoWrapper testInfoWrapper = Grid.GetRow(rowHandle) as TestInfoWrapper;
             if(testInfoWrapper == null || testInfoWrapper.Valid == TestState.Error)
                 return;
-            testInfoWrapper.CommitChange = !testInfoWrapper.CommitChange;
+            testInfoWrapper.CommitChange = makeInverse ? !testInfoWrapper.CommitChange : true;
         }
 
         public void CommitAllInViewport() {
             int i = 0;
-            while(i++ < Grid.VisibleRowCount - 1) {
-                int rowHandle = Grid.GetRowHandleByVisibleIndex(i);
-                if(!Grid.IsValidRowHandle(rowHandle) || Grid.IsGroupRowHandle(rowHandle))
-                    continue;
-                TestInfoWrapper wrapper = Grid.GetRow(rowHandle) as TestInfoWrapper;
-                if(wrapper == null || wrapper.Valid == TestState.Error)
-                    continue;
-                wrapper.CommitChange = true;
-            }
+            while(i++ < Grid.VisibleRowCount - 1)
+                SetCommitChange(Grid.GetRowHandleByVisibleIndex(i), false);
+        }
+
+        public void ProcessKeyDown(KeyEventArgs e) {
+            if(e.Key != Key.Space)
+                return;
+            e.Handled = true;
+            SetCommitChange(FocusedRowHandle, true);
         }
     }
 }

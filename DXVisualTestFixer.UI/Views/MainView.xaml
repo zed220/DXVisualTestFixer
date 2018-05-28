@@ -351,7 +351,8 @@
                             </dxg:GridControl.TotalSummary>
                             <dxg:GridControl.View>
                                 <controls:TableViewAdvNavigation x:Name="view" AllowEditing="True" ShowVerticalLines="False" ShowIndicator="False" ShowHorizontalLines="False" ShowColumnHeaders="False" 
-                                                                 ShowGroupPanel="False" ShowFixedTotalSummary="True" RowDoubleClick="{DXEvent Handler='@s.DoubleClick(@args)'}">
+                                                                 ShowGroupPanel="False" ShowFixedTotalSummary="True" RowDoubleClick="{DXEvent Handler='@s.ProcessDoubleClick(@args)'}"
+                                                                 PreviewKeyDown="{DXEvent Handler='@s.ProcessKeyDown(@args)'}">
                                     <dxb:BarManager.DXContextMenu>
                                         <dxb:PopupMenu>
                                             <dxb:BarButtonItem Content="Commit All In Viewport" Glyph="{dx:DXImage Image=SelectAll_16x16.png}" Command="{DXCommand Execute='@e(view).CommitAllInViewport()'}"/>
