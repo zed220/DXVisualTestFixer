@@ -1,4 +1,5 @@
-﻿using DXVisualTestFixer.UI.ViewModels;
+﻿using DXVisualTestFixer.UI.Models;
+using DXVisualTestFixer.UI.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Globalization;

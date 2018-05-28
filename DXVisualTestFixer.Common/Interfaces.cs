@@ -53,7 +53,7 @@ namespace DXVisualTestFixer.Common {
     }
     public interface IApplyChangesViewModel : IConfirmation { }
     public interface IFilterPanelViewModel { }
-    public interface ITestInfoWrapper {
+    public interface ITestInfoModel {
         bool CommitChange { get; set; }
         string TeamName { get; }
         int Dpi { get; }
@@ -69,11 +69,10 @@ namespace DXVisualTestFixer.Common {
     public interface IMainViewModel {
         MergerdTestViewType MergerdTestViewType { get; set; }
         TestViewType TestViewType { get; }
-        ITestInfoWrapper CurrentTest { get; }
+        ITestInfoModel CurrentTest { get; }
 
         void RaiseMoveNext();
         void RaiseMovePrev();
-        List<ITestInfoWrapper> GetChangedTests();
     }
     public interface IRepositoryAnalyzerViewModel : INotification { }
     public interface IRepositoryOptimizerViewModel : IConfirmation { }
@@ -117,6 +116,7 @@ namespace DXVisualTestFixer.Common {
         Dictionary<Repository, List<string>> UsedFiles { get; }
         Dictionary<Repository, List<IElapsedTimeInfo>> ElapsedTimes { get; }
         Dictionary<Repository, List<Team>> Teams { get; }
+        List<TestInfo> ChangedTests { get; }
     }
     public interface IConfigSerializer {
         IConfig GetConfig(bool useCache = true);

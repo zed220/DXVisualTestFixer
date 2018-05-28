@@ -44,10 +44,10 @@ namespace DXVisualTestFixer.UI.Controls {
         void SetCommitChange(int rowHandle, bool makeInverse) {
             if(!Grid.IsValidRowHandle(rowHandle) || Grid.IsGroupRowHandle(rowHandle))
                 return;
-            TestInfoWrapper testInfoWrapper = Grid.GetRow(rowHandle) as TestInfoWrapper;
-            if(testInfoWrapper == null || testInfoWrapper.Valid == TestState.Error)
+            TestInfoModel testInfoModel = Grid.GetRow(rowHandle) as TestInfoModel;
+            if(testInfoModel == null || testInfoModel.Valid == TestState.Error)
                 return;
-            testInfoWrapper.CommitChange = makeInverse ? !testInfoWrapper.CommitChange : true;
+            testInfoModel.CommitChange = makeInverse ? !testInfoModel.CommitChange : true;
         }
 
         public void CommitAllInViewport() {

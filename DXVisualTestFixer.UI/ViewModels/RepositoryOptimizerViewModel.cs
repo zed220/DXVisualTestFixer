@@ -1,10 +1,10 @@
 ﻿using DevExpress.Mvvm;
 using DevExpress.Xpf.Core;
 using DXVisualTestFixer.Common;
+using DXVisualTestFixer.UI.Models;
 using Microsoft.Practices.Unity;
 using Prism.Interactivity.InteractionRequest;
 using Prism.Mvvm;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -15,22 +15,6 @@ using System.Windows.Threading;
 using BindableBase = Prism.Mvvm.BindableBase;
 
 namespace DXVisualTestFixer.UI.ViewModels {
-    public class RepositoryFileModel {
-        public RepositoryFileModel(string path, string version) {
-            Path = path;
-            Version = version;
-        }
-
-        public string Path { get; }
-        public string Version { get; }
-        public string DirName { get { return System.IO.Path.GetDirectoryName(Path); } }
-        public string FileName { get { return System.IO.Path.GetFileName(Path); } }
-
-        public override string ToString() {
-            return $"DirName:{DirName}{Environment.NewLine}FileName:{FileName}";
-        }
-    }
-
     public class RepositoryOptimizerViewModel : BindableBase, IRepositoryOptimizerViewModel {
         readonly Dispatcher Dispatcher;
         readonly ITestsService testsService;

@@ -13,11 +13,13 @@ using BindableBase = Prism.Mvvm.BindableBase;
 
 namespace DXVisualTestFixer.UI.ViewModels {
     public class ApplyChangesViewModel : BindableBase, IApplyChangesViewModel {
-        List<ITestInfoWrapper> _ChangedTests;
+        readonly ITestsService testsService;
+
+        List<TestInfo> _ChangedTests;
 
         public IEnumerable<UICommand> DialogCommands { get; private set; }
 
-        public List<ITestInfoWrapper> ChangedTests {
+        public List<TestInfo> ChangedTests {
             get { return _ChangedTests; }
             private set { SetProperty(ref _ChangedTests, value); }
         }
@@ -28,11 +30,12 @@ namespace DXVisualTestFixer.UI.ViewModels {
 
         public IEnumerable<UICommand> Commands { get; }
 
-        public ApplyChangesViewModel(IMainViewModel mainViewModel) {
+        public ApplyChangesViewModel(ITestsService testsService) {
+            this.testsService = testsService;
             Title = "Settings";
             Commands = UICommand.GenerateFromMessageButton(MessageButton.OKCancel, new DialogService(), MessageResult.OK, MessageResult.Cancel);
             Commands.Where(c => c.IsDefault).Single().Command = new DelegateCommand(() => Confirmed = true);
-            ChangedTests = mainViewModel.GetChangedTests();
+            ChangedTests = testsService.ActualState.ChangedTests;
         }
     }
 }

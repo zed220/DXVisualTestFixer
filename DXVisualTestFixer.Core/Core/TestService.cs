@@ -38,12 +38,14 @@ namespace DXVisualTestFixer.Core {
             UsedFiles = new Dictionary<Repository, List<string>>();
             ElapsedTimes = new Dictionary<Repository, List<IElapsedTimeInfo>>();
             Teams = new Dictionary<Repository, List<Team>>();
+            ChangedTests = new List<TestInfo>();
         }
 
         public List<TestInfo> TestList { get; }
         public Dictionary<Repository, List<string>> UsedFiles { get; }
         public Dictionary<Repository, List<IElapsedTimeInfo>> ElapsedTimes { get; }
         public Dictionary<Repository, List<Team>> Teams { get; }
+        public List<TestInfo> ChangedTests { get; }
     }
     public class TestsService : BindableBase, ITestsService {
         readonly ILoadingProgressController loadingProgressController;

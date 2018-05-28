@@ -19,7 +19,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
         }
         public Action MoveNextRow { get { return mainViewModel.RaiseMoveNext; } }
         public Action MovePrevRow { get { return mainViewModel.RaiseMovePrev; } }
-        public ITestInfoWrapper TestInfo { get { return mainViewModel.CurrentTest; } }
+        public ITestInfoModel TestInfo { get { return mainViewModel.CurrentTest; } }
 
         public TestInfoViewModel(IMainViewModel mainViewModel) {
             this.mainViewModel = mainViewModel;

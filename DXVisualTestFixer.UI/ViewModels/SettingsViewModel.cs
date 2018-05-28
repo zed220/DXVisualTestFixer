@@ -4,6 +4,7 @@ using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Dialogs;
 using DevExpress.Xpf.Layout.Core;
 using DXVisualTestFixer.Common;
+using DXVisualTestFixer.UI.Models;
 using Microsoft.Practices.ServiceLocation;
 using Microsoft.Practices.Unity;
 using Prism.Interactivity.InteractionRequest;

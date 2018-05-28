@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using DXVisualTestFixer.Common;
 
-namespace DXVisualTestFixer.UI.ViewModels {
+namespace DXVisualTestFixer.UI.Models {
     public class SolutionModel {
         public SolutionModel(string version, string path) {
             Version = version;

@@ -13,6 +13,7 @@ using System.Windows;
 using System.Windows.Threading;
 using DXVisualTestFixer.Common;
 using DXVisualTestFixer.UI.Native;
+using DXVisualTestFixer.UI.Models;
 
 namespace DXVisualTestFixer.UI.ViewModels {
     public enum ProgramStatus {
@@ -29,8 +30,8 @@ namespace DXVisualTestFixer.UI.ViewModels {
         #region private properties
         IConfig Config;
 
-        List<ITestInfoWrapper> _Tests;
-        ITestInfoWrapper _CurrentTest;
+        List<ITestInfoModel> _Tests;
+        ITestInfoModel _CurrentTest;
         ProgramStatus _Status;
         string _CurrentLogLine;
         TestViewType _TestViewType;
@@ -41,11 +42,11 @@ namespace DXVisualTestFixer.UI.ViewModels {
         List<SolutionModel> _Solutions;
         #endregion
 
-        public List<ITestInfoWrapper> Tests {
+        public List<ITestInfoModel> Tests {
             get { return _Tests; }
             set { SetProperty(ref _Tests, value, OnTestsChanged); }
         }
-        public ITestInfoWrapper CurrentTest {
+        public ITestInfoModel CurrentTest {
             get { return _CurrentTest; }
             set { SetProperty(ref _CurrentTest, value, OnCurrentTestChanged); }
         }
@@ -127,7 +128,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
             LoadingProgressController.Start();
             await TestService.UpdateTests().ConfigureAwait(false);
             var testInfoContainer = TestService.ActualState;
-            var tests = testInfoContainer.TestList.Where(t => t != null).Select(t => new TestInfoWrapper(this, t)).Cast<ITestInfoWrapper>().ToList();
+            var tests = testInfoContainer.TestList.Where(t => t != null).Select(t => new TestInfoModel(this, t)).Cast<ITestInfoModel>().ToList();
             loggingService.SendMessage("");
             await Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
                 Tests = tests;
@@ -231,7 +232,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
             configSerializer.SaveConfig(confirmation.Config);
             UpdateConfig();
         }
-        public List<ITestInfoWrapper> GetChangedTests() {
+        public List<ITestInfoModel> GetChangedTests() {
             return Tests.Where(t => t.CommitChange).ToList();
         }
         public void ApplyChanges() {
@@ -239,8 +240,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
                 DoNotification("Nothing to commit", "Nothing to commit");
                 return;
             }
-            List<ITestInfoWrapper> changedTests = GetChangedTests();
-            if(changedTests.Count == 0) {
+            if(TestService.ActualState.ChangedTests.Count == 0) {
                 DoNotification("Nothing to commit", "Nothing to commit");
                 return;
             }
@@ -248,17 +248,18 @@ namespace DXVisualTestFixer.UI.ViewModels {
             ApplyChangesRequest.Raise(confirmation);
             if(!confirmation.Confirmed)
                 return;
-            changedTests.ForEach(ApplyTest);
+            TestService.ActualState.ChangedTests.ForEach(ApplyTest);
             TestsToCommitCount = 0;
             UpdateContent();
         }
         bool ShowCheckOutMessageBox(string text) {
             return CheckConfirmation(ConfirmationRequest, "Readonly file detected", "Please checkout file in DXVCS \n" + text);
         }
-        void ApplyTest(ITestInfoWrapper testWrapper) {
-            if(TestService.ApplyTest(testWrapper.TestInfo, ShowCheckOutMessageBox))
+        void ApplyTest(TestInfo testInfo) {
+            if(TestService.ApplyTest(testInfo, ShowCheckOutMessageBox))
                 return;
-            DoNotification("Test not fixed", "Test not fixed \n" + testWrapper.ToLog(), MessageBoxImage.Error);
+            var testWrapper = Tests.FirstOrDefault(test => test.TestInfo == testInfo);
+            DoNotification("Test not fixed", "Test not fixed \n" + testWrapper != null ? testWrapper.ToLog() : testInfo.Name, MessageBoxImage.Error);
         }
         bool CheckHasUncommittedChanges() {
             if(TestsToCommitCount == 0)
@@ -294,11 +295,22 @@ namespace DXVisualTestFixer.UI.ViewModels {
         public void ClearCommits() {
             if(TestsToCommitCount == 0)
                 return;
-            foreach(var test in Tests)
+            foreach(var test in Tests) {
                 test.CommitChange = false;
+                TestService.ActualState.ChangedTests.Clear();
+            }
         }
         public void ChangeTestViewType(TestViewType testViewType) {
             TestViewType = testViewType;
+        }
+
+        public void CommitTest(TestInfoModel testInfoModel) {
+            TestsToCommitCount++;
+            TestService.ActualState.ChangedTests.Add(testInfoModel.TestInfo);
+        }
+        public void UndoCommitTest(TestInfoModel testInfoModel) {
+            TestsToCommitCount--;
+            TestService.ActualState.ChangedTests.Remove(testInfoModel.TestInfo);
         }
 
         public event EventHandler MoveNext;

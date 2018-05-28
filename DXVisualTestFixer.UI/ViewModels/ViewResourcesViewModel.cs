@@ -1,6 +1,7 @@
 ﻿using DevExpress.Mvvm;
 using DevExpress.Xpf.Core;
 using DXVisualTestFixer.Common;
+using DXVisualTestFixer.UI.Models;
 using Microsoft.Practices.Unity;
 using Prism.Mvvm;
 using System;
@@ -41,7 +42,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
             set { SetProperty(ref _CurrentFile, value); }
         }
 
-        public ViewResourcesViewModel(IUnityContainer container, ITestsService testsService) {
+        public ViewResourcesViewModel(ITestsService testsService) {
             Commands = UICommand.GenerateFromMessageButton(MessageButton.OK, new DialogService(), MessageResult.OK);
             Dispatcher = Dispatcher.CurrentDispatcher;
             this.testsService = testsService;
