@@ -38,9 +38,6 @@ namespace DXVisualTestFixer.UI.ViewModels {
         int _TestsToCommitCount;
         CriteriaOperator _CurrentFilter;
         ITestsService _TestService;
-        Dictionary<Repository, List<string>> _UsedFiles;
-        Dictionary<Repository, List<Team>> _Teams;
-        Dictionary<Repository, List<IElapsedTimeInfo>> _ElapsedTimes;
         List<SolutionModel> _Solutions;
         #endregion
 

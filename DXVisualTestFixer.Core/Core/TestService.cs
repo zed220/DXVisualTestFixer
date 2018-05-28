@@ -66,7 +66,10 @@ namespace DXVisualTestFixer.Core {
 
         public string CurrentFilter {
             get { return _CurrentFilter; }
-            set { SetProperty(ref _CurrentFilter, value); }
+            set {
+                _CurrentFilter = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentFilter)));
+            }
         }
 
         public async Task UpdateTests() {
