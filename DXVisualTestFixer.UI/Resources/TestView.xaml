@@ -22,7 +22,8 @@
         </Setter>
     </Style>
     <DataTemplate x:Key="DraggableScrollViewerDataTemplate">
-        <controls:DraggableScrollViewer HorizontalScrollBarVisibility="Auto" dx:ScrollBarExtensions.HandlesDefaultMouseScrolling="False" dx:ScrollBarExtensions.AllowMouseScrolling="False">
+        <controls:DraggableScrollViewer HorizontalScrollBarVisibility="Auto" dx:ScrollBarExtensions.HandlesDefaultMouseScrolling="False" dx:ScrollBarExtensions.AllowMouseScrolling="False"
+                                        Cursor="{Binding Path=(controls:DraggableScrollViewer.DraggableMode), RelativeSource={RelativeSource Self}, Converter={dxmvvm:BooleanToObjectConverter TrueValue=Hand, FalseValue={x:Null}}}">
             <dxmvvm:Interaction.Behaviors>
                 <behaviors:ScrollVIewerDragBehavior/>
             </dxmvvm:Interaction.Behaviors>

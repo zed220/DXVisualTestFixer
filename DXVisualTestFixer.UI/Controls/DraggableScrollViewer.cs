@@ -23,11 +23,16 @@ namespace DXVisualTestFixer.UI.Controls {
             obj.SetValue(DraggableModeProperty, value);
         }
 
+        public bool DraggableMode {
+            get { return GetDraggableMode(this); }
+            set { SetDraggableMode(this, value); }
+        }
+
         Point scrollMousePoint = new Point();
         Point offset;
         protected override void OnPreviewMouseLeftButtonDown(MouseButtonEventArgs e) {
             base.OnPreviewMouseLeftButtonDown(e);
-            if(!GetDraggableMode(this))
+            if(!DraggableMode)
                 return;
             scrollMousePoint = e.GetPosition(this);
             offset = new Point(HorizontalOffset, VerticalOffset);
@@ -35,7 +40,7 @@ namespace DXVisualTestFixer.UI.Controls {
         }
         protected override void OnPreviewMouseLeftButtonUp(MouseButtonEventArgs e) {
             base.OnPreviewMouseLeftButtonUp(e);
-            if(!GetDraggableMode(this))
+            if(!DraggableMode)
                 return;
             ReleaseMouseCapture();
         }
