@@ -2,7 +2,6 @@
 using DevExpress.Xpf.Core;
 using DXVisualTestFixer.Common;
 using DXVisualTestFixer.UI.Models;
-using Microsoft.Practices.Unity;
 using Prism.Mvvm;
 using System;
 using System.Collections.Generic;

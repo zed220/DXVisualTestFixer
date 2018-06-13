@@ -1,7 +1,5 @@
 ﻿using DevExpress.Data.Filtering;
 using DXVisualTestFixer.UI.Views;
-using Microsoft.Practices.ServiceLocation;
-using Microsoft.Practices.Unity;
 using Prism.Commands;
 using Prism.Interactivity.InteractionRequest;
 using Prism.Regions;
@@ -14,6 +12,7 @@ using System.Windows.Threading;
 using DXVisualTestFixer.Common;
 using DXVisualTestFixer.UI.Native;
 using DXVisualTestFixer.UI.Models;
+using CommonServiceLocator;
 
 namespace DXVisualTestFixer.UI.ViewModels {
     public enum ProgramStatus {
@@ -26,6 +25,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
         readonly Dispatcher Dispatcher;
         readonly IFarmIntegrator farmIntegrator;
         readonly IConfigSerializer configSerializer;
+        readonly IAppearanceService appearanceService;
 
         #region private properties
         IConfig Config;
@@ -91,12 +91,13 @@ namespace DXVisualTestFixer.UI.ViewModels {
         public InteractionRequest<INotification> RepositoryAnalyzerRequest { get; } = new InteractionRequest<INotification>();
         public InteractionRequest<INotification> ViewResourcesRequest { get; } = new InteractionRequest<INotification>();
 
-        public MainViewModel(IRegionManager regionManager, ILoggingService loggingService, IFarmIntegrator farmIntegrator, IConfigSerializer configSerializer, ILoadingProgressController loadingProgressController, ITestsService testsService) {
+        public MainViewModel(IRegionManager regionManager, ILoggingService loggingService, IFarmIntegrator farmIntegrator, IConfigSerializer configSerializer, ILoadingProgressController loadingProgressController, ITestsService testsService, IAppearanceService appearanceService) {
             Dispatcher = Dispatcher.CurrentDispatcher;
             this.regionManager = regionManager;
             this.loggingService = loggingService;
             this.farmIntegrator = farmIntegrator;
             this.configSerializer = configSerializer;
+            this.appearanceService = appearanceService;
             LoadingProgressController = loadingProgressController;
             TestService = testsService;
             TestService.PropertyChanged += TestService_PropertyChanged;
@@ -155,7 +156,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
                 return;
             Config = config;
             FillSolutions();
-            ServiceLocator.Current.GetInstance<IAppearanceService>()?.SetTheme(Config.ThemeName);
+            appearanceService?.SetTheme(Config.ThemeName);
             loggingService.SendMessage("Config loaded");
             UpdateContent();
         }

@@ -2,7 +2,6 @@
 using DXVisualTestFixer.Core.Configuration;
 using DXVisualTestFixer.Native;
 using HtmlAgilityPack;
-using Microsoft.Practices.ServiceLocation;
 using Prism.Mvvm;
 using System;
 using System.Collections.Generic;

@@ -1,5 +1,4 @@
 ﻿using DXVisualTestFixer.Common;
-using Microsoft.Practices.ServiceLocation;
 using Prism.Commands;
 using Prism.Mvvm;
 using Squirrel;

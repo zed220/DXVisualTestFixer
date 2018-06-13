@@ -1,8 +1,8 @@
-﻿using Microsoft.Practices.ServiceLocation;
-using Prism.Interactivity.InteractionRequest;
+﻿using Prism.Interactivity.InteractionRequest;
 using Prism.Mvvm;
 using System.Windows;
 using DXVisualTestFixer.Common;
+using CommonServiceLocator;
 
 namespace DXVisualTestFixer.UI.ViewModels {
     public class ViewModelBase : BindableBase {

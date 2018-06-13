@@ -1,5 +1,5 @@
-﻿using DXVisualTestFixer.Common;
-using Microsoft.Practices.ServiceLocation;
+﻿using CommonServiceLocator;
+using DXVisualTestFixer.Common;
 using System;
 using System.Collections.Generic;
 using System.IO;

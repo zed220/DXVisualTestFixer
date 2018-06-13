@@ -1,7 +1,6 @@
 ﻿using DevExpress.Mvvm;
 using DevExpress.Xpf.Core;
 using DXVisualTestFixer.Common;
-using Microsoft.Practices.Unity;
 using Prism.Interactivity.InteractionRequest;
 using Prism.Mvvm;
 using System;

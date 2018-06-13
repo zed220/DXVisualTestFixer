@@ -5,8 +5,6 @@ using DevExpress.Xpf.Dialogs;
 using DevExpress.Xpf.Layout.Core;
 using DXVisualTestFixer.Common;
 using DXVisualTestFixer.UI.Models;
-using Microsoft.Practices.ServiceLocation;
-using Microsoft.Practices.Unity;
 using Prism.Interactivity.InteractionRequest;
 using Prism.Mvvm;
 using System;
@@ -19,6 +17,7 @@ using System.Windows.Forms;
 namespace DXVisualTestFixer.UI.ViewModels {
     public class SettingsViewModel : ViewModelBase, ISettingsViewModel {
         readonly IConfigSerializer configSerializer;
+        readonly IFolderBrowserDialog dialog;
 
         IConfig _Config;
         ObservableCollection<RepositoryModel> _Repositories;
@@ -44,8 +43,9 @@ namespace DXVisualTestFixer.UI.ViewModels {
         public string Title { get; set; }
         public object Content { get; set; }
 
-        public SettingsViewModel(IConfigSerializer configSerializer)  {
+        public SettingsViewModel(IConfigSerializer configSerializer, IFolderBrowserDialog dialog)  {
             Title = "Settings";
+            this.dialog = dialog;
             this.configSerializer = configSerializer;
             Config = configSerializer.GetConfig();
             Commands = UICommand.GenerateFromMessageButton(MessageButton.OKCancel, new DialogService(), MessageResult.OK, MessageResult.Cancel);
@@ -85,7 +85,6 @@ namespace DXVisualTestFixer.UI.ViewModels {
         }
 
         public void LoadFromWorkingFolder() {
-            var dialog = ServiceLocator.Current.TryResolve<IFolderBrowserDialog>();
             var result = dialog.ShowDialog();
             if(result != DialogResult.OK)
                 return;
