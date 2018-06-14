@@ -111,6 +111,7 @@ namespace DXVisualTestFixer.Common {
     public interface IFarmTaskInfo {
         Repository Repository { get; }
         string Url { get; }
+        bool Success { get; }
     }
     public interface ITestInfoContainer {
         List<TestInfo> TestList { get; }

@@ -25,5 +25,6 @@ namespace DXVisualTestFixer.Farm {
 
         public Repository Repository { get; private set; }
         public string Url { get; private set; }
+        public bool Success { get; set; }
     }
 }
