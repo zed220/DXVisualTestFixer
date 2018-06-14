@@ -1,5 +1,6 @@
 ﻿using DXVisualTestFixer.Common;
 using Prism.Commands;
+using Prism.Interactivity.InteractionRequest;
 using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
@@ -7,16 +8,21 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 namespace DXVisualTestFixer.UI.ViewModels {
     public class ShellViewModel : BindableBase, IShellViewModel {
         readonly IUpdateService updateService;
+        readonly IDXNotification notification;
 
         bool _HasUpdate;
 
-        public ShellViewModel(IUpdateService updateService) {
+        public InteractionRequest<INotification> NotificationRequest { get; } = new InteractionRequest<INotification>();
+
+        public ShellViewModel(IUpdateService updateService, IDXNotification notification) {
             this.updateService = updateService;
+            this.notification = notification;
             Commands = new List<ICommand>() { new DelegateCommand(Update).ObservesCanExecute(() => HasUpdate) };
             if(updateService.HasUpdate) {
                 HasUpdate = true;
@@ -42,6 +48,11 @@ namespace DXVisualTestFixer.UI.ViewModels {
         public bool HasUpdate {
             get { return _HasUpdate; }
             set { SetProperty(ref _HasUpdate, value); }
+        }
+
+        public void DoNotification(string title, string content, MessageBoxImage image = MessageBoxImage.Information) {
+            ViewModelBase.SetupNotification(notification, title, content, image);
+            NotificationRequest.Raise(notification);
         }
     }
 }

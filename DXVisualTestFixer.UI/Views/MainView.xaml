@@ -72,13 +72,6 @@
                 </prismcommon:PopupDXDialogWindowAction.WindowContent>
             </prismcommon:PopupDXDialogWindowAction>
         </prism:InteractionRequestTrigger>
-        <prism:InteractionRequestTrigger SourceObject="{Binding NotificationRequest}">
-            <prismcommon:PopupDXDialogWindowAction IsModal="True" CenterOverAssociatedObject="True" WindowStyle="{StaticResource NotificationWindowStyle}">
-                <prismcommon:PopupDXDialogWindowAction.WindowContent>
-                    <ContentControl Content="{Binding Converter={converters:NotificationContentConverter}}" ContentTemplate="{StaticResource NotificationWindowTemplate}"/>
-                </prismcommon:PopupDXDialogWindowAction.WindowContent>
-            </prismcommon:PopupDXDialogWindowAction>
-        </prism:InteractionRequestTrigger>
         <prism:InteractionRequestTrigger SourceObject="{Binding SettingsRequest}">
             <prismcommon:PopupDXDialogWindowAction IsModal="True" CenterOverAssociatedObject="True" WindowStyle="{StaticResource DialogWindowStyle}">
                 <prismcommon:PopupDXDialogWindowAction.WindowContent>

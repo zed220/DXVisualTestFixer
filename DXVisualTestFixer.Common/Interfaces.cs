@@ -85,6 +85,7 @@ namespace DXVisualTestFixer.Common {
     }
     public interface IShellViewModel {
         IEnumerable<ICommand> Commands { get; }
+        void DoNotification(string title, string content, MessageBoxImage image = MessageBoxImage.Information);
     }
     public interface ITestInfoViewModel : INavigationAware { }
     public interface IFarmRefreshedEventArgs {

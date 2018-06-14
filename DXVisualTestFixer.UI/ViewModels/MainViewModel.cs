@@ -20,6 +20,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
         Loading,
     }
     public class MainViewModel : ViewModelBase, IMainViewModel {
+        readonly IShellViewModel shellViewModel;
         readonly IRegionManager regionManager;
         readonly ILoggingService loggingService;
         readonly Dispatcher Dispatcher;
@@ -91,8 +92,9 @@ namespace DXVisualTestFixer.UI.ViewModels {
         public InteractionRequest<INotification> RepositoryAnalyzerRequest { get; } = new InteractionRequest<INotification>();
         public InteractionRequest<INotification> ViewResourcesRequest { get; } = new InteractionRequest<INotification>();
 
-        public MainViewModel(IRegionManager regionManager, ILoggingService loggingService, IFarmIntegrator farmIntegrator, IConfigSerializer configSerializer, ILoadingProgressController loadingProgressController, ITestsService testsService, IAppearanceService appearanceService) {
+        public MainViewModel(IShellViewModel shellViewModel, IRegionManager regionManager, ILoggingService loggingService, IFarmIntegrator farmIntegrator, IConfigSerializer configSerializer, ILoadingProgressController loadingProgressController, ITestsService testsService, IAppearanceService appearanceService) {
             Dispatcher = Dispatcher.CurrentDispatcher;
+            this.shellViewModel = shellViewModel;
             this.regionManager = regionManager;
             this.loggingService = loggingService;
             this.farmIntegrator = farmIntegrator;
@@ -164,7 +166,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
         void UpdateContent() {
             if(Config.Repositories == null || Config.Repositories.Length == 0) {
                 Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
-                    DoNotification("Add repositories in settings", "Add repositories in settings");
+                    shellViewModel.DoNotification("Add repositories in settings", "Add repositories in settings");
                     ShowSettings();
                     RefreshTestList();
                 }));
@@ -173,7 +175,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
             foreach(var repoModel in Config.Repositories.Select(rep => new RepositoryModel(rep))) {
                 if(!repoModel.IsValid()) {
                     Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
-                        DoNotification("Invalid Settings", "Modify repositories in settings", MessageBoxImage.Warning);
+                        shellViewModel.DoNotification("Invalid Settings", "Modify repositories in settings", MessageBoxImage.Warning);
                         ShowSettings();
                         RefreshTestList();
                     }));
@@ -238,11 +240,11 @@ namespace DXVisualTestFixer.UI.ViewModels {
         }
         public void ApplyChanges() {
             if(TestsToCommitCount == 0) {
-                DoNotification("Nothing to commit", "Nothing to commit");
+                shellViewModel.DoNotification("Nothing to commit", "Nothing to commit");
                 return;
             }
             if(TestService.ActualState.ChangedTests.Count == 0) {
-                DoNotification("Nothing to commit", "Nothing to commit");
+                shellViewModel.DoNotification("Nothing to commit", "Nothing to commit");
                 return;
             }
             IApplyChangesViewModel confirmation = ServiceLocator.Current.TryResolve<IApplyChangesViewModel>();
@@ -260,7 +262,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
             if(TestService.ApplyTest(testInfo, ShowCheckOutMessageBox))
                 return;
             var testWrapper = Tests.FirstOrDefault(test => test.TestInfo == testInfo);
-            DoNotification("Test not fixed", "Test not fixed \n" + testWrapper != null ? testWrapper.ToLog() : testInfo.Name, MessageBoxImage.Error);
+            shellViewModel.DoNotification("Test not fixed", "Test not fixed \n" + testWrapper != null ? testWrapper.ToLog() : testInfo.Name, MessageBoxImage.Error);
         }
         bool CheckHasUncommittedChanges() {
             if(TestsToCommitCount == 0)
