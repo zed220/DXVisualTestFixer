@@ -1,4 +1,5 @@
-﻿using DXVisualTestFixer.Common;
+﻿using CommonServiceLocator;
+using DXVisualTestFixer.Common;
 using DXVisualTestFixer.Core.Configuration;
 using DXVisualTestFixer.Native;
 using HtmlAgilityPack;

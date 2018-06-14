@@ -25,7 +25,8 @@ namespace DXVisualTestFixer.Farm {
             List<IFarmTaskInfo> result = new List<IFarmTaskInfo>();
             foreach(var repository in repositories) {
                 if(Repository.IsNewVersion(repository.Version)) {
-                    result.Add(new FarmTaskInfo(repository, GetTaskUrl(repository.GetTaskName_New())));
+                    var success = GetTaskStatus(repository.GetTaskName_New()).BuildStatus == FarmIntegrationStatus.Success;
+                    result.Add(new FarmTaskInfo(repository, GetTaskUrl(repository.GetTaskName_New())) { Success = success });
                     continue;
                 }
                 if(GetTaskStatus(repository.GetTaskName()).BuildStatus == FarmIntegrationStatus.Failure) {
