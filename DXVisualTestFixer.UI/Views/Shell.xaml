@@ -10,6 +10,9 @@
         xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
         xmlns:prism="http://prismlibrary.com/"
         xmlns:common="clr-namespace:DXVisualTestFixer.Common;assembly=DXVisualTestFixer.Common"
+        xmlns:prismcommon="clr-namespace:DXVisualTestFixer.UI.PrismCommon"
+        xmlns:converters="clr-namespace:DXVisualTestFixer.UI.Converters"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         dx:ScrollBarExtensions.ScrollBarMode="TouchOverlap"
         UseLayoutRounding="True"
         ShowActivated="True"
@@ -23,6 +26,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/DXVisualTestFixer.UI;component/Resources/LayoutPanel.xaml"/>
+                <ResourceDictionary Source="/DXVisualTestFixer.UI;component/Resources/Services.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <Style TargetType="{x:Type dx:HeaderItemControl}">
                 <Setter Property="Command" Value="{Binding}"/>
@@ -38,5 +42,14 @@
             </Style>
         </ResourceDictionary>
     </dx:ThemedWindow.Resources>
+    <i:Interaction.Triggers>
+        <prism:InteractionRequestTrigger SourceObject="{Binding NotificationRequest}">
+            <prismcommon:PopupDXDialogWindowAction IsModal="True" CenterOverAssociatedObject="True" WindowStyle="{StaticResource NotificationWindowStyle}">
+                <prismcommon:PopupDXDialogWindowAction.WindowContent>
+                    <ContentControl Content="{Binding Converter={converters:NotificationContentConverter}}" ContentTemplate="{StaticResource NotificationWindowTemplate}"/>
+                </prismcommon:PopupDXDialogWindowAction.WindowContent>
+            </prismcommon:PopupDXDialogWindowAction>
+        </prism:InteractionRequestTrigger>
+    </i:Interaction.Triggers>
     <ContentControl prism:RegionManager.RegionName="{x:Static common:Regions.Main}"/>
 </dx:ThemedWindow>

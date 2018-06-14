@@ -85,6 +85,10 @@ namespace DXVisualTestFixer.Core {
             loggingService.SendMessage($"Collecting tests information from farm");
             List<Task<TestInfoCached>> allTasks = new List<Task<TestInfoCached>>();
             foreach(IFarmTaskInfo farmTaskInfo in farmTasks) {
+                if(String.IsNullOrEmpty(farmTaskInfo.Url)) {
+                    ServiceLocator.Current.GetInstance<IShellViewModel>().DoNotification($"Farm Task Not Found For {farmTaskInfo.Repository.Version}", $"Farm Task {farmTaskInfo.Repository.Version} from path {farmTaskInfo.Repository.Path} does not found. Maybe new branch created, but corresponding farm task missing. It well be added later. Otherwise, contact app owner for details.", System.Windows.MessageBoxImage.Information);
+                    continue;
+                }
                 IFarmTaskInfo info = farmTaskInfo;
                 var task = LoadTestsCoreAsync(info);
                 allTasks.Add(task);

@@ -52,7 +52,7 @@ namespace DXVisualTestFixer.Core {
                     return localRes;
                 }));
             }
-            if(failedTestsTasks.Count > 0) {
+            if(failedTestsTasks.Count > 0 || Repository.IsNewVersion(taskInfo.Repository.Version)) {
                 Task.WaitAll(failedTestsTasks.ToArray());
                 failedTestsTasks.ForEach(t => failedTests.AddRange(t.Result));
             }
