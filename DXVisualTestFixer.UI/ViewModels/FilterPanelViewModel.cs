@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace DXVisualTestFixer.UI.ViewModels {
-    public class FilterPanelViewModel : BindableBase, IFilterPanelViewModel {
+    public class FilterPanelViewModel : BindableBase {
         readonly ITestsService testsService;
 
         string _DpiNullText, _TeamsNullText, _VersionsNullText;

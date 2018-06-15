@@ -15,7 +15,7 @@ using System.Windows.Threading;
 using BindableBase = Prism.Mvvm.BindableBase;
 
 namespace DXVisualTestFixer.UI.ViewModels {
-    public class RepositoryOptimizerViewModel : BindableBase, IRepositoryOptimizerViewModel {
+    public class RepositoryOptimizerViewModel : BindableBase, IConfirmation {
         readonly Dispatcher Dispatcher;
         readonly ITestsService testsService;
 

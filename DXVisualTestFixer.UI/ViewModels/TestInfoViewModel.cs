@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace DXVisualTestFixer.UI.ViewModels {
-    public class TestInfoViewModel : BindableBase, ITestInfoViewModel {
+    public class TestInfoViewModel : BindableBase, INavigationAware {
         readonly IMainViewModel mainViewModel;
 
         MergerdTestViewType _MergerdTestViewType;

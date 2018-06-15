@@ -51,8 +51,6 @@ namespace DXVisualTestFixer.Common {
     public interface IVersionService {
         Version Version { get; }
     }
-    public interface IApplyChangesViewModel : IConfirmation { }
-    public interface IFilterPanelViewModel { }
     public interface ITestInfoModel {
         bool CommitChange { get; set; }
         string TeamName { get; }
@@ -66,6 +64,10 @@ namespace DXVisualTestFixer.Common {
         string Name { get; }
         TimeSpan Time { get; }
     }
+    public interface INotificationService {
+        void DoNotification(string title, string content, MessageBoxImage image = MessageBoxImage.Information);
+        event EventHandler<INotificationServiceArgs> Notification;
+    }
     public interface IMainViewModel {
         MergerdTestViewType MergerdTestViewType { get; set; }
         TestViewType TestViewType { get; }
@@ -74,8 +76,6 @@ namespace DXVisualTestFixer.Common {
         void RaiseMoveNext();
         void RaiseMovePrev();
     }
-    public interface IRepositoryAnalyzerViewModel : INotification { }
-    public interface IRepositoryOptimizerViewModel : IConfirmation { }
     public interface IConfig {
         string ThemeName { get; set; }
         Repository[] Repositories { get; set; }
@@ -83,11 +83,6 @@ namespace DXVisualTestFixer.Common {
     public interface ISettingsViewModel : IConfirmation {
         IConfig Config { get; }
     }
-    public interface IShellViewModel {
-        IEnumerable<ICommand> Commands { get; }
-        void DoNotification(string title, string content, MessageBoxImage image = MessageBoxImage.Information);
-    }
-    public interface ITestInfoViewModel : INavigationAware { }
     public interface IFarmRefreshedEventArgs {
         FarmRefreshType RefreshType { get; }
         void Parse();
@@ -105,7 +100,7 @@ namespace DXVisualTestFixer.Common {
         string CurrentFilter { get; set; }
 
         bool ApplyTest(TestInfo test, Func<string, bool> checkoutFunc);
-        Task UpdateTests();
+        Task UpdateTests(INotificationService notificationService);
         string GetResourcePath(Repository repository, string relativePath);
     }
     public interface IFarmTaskInfo {
@@ -125,5 +120,9 @@ namespace DXVisualTestFixer.Common {
         bool IsConfigEquals(IConfig left, IConfig right);
         void SaveConfig(IConfig options);
     }
-    public interface IViewResourcesViewModel : INotification { }
+    public interface INotificationServiceArgs {
+        string Title { get; }
+        string Content { get; }
+        MessageBoxImage Image { get; }
+    }
 }

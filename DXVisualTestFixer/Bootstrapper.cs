@@ -30,6 +30,7 @@ namespace DXVisualTestFixer {
 
         protected override void ConfigureContainer() {
             base.ConfigureContainer();
+            RegisterTypeIfMissing(typeof(INotificationService), typeof(DXVisualTestFixer.UI.Services.NotificationService), true);
             RegisterTypeIfMissing(typeof(IConfigSerializer), typeof(ConfigSerializer), true);
             RegisterTypeIfMissing(typeof(IThemesProvider), typeof(ThemesProvider), true);
             RegisterTypeIfMissing(typeof(ILoadingProgressController), typeof(LoadingProgressController), true);
@@ -37,18 +38,11 @@ namespace DXVisualTestFixer {
             RegisterTypeIfMissing(typeof(ITestsService), typeof(TestsService), true);
             RegisterTypeIfMissing(typeof(IFarmIntegrator), typeof(FarmIntegrator), true);
             RegisterTypeIfMissing(typeof(IVersionService), typeof(VersionService), true);
-            RegisterTypeIfMissing(typeof(IShellViewModel), typeof(ShellViewModel), true);
             RegisterTypeIfMissing(typeof(IMainViewModel), typeof(MainViewModel), true);
             RegisterTypeIfMissing(typeof(ISettingsViewModel), typeof(SettingsViewModel), false);
-            RegisterTypeIfMissing(typeof(ITestInfoViewModel), typeof(TestInfoViewModel), false);
             RegisterTypeIfMissing(typeof(IFolderBrowserDialog), typeof(DXFolderBrowserDialog), false);
             RegisterTypeIfMissing(typeof(IAppearanceService), typeof(AppearanceService), true);
             RegisterTypeIfMissing(typeof(IUpdateService), typeof(SquirrelUpdateService), true);
-            RegisterTypeIfMissing(typeof(IFilterPanelViewModel), typeof(FilterPanelViewModel), false);
-            RegisterTypeIfMissing(typeof(IApplyChangesViewModel), typeof(ApplyChangesViewModel), false);
-            RegisterTypeIfMissing(typeof(IRepositoryOptimizerViewModel), typeof(RepositoryOptimizerViewModel), false);
-            RegisterTypeIfMissing(typeof(IRepositoryAnalyzerViewModel), typeof(RepositoryAnalyzerViewModel), false);
-            RegisterTypeIfMissing(typeof(IViewResourcesViewModel), typeof(ViewResourcesViewModel), false);
             RegisterTypeIfMissing(typeof(IDXNotification), typeof(DXNotification), false);
             RegisterTypeIfMissing(typeof(IDXConfirmation), typeof(DXConfirmation), false);
 
@@ -64,9 +58,8 @@ namespace DXVisualTestFixer {
 
         protected override void ConfigureViewModelLocator() {
             base.ConfigureViewModelLocator();
-            ViewModelLocationProvider.Register(typeof(SplitTestInfoView).FullName, typeof(ITestInfoViewModel));
-            ViewModelLocationProvider.Register(typeof(MergedTestInfoView).FullName, typeof(ITestInfoViewModel));
-            ViewModelLocationProvider.Register(typeof(Shell).FullName, typeof(IShellViewModel));
+            ViewModelLocationProvider.Register(typeof(SplitTestInfoView).FullName, typeof(TestInfoViewModel));
+            ViewModelLocationProvider.Register(typeof(MergedTestInfoView).FullName, typeof(TestInfoViewModel));
 
             Container.Resolve<IRegionManager>().RegisterViewWithRegion(Regions.Main, typeof(MainView));
         }
