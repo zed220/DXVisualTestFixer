@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using BindableBase = Prism.Mvvm.BindableBase;
 
 namespace DXVisualTestFixer.UI.ViewModels {
-    public class ApplyChangesViewModel : BindableBase, IApplyChangesViewModel {
+    public class ApplyChangesViewModel : BindableBase, IConfirmation {
         readonly ITestsService testsService;
 
         List<TestInfo> _ChangedTests;

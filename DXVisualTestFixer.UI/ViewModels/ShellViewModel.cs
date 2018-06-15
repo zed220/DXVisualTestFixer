@@ -12,17 +12,20 @@ using System.Windows;
 using System.Windows.Input;
 
 namespace DXVisualTestFixer.UI.ViewModels {
-    public class ShellViewModel : BindableBase, IShellViewModel {
+    public class ShellViewModel : BindableBase {
         readonly IUpdateService updateService;
         readonly IDXNotification notification;
+        readonly INotificationService notificationService;
 
         bool _HasUpdate;
 
         public InteractionRequest<INotification> NotificationRequest { get; } = new InteractionRequest<INotification>();
 
-        public ShellViewModel(IUpdateService updateService, IDXNotification notification) {
+        public ShellViewModel(IUpdateService updateService, IDXNotification notification, INotificationService notificationService) {
             this.updateService = updateService;
             this.notification = notification;
+            this.notificationService = notificationService;
+            notificationService.Notification += NotificationService_Notification;
             Commands = new List<ICommand>() { new DelegateCommand(Update).ObservesCanExecute(() => HasUpdate) };
             if(updateService.HasUpdate) {
                 HasUpdate = true;
@@ -32,6 +35,11 @@ namespace DXVisualTestFixer.UI.ViewModels {
             }
             updateService.PropertyChanged += UpdateService_PropertyChanged;
             updateService.Start();
+        }
+
+        void NotificationService_Notification(object sender, INotificationServiceArgs e) {
+            ViewModelBase.SetupNotification(notification, e.Title, e.Content, e.Image);
+            NotificationRequest.Raise(notification);
         }
 
         void UpdateService_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
@@ -48,11 +56,6 @@ namespace DXVisualTestFixer.UI.ViewModels {
         public bool HasUpdate {
             get { return _HasUpdate; }
             set { SetProperty(ref _HasUpdate, value); }
-        }
-
-        public void DoNotification(string title, string content, MessageBoxImage image = MessageBoxImage.Information) {
-            ViewModelBase.SetupNotification(notification, title, content, image);
-            NotificationRequest.Raise(notification);
         }
     }
 }

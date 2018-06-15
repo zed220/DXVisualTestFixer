@@ -12,7 +12,7 @@ using BindableBase = Prism.Mvvm.BindableBase;
 
 namespace DXVisualTestFixer.UI.ViewModels {
 
-    public class RepositoryAnalyzerViewModel : BindableBase, IRepositoryAnalyzerViewModel {
+    public class RepositoryAnalyzerViewModel : BindableBase, Prism.Interactivity.InteractionRequest.INotification {
         string _CurrentVersion;
         List<TimingModel> _CurrentTimings;
 

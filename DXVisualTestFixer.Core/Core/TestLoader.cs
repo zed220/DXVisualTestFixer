@@ -52,14 +52,13 @@ namespace DXVisualTestFixer.Core {
                     return localRes;
                 }));
             }
-            if(failedTestsTasks.Count > 0 || Repository.IsNewVersion(taskInfo.Repository.Version)) {
+            if(failedTestsTasks.Count > 0) {
                 Task.WaitAll(failedTestsTasks.ToArray());
                 failedTestsTasks.ForEach(t => failedTests.AddRange(t.Result));
-                if(Repository.IsNewVersion(taskInfo.Repository.Version) && !taskInfo.Success)
-                    failedTests.Add(CorpDirTestInfo.CreateError(taskInfo, "BuildError", "BuildError", "BuildError"));
             }
             else {
-                failedTests.Add(CorpDirTestInfo.CreateError(taskInfo, "BuildError", "BuildError", "BuildError"));
+                if(!Repository.IsNewVersion(taskInfo.Repository.Version) || !taskInfo.Success)
+                    failedTests.Add(CorpDirTestInfo.CreateError(taskInfo, "BuildError", "BuildError", "BuildError"));
             }
             return new CorpDirTestInfoContainer(failedTests, FindUsedFiles(myXmlDocument).ToList(), FindElapsedTimes(myXmlDocument), FindTeams(taskInfo.Repository.Version, myXmlDocument));
         }

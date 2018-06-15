@@ -33,10 +33,6 @@ namespace DXVisualTestFixer {
             ApplicationThemeHelper.UseLegacyDefaultTheme = true;
         }
 
-        //protected override void OnStartup(StartupEventArgs e) {
-        //    base.OnStartup(e);
-        //    new Bootstrapper().Run();
-        //}
         protected override Window CreateShell() {
             return new Shell();
         }
@@ -52,16 +48,9 @@ namespace DXVisualTestFixer {
             containerRegistry.RegisterSingleton<IAppearanceService, AppearanceService>();
             containerRegistry.RegisterSingleton<IUpdateService, SquirrelUpdateService>();
 
-            containerRegistry.Register<IShellViewModel, ShellViewModel>();
             containerRegistry.Register<IMainViewModel, MainViewModel>();
             containerRegistry.Register<ISettingsViewModel, SettingsViewModel>();
-            containerRegistry.Register<ITestInfoViewModel, TestInfoViewModel>();
             containerRegistry.Register<IFolderBrowserDialog, DXFolderBrowserDialog>();
-            containerRegistry.Register<IFilterPanelViewModel, FilterPanelViewModel>();
-            containerRegistry.Register<IApplyChangesViewModel, ApplyChangesViewModel>();
-            containerRegistry.Register<IRepositoryOptimizerViewModel, RepositoryOptimizerViewModel>();
-            containerRegistry.Register<IRepositoryAnalyzerViewModel, RepositoryAnalyzerViewModel>();
-            containerRegistry.Register<IViewResourcesViewModel, ViewResourcesViewModel>();
             containerRegistry.Register<IDXNotification, DXNotification>();
             containerRegistry.Register<IDXConfirmation, DXConfirmation>();
 
@@ -77,9 +66,8 @@ namespace DXVisualTestFixer {
 
         protected override void ConfigureViewModelLocator() {
             base.ConfigureViewModelLocator();
-            ViewModelLocationProvider.Register<MergedTestInfoView, ITestInfoViewModel>();
-            ViewModelLocationProvider.Register<SplitTestInfoView, ITestInfoViewModel>();
-            ViewModelLocationProvider.Register<Shell, IShellViewModel>();
+            ViewModelLocationProvider.Register<MergedTestInfoView, TestInfoViewModel>();
+            ViewModelLocationProvider.Register<SplitTestInfoView, TestInfoViewModel>();
         }
     }
 }

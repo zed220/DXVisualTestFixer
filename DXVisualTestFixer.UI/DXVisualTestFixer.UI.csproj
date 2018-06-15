@@ -172,6 +172,7 @@
     <Compile Include="Native\VersionHelper.cs" />
     <Compile Include="Services\AppearanceService.cs" />
     <Compile Include="Services\Notifications.cs" />
+    <Compile Include="Services\NotificationService.cs" />
     <Compile Include="ViewModels\ApplyChangesViewModel.cs" />
     <Compile Include="ViewModels\FilterPanelViewModel.cs" />
     <Compile Include="Common\LoadingProgressController.cs" />

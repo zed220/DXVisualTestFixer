@@ -14,7 +14,7 @@ using System.Windows.Threading;
 using BindableBase = Prism.Mvvm.BindableBase;
 
 namespace DXVisualTestFixer.UI.ViewModels {
-    public class ViewResourcesViewModel : BindableBase, IViewResourcesViewModel {
+    public class ViewResourcesViewModel : BindableBase, Prism.Interactivity.InteractionRequest.INotification {
         readonly Dispatcher Dispatcher;
         readonly ITestsService testsService;
 

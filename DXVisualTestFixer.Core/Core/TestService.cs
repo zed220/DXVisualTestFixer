@@ -74,19 +74,19 @@ namespace DXVisualTestFixer.Core {
             }
         }
 
-        public async Task UpdateTests() {
+        public async Task UpdateTests(INotificationService notificationService) {
             CurrentFilter = null;
-            ActualState = await LoadTestsAsync(farmIntegrator.GetAllTasks(configSerializer.GetConfig().Repositories));
+            ActualState = await LoadTestsAsync(farmIntegrator.GetAllTasks(configSerializer.GetConfig().Repositories), notificationService);
         }
 
-        async Task<ITestInfoContainer> LoadTestsAsync(List<IFarmTaskInfo> farmTasks) {
+        async Task<ITestInfoContainer> LoadTestsAsync(List<IFarmTaskInfo> farmTasks, INotificationService notificationService) {
             loadingProgressController.Flush();
             loadingProgressController.Enlarge(farmTasks.Count);
             loggingService.SendMessage($"Collecting tests information from farm");
             List<Task<TestInfoCached>> allTasks = new List<Task<TestInfoCached>>();
             foreach(IFarmTaskInfo farmTaskInfo in farmTasks) {
                 if(String.IsNullOrEmpty(farmTaskInfo.Url)) {
-                    ServiceLocator.Current.GetInstance<IShellViewModel>().DoNotification($"Farm Task Not Found For {farmTaskInfo.Repository.Version}", $"Farm Task {farmTaskInfo.Repository.Version} from path {farmTaskInfo.Repository.Path} does not found. Maybe new branch created, but corresponding farm task missing. It well be added later. Otherwise, contact app owner for details.", System.Windows.MessageBoxImage.Information);
+                    notificationService?.DoNotification($"Farm Task Not Found For {farmTaskInfo.Repository.Version}", $"Farm Task {farmTaskInfo.Repository.Version} from path {farmTaskInfo.Repository.Path} does not found. Maybe new branch created, but corresponding farm task missing. It well be added later. Otherwise, contact app owner for details.", System.Windows.MessageBoxImage.Information);
                     continue;
                 }
                 IFarmTaskInfo info = farmTaskInfo;
