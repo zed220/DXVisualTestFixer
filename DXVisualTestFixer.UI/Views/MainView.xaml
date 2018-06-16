@@ -366,8 +366,20 @@
                         </dxg:GridControl>
                     </dxdo:LayoutPanel>
                 </dxdo:LayoutGroup>
-                <dxdo:LayoutPanel x:Name="TestInfo" prism:RegionManager.RegionName="{x:Static common:Regions.TestInfo}" ShowCaption="False" dxb:MergingProperties.ElementMergingBehavior="All"
-                                  Visibility="{Binding CurrentTest, Converter={dx:NullableToVisibilityConverter}}"/>
+                <dxdo:LayoutGroup AllowDrag="False" Orientation="Vertical" AllowSplitters="False" Visibility="{Binding CurrentTest, Converter={dx:NullableToVisibilityConverter}}">
+                    <dxdo:LayoutPanel x:Name="TestInfo" prism:RegionManager.RegionName="{x:Static common:Regions.TestInfo}" ShowCaption="False" 
+                                      dxb:MergingProperties.ElementMergingBehavior="All"/>
+                    <dxdo:LayoutPanel ShowBorder="False" ShowCaption="False" ItemWidth="Auto" ItemHeight="Auto">
+                        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Content="Prev" Click="{DXEvent Handler='@e(view).MovePrevDataRow()'}" Width="100"/>
+                            <Button Content="Next" Click="{DXEvent Handler='@e(view).MoveNextDataRow()'}" Width="100"/>
+                            <Button Content="Valid And Next" Click="{DXEvent Handler='CommitCurrentTest(); @e(view).MoveNextDataRow()'}" IsEnabled="{DXBinding Expr='CurrentTest.Valid == $common:TestState.Valid'}"/>
+                            <Button Content="Commit New Test" Click="{DXEvent Handler='CommitCurrentTest(); @e(view).MoveNextDataRow()'}" IsEnabled="{DXBinding Expr='CurrentTest.Valid == $common:TestState.Invalid'}"
+                                Visibility="{DXBinding Expr='CurrentTest.Valid == $common:TestState.Invalid', Converter={dxmvvm:BooleanToVisibilityConverter}}"/>
+                            <Button Content="Wrong And Next" Click="{DXEvent Handler='UncommitCurrentTest(); @e(view).MoveNextDataRow()'}" IsEnabled="{DXBinding Expr='CurrentTest.Valid != $common:TestState.Fixed'}"/>
+                        </StackPanel>
+                    </dxdo:LayoutPanel>
+                </dxdo:LayoutGroup>
             </dxdo:LayoutGroup>
         </dxdo:DockLayoutManager>
         <dxr:RibbonStatusBarControl Grid.Row="2" IsSizeGripVisible="True">

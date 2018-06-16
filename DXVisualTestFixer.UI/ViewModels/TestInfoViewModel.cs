@@ -9,39 +9,20 @@ using System.Threading.Tasks;
 
 namespace DXVisualTestFixer.UI.ViewModels {
     public class TestInfoViewModel : BindableBase, INavigationAware {
-        readonly IMainViewModel mainViewModel;
-
         MergerdTestViewType _MergerdTestViewType;
+        ITestInfoModel _TestInfo;
 
         public MergerdTestViewType MergerdTestViewType {
             get { return _MergerdTestViewType; }
-            set { SetProperty(ref _MergerdTestViewType, value, OnMergerdTestViewTypeChanged); }
+            set { SetProperty(ref _MergerdTestViewType, value); }
         }
-        public Action MoveNextRow { get { return mainViewModel.RaiseMoveNext; } }
-        public Action MovePrevRow { get { return mainViewModel.RaiseMovePrev; } }
-        public ITestInfoModel TestInfo { get { return mainViewModel.CurrentTest; } }
-
-        public TestInfoViewModel(IMainViewModel mainViewModel) {
-            this.mainViewModel = mainViewModel;
-            MergerdTestViewType = mainViewModel.MergerdTestViewType;
-        }
-
-        void OnMergerdTestViewTypeChanged() {
-            mainViewModel.MergerdTestViewType = MergerdTestViewType;
-        }
-
-        public void Valid() {
-            TestInfo.CommitChange = true;
-            MoveNextRow();
-        }
-        public void Invalid() {
-            TestInfo.CommitChange = false;
-            MoveNextRow();
+        public ITestInfoModel TestInfo {
+            get { return _TestInfo; }
+            set { SetProperty(ref _TestInfo, value); }
         }
 
         public void OnNavigatedTo(NavigationContext navigationContext) {
-            MergerdTestViewType = mainViewModel.MergerdTestViewType;
-            RaisePropertyChanged(nameof(TestInfo));
+            TestInfo = navigationContext.Parameters[MainViewModel.NavigationParameter_Test] as ITestInfoModel;
         }
 
         public bool IsNavigationTarget(NavigationContext navigationContext) {

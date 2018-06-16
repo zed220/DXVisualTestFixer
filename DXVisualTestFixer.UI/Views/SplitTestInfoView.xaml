@@ -114,21 +114,9 @@
                     <TextBlock Margin="4" VerticalAlignment="Center" Text="Test already fixed."/>
                 </StackPanel>
             </dxdo:LayoutPanel>
-            <dxdo:LayoutGroup Orientation="Horizontal" ItemHeight="Auto">
-                <dxdo:LayoutPanel ItemWidth="*" ShowBorder="False" ShowCaption="False">
-                    <dxe:TextEdit Margin="4" VerticalAlignment="Center" EditValue="{DXBinding Expr='TestInfo.ToLog()', Mode=OneWay}" IsReadOnly="True" ShowBorder="False"/>
-                </dxdo:LayoutPanel>
-                <dxdo:LayoutPanel ShowBorder="False" ShowCaption="False" ItemWidth="Auto">
-                    <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Button Content="Prev" Click="{DXEvent Handler='MovePrevRow.Invoke()'}" Width="100"/>
-                        <Button Content="Next" Click="{DXEvent Handler='MoveNextRow.Invoke()'}" Width="100"/>
-                        <Button Content="Valid And Next" Click="{DXEvent Handler='Valid()'}" IsEnabled="{DXBinding Expr='TestInfo.Valid == $common:TestState.Valid'}"/>
-                        <Button Content="Commit New Test" Click="{DXEvent Handler='Valid()'}" IsEnabled="{DXBinding Expr='TestInfo.Valid == $common:TestState.Invalid'}"
-                                Visibility="{DXBinding Expr='TestInfo.Valid == $common:TestState.Invalid', Converter={dxmvvm:BooleanToVisibilityConverter}}"/>
-                        <Button Content="Wrong And Next" Click="{DXEvent Handler='Invalid()'}" IsEnabled="{DXBinding Expr='TestInfo.Valid != $common:TestState.Fixed'}"/>
-                    </StackPanel>
-                </dxdo:LayoutPanel>
-            </dxdo:LayoutGroup>
+            <dxdo:LayoutPanel ItemWidth="*" ShowBorder="False" ShowCaption="False" ItemHeight="Auto">
+                <dxe:TextEdit Margin="4" VerticalAlignment="Center" EditValue="{DXBinding Expr='TestInfo.ToLog()', Mode=OneWay}" IsReadOnly="True" ShowBorder="False"/>
+            </dxdo:LayoutPanel>
         </dxdo:LayoutGroup>
     </Grid>
 </UserControl>

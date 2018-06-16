@@ -20,7 +20,9 @@ namespace DXVisualTestFixer.UI.ViewModels {
         Idle,
         Loading,
     }
-    public class MainViewModel : ViewModelBase, IMainViewModel {
+    public class MainViewModel : ViewModelBase {
+        public static string NavigationParameter_Test = "Test";
+
         readonly INotificationService notificationService;
         readonly IRegionManager regionManager;
         readonly ILoggingService loggingService;
@@ -62,10 +64,6 @@ namespace DXVisualTestFixer.UI.ViewModels {
         public TestViewType TestViewType {
             get { return _TestViewType; }
             set { SetProperty(ref _TestViewType, value, OnTestViewTypeChanged); }
-        }
-        public MergerdTestViewType MergerdTestViewType {
-            get { return _MergerdTestViewType; }
-            set { SetProperty(ref _MergerdTestViewType, value); }
         }
         public int TestsToCommitCount {
             get { return _TestsToCommitCount; }
@@ -197,7 +195,9 @@ namespace DXVisualTestFixer.UI.ViewModels {
         void OnCurrentTestChanged() {
             if(CurrentTest == null)
                 return;
-            regionManager.RequestNavigate(Regions.TestInfo, TestViewType == TestViewType.Split ? nameof(SplitTestInfoView) : nameof(MergedTestInfoView));
+            NavigationParameters p = new NavigationParameters();
+            p.Add(NavigationParameter_Test, CurrentTest);
+            regionManager.RequestNavigate(Regions.TestInfo, TestViewType == TestViewType.Split ? nameof(SplitTestInfoView) : nameof(MergedTestInfoView), p);
         }
         void OnTestsChanged() {
             if(Tests == null) {
@@ -240,6 +240,17 @@ namespace DXVisualTestFixer.UI.ViewModels {
             configSerializer.SaveConfig(confirmation.Config);
             UpdateConfig();
         }
+        public void CommitCurrentTest() {
+            if(CurrentTest == null || CurrentTest.Valid != TestState.Valid)
+                return;
+            CurrentTest.CommitChange = true;
+        }
+        public void UncommitCurrentTest() {
+            if(CurrentTest == null)
+                return;
+            CurrentTest.CommitChange = false;
+        }
+
         public List<ITestInfoModel> GetChangedTests() {
             return Tests.Where(t => t.CommitChange).ToList();
         }
@@ -273,7 +284,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
             if(TestsToCommitCount == 0)
                 return false;
             return !CheckConfirmation(ConfirmationRequest, "Uncommitted tests", "You has uncommitted tests! Do you want to refresh tests list and flush all uncommitted tests?");
-        }
+         }
         bool CheckAlarmAdmin() {
             return !CheckConfirmation(ConfirmationRequest, "Warning", "This tool is powerful and dangerous. Unbridled using may cause repository errors! Are you really sure?");
         }
@@ -284,20 +295,6 @@ namespace DXVisualTestFixer.UI.ViewModels {
             Tests = null;
             Status = ProgramStatus.Loading;
             farmIntegrator.Start(FarmRefreshed);
-        }
-
-        public void RaiseMoveNext() {
-            MoveNext?.Invoke(this, EventArgs.Empty);
-        }
-        public void RaiseMovePrev() {
-            MovePrev?.Invoke(this, EventArgs.Empty);
-        }
-
-        void MoveNextCore() {
-            MoveNext?.Invoke(this, EventArgs.Empty);
-        }
-        void MovePrevCore() {
-            MovePrev?.Invoke(this, EventArgs.Empty);
         }
 
         public void ClearCommits() {
@@ -320,8 +317,5 @@ namespace DXVisualTestFixer.UI.ViewModels {
             TestsToCommitCount--;
             TestService.ActualState.ChangedTests.Remove(testInfoModel.TestInfo);
         }
-
-        public event EventHandler MoveNext;
-        public event EventHandler MovePrev;
     }
 }

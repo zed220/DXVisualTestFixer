@@ -38,7 +38,6 @@ namespace DXVisualTestFixer {
             RegisterTypeIfMissing(typeof(ITestsService), typeof(TestsService), true);
             RegisterTypeIfMissing(typeof(IFarmIntegrator), typeof(FarmIntegrator), true);
             RegisterTypeIfMissing(typeof(IVersionService), typeof(VersionService), true);
-            RegisterTypeIfMissing(typeof(IMainViewModel), typeof(MainViewModel), true);
             RegisterTypeIfMissing(typeof(ISettingsViewModel), typeof(SettingsViewModel), false);
             RegisterTypeIfMissing(typeof(IFolderBrowserDialog), typeof(DXFolderBrowserDialog), false);
             RegisterTypeIfMissing(typeof(IAppearanceService), typeof(AppearanceService), true);
