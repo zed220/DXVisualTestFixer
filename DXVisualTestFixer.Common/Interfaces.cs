@@ -68,14 +68,6 @@ namespace DXVisualTestFixer.Common {
         void DoNotification(string title, string content, MessageBoxImage image = MessageBoxImage.Information);
         event EventHandler<INotificationServiceArgs> Notification;
     }
-    public interface IMainViewModel {
-        MergerdTestViewType MergerdTestViewType { get; set; }
-        TestViewType TestViewType { get; }
-        ITestInfoModel CurrentTest { get; }
-
-        void RaiseMoveNext();
-        void RaiseMovePrev();
-    }
     public interface IConfig {
         string ThemeName { get; set; }
         Repository[] Repositories { get; set; }

@@ -48,7 +48,7 @@ namespace DXVisualTestFixer {
             containerRegistry.RegisterSingleton<IAppearanceService, AppearanceService>();
             containerRegistry.RegisterSingleton<IUpdateService, SquirrelUpdateService>();
 
-            containerRegistry.Register<IMainViewModel, MainViewModel>();
+            containerRegistry.Register<INotificationService, UI.Services.NotificationService>();
             containerRegistry.Register<ISettingsViewModel, SettingsViewModel>();
             containerRegistry.Register<IFolderBrowserDialog, DXFolderBrowserDialog>();
             containerRegistry.Register<IDXNotification, DXNotification>();
@@ -68,6 +68,7 @@ namespace DXVisualTestFixer {
             base.ConfigureViewModelLocator();
             ViewModelLocationProvider.Register<MergedTestInfoView, TestInfoViewModel>();
             ViewModelLocationProvider.Register<SplitTestInfoView, TestInfoViewModel>();
+            ViewModelLocationProvider.Register<Shell, ShellViewModel>();
         }
     }
 }
