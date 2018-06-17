@@ -74,6 +74,8 @@ namespace DXVisualTestFixer.UI.ViewModels {
         ObservableCollection<RepositoryFileModel> GetActualFiles(List<string> usedVersions, HashSet<string> usedFiles, Dictionary<Repository, List<Team>> teams) {
             ObservableCollection<RepositoryFileModel> result = new ObservableCollection<RepositoryFileModel>();
             foreach(var repository in teams.Keys) {
+                if(!Repository.IsNewVersion(repository.Version))
+                    continue;
                 foreach(Team team in teams[repository]) {
                     if(!usedVersions.Contains(team.Version))
                         continue;

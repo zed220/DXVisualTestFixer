@@ -60,6 +60,8 @@ namespace DXVisualTestFixer.UI.ViewModels {
         List<RepositoryFileModel> GetActualFiles(List<string> usedVersions, HashSet<string> usedFiles, Dictionary<Repository, List<Team>> teams) {
             List<RepositoryFileModel> result = new List<RepositoryFileModel>();
             foreach(var repository in teams.Keys) {
+                if(!Repository.IsNewVersion(repository.Version))
+                    continue;
                 foreach(Team team in teams[repository]) {
                     if(!usedVersions.Contains(team.Version))
                         continue;
