@@ -23,6 +23,10 @@ namespace DXVisualTestFixer.UI.Common {
             get { return GetProperty(() => IsEnabled); }
             private set { SetProperty(() => IsEnabled, value); }
         }
+        public ProgramStatus Status {
+            get { return GetProperty(() => Status); }
+            set { SetProperty(() => Status, value); }
+        }
 
         public void Start() {
             Value = 0;

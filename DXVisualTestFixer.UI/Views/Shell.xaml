@@ -74,7 +74,7 @@
         <ContentControl Grid.Row="1" prism:RegionManager.RegionName="{x:Static common:Regions.Main}" dxb:MergingProperties.ElementMergingBehavior="All"/>
         <dxr:RibbonStatusBarControl Grid.Row="2" IsSizeGripVisible="True">
             <dxr:RibbonStatusBarControl.LeftItems>
-                <dxb:BarStaticItem Content="{Binding Status}" AutoSizeMode="Content"/>
+                <dxb:BarStaticItem Content="{Binding LoadingProgressController.Status}" AutoSizeMode="Content"/>
                 <dxb:BarEditItem EditWidth="200" EditValue="{Binding Path=LoadingProgressController.Value, Mode=OneWay}" IsVisible="{Binding Path=LoadingProgressController.IsEnabled}">
                     <dxb:BarEditItem.EditSettings>
                         <dxe:ProgressBarEditSettings IsEnabled="False" Maximum="{Binding Path=LoadingProgressController.Maximum}"/>

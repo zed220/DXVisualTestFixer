@@ -35,7 +35,7 @@
     <dxdo:LayoutGroup Orientation="Horizontal" ShowCaption="False">
         <dxdo:LayoutPanel Caption="Unused Files" ShowCloseButton="False" ShowPinButton="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False">
             <dxg:GridControl ItemsSource="{Binding UnusedFiles}" AutoExpandAllGroups="True" ShowBorder="False"
-                             ShowLoadingPanel="{DXBinding Expr='Status != $viewModels:ProgramStatus.Idle'}" SelectionMode="Row">
+                             ShowLoadingPanel="{DXBinding Expr='Status != $common:ProgramStatus.Idle'}" SelectionMode="Row">
                 <dxg:GridColumn FieldName="Version" GroupIndex="0"/>
                 <dxg:GridColumn FieldName="DirName" GroupIndex="1"/>
                 <dxg:GridColumn FieldName="FileName" Width="*"/>
@@ -53,7 +53,7 @@
         </dxdo:LayoutPanel>
         <dxdo:LayoutPanel Caption="Files To Remove (Drag-Drop files here)" ShowCloseButton="False" ShowPinButton="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False">
             <dxg:GridControl ItemsSource="{Binding RemovedFiles}" AutoExpandAllGroups="True"  ShowBorder="False"
-                             ShowLoadingPanel="{DXBinding Expr='Status != $viewModels:ProgramStatus.Idle'}" SelectionMode="Row">
+                             ShowLoadingPanel="{DXBinding Expr='Status != $common:ProgramStatus.Idle'}" SelectionMode="Row">
                 <dxg:GridColumn FieldName="Version" GroupIndex="0"/>
                 <dxg:GridColumn FieldName="DirName" GroupIndex="1"/>
                 <dxg:GridColumn FieldName="FileName" Width="*"/>
