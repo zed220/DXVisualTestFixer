@@ -60,7 +60,7 @@ namespace DXVisualTestFixer {
             ViewModelLocationProvider.Register(typeof(SplitTestInfoView).FullName, typeof(TestInfoViewModel));
             ViewModelLocationProvider.Register(typeof(MergedTestInfoView).FullName, typeof(TestInfoViewModel));
 
-            Container.Resolve<IRegionManager>().RegisterViewWithRegion(Regions.Main, typeof(MainView));
+            //Container.Resolve<IRegionManager>().RegisterViewWithRegion(Regions.Main, typeof(MainView));
         }
     }
 }

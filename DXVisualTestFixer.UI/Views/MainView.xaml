@@ -382,16 +382,5 @@
                 </dxdo:LayoutGroup>
             </dxdo:LayoutGroup>
         </dxdo:DockLayoutManager>
-        <dxr:RibbonStatusBarControl Grid.Row="2" IsSizeGripVisible="True">
-            <dxr:RibbonStatusBarControl.LeftItems>
-                <dxb:BarStaticItem Content="{Binding Status}" AutoSizeMode="Content"/>
-                <dxb:BarEditItem EditWidth="200" EditValue="{Binding Path=LoadingProgressController.Value, Mode=OneWay}" IsVisible="{Binding Path=LoadingProgressController.IsEnabled}">
-                    <dxb:BarEditItem.EditSettings>
-                        <dxe:ProgressBarEditSettings IsEnabled="False" Maximum="{Binding Path=LoadingProgressController.Maximum}"/>
-                    </dxb:BarEditItem.EditSettings>
-                </dxb:BarEditItem>
-                <dxb:BarStaticItem Content="{Binding CurrentLogLine}" AutoSizeMode="None" IsVisible="{DXBinding Expr='@s.Content ne $string.Empty'}"/>
-            </dxr:RibbonStatusBarControl.LeftItems>
-        </dxr:RibbonStatusBarControl>
     </Grid>
 </UserControl>
