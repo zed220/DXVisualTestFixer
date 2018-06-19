@@ -36,9 +36,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
         List<ITestInfoModel> _Tests;
         ITestInfoModel _CurrentTest;
         ProgramStatus _Status;
-        string _CurrentLogLine;
         TestViewType _TestViewType;
-        MergerdTestViewType _MergerdTestViewType;
         int _TestsToCommitCount;
         CriteriaOperator _CurrentFilter;
         ITestsService _TestService;
@@ -56,10 +54,6 @@ namespace DXVisualTestFixer.UI.ViewModels {
         public ProgramStatus Status {
             get { return _Status; }
             set { SetProperty(ref _Status, value); }
-        }
-        public string CurrentLogLine {
-            get { return _CurrentLogLine; }
-            set { SetProperty(ref _CurrentLogLine, value); }
         }
         public TestViewType TestViewType {
             get { return _TestViewType; }
@@ -108,17 +102,12 @@ namespace DXVisualTestFixer.UI.ViewModels {
             LoadingProgressController = loadingProgressController;
             TestService = testsService;
             TestService.PropertyChanged += TestService_PropertyChanged;
-            loggingService.MessageReserved += OnLoggingMessageReserved;
             UpdateConfig();
         }
 
         void TestService_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
             if(e.PropertyName == nameof(ITestsService.CurrentFilter))
                 CurrentFilter = CriteriaOperator.Parse(TestService.CurrentFilter);
-        }
-
-        void OnLoggingMessageReserved(object sender, IMessageEventArgs args) {
-            CurrentLogLine = args.Message;
         }
 
         async void FarmRefreshed(IFarmRefreshedEventArgs args) {

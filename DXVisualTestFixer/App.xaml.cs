@@ -61,7 +61,7 @@ namespace DXVisualTestFixer {
         protected override void ConfigureRegionAdapterMappings(RegionAdapterMappings regionAdapterMappings) {
             base.ConfigureRegionAdapterMappings(regionAdapterMappings);
             regionAdapterMappings.RegisterMapping(typeof(LayoutPanel), Container.Resolve<LayoutPanelRegionAdapter>());
-            Container.Resolve<IRegionManager>().RegisterViewWithRegion(Regions.Main, typeof(MainView));
+            //Container.Resolve<IRegionManager>().RegisterViewWithRegion(Regions.Main, typeof(MainView));
         }
 
         protected override void ConfigureViewModelLocator() {

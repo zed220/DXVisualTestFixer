@@ -13,7 +13,9 @@
         xmlns:prismcommon="clr-namespace:DXVisualTestFixer.UI.PrismCommon"
         xmlns:converters="clr-namespace:DXVisualTestFixer.UI.Converters"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-        dx:ScrollBarExtensions.ScrollBarMode="TouchOverlap"
+        xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+                 xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+                 dx:ScrollBarExtensions.ScrollBarMode="TouchOverlap"
         UseLayoutRounding="True"
         ShowActivated="True"
         mc:Ignorable="d"
@@ -51,5 +53,35 @@
             </prismcommon:PopupDXDialogWindowAction>
         </prism:InteractionRequestTrigger>
     </i:Interaction.Triggers>
-    <ContentControl prism:RegionManager.RegionName="{x:Static common:Regions.Main}"/>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <dxr:RibbonControl RibbonStyle="Office2010" ToolbarShowMode="ShowAbove" AllowCustomization="False" MinimizationButtonVisibility="Collapsed" RibbonHeaderVisibility="Visible" 
+                           ToolbarShowCustomizationButton="False" ShowApplicationButton="True" AsyncMergingEnabled="True">
+            <dxr:RibbonControl.ApplicationMenu>
+                <dxr:BackstageViewControl ItemsSource="{Binding Views}">
+                    <dxr:BackstageViewControl.ItemTemplate>
+                        <DataTemplate>
+                            <dxr:BackstageTabItem Content="{Binding DisplayText}" IsEnabled="{Binding IsEnabled}"/>
+                        </DataTemplate>
+                    </dxr:BackstageViewControl.ItemTemplate>
+                </dxr:BackstageViewControl>
+            </dxr:RibbonControl.ApplicationMenu>
+        </dxr:RibbonControl>
+        <ContentControl Grid.Row="1" prism:RegionManager.RegionName="{x:Static common:Regions.Main}" dxb:MergingProperties.ElementMergingBehavior="All"/>
+        <dxr:RibbonStatusBarControl Grid.Row="2" IsSizeGripVisible="True">
+            <dxr:RibbonStatusBarControl.LeftItems>
+                <dxb:BarStaticItem Content="{Binding Status}" AutoSizeMode="Content"/>
+                <dxb:BarEditItem EditWidth="200" EditValue="{Binding Path=LoadingProgressController.Value, Mode=OneWay}" IsVisible="{Binding Path=LoadingProgressController.IsEnabled}">
+                    <dxb:BarEditItem.EditSettings>
+                        <dxe:ProgressBarEditSettings IsEnabled="False" Maximum="{Binding Path=LoadingProgressController.Maximum}"/>
+                    </dxb:BarEditItem.EditSettings>
+                </dxb:BarEditItem>
+                <dxb:BarStaticItem Content="{Binding CurrentLogLine}" AutoSizeMode="None" IsVisible="{DXBinding Expr='@s.Content ne $string.Empty'}"/>
+            </dxr:RibbonStatusBarControl.LeftItems>
+        </dxr:RibbonStatusBarControl>
+    </Grid>
 </dx:ThemedWindow>
