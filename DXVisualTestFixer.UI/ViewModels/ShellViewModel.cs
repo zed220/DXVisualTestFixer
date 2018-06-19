@@ -1,5 +1,6 @@
 ﻿using DevExpress.Utils;
 using DXVisualTestFixer.Common;
+using DXVisualTestFixer.UI.Models;
 using DXVisualTestFixer.UI.Views;
 using Prism.Commands;
 using Prism.Interactivity.InteractionRequest;
@@ -22,10 +23,17 @@ namespace DXVisualTestFixer.UI.ViewModels {
         readonly INotificationService notificationService;
         readonly IRegionManager regionManager;
         readonly ILoggingService loggingService;
+        readonly IAppearanceService appearanceService;
+        readonly IConfigSerializer configSerializer;
+        readonly ViewItem settingsView;
+        readonly Dispatcher dispatcher;
+
+        IConfig Config;
 
         bool _HasUpdate;
         ViewItem _CurrentView;
         string _CurrentLogLine;
+        ProgramStatus _Status;
 
         public InteractionRequest<INotification> NotificationRequest { get; } = new InteractionRequest<INotification>();
 
@@ -34,34 +42,43 @@ namespace DXVisualTestFixer.UI.ViewModels {
                               INotificationService notificationService, 
                               IRegionManager regionManager, 
                               ILoadingProgressController loadingProgressController,
-                              ILoggingService loggingService) {
+                              ILoggingService loggingService,
+                              IConfigSerializer configSerializer, 
+                              IAppearanceService appearanceService) {
             this.updateService = updateService;
             this.notification = notification;
             this.notificationService = notificationService;
             this.regionManager = regionManager;
             LoadingProgressController = loadingProgressController;
             this.loggingService = loggingService;
-            notificationService.Notification += NotificationService_Notification;
+            this.configSerializer = configSerializer;
+            this.appearanceService = appearanceService;
+            this.dispatcher = Dispatcher.CurrentDispatcher;
             Commands = new List<ICommand>() { new DelegateCommand(Update).ObservesCanExecute(() => HasUpdate) };
+            settingsView = new ViewItem("Settings", () => new SettingsView());
             Views = new List<ViewItem>() {
                 new ViewItem("Failed Tests", () => new MainView()),
                 new ViewItem("Unused Files", () => new RepositoryOptimizerView()),
                 new ViewItem("Analyse Timings", () => new RepositoryAnalyzerView()),
-                new ViewItem("Resource Viewer", () => new ViewResourcesView())
+                new ViewItem("Resource Viewer", () => new ViewResourcesView()),
+                settingsView,
             };
-            CurrentView = Views[0];
             InitializeUpdateService();
             InitializeLoggingService();
+            InitializeNotificationService();
+            InitializeConfig();
+            UpdateContent();
         }
 
+        void InitializeNotificationService() {
+            notificationService.Notification += NotificationService_Notification;
+        }
         void InitializeLoggingService() {
             loggingService.MessageReserved += OnLoggingMessageReserved;
         }
-
         void OnLoggingMessageReserved(object sender, IMessageEventArgs args) {
             CurrentLogLine = args.Message;
         }
-
         void InitializeUpdateService() {
             if(updateService.HasUpdate) {
                 HasUpdate = true;
@@ -72,12 +89,12 @@ namespace DXVisualTestFixer.UI.ViewModels {
             updateService.PropertyChanged += UpdateService_PropertyChanged;
             updateService.Start();
         }
-
         void NotificationService_Notification(object sender, INotificationServiceArgs e) {
             ViewModelBase.SetupNotification(notification, e.Title, e.Content, e.Image);
-            NotificationRequest.Raise(notification);
+            dispatcher.Invoke(() => {
+                NotificationRequest.Raise(notification);
+            });
         }
-
         void UpdateService_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
             if(e.PropertyName == nameof(IUpdateService.HasUpdate))
                 HasUpdate = updateService.HasUpdate;
@@ -85,6 +102,42 @@ namespace DXVisualTestFixer.UI.ViewModels {
 
         void Update() {
             updateService.Update();
+        }
+
+        void InitializeConfig() {
+            loggingService.SendMessage("Checking config");
+            var config = configSerializer.GetConfig(false);
+            if(Config != null && configSerializer.IsConfigEquals(config, Config))
+                return;
+            Config = config;
+            configSerializer.ConfigChanged += ConfigSerializer_ConfigChanged;
+            appearanceService?.SetTheme(Config.ThemeName);
+            loggingService.SendMessage("Config loaded");
+        }
+
+        void ConfigSerializer_ConfigChanged(object sender, EventArgs e) {
+            UpdateContent();
+        }
+
+        void UpdateContent() {
+            if(!IsConfigValid()) {
+                CurrentView = settingsView;
+                return;
+            }
+            CurrentView = Views[0];
+        }
+        bool IsConfigValid() {
+            if(Config.Repositories == null || Config.Repositories.Length == 0) {
+                notificationService.DoNotification("Add repositories in settings", "Add repositories in settings");
+                return false;
+            }
+            foreach(var repoModel in Config.Repositories.Select(rep => new RepositoryModel(rep))) {
+                if(!repoModel.IsValid()) {
+                    notificationService.DoNotification("Invalid Settings", "Modify repositories in settings", MessageBoxImage.Warning);
+                    return false;
+                }
+            }
+            return true;
         }
 
         public IEnumerable<ICommand> Commands { get; }
@@ -103,11 +156,16 @@ namespace DXVisualTestFixer.UI.ViewModels {
             get { return _CurrentLogLine; }
             set { SetProperty(ref _CurrentLogLine, value); }
         }
+        public ProgramStatus Status {
+            get { return _Status; }
+            set { SetProperty(ref _Status, value); }
+        }
 
         void OnCurrentViewChanged() {
-            Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() => {
+            dispatcher.BeginInvoke(new Action(() => {
                 regionManager.Regions[Regions.Main].RemoveAll();
-                regionManager.AddToRegion(Regions.Main, CurrentView.GetView());
+                if(CurrentView != null)
+                    regionManager.AddToRegion(Regions.Main, CurrentView.GetView());
             }));
         }
     }

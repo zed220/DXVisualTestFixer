@@ -145,7 +145,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <dxr:RibbonControl RibbonStyle="Office2010" ToolbarShowMode="ShowAbove" AllowCustomization="False" MinimizationButtonVisibility="Collapsed" RibbonHeaderVisibility="Visible" 
-                           IsEnabled="{DXBinding Expr='Status == $viewModels:ProgramStatus.Idle'}" ToolbarShowCustomizationButton="False" ShowApplicationButton="False"
+                           IsEnabled="{DXBinding Expr='Status == $common:ProgramStatus.Idle'}" ToolbarShowCustomizationButton="False" ShowApplicationButton="False"
                            AsyncMergingEnabled="True">
             <dxr:RibbonDefaultPageCategory>
                 <dxr:RibbonPage Caption="Main">
@@ -206,7 +206,7 @@
                             </dxb:BarSubItem.ItemTemplate>
                         </dxb:BarSubItem>
                     </dxr:RibbonPageGroup>
-                    <dxr:RibbonPageGroup Caption="Settings">
+                    <!--<dxr:RibbonPageGroup Caption="Settings">
                         <dxb:BarButtonItem
                             RibbonStyle="Large" 
                             GlyphSize="Large" 
@@ -214,7 +214,7 @@
                             Command="{DXCommand Execute='ShowSettings()'}"
                             LargeGlyph="{dx:DXImageOffice2013 Image=Properties_32x32.png}">
                         </dxb:BarButtonItem>
-                    </dxr:RibbonPageGroup>
+                    </dxr:RibbonPageGroup>-->
                     <dxr:RibbonPageGroup Caption="View Type">
                         <dxb:BarItemSelector  SelectedItem="{Binding TestViewType, Mode=TwoWay}">
                             <dxb:BarItemSelector.ItemLinksSource>
@@ -282,7 +282,7 @@
                                       prism:RegionManager.RegionName="{x:Static common:Regions.FilterPanel}"/>
                     <dxdo:LayoutPanel ShowCaption="False" ItemHeight="*">
                         <dxg:GridControl ItemsSource="{Binding Tests}" CurrentItem="{Binding CurrentTest, Mode=TwoWay}" AutoExpandAllGroups="True" ShowBorder="False" 
-                                         ShowLoadingPanel="{DXBinding Expr='Status != $viewModels:ProgramStatus.Idle'}" FixedFilter="{Binding CurrentFilter}">
+                                         ShowLoadingPanel="{DXBinding Expr='Status != $common:ProgramStatus.Idle'}" FixedFilter="{Binding CurrentFilter}">
                             <dxg:GridColumn FieldName="Version" GroupIndex="0" MergeWithPreviousGroup="False" Header="Version"/>
                             <dxg:GridColumn FieldName="TeamName" GroupIndex="1" MergeWithPreviousGroup="True" Header="Team"/>
                             <dxg:GridColumn FieldName="TestInfo.Name" GroupIndex="2" MergeWithPreviousGroup="False" Header="Name"/>

@@ -39,6 +39,7 @@ namespace DXVisualTestFixer.Common {
         bool IsEnabled { get; }
         int Maximum { get; }
         int Value { get; }
+        ProgramStatus Status { get; set; }
     }
     public interface ILoggingService {
         void SendMessage(string text);
@@ -111,6 +112,7 @@ namespace DXVisualTestFixer.Common {
         IConfig GetConfig(bool useCache = true);
         bool IsConfigEquals(IConfig left, IConfig right);
         void SaveConfig(IConfig options);
+        event EventHandler ConfigChanged;
     }
     public interface INotificationServiceArgs {
         string Title { get; }

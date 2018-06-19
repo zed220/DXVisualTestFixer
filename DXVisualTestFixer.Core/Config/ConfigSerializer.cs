@@ -41,6 +41,7 @@ namespace DXVisualTestFixer.Core.Configuration {
             cached = null;
             try {
                 Serializer.Serialize(SettingsFilePath, options);
+                ConfigChanged?.Invoke(this, EventArgs.Empty);
             }
             catch {
             }
@@ -56,5 +57,7 @@ namespace DXVisualTestFixer.Core.Configuration {
                     return reader.ReadToEnd();
             }
         }
+
+        public event EventHandler ConfigChanged;
     }
 }

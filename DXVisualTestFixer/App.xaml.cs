@@ -47,8 +47,8 @@ namespace DXVisualTestFixer {
             containerRegistry.RegisterSingleton<IVersionService, VersionService>();
             containerRegistry.RegisterSingleton<IAppearanceService, AppearanceService>();
             containerRegistry.RegisterSingleton<IUpdateService, SquirrelUpdateService>();
+            containerRegistry.RegisterSingleton<INotificationService, UI.Services.NotificationService>();
 
-            containerRegistry.Register<INotificationService, UI.Services.NotificationService>();
             containerRegistry.Register<ISettingsViewModel, SettingsViewModel>();
             containerRegistry.Register<IFolderBrowserDialog, DXFolderBrowserDialog>();
             containerRegistry.Register<IDXNotification, DXNotification>();

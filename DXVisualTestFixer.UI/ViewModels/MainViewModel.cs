@@ -15,10 +15,6 @@ using DXVisualTestFixer.UI.Models;
 using CommonServiceLocator;
 
 namespace DXVisualTestFixer.UI.ViewModels {
-    public enum ProgramStatus {
-        Idle,
-        Loading,
-    }
     public class MainViewModel : ViewModelBase {
         public static string NavigationParameter_Test = "Test";
 
@@ -27,17 +23,13 @@ namespace DXVisualTestFixer.UI.ViewModels {
         readonly ILoggingService loggingService;
         readonly Dispatcher Dispatcher;
         readonly IFarmIntegrator farmIntegrator;
-        readonly IConfigSerializer configSerializer;
-        readonly IAppearanceService appearanceService;
 
         #region private properties
         IConfig Config;
 
         List<ITestInfoModel> _Tests;
         ITestInfoModel _CurrentTest;
-        ProgramStatus _Status;
         TestViewType _TestViewType;
-        int _TestsToCommitCount;
         CriteriaOperator _CurrentFilter;
         ITestsService _TestService;
         List<SolutionModel> _Solutions;
@@ -51,17 +43,9 @@ namespace DXVisualTestFixer.UI.ViewModels {
             get { return _CurrentTest; }
             set { SetProperty(ref _CurrentTest, value, OnCurrentTestChanged); }
         }
-        public ProgramStatus Status {
-            get { return _Status; }
-            set { SetProperty(ref _Status, value); }
-        }
         public TestViewType TestViewType {
             get { return _TestViewType; }
             set { SetProperty(ref _TestViewType, value, OnTestViewTypeChanged); }
-        }
-        public int TestsToCommitCount {
-            get { return _TestsToCommitCount; }
-            set { SetProperty(ref _TestsToCommitCount, value); }
         }
         public CriteriaOperator CurrentFilter {
             get { return _CurrentFilter; }
@@ -90,19 +74,18 @@ namespace DXVisualTestFixer.UI.ViewModels {
                              IFarmIntegrator farmIntegrator, 
                              IConfigSerializer configSerializer, 
                              ILoadingProgressController loadingProgressController, 
-                             ITestsService testsService,
-                             IAppearanceService appearanceService) {
+                             ITestsService testsService) {
             Dispatcher = Dispatcher.CurrentDispatcher;
             this.notificationService = notificationService;
             this.regionManager = regionManager;
             this.loggingService = loggingService;
             this.farmIntegrator = farmIntegrator;
-            this.configSerializer = configSerializer;
-            this.appearanceService = appearanceService;
             LoadingProgressController = loadingProgressController;
             TestService = testsService;
             TestService.PropertyChanged += TestService_PropertyChanged;
-            UpdateConfig();
+            Config = configSerializer.GetConfig();
+            FillSolutions();
+            RefreshTestList();
         }
 
         void TestService_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
@@ -129,7 +112,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
             loggingService.SendMessage("");
             await Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
                 Tests = tests;
-                Status = ProgramStatus.Idle;
+                LoadingProgressController.Status = ProgramStatus.Idle;
                 LoadingProgressController.Stop();
             }));
         }
@@ -145,40 +128,6 @@ namespace DXVisualTestFixer.UI.ViewModels {
             Solutions = actualSolutions;
         }
 
-        void UpdateConfig() {
-            loggingService.SendMessage("Checking config");
-            var config = configSerializer.GetConfig(false);
-            if(Config != null && configSerializer.IsConfigEquals(config, Config))
-                return;
-            Config = config;
-            FillSolutions();
-            appearanceService?.SetTheme(Config.ThemeName);
-            loggingService.SendMessage("Config loaded");
-            UpdateContent();
-        }
-
-        void UpdateContent() {
-            if(Config.Repositories == null || Config.Repositories.Length == 0) {
-                Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
-                    notificationService.DoNotification("Add repositories in settings", "Add repositories in settings");
-                    ShowSettings();
-                    RefreshTestList();
-                }));
-                return;
-            }
-            foreach(var repoModel in Config.Repositories.Select(rep => new RepositoryModel(rep))) {
-                if(!repoModel.IsValid()) {
-                    Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
-                        notificationService.DoNotification("Invalid Settings", "Modify repositories in settings", MessageBoxImage.Warning);
-                        ShowSettings();
-                        RefreshTestList();
-                    }));
-                    return;
-                }
-            }
-            RefreshTestList();
-        }
-
         void OnTestViewTypeChanged() {
             regionManager.Regions[Regions.TestInfo].RemoveAll();
             OnCurrentTestChanged();
@@ -192,7 +141,6 @@ namespace DXVisualTestFixer.UI.ViewModels {
         }
         void OnTestsChanged() {
             if(Tests == null) {
-                TestsToCommitCount = 0;
                 CurrentTest = null;
                 CurrentFilter = null;
                 regionManager.Regions[Regions.FilterPanel].RemoveAll();
@@ -210,26 +158,13 @@ namespace DXVisualTestFixer.UI.ViewModels {
             RepositoryOptimizerRequest.Raise(confirmation);
             if(!confirmation.Confirmed)
                 return;
-            TestsToCommitCount = 0;
-            UpdateContent();
+            RefreshTestList();
         }
         public void ShowRepositoryAnalyzer() {
             RepositoryAnalyzerRequest.Raise(ServiceLocator.Current.TryResolve<RepositoryAnalyzerViewModel>());
         }
         public void ShowViewResources() {
             ViewResourcesRequest.Raise(ServiceLocator.Current.TryResolve<ViewResourcesViewModel>());
-        }
-
-        public void ShowSettings() {
-            if(CheckHasUncommittedChanges())
-                return;
-            ISettingsViewModel confirmation = ServiceLocator.Current.TryResolve<ISettingsViewModel>();
-            SettingsRequest.Raise(confirmation);
-            if(!confirmation.Confirmed)
-                return;
-            TestsToCommitCount = 0;
-            configSerializer.SaveConfig(confirmation.Config);
-            UpdateConfig();
         }
         public void CommitCurrentTest() {
             if(CurrentTest == null || CurrentTest.Valid != TestState.Valid)
@@ -246,10 +181,6 @@ namespace DXVisualTestFixer.UI.ViewModels {
             return Tests.Where(t => t.CommitChange).ToList();
         }
         public void ApplyChanges() {
-            if(TestsToCommitCount == 0) {
-                notificationService.DoNotification("Nothing to commit", "Nothing to commit");
-                return;
-            }
             if(TestService.ActualState.ChangedTests.Count == 0) {
                 notificationService.DoNotification("Nothing to commit", "Nothing to commit");
                 return;
@@ -259,8 +190,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
             if(!confirmation.Confirmed)
                 return;
             TestService.ActualState.ChangedTests.ForEach(ApplyTest);
-            TestsToCommitCount = 0;
-            UpdateContent();
+            RefreshTestList();
         }
         bool ShowCheckOutMessageBox(string text) {
             return CheckConfirmation(ConfirmationRequest, "Readonly file detected", "Please checkout file in DXVCS \n" + text);
@@ -272,7 +202,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
             notificationService.DoNotification("Test not fixed", "Test not fixed \n" + testWrapper != null ? testWrapper.ToLog() : testInfo.Name, MessageBoxImage.Error);
         }
         bool CheckHasUncommittedChanges() {
-            if(TestsToCommitCount == 0)
+            if(TestService.ActualState == null || TestService.ActualState.ChangedTests.Count == 0)
                 return false;
             return !CheckConfirmation(ConfirmationRequest, "Uncommitted tests", "You has uncommitted tests! Do you want to refresh tests list and flush all uncommitted tests?");
          }
@@ -284,12 +214,12 @@ namespace DXVisualTestFixer.UI.ViewModels {
                 return;
             loggingService.SendMessage("Waiting response from farm integrator");
             Tests = null;
-            Status = ProgramStatus.Loading;
+            LoadingProgressController.Status = ProgramStatus.Loading;
             farmIntegrator.Start(FarmRefreshed);
         }
 
         public void ClearCommits() {
-            if(TestsToCommitCount == 0)
+            if(TestService.ActualState.ChangedTests.Count == 0)
                 return;
             foreach(var test in Tests) {
                 test.CommitChange = false;
@@ -301,11 +231,9 @@ namespace DXVisualTestFixer.UI.ViewModels {
         }
 
         public void CommitTest(TestInfoModel testInfoModel) {
-            TestsToCommitCount++;
             TestService.ActualState.ChangedTests.Add(testInfoModel.TestInfo);
         }
         public void UndoCommitTest(TestInfoModel testInfoModel) {
-            TestsToCommitCount--;
             TestService.ActualState.ChangedTests.Remove(testInfoModel.TestInfo);
         }
     }

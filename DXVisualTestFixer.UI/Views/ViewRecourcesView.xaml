@@ -25,7 +25,7 @@
     <dxdo:LayoutGroup Orientation="Horizontal" ShowCaption="False">
         <dxdo:LayoutPanel Caption="Files" ShowCloseButton="False" ShowPinButton="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False">
             <dxg:GridControl ItemsSource="{Binding UsedFiles}" AutoExpandAllGroups="True" ShowBorder="False"
-                             ShowLoadingPanel="{DXBinding Expr='Status != $viewModels:ProgramStatus.Idle'}" SelectedItem="{Binding CurrentFile, Mode=TwoWay}">
+                             ShowLoadingPanel="{DXBinding Expr='Status != $common:ProgramStatus.Idle'}" SelectedItem="{Binding CurrentFile, Mode=TwoWay}">
                 <dxg:GridColumn FieldName="Version" GroupIndex="0"/>
                 <dxg:GridColumn FieldName="DirName" GroupIndex="1"/>
                 <dxg:GridColumn FieldName="FileName" Width="*"/>
