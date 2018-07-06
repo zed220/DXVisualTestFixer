@@ -349,6 +349,7 @@
                                     <dxb:BarManager.DXContextMenu>
                                         <dxb:PopupMenu>
                                             <dxb:BarButtonItem Content="Commit All In Viewport" Glyph="{dx:DXImage Image=SelectAll_16x16.png}" Command="{DXCommand Execute='@e(view).CommitAllInViewport()'}"/>
+                                            <dxb:BarButtonItem Content="Clear Commits In Viewport" Glyph="{dx:DXImageOffice2013 Image=Clear_16x16.png}" Command="{DXCommand Execute='@e(view).ClearCommitsInViewport()'}"/>
                                             <dxb:BarButtonItem Content="Clear All Commits" Glyph="{dx:DXImageOffice2013 Image=Clear_16x16.png}" Command="{DXCommand Execute='ClearCommits()'}"/>
                                         </dxb:PopupMenu>
                                     </dxb:BarManager.DXContextMenu>
