@@ -225,7 +225,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
                 return;
             foreach(var test in Tests)
                 test.CommitChange = false;
-            TestService.ActualState.ChangedTests.Clear();
+            TestService.ActualState?.ChangedTests?.Clear();
         }
         public void ChangeTestViewType(TestViewType testViewType) {
             TestViewType = testViewType;
