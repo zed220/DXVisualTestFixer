@@ -75,6 +75,8 @@ namespace DXVisualTestFixer.UI.Controls {
         public void ProcessKeyDown(KeyEventArgs e) {
             if(e.Key != Key.Space)
                 return;
+            if(SearchControl != null && SearchControl.IsKeyboardFocusWithin)
+                return;
             e.Handled = true;
             InverceCommitChange(FocusedRowHandle);
         }
