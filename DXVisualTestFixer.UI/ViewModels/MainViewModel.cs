@@ -221,10 +221,9 @@ namespace DXVisualTestFixer.UI.ViewModels {
         public void ClearCommits() {
             if(TestService.ActualState.ChangedTests.Count == 0)
                 return;
-            foreach(var test in Tests) {
+            foreach(var test in Tests)
                 test.CommitChange = false;
-                TestService.ActualState.ChangedTests.Clear();
-            }
+            TestService.ActualState.ChangedTests.Clear();
         }
         public void ChangeTestViewType(TestViewType testViewType) {
             TestViewType = testViewType;
