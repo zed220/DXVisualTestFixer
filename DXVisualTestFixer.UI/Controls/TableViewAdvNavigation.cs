@@ -38,29 +38,45 @@ namespace DXVisualTestFixer.UI.Controls {
             if(e.HitInfo.Column.FieldName != "TestInfo.Theme")
                 return;
             e.Handled = true;
-            SetCommitChange(e.HitInfo.RowHandle, true);
+            InverceCommitChange(e.HitInfo.RowHandle);
         }
 
-        void SetCommitChange(int rowHandle, bool makeInverse) {
+        TestInfoModel GetValidTestInfoModel(int rowHandle) {
             if(!Grid.IsValidRowHandle(rowHandle) || Grid.IsGroupRowHandle(rowHandle))
-                return;
+                return null;
             TestInfoModel testInfoModel = Grid.GetRow(rowHandle) as TestInfoModel;
             if(testInfoModel == null || testInfoModel.Valid == TestState.Error)
-                return;
-            testInfoModel.CommitChange = makeInverse ? !testInfoModel.CommitChange : true;
+                return null;
+            return testInfoModel;
+        }
+        void InverceCommitChange(int rowHandle) {
+            var model = GetValidTestInfoModel(rowHandle);
+            if(model != null)
+                model.CommitChange = !model.CommitChange;
+        }
+        void SetCommitChange(int rowHandle, bool value) {
+            var model = GetValidTestInfoModel(rowHandle);
+            if(model != null)
+                model.CommitChange = value;
         }
 
         public void CommitAllInViewport() {
             int i = 0;
             while(i++ < Grid.VisibleRowCount - 1)
+                SetCommitChange(Grid.GetRowHandleByVisibleIndex(i), true);
+        }
+        public void ClearCommitsInViewport() {
+            int i = 0;
+            while(i++ < Grid.VisibleRowCount - 1)
                 SetCommitChange(Grid.GetRowHandleByVisibleIndex(i), false);
         }
+
 
         public void ProcessKeyDown(KeyEventArgs e) {
             if(e.Key != Key.Space)
                 return;
             e.Handled = true;
-            SetCommitChange(FocusedRowHandle, true);
+            InverceCommitChange(FocusedRowHandle);
         }
     }
 }
