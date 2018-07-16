@@ -122,9 +122,17 @@ namespace DXVisualTestFixer.UI.ViewModels {
         async void FarmRefreshed(IFarmRefreshedEventArgs args) {
             if(args == null) {
                 await Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(async () => {
+                    loggingService.SendMessage("Finishing farm integrator");
                     farmIntegrator.Stop();
                     loggingService.SendMessage("Farm integrator succes");
                     await UpdateAllTests().ConfigureAwait(false);
+                }));
+            }
+            else {
+                await Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(async () => {
+                    loggingService.SendMessage("Retrying farm integrator");
+                    farmIntegrator.Stop();
+                    RefreshTestList();
                 }));
             }
         }
@@ -288,8 +296,8 @@ namespace DXVisualTestFixer.UI.ViewModels {
         bool CheckAlarmAdmin() {
             return !CheckConfirmation(ConfirmationRequest, "Warning", "This tool is powerful and dangerous. Unbridled using may cause repository errors! Are you really sure?");
         }
-        public void RefreshTestList() {
-            if(CheckHasUncommittedChanges())
+        public void RefreshTestList(bool checkConfirmation = true) {
+            if(checkConfirmation && CheckHasUncommittedChanges())
                 return;
             loggingService.SendMessage("Waiting response from farm integrator");
             Tests = null;
