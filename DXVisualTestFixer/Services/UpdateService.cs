@@ -24,8 +24,13 @@ namespace DXVisualTestFixer.Services {
         }
 
         protected override async Task<bool> CheckUpdateCore() {
-            if(!Directory.Exists(serverfolder))
-                Directory.CreateDirectory(serverfolder);
+            try {
+                if(!Directory.Exists(serverfolder))
+                    Directory.CreateDirectory(serverfolder);
+            }
+            catch(IOException e) {
+                return false;
+            }
             using(var mgr = new UpdateManager(serverfolder)) {
                 UpdateInfo updateInfo = await mgr.CheckForUpdate();
                 if(!updateInfo.ReleasesToApply.Any())
