@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DXVisualTestFixer.Configuration {
     public static class VersionInfo {
-        public const string VersionString = "2.3.8";
+        public const string VersionString = "2.3.9";
         public static readonly Version Version = new Version(VersionString);
     }
 }
