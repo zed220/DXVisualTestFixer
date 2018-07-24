@@ -23,7 +23,7 @@
         <converters:FilePathToTextConverter x:Key="filePathToTextConverter"/>
     </UserControl.Resources>
     <dxdo:LayoutGroup Orientation="Horizontal" ShowCaption="False">
-        <dxdo:LayoutPanel Caption="Files" ShowCloseButton="False" ShowPinButton="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False">
+        <dxdo:LayoutPanel Caption="Files" ShowCloseButton="False" ShowPinButton="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False" AllowSizing="False" ItemWidth="400">
             <dxg:GridControl ItemsSource="{Binding UsedFiles}" AutoExpandAllGroups="True" ShowBorder="False"
                              ShowLoadingPanel="{DXBinding Expr='Status != $viewModels:ProgramStatus.Idle'}" SelectedItem="{Binding CurrentFile, Mode=TwoWay}">
                 <dxg:GridColumn FieldName="Version" GroupIndex="0"/>

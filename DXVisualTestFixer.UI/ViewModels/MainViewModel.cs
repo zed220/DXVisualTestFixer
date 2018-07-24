@@ -38,7 +38,6 @@ namespace DXVisualTestFixer.UI.ViewModels {
         ProgramStatus _Status;
         string _CurrentLogLine;
         TestViewType _TestViewType;
-        MergerdTestViewType _MergerdTestViewType;
         int _TestsToCommitCount;
         CriteriaOperator _CurrentFilter;
         ITestsService _TestService;
