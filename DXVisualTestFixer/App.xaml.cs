@@ -20,6 +20,7 @@ using DXVisualTestFixer.UI.Common;
 using DevExpress.Logify.WPF;
 using Prism.Ioc;
 using DevExpress.Xpf.Core;
+using DevExpress.Utils.CommonDialogs;
 
 namespace DXVisualTestFixer {
     /// <summary>
