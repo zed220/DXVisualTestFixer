@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata>
+        <id>DXVisualTests_UI_Addin_Dependencies</id>
+        <version>18.2.0.11</version>
+        <title>DXVisualTests UI Addin Dependencies</title>
+        <authors>DevExpress</authors>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>DXVisualTests Addin UI dependencies</description>
+    </metadata>
+    <files>
+        <file src="files\DevExpress.Data.v18.2.dll" target="lib\net40\DevExpress.Data.v18.2.dll" />
+        <file src="files\DevExpress.CodeParser.v18.2.dll" target="lib\net40\DevExpress.CodeParser.v18.2.dll" />
+        <file src="files\DevExpress.Images.v18.2.dll" target="lib\net40\DevExpress.Images.v18.2.dll" />
+        <file src="files\DevExpress.Mvvm.v18.2.dll" target="lib\net40\DevExpress.Mvvm.v18.2.dll" />
+        <file src="files\DevExpress.Printing.v18.2.Core.dll" target="lib\net40\DevExpress.Printing.v18.2.Core.dll" />
+        <file src="files\DevExpress.Xpf.Core.v18.2.dll" target="lib\net40\DevExpress.Xpf.Core.v18.2.dll" />
+        <file src="files\DevExpress.Xpf.Layout.v18.2.Core.dll" target="lib\net40\DevExpress.Xpf.Layout.v18.2.Core.dll" />
+        <file src="files\DevExpress.Xpf.Docking.v18.2.dll" target="lib\net40\DevExpress.Xpf.Docking.v18.2.dll" />
+        <file src="files\DevExpress.Xpf.LayoutControl.v18.2.dll" target="lib\net40\DevExpress.Xpf.LayoutControl.v18.2.dll" />
+        <file src="files\DevExpress.Xpf.Grid.v18.2.Core.dll" target="lib\net40\DevExpress.Xpf.Grid.v18.2.Core.dll" />
+        <file src="files\DevExpress.Xpf.Grid.v18.2.dll" target="lib\net40\DevExpress.Xpf.Grid.v18.2.dll" />
+        <file src="files\DevExpress.Xpf.PropertyGrid.v18.2.dll" target="lib\net40\DevExpress.Xpf.PropertyGrid.v18.2.dll" />
+        <file src="files\DevExpress.Xpf.Ribbon.v18.2.dll" target="lib\net40\DevExpress.Xpf.Ribbon.v18.2.dll" />
+        <file src="files\DevExpress.Xpf.Controls.v18.2.dll" target="lib\net40\DevExpress.Xpf.Controls.v18.2.dll" />
+        <file src="files\DevExpress.Xpf.Accordion.v18.2.dll" target="lib\net40\DevExpress.Xpf.Accordion.v18.2.dll" />
+        <file src="files\DevExpress.Pdf.v18.2.Core.dll" target="lib\net40\DevExpress.Pdf.v18.2.Core.dll" />
+        <file src="files\DevExpress.Diagram.v18.2.Core.dll" target="lib\net40\DevExpress.Diagram.v18.2.Core.dll" />
+        <file src="files\DevExpress.Xpf.Diagram.v18.2.dll" target="lib\net40\DevExpress.Xpf.Diagram.v18.2.dll" />
+        <file src="files\DevExpress.Xpf.DocumentViewer.v18.2.Core.dll" target="lib\net40\DevExpress.Xpf.DocumentViewer.v18.2.Core.dll" />
+        <file src="files\DevExpress.Xpf.NavBar.v18.2.dll" target="lib\net40\DevExpress.Xpf.NavBar.v18.2.dll" />
+        <file src="files\DevExpress.Dialogs.v18.2.Core.dll" target="lib\net40\DevExpress.Dialogs.v18.2.Core.dll" />
+        <file src="files\DevExpress.Xpf.Dialogs.v18.2.dll" target="lib\net40\DevExpress.Xpf.Dialogs.v18.2.dll" />
+		<file src="files\DevExpress.Xpf.Themes.Office2016White.v18.2.dll" target="lib\net40\DevExpress.Xpf.Themes.Office2016White.v18.2.dll" />
+    </files>
+</package>

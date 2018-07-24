@@ -18,6 +18,7 @@ using DXVisualTestFixer.Farm;
 using DXVisualTestFixer.Core.Configuration;
 using DXVisualTestFixer.UI.Native;
 using DXVisualTestFixer.UI.Common;
+using DevExpress.Utils.CommonDialogs;
 
 namespace DXVisualTestFixer {
     public class Bootstrapper : UnityBootstrapper {
