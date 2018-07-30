@@ -62,6 +62,8 @@
                                     <Binding Path="ImageBeforeArr"/>
                                     <Binding Path="ImageCurrentArr"/>
                                     <Binding Path="ImageDiffArr"/>
+                                    <Binding Path="Theme"/>
+                                    <Binding Path="Team"/>
                                 </MultiBinding>
                             </dxb:BarButtonItem.Command>
                         </dxb:BarButtonItem>
