@@ -1,4 +1,5 @@
 ﻿using DevExpress.Mvvm;
+using DXVisualTestFixer.Common;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -14,14 +15,20 @@ using System.Windows.Media.Imaging;
 
 namespace DXVisualTestFixer.UI.Converters {
     public class MultiImageToClipboardConverter : IMultiValueConverter {
+        const int textHeight = 20;
+
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
-            if(values.Length != 3)
+            if(values.Length != 5)
                 return null;
             byte[] imgBeforeArr = values[0] as byte[];
             byte[] imgAfterArr = values[1] as byte[];
             byte[] imgDiffArr = values[2] as byte[];
+            string theme = values[3] as string;
+            Team team = values[4] as Team;
             if(imgBeforeArr == null && imgAfterArr == null && imgDiffArr == null)
                 return null;
+            if(theme == null || team == null)
+                theme = String.Empty;
             return new DelegateCommand(() => {
                 Bitmap beforeImage = imgBeforeArr == null ? null : CreateImage(imgBeforeArr);
                 Bitmap afterImage = imgAfterArr == null ? null : CreateImage(imgAfterArr);
@@ -33,24 +40,25 @@ namespace DXVisualTestFixer.UI.Converters {
                 int left = 0;
                 using(Graphics g = Graphics.FromImage(b)) {
                     g.FillRectangle(new SolidBrush(Color.White), new Rectangle(0, 0, size.Width, size.Height));
-                    Draw(g, beforeImage, "BEFORE", size.Height, ref left);
-                    Draw(g, afterImage, "CURRENT", size.Height, ref left);
-                    Draw(g, diffImage, "DIFF", size.Height, ref left);
+                    g.DrawString($"Theme: {theme.ToUpper()}, Version: {team.Version}, Team: {team.Name}", new Font("Arial", 10), new SolidBrush(Color.Black), new PointF(0, 0));
+                    Draw(g, beforeImage, "BEFORE", textHeight, size.Height - textHeight, ref left);
+                    Draw(g, afterImage, "CURRENT", textHeight, size.Height - textHeight, ref left);
+                    Draw(g, diffImage, "DIFF", textHeight, size.Height - textHeight, ref left);
                 }
                 var targetImage = Imaging.CreateBitmapSourceFromHBitmap(b.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromWidthAndHeight(size.Width, size.Height));
                 Clipboard.SetImage(targetImage);
             });
         }
 
-        static void Draw(Graphics g, Bitmap b, string header, int height, ref int left) {
+        static void Draw(Graphics g, Bitmap b, string header, int top, int height, ref int left) {
             if(b == null)
                 return;
             if(left > 0) {
-                g.DrawLine(new Pen(Color.Aqua), left, 0, left++, height);
-                g.DrawLine(new Pen(Color.Aqua), left, 0, left++, height);
+                g.DrawLine(new Pen(Color.Aqua), left, top, left++, height);
+                g.DrawLine(new Pen(Color.Aqua), left, top, left++, height);
             }
-            g.DrawString(header, new Font("Arial", 10), new SolidBrush(Color.Aqua), new PointF(left, 0));
-            g.DrawImage(b, new Rectangle(left, 30, b.Width, b.Height));
+            g.DrawString(header, new Font("Arial", 10), new SolidBrush(Color.Black), new PointF(left, top));
+            g.DrawImage(b, new Rectangle(left, textHeight * 2, b.Width, b.Height));
             left += b.Width;
         }
 
@@ -62,7 +70,7 @@ namespace DXVisualTestFixer.UI.Converters {
                 width += source.Width + 2;
                 height = Math.Max(height, source.Height);
             }
-            return new System.Drawing.Size(width, height + 30);
+            return new System.Drawing.Size(width, height + (textHeight * 2));
         }
 
         static Bitmap CreateImage(byte[] imgArr) {
