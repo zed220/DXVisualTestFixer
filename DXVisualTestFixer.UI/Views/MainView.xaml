@@ -57,7 +57,30 @@
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="dxg:GroupValuePresenter">
-                            <StackPanel x:Name="PART_GroupValuesPanel" Orientation="Horizontal" Margin="{DynamicResource {dxgt:GroupRowThemeKey ResourceKey=GroupRowContentMargin}}"/>
+                            <StackPanel Orientation="Horizontal" Margin="3,0,0,1">
+                                <dxe:CheckEdit EditMode="InplaceActive" VerticalAlignment="Center">
+                                    <dxmvvm:Interaction.Behaviors>
+                                        <behaviors:GroupRowCheckBoxCommitChangesBehavior/>
+                                    </dxmvvm:Interaction.Behaviors>
+                                    <dxe:CheckEdit.EditValue>
+                                        <MultiBinding Converter="{converters:SummaryToCheckedStateConverter}" Mode="OneWay">
+                                            <Binding Path="."/>
+                                            <Binding Path="GroupSummaryData[0]"/>
+                                            <Binding Path="GroupSummaryData[0].SummaryValue"/>
+                                        </MultiBinding>
+                                    </dxe:CheckEdit.EditValue>
+                                    <dxe:CheckEdit.Visibility>
+                                        <Binding Path="GroupLevel">
+                                            <Binding.Converter>
+                                                <dxmvvm:ObjectToObjectConverter DefaultTarget="Collapsed">
+                                                    <dxmvvm:MapItem Source="1" Target="Visible"/>
+                                                </dxmvvm:ObjectToObjectConverter>
+                                            </Binding.Converter>
+                                        </Binding>
+                                    </dxe:CheckEdit.Visibility>
+                                </dxe:CheckEdit>
+                                <StackPanel x:Name="PART_GroupValuesPanel" Orientation="Horizontal" VerticalAlignment="Center" Margin="{DynamicResource {dxgt:GroupRowThemeKey ResourceKey=GroupRowContentMargin}}"/>
+                            </StackPanel>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
@@ -282,7 +305,10 @@
                                       prism:RegionManager.RegionName="{x:Static common:Regions.FilterPanel}"/>
                     <dxdo:LayoutPanel ShowCaption="False" ItemHeight="*">
                         <dxg:GridControl ItemsSource="{Binding Tests}" CurrentItem="{Binding CurrentTest, Mode=TwoWay}" AutoExpandAllGroups="True" ShowBorder="False" 
-                                         ShowLoadingPanel="{DXBinding Expr='Status != $viewModels:ProgramStatus.Idle'}" FixedFilter="{Binding CurrentFilter}">
+                                         ShowLoadingPanel="{DXBinding Expr='Status != $viewModels:ProgramStatus.Idle'}" FixedFilter="{Binding CurrentFilter}" AllowLiveDataShaping="True">
+                            <dxmvvm:Interaction.Behaviors>
+                                <behaviors:GridControlCustomSummaryBehavior/>
+                            </dxmvvm:Interaction.Behaviors>
                             <dxg:GridColumn FieldName="Version" GroupIndex="0" MergeWithPreviousGroup="False" Header="Version"/>
                             <dxg:GridColumn FieldName="TeamName" GroupIndex="1" MergeWithPreviousGroup="True" Header="Team"/>
                             <dxg:GridColumn FieldName="TestInfo.Name" GroupIndex="2" MergeWithPreviousGroup="False" Header="Name"/>
@@ -339,13 +365,16 @@
                                     </DataTemplate>
                                 </dxg:GridColumn.CellTemplate>
                             </dxg:GridColumn>
+                            <dxg:GridControl.GroupSummary>
+                                <dxg:GridSummaryItem SummaryType="Custom" FieldName="CommitChange"/>
+                            </dxg:GridControl.GroupSummary>
                             <dxg:GridControl.TotalSummary>
                                 <dxg:GridSummaryItem SummaryType="Count" Alignment="Left"/>
                             </dxg:GridControl.TotalSummary>
                             <dxg:GridControl.View>
                                 <controls:TableViewAdvNavigation x:Name="view" AllowEditing="True" ShowVerticalLines="False" ShowIndicator="False" ShowHorizontalLines="False" ShowColumnHeaders="False" 
                                                                  ShowGroupPanel="False" ShowFixedTotalSummary="True" RowDoubleClick="{DXEvent Handler='@s.ProcessDoubleClick(@args)'}"
-                                                                 PreviewKeyDown="{DXEvent Handler='@s.ProcessKeyDown(@args)'}">
+                                                                 PreviewKeyDown="{DXEvent Handler='@s.ProcessKeyDown(@args)'}" GroupSummaryDisplayMode="Default">
                                     <dxb:BarManager.DXContextMenu>
                                         <dxb:PopupMenu>
                                             <dxb:BarButtonItem Content="Commit All In Viewport" Glyph="{dx:DXImage Image=SelectAll_16x16.png}" Command="{DXCommand Execute='@e(view).CommitAllInViewport()'}"/>
