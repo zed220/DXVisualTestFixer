@@ -158,6 +158,8 @@
     <Compile Include="Behaviors\AvalonEditTextBindingBehavior.cs" />
     <Compile Include="Behaviors\BarItemIndicatorBehavior.cs" />
     <Compile Include="Behaviors\BrowseDirBehavior.cs" />
+    <Compile Include="Behaviors\GridControlCustomSummaryBehavior.cs" />
+    <Compile Include="Behaviors\GroupRowCheckBoxCommitChangesBehavior.cs" />
     <Compile Include="Behaviors\ImageScaleBehavior.cs" />
     <Compile Include="Behaviors\MergedTestInfoButtonBehavior.cs" />
     <Compile Include="Behaviors\ScrollVIewerDragBehavior.cs" />
@@ -173,6 +175,7 @@
     <Compile Include="Converters\MultiImageToClipboardConverter.cs" />
     <Compile Include="Converters\NotificationContentConverter.cs" />
     <Compile Include="Converters\StackPanelToTooltipConverter.cs" />
+    <Compile Include="Converters\SummaryToCheckedStateConverter.cs" />
     <Compile Include="Converters\TestViewTypeConverter.cs" />
     <Compile Include="Native\DiffLineBackgroundRenderer.cs" />
     <Compile Include="Native\ThemesProvider.cs" />
