@@ -9,3 +9,6 @@ DXVisualTestFixer/DXVisualTestFixer_TemporaryKey.pfx
 DXVisualTestFixer.Core/obj/
 DXVisualTestFixer.UI/obj
 DXVisualTestFixer.Common/obj
+DXVcs2Git.Nuget/files/*
+DXVcs2Git.Nuget/Nuget.exe
+DXVcs2Git.Nuget/*.nupkg
