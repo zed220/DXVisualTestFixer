@@ -168,7 +168,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
                 return;
             Config = config;
             FillSolutions();
-            ServiceLocator.Current.GetInstance<IAppearanceService>()?.SetTheme(Config.ThemeName);
+            ServiceLocator.Current.GetInstance<IAppearanceService>()?.SetTheme(/*Config.ThemeName*/ "VS2017Light");
             loggingService.SendMessage("Config loaded");
             UpdateContent();
         }

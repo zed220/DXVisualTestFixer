@@ -12,6 +12,7 @@
         xmlns:common="clr-namespace:DXVisualTestFixer.Common;assembly=DXVisualTestFixer.Common"
         xmlns:prismcommon="clr-namespace:DXVisualTestFixer.UI.PrismCommon"
         xmlns:converters="clr-namespace:DXVisualTestFixer.UI.Converters"
+        xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         dx:ScrollBarExtensions.ScrollBarMode="TouchOverlap"
         UseLayoutRounding="True"
@@ -35,7 +36,18 @@
                 <Setter Property="ContentTemplate">
                     <Setter.Value>
                         <DataTemplate>
-                            <dx:DXImage x:Name="image" Source="{dx:DXImageOffice2013 Image=MoveUp_16x16.png}" VerticalAlignment="Center" HorizontalAlignment="Center" Height="16" Width="16"/>
+                            <dx:DXImage x:Name="image" Source="{dx:DXImageOffice2013 Image=MoveUp_16x16.png}"  VerticalAlignment="Center" HorizontalAlignment="Center" Height="16" Width="16"
+                                        dxb:ImageColorizer.Color="{Binding TextElement.Foreground}" dxb:ImageColorizer.IsEnabled="True"/>
+                            <DataTemplate.Triggers>
+                                <EventTrigger RoutedEvent="Loaded">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="Opacity" Storyboard.TargetName="image" From="1" To="0" AutoReverse="True" 
+                                                             BeginTime="0:0:1" RepeatBehavior="Forever"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                            </DataTemplate.Triggers>
                         </DataTemplate>
                     </Setter.Value>
                 </Setter>
