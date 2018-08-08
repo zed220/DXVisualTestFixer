@@ -111,7 +111,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
                 return;
             Config = config;
             configSerializer.ConfigChanged += ConfigSerializer_ConfigChanged;
-            appearanceService?.SetTheme(Config.ThemeName);
+            appearanceService?.SetTheme(/*Config.ThemeName*/"VS2017Light");
             loggingService.SendMessage("Config loaded");
         }
 
