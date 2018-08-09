@@ -24,7 +24,13 @@ namespace DXVisualTestFixer.UI.ViewModels {
 
         public bool CommitChange {
             get { return GetProperty(() => CommitChange); }
-            set { SetProperty(() => CommitChange, value, OnChanged); }
+            set { SetCommitChange(value); }
+        }
+
+        void SetCommitChange(bool value) {
+            if(Valid == TestState.Error)
+                return;
+            SetProperty(() => CommitChange, value, OnChanged);
         }
 
         void OnChanged() {
