@@ -367,9 +367,6 @@
                                     </DataTemplate>
                                 </dxg:GridColumn.CellTemplate>
                             </dxg:GridColumn>
-                            <dxg:GridControl.GroupSummary>
-                                <dxg:GridSummaryItem SummaryType="Custom" FieldName="CommitChange"/>
-                            </dxg:GridControl.GroupSummary>
                             <dxg:GridControl.TotalSummary>
                                 <dxg:GridSummaryItem SummaryType="Count" Alignment="Left"/>
                             </dxg:GridControl.TotalSummary>
