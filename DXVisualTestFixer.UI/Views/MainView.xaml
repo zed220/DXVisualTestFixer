@@ -26,6 +26,7 @@
              xmlns:dxt="http://schemas.devexpress.com/winfx/2008/xaml/core/themekeys"
              xmlns:core="http://schemas.dxvisualtests.com/winfx/2008/xaml/core"
              xmlns:root="clr-namespace:DXVisualTestFixer.UI"
+             xmlns:dxght="http://schemas.devexpress.com/winfx/2008/xaml/grid/internal"
              prism:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
@@ -43,6 +44,33 @@
             <Style TargetType="{x:Type Button}">
                 <Setter Property="Margin" Value="4"/>
             </Style>
+            <Style TargetType="{x:Type dxg:GroupRowCheckBoxSelector}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate>
+                            <dxe:CheckEdit x:Name="PART_CheckBoxRowSelector" 
+                                                   Padding="0" 
+                                                   Focusable="False" 
+                                                   VerticalAlignment="Center"
+                                                   Margin="{DynamicResource {dxgt:GroupRowThemeKey ResourceKey=CheckBoxSelectorMargin}}" 
+                                                   IsChecked="{Binding AllItemsSelected, Mode=TwoWay}"
+                                                   IsEnabled="{Binding EnabledSelected}" >
+                                <dxg:GridViewHitInfoBase.HitTestAcceptor>
+                                    <dxght:GroupRowCheckBoxTableViewHitTestAcceptor />
+                                </dxg:GridViewHitInfoBase.HitTestAcceptor>
+                            </dxe:CheckEdit>
+                            <ControlTemplate.Triggers>
+                                <DataTrigger Binding="{Binding View.ActualShowCheckBoxInGroupRow}"  Value="True">
+                                    <Setter Property="IsEnabled" TargetName="PART_CheckBoxRowSelector" Value="True"/>
+                                    <Setter Property="Visibility" TargetName="PART_CheckBoxRowSelector" Value="Visible"/>
+                                    <Setter Property="IsReadOnly" TargetName="PART_CheckBoxRowSelector" Value="{DXBinding 'GroupLevel == 0'}"/>
+                                    <Setter Property="IsChecked" TargetName="PART_CheckBoxRowSelector" Value="{Binding IsChecked, Mode=TwoWay}"/>
+                                </DataTrigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
             <Style TargetType="dxg:GroupValuePresenter">
                 <Setter Property="Margin" Value="{DynamicResource {dxgt:GroupRowThemeKey ResourceKey=GroupValuePresenterMargin}}" />
                 <Setter Property="VerticalAlignment" Value="Center" />
@@ -57,30 +85,7 @@
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="dxg:GroupValuePresenter">
-                            <StackPanel Orientation="Horizontal" Margin="3,0,0,1">
-                                <dxe:CheckEdit EditMode="InplaceActive" VerticalAlignment="Center">
-                                    <dxmvvm:Interaction.Behaviors>
-                                        <behaviors:GroupRowCheckBoxCommitChangesBehavior/>
-                                    </dxmvvm:Interaction.Behaviors>
-                                    <dxe:CheckEdit.EditValue>
-                                        <MultiBinding Converter="{converters:SummaryToCheckedStateConverter}" Mode="OneWay">
-                                            <Binding Path="."/>
-                                            <Binding Path="GroupSummaryData[0]"/>
-                                            <Binding Path="GroupSummaryData[0].SummaryValue"/>
-                                        </MultiBinding>
-                                    </dxe:CheckEdit.EditValue>
-                                    <dxe:CheckEdit.Visibility>
-                                        <Binding Path="GroupLevel">
-                                            <Binding.Converter>
-                                                <dxmvvm:ObjectToObjectConverter DefaultTarget="Collapsed">
-                                                    <dxmvvm:MapItem Source="1" Target="Visible"/>
-                                                </dxmvvm:ObjectToObjectConverter>
-                                            </Binding.Converter>
-                                        </Binding>
-                                    </dxe:CheckEdit.Visibility>
-                                </dxe:CheckEdit>
-                                <StackPanel x:Name="PART_GroupValuesPanel" Orientation="Horizontal" VerticalAlignment="Center" Margin="{DynamicResource {dxgt:GroupRowThemeKey ResourceKey=GroupRowContentMargin}}"/>
-                            </StackPanel>
+                            <StackPanel x:Name="PART_GroupValuesPanel" Orientation="Horizontal" VerticalAlignment="Center" Margin="{DynamicResource {dxgt:GroupRowThemeKey ResourceKey=GroupRowContentMargin}}"/>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
@@ -306,16 +311,13 @@
                     <dxdo:LayoutPanel ShowCaption="False" ItemHeight="*">
                         <dxg:GridControl ItemsSource="{Binding Tests}" CurrentItem="{Binding CurrentTest, Mode=TwoWay}" AutoExpandAllGroups="True" ShowBorder="False" 
                                          ShowLoadingPanel="{DXBinding Expr='Status != $common:ProgramStatus.Idle'}" FixedFilter="{Binding CurrentFilter}">
-                            <dxmvvm:Interaction.Behaviors>
-                                <behaviors:GridControlCustomSummaryBehavior/>
-                            </dxmvvm:Interaction.Behaviors>
                             <dxg:GridColumn FieldName="Version" GroupIndex="0" MergeWithPreviousGroup="False" Header="Version"/>
                             <dxg:GridColumn FieldName="TeamName" GroupIndex="1" MergeWithPreviousGroup="True" Header="Team"/>
                             <dxg:GridColumn FieldName="TestInfo.Name" GroupIndex="2" MergeWithPreviousGroup="False" Header="Name"/>
-                            <dxg:GridColumn FieldName="CommitChange" Header="Commit" Width="20">
+                            <dxg:GridColumn FieldName="CommitChange" Header="Commit" Width="29">
                                 <dxg:GridColumn.CellTemplate>
                                     <DataTemplate>
-                                        <dxe:CheckEdit IsChecked="{Binding Path=RowData.Row.CommitChange, UpdateSourceTrigger=PropertyChanged}" EditMode="InplaceActive">
+                                        <dxe:CheckEdit HorizontalAlignment="Center" IsChecked="{Binding Path=RowData.Row.CommitChange, UpdateSourceTrigger=PropertyChanged}" EditMode="InplaceActive">
                                             <dxe:CheckEdit.IsEnabled>
                                                 <Binding Path="RowData.Row.Valid">
                                                     <Binding.Converter>
@@ -375,6 +377,7 @@
                                 <controls:TableViewAdvNavigation x:Name="view" AllowEditing="True" ShowVerticalLines="False" ShowIndicator="False" ShowHorizontalLines="False" ShowColumnHeaders="False" 
                                                                  ShowGroupPanel="False" ShowFixedTotalSummary="True" RowDoubleClick="{DXEvent Handler='@s.ProcessDoubleClick(@args)'}"
                                                                  PreviewKeyDown="{DXEvent Handler='@s.ProcessKeyDown(@args)'}">
+                                                                 GroupRowCheckBoxFieldName="CommitChange">
                                     <dxb:BarManager.DXContextMenu>
                                         <dxb:PopupMenu>
                                             <dxb:BarButtonItem Content="Commit All In Viewport" Glyph="{dx:DXImage Image=SelectAll_16x16.png}" Command="{DXCommand Execute='@e(view).CommitAllInViewport()'}"/>
