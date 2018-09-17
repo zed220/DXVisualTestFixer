@@ -10,15 +10,29 @@ using System.Windows.Input;
 using System.Windows.Media;
 
 namespace DXVisualTestFixer.UI.Behaviors {
-    public class ImageScaleBehavior : Behavior<Image> {
+    public class ImageScaleBehavior : Behavior<ScrollViewer> {
         static List<Image> TrackingImages = new List<Image>();
         static int Scale = 100;
 
         protected override void OnAttached() {
             base.OnAttached();
-            TrackingImages.Add(AssociatedObject);
+            if(!AssociatedObject.IsLoaded)
+                AssociatedObject.Loaded += AssociatedObject_Loaded;
+            else
+                Initialize();
+        }
+
+        void AssociatedObject_Loaded(object sender, RoutedEventArgs e) {
+            AssociatedObject.Loaded -= AssociatedObject_Loaded;
+            Initialize();
+        }
+
+        Image Image { get { return (Image)AssociatedObject.Content; } }
+
+        void Initialize() {
+            TrackingImages.Add(Image);
             AssociatedObject.PreviewMouseWheel += AssociatedObject_PreviewMouseWheel;
-            AssociatedObject.LayoutTransform = new ScaleTransform() { ScaleX = Scale, ScaleY = Scale };
+            Image.LayoutTransform = new ScaleTransform() { ScaleX = Scale, ScaleY = Scale };
             SetScale(100);
         }
 
@@ -53,8 +67,8 @@ namespace DXVisualTestFixer.UI.Behaviors {
         protected override void OnDetaching() {
             base.OnDetaching();
             AssociatedObject.PreviewMouseWheel -= AssociatedObject_PreviewMouseWheel;
-            if(TrackingImages.Contains(AssociatedObject))
-                TrackingImages.Remove(AssociatedObject);
+            if(TrackingImages.Contains(Image))
+                TrackingImages.Remove(Image);
         }
     }
 }
