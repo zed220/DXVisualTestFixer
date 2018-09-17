@@ -26,6 +26,7 @@
                                         Cursor="{Binding Path=(controls:DraggableScrollViewer.DraggableMode), RelativeSource={RelativeSource Self}, Converter={dxmvvm:BooleanToObjectConverter TrueValue=Hand, FalseValue={x:Null}}}">
             <dxmvvm:Interaction.Behaviors>
                 <behaviors:ScrollVIewerDragBehavior/>
+                <behaviors:ImageScaleBehavior/>
             </dxmvvm:Interaction.Behaviors>
             <Image Source="{Binding Path=Content, Converter={StaticResource ArrayToImageConverter}, RelativeSource={RelativeSource TemplatedParent}}" Stretch="None">
                 <dxb:BarManager.DXContextMenu>
@@ -33,9 +34,6 @@
                         <dxb:BarButtonItem Content="Copy Image To Clipboard" Glyph="{dx:DXImageOffice2013 Image=Copy_16x16.png}" Command="{Binding Converter={StaticResource ImageToClipboardConverter}}"/>
                     </dxb:PopupMenu>
                 </dxb:BarManager.DXContextMenu>
-                <dxmvvm:Interaction.Behaviors>
-                    <behaviors:ImageScaleBehavior/>
-                </dxmvvm:Interaction.Behaviors>
             </Image>
         </controls:DraggableScrollViewer>
     </DataTemplate>

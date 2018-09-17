@@ -49,7 +49,7 @@
         <dxr:RibbonControl>
             <dxr:RibbonDefaultPageCategory>
                 <dxr:RibbonPage Caption="Main">
-                    <dxr:RibbonPageGroup Caption="Tools" DataContext="{Binding Path=TestInfo.TestInfo}">
+                    <dxr:RibbonPageGroup Caption="Clipboard Tools" DataContext="{Binding Path=TestInfo.TestInfo}">
                         <dxb:BarButtonItem RibbonStyle="Large" Content="Copy Original" LargeGlyph="{dx:DXImageOffice2013 Image=Copy_32x32.png}" GlyphSize="Large"
                                            Command="{Binding ImageBeforeArr, Converter={StaticResource ImageToClipboardConverter}}"/>
                         <dxb:BarButtonItem RibbonStyle="Large" Content="Copy Current" LargeGlyph="{dx:DXImageOffice2013 Image=Copy_32x32.png}" GlyphSize="Large"
