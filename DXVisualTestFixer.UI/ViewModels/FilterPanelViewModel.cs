@@ -13,13 +13,15 @@ namespace DXVisualTestFixer.UI.ViewModels {
     public class FilterPanelViewModel : BindableBase {
         readonly ITestsService testsService;
 
-        string _DpiNullText, _TeamsNullText, _VersionsNullText;
+        string _DpiNullText, _TeamsNullText, _VersionsNullText, _ProblemsNullText;
         List<int> _DpiList;
         List<string> _TeamsList;
         List<string> _VersionsList;
+        List<int> _ProblemsList;
         List<object> _SelectedDpis;
         List<object> _SelectedTeams;
         List<object> _SelectedVersions;
+        List<object> _SelectedProblems;
 
         public List<int> DpiList {
             get { return _DpiList; }
@@ -33,6 +35,10 @@ namespace DXVisualTestFixer.UI.ViewModels {
             get { return _VersionsList; }
             set { SetProperty(ref _VersionsList, value); }
         }
+        public List<int> ProblemsList {
+            get { return _ProblemsList; }
+            set { SetProperty(ref _ProblemsList, value); }
+        }
         public List<object> SelectedDpis {
             get { return _SelectedDpis; }
             set { SetProperty(ref _SelectedDpis, value, OnFilterChanged); }
@@ -45,6 +51,10 @@ namespace DXVisualTestFixer.UI.ViewModels {
             get { return _SelectedVersions; }
             set { SetProperty(ref _SelectedVersions, value, OnFilterChanged); }
         }
+        public List<object> SelectedProblems {
+            get { return _SelectedProblems; }
+            set { SetProperty(ref _SelectedProblems, value, OnFilterChanged); }
+        }
         public string DpiNullText {
             get { return _DpiNullText; }
             set { SetProperty(ref _DpiNullText, value); }
@@ -56,6 +66,10 @@ namespace DXVisualTestFixer.UI.ViewModels {
         public string VersionsNullText {
             get { return _VersionsNullText; }
             set { SetProperty(ref _VersionsNullText, value); }
+        }
+        public string ProblemsNullText {
+            get { return _ProblemsNullText; }
+            set { SetProperty(ref _ProblemsNullText, value); }
         }
 
         public FilterPanelViewModel(ITestsService testsService) {
@@ -90,6 +104,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
                 DpiList.Sort();
             }
             VersionsList = tests.Select(t => t.Version).Distinct().OrderBy(v => v).ToList();
+            ProblemsList = tests.Select(t => t.Problem).Distinct().OrderBy(n => n).ToList();
         }
 
         void OnFilterChanged() {
@@ -114,6 +129,13 @@ namespace DXVisualTestFixer.UI.ViewModels {
                     versions.Add(new BinaryOperator("Version", selectedVersion, BinaryOperatorType.Equal));
                 }
                 resultList.Add(CriteriaOperator.Or(versions));
+            }
+            if(SelectedProblems != null && SelectedProblems.Count > 0) {
+                List<CriteriaOperator> problems = new List<CriteriaOperator>();
+                foreach(var selectedProblem in SelectedProblems.Cast<int>()) {
+                    problems.Add(new BinaryOperator("Problem", selectedProblem, BinaryOperatorType.Equal));
+                }
+                resultList.Add(CriteriaOperator.Or(problems));
             }
             testsService.CurrentFilter = resultList.Count > 0 ? CriteriaOperator.And(resultList).ToString() : null;
         }
