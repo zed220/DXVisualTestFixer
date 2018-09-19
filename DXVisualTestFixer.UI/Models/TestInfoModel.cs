@@ -20,6 +20,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
         public string Version { get { return TestInfo.Version; } }
         public string TeamName { get { return TestInfo.Team.Name; } }
         public int Dpi { get { return TestInfo.Dpi; } }
+        public int Problem { get { return TestInfo.Problem; } }
         public bool ImageEquals { get { return TestInfo.ImageEquals; } }
 
         public bool CommitChange {

@@ -54,6 +54,7 @@ namespace DXVisualTestFixer.Common {
     public interface ITestInfoModel : INotifyPropertyChanged {
         bool CommitChange { get; set; }
         string TeamName { get; }
+        int Problem { get; }
         int Dpi { get; }
         string Version { get; }
         TestInfo TestInfo { get; }
