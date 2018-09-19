@@ -46,6 +46,40 @@ namespace DXVisualTestFixer.Core {
         public Dictionary<Repository, List<IElapsedTimeInfo>> ElapsedTimes { get; }
         public Dictionary<Repository, List<Team>> Teams { get; }
         public List<TestInfo> ChangedTests { get; }
+        public void UpdateDiffs() {
+            Parallel.ForEach(TestList, test => test.ImageDiffsCount = CalculateImageDiffsCount(test));
+            List<int> diffs = new List<int>();
+            TestList.ForEach(t => diffs.Add(t.ImageDiffsCount));
+            diffs.Sort();
+            Dictionary<int, int> problems = new Dictionary<int, int>();
+            int proplemNumber = 1;
+            int currentD = 0;
+            foreach(var d in diffs) {
+                if(currentD * 1.2d < d) {
+                    problems.Add(currentD, proplemNumber++);
+                    currentD = d;
+                }
+            }
+            if(!problems.ContainsKey(currentD))
+                problems.Add(currentD, proplemNumber++);
+            Parallel.ForEach(TestList, test => {
+                foreach(var d in problems) {
+                    if(test.ImageDiffsCount < d.Key * 1.2d && test.Problem == int.MinValue) {
+                        test.Problem = d.Value;
+                        break;
+                    }
+                }
+            });
+        }
+        int CalculateImageDiffsCount(TestInfo test) {
+            if(test.ImageDiffArr == null || test.ImageBeforeArr == null || test.ImageCurrentArr == null)
+                return int.MaxValue;
+            var imgBefore = ImageHelper.CreateImageFromArray(test.ImageBeforeArr);
+            var imgCurrent = ImageHelper.CreateImageFromArray(test.ImageCurrentArr);
+            if(imgBefore.Size != imgCurrent.Size)
+                return int.MaxValue;
+            return ImageHelper.DeltaUnsafe(imgBefore, imgCurrent);
+        }
     }
     public class TestsService : BindableBase, ITestsService {
         readonly ILoadingProgressController loadingProgressController;
@@ -99,6 +133,7 @@ namespace DXVisualTestFixer.Core {
                 result.UsedFiles[cached.Repository] = cached.UsedFiles;
                 result.ElapsedTimes[cached.Repository] = cached.ElapsedTimes.Cast<IElapsedTimeInfo>().ToList();
                 result.Teams[cached.Repository] = cached.Teams;
+                result.UpdateDiffs();
             }
             return result;
         }
@@ -328,19 +363,12 @@ namespace DXVisualTestFixer.Core {
         }
 
         static bool IsImageEquals(byte[] left, byte[] right) {
-            Bitmap imgLeft = null;
-            using(MemoryStream s = new MemoryStream(left)) {
-                imgLeft = Image.FromStream(s) as Bitmap;
-            }
-            Bitmap imgRight = null;
-            using(MemoryStream s = new MemoryStream(right)) {
-                imgRight = Image.FromStream(s) as Bitmap;
-            }
-            return ImageComparer.CompareMemCmp(imgLeft, imgRight);
+            Bitmap imgLeft = ImageHelper.CreateImageFromArray(left);
+            Bitmap imgRight = ImageHelper.CreateImageFromArray(right);
+            return ImageHelper.CompareUnsafe(imgLeft, imgRight);
         }
         static bool LoadImage(string path, Action<byte[]> saveAction) {
             if(!File.Exists(path)) {
-                //Debug.WriteLine("fire LoadImage");
                 return false;
             }
             byte[] bytes;

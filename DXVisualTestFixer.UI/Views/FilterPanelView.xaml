@@ -42,5 +42,8 @@
         <dxdo:LayoutControlItem Caption="Versions">
             <dxe:ComboBoxEdit ItemsSource="{Binding VersionsList}" EditValue="{Binding SelectedVersions, UpdateSourceTrigger=PropertyChanged}" NullText="{Binding VersionsNullText}"/>
         </dxdo:LayoutControlItem>
+        <dxdo:LayoutControlItem Caption="Problems">
+            <dxe:ComboBoxEdit ItemsSource="{Binding ProblemsList}" EditValue="{Binding SelectedProblems, UpdateSourceTrigger=PropertyChanged}" NullText="{Binding ProblemsNullText}"/>
+        </dxdo:LayoutControlItem>
     </dxdo:LayoutGroup>
 </UserControl>
