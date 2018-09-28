@@ -7,6 +7,7 @@
              xmlns:dxdo="http://schemas.devexpress.com/winfx/2008/xaml/docking"
              xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
              xmlns:dxmmvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
              xmlns:converters="clr-namespace:DXVisualTestFixer.UI.Converters"
              xmlns:prism="http://prismlibrary.com/"
              prism:ViewModelLocator.AutoWireViewModel="True"
@@ -44,6 +45,9 @@
         </dxdo:LayoutControlItem>
         <dxdo:LayoutControlItem Caption="Problems">
             <dxe:ComboBoxEdit ItemsSource="{Binding ProblemsList}" EditValue="{Binding SelectedProblems, UpdateSourceTrigger=PropertyChanged}" NullText="{Binding ProblemsNullText}"/>
+        </dxdo:LayoutControlItem>
+        <dxdo:LayoutControlItem Caption="Show Fixed" Visibility="{Binding HasFixedTests, Converter={dx:BooleanToVisibilityConverter}}">
+            <dxe:CheckEdit EditValue="{Binding ShowFixedTests, UpdateSourceTrigger=PropertyChanged}"/>
         </dxdo:LayoutControlItem>
     </dxdo:LayoutGroup>
 </UserControl>
