@@ -11,13 +11,37 @@ using System.Threading.Tasks;
 
 namespace DXVisualTestFixer.UI.ViewModels {
     public class FilterPanelViewModel : BindableBase {
+        public class Problem {
+            public Problem(int id, string value) {
+                Id = id;
+                Value = value;
+            }
+
+            public override bool Equals(object obj) {
+                Problem other = obj as Problem;
+                if(other == null)
+                    return false;
+                return other.Id == Id && other.Value == Value;
+            }
+
+            public override int GetHashCode() {
+                var hashCode = 1325046378;
+                hashCode = hashCode * -1521134295 + Id.GetHashCode();
+                hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Value);
+                return hashCode;
+            }
+
+            public int Id { get; }
+            public string Value { get; }
+        }
+
         readonly ITestsService testsService;
 
         string _DpiNullText, _TeamsNullText, _VersionsNullText, _ProblemsNullText;
         List<int> _DpiList;
         List<string> _TeamsList;
         List<string> _VersionsList;
-        List<int> _ProblemsList;
+        List<Problem> _ProblemsList;
         List<object> _SelectedDpis;
         List<object> _SelectedTeams;
         List<object> _SelectedVersions;
@@ -36,7 +60,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
             get { return _VersionsList; }
             set { SetProperty(ref _VersionsList, value); }
         }
-        public List<int> ProblemsList {
+        public List<Problem> ProblemsList {
             get { return _ProblemsList; }
             set { SetProperty(ref _ProblemsList, value); }
         }
@@ -113,7 +137,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
                 DpiList.Sort();
             }
             VersionsList = tests.Select(t => t.Version).Distinct().OrderBy(v => v).ToList();
-            ProblemsList = tests.Select(t => t.Problem).Distinct().OrderBy(n => n).ToList();
+            ProblemsList = tests.Select(t => new Problem(t.Problem, t.ProblemName)).Distinct().OrderBy(n => n.Id).ToList();
             HasFixedTests = tests.FirstOrDefault(t => t.Valid == TestState.Fixed) != null;
         }
 
