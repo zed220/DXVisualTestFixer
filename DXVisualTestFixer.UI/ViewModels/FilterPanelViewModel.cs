@@ -22,6 +22,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
         List<object> _SelectedTeams;
         List<object> _SelectedVersions;
         List<object> _SelectedProblems;
+        bool _ShowFixedTests, _HasFixedTests;
 
         public List<int> DpiList {
             get { return _DpiList; }
@@ -71,6 +72,14 @@ namespace DXVisualTestFixer.UI.ViewModels {
             get { return _ProblemsNullText; }
             set { SetProperty(ref _ProblemsNullText, value); }
         }
+        public bool ShowFixedTests {
+            get { return _ShowFixedTests; }
+            set { SetProperty(ref _ShowFixedTests, value, OnFilterChanged); }
+        }
+        public bool HasFixedTests {
+            get { return _HasFixedTests; }
+            set { SetProperty(ref _HasFixedTests, value); }
+        }
 
         public FilterPanelViewModel(ITestsService testsService) {
             this.testsService = testsService;
@@ -105,39 +114,24 @@ namespace DXVisualTestFixer.UI.ViewModels {
             }
             VersionsList = tests.Select(t => t.Version).Distinct().OrderBy(v => v).ToList();
             ProblemsList = tests.Select(t => t.Problem).Distinct().OrderBy(n => n).ToList();
+            HasFixedTests = tests.FirstOrDefault(t => t.Valid == TestState.Fixed) != null;
         }
 
         void OnFilterChanged() {
             List<CriteriaOperator> resultList = new List<CriteriaOperator>();
-            if(SelectedDpis != null && SelectedDpis.Count > 0) {
-                List<CriteriaOperator> dpis = new List<CriteriaOperator>();
-                foreach(int selectedDpi in SelectedDpis.Cast<int>()) {
-                    dpis.Add(new BinaryOperator("Dpi", selectedDpi, BinaryOperatorType.Equal));
-                }
-                resultList.Add(CriteriaOperator.Or(dpis));
-            }
-            if(SelectedTeams != null && SelectedTeams.Count > 0) {
-                List<CriteriaOperator> teams = new List<CriteriaOperator>();
-                foreach(string selectedTeam in SelectedTeams.Cast<string>()) {
-                    teams.Add(new BinaryOperator("TeamName", selectedTeam, BinaryOperatorType.Equal));
-                }
-                resultList.Add(CriteriaOperator.Or(teams));
-            }
-            if(SelectedVersions != null && SelectedVersions.Count > 0) {
-                List<CriteriaOperator> versions = new List<CriteriaOperator>();
-                foreach(string selectedVersion in SelectedVersions.Cast<string>()) {
-                    versions.Add(new BinaryOperator("Version", selectedVersion, BinaryOperatorType.Equal));
-                }
-                resultList.Add(CriteriaOperator.Or(versions));
-            }
-            if(SelectedProblems != null && SelectedProblems.Count > 0) {
-                List<CriteriaOperator> problems = new List<CriteriaOperator>();
-                foreach(var selectedProblem in SelectedProblems.Cast<int>()) {
-                    problems.Add(new BinaryOperator("Problem", selectedProblem, BinaryOperatorType.Equal));
-                }
-                resultList.Add(CriteriaOperator.Or(problems));
-            }
+            resultList.Add(CriteriaOperator.Or(GetCriteriaOperator(SelectedDpis, "Dpi")));
+            resultList.Add(CriteriaOperator.Or(GetCriteriaOperator(SelectedTeams, "TeamName")));
+            resultList.Add(CriteriaOperator.Or(GetCriteriaOperator(SelectedVersions, "Version")));
+            resultList.Add(CriteriaOperator.Or(GetCriteriaOperator(SelectedProblems, "Problem")));
+            if(HasFixedTests && !ShowFixedTests)
+                resultList.Add(new BinaryOperator("Valid", TestState.Fixed, BinaryOperatorType.NotEqual));
             testsService.CurrentFilter = resultList.Count > 0 ? CriteriaOperator.And(resultList).ToString() : null;
+        }
+        static IEnumerable<CriteriaOperator> GetCriteriaOperator(IEnumerable selectedFilterItems, string fieldName) {
+            if(selectedFilterItems == null)
+                yield break;
+            foreach(var selectedFilterItem in selectedFilterItems)
+                yield return new BinaryOperator(fieldName, selectedFilterItem, BinaryOperatorType.Equal);
         }
     }
 }
