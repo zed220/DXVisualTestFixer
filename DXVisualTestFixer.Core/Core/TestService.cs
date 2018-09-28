@@ -62,14 +62,37 @@ namespace DXVisualTestFixer.Core {
             }
             if(!problems.ContainsKey(currentD))
                 problems.Add(currentD, proplemNumber++);
-            Parallel.ForEach(TestList, test => {
-                foreach(var d in problems) {
+            Dictionary<int, HashSet<string>> namedProblems = new Dictionary<int, HashSet<string>>();
+            //foreach(var test in TestList) {
+            //    foreach(var d in problems) {
+            //        if(test.ImageDiffsCount < d.Key * 1.2d && test.Problem == int.MinValue) {
+            //            test.Problem = d.Value;
+            //            HashSet<string> tests = null;
+            //            if(!namedProblems.TryGetValue(d.Value, out tests))
+            //                namedProblems[d.Value] = tests = new HashSet<string>();
+            //            if(!tests.Contains(test.Team.Name))
+            //                tests.Add(test.Team.Name);
+            //            break;
+            //        }
+            //    }
+            //}
+            foreach(var d in problems) {
+                foreach(var test in TestList) {
                     if(test.ImageDiffsCount < d.Key * 1.2d && test.Problem == int.MinValue) {
                         test.Problem = d.Value;
-                        break;
+                        HashSet<string> tests = null;
+                        if(!namedProblems.TryGetValue(d.Value, out tests))
+                            namedProblems[d.Value] = tests = new HashSet<string>();
+                        if(!tests.Contains(test.Team.Name))
+                            tests.Add(test.Team.Name);
+                        //break;
                     }
                 }
-            });
+            }
+
+            foreach(var test in TestList) {
+                test.ProblemName = $"#{test.Problem} ({string.Join(", ", namedProblems[test.Problem])})";
+            }
         }
         int CalculateImageDiffsCount(TestInfo test) {
             if(test.ImageDiffArr == null || test.ImageBeforeArr == null || test.ImageCurrentArr == null)
@@ -133,8 +156,8 @@ namespace DXVisualTestFixer.Core {
                 result.UsedFiles[cached.Repository] = cached.UsedFiles;
                 result.ElapsedTimes[cached.Repository] = cached.ElapsedTimes.Cast<IElapsedTimeInfo>().ToList();
                 result.Teams[cached.Repository] = cached.Teams;
-                result.UpdateDiffs();
             }
+            result.UpdateDiffs();
             return result;
         }
         async Task<TestInfoCached> LoadTestsCoreAsync(IFarmTaskInfo farmTaskInfo) {

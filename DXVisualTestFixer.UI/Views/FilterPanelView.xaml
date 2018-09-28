@@ -44,7 +44,7 @@
             <dxe:ComboBoxEdit ItemsSource="{Binding VersionsList}" EditValue="{Binding SelectedVersions, UpdateSourceTrigger=PropertyChanged}" NullText="{Binding VersionsNullText}"/>
         </dxdo:LayoutControlItem>
         <dxdo:LayoutControlItem Caption="Problems">
-            <dxe:ComboBoxEdit ItemsSource="{Binding ProblemsList}" EditValue="{Binding SelectedProblems, UpdateSourceTrigger=PropertyChanged}" NullText="{Binding ProblemsNullText}"/>
+            <dxe:ComboBoxEdit ItemsSource="{Binding ProblemsList}" EditValue="{Binding SelectedProblems, UpdateSourceTrigger=PropertyChanged}" NullText="{Binding ProblemsNullText}" DisplayMember="Value" ValueMember="Id"/>
         </dxdo:LayoutControlItem>
         <dxdo:LayoutControlItem Caption="Show Fixed" Visibility="{Binding HasFixedTests, Converter={dx:BooleanToVisibilityConverter}}">
             <dxe:CheckEdit EditValue="{Binding ShowFixedTests, UpdateSourceTrigger=PropertyChanged}"/>

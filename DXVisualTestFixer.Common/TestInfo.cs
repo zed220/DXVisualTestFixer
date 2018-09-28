@@ -30,6 +30,7 @@ namespace DXVisualTestFixer.Common {
         public bool ImageEquals { get; set; }
         public int ImageDiffsCount { get; set; }
         public int Problem { get; set; } = int.MinValue;
+        public string ProblemName { get; set; }
         public string InvalidLog { get { return InvalidLogBuilder.ToString(); } }
 
         public void LogCustomError(string text) {
