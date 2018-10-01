@@ -46,7 +46,7 @@ namespace DXVisualTestFixer.Core {
         public Dictionary<Repository, List<IElapsedTimeInfo>> ElapsedTimes { get; }
         public Dictionary<Repository, List<Team>> Teams { get; }
         public List<TestInfo> ChangedTests { get; }
-        public void UpdateDiffs() {
+        public void UpdateProblems() {
             Parallel.ForEach(TestList, test => test.ImageDiffsCount = CalculateImageDiffsCount(test));
             List<int> diffs = new List<int>();
             TestList.ForEach(t => diffs.Add(t.ImageDiffsCount));
@@ -63,19 +63,6 @@ namespace DXVisualTestFixer.Core {
             if(!problems.ContainsKey(currentD))
                 problems.Add(currentD, proplemNumber++);
             Dictionary<int, HashSet<string>> namedProblems = new Dictionary<int, HashSet<string>>();
-            //foreach(var test in TestList) {
-            //    foreach(var d in problems) {
-            //        if(test.ImageDiffsCount < d.Key * 1.2d && test.Problem == int.MinValue) {
-            //            test.Problem = d.Value;
-            //            HashSet<string> tests = null;
-            //            if(!namedProblems.TryGetValue(d.Value, out tests))
-            //                namedProblems[d.Value] = tests = new HashSet<string>();
-            //            if(!tests.Contains(test.Team.Name))
-            //                tests.Add(test.Team.Name);
-            //            break;
-            //        }
-            //    }
-            //}
             foreach(var d in problems) {
                 foreach(var test in TestList) {
                     if(test.ImageDiffsCount < d.Key * 1.2d && test.Problem == int.MinValue) {
@@ -85,13 +72,14 @@ namespace DXVisualTestFixer.Core {
                             namedProblems[d.Value] = tests = new HashSet<string>();
                         if(!tests.Contains(test.Team.Name))
                             tests.Add(test.Team.Name);
-                        //break;
                     }
                 }
             }
-
             foreach(var test in TestList) {
-                test.ProblemName = $"#{test.Problem} ({string.Join(", ", namedProblems[test.Problem])})";
+                HashSet<string> namedProblemsList = null;
+                if(!namedProblems.TryGetValue(test.Problem, out namedProblemsList))
+                    namedProblemsList = new HashSet<string>();
+                test.ProblemName = $"#{test.Problem} ({string.Join(", ", namedProblemsList)})";
             }
         }
         int CalculateImageDiffsCount(TestInfo test) {
@@ -157,7 +145,7 @@ namespace DXVisualTestFixer.Core {
                 result.ElapsedTimes[cached.Repository] = cached.ElapsedTimes.Cast<IElapsedTimeInfo>().ToList();
                 result.Teams[cached.Repository] = cached.Teams;
             }
-            result.UpdateDiffs();
+            result.UpdateProblems();
             return result;
         }
         async Task<TestInfoCached> LoadTestsCoreAsync(IFarmTaskInfo farmTaskInfo) {
