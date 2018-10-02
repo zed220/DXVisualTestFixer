@@ -47,7 +47,10 @@ namespace DXVisualTestFixer.Core {
         public Dictionary<Repository, List<Team>> Teams { get; }
         public List<TestInfo> ChangedTests { get; }
         public void UpdateProblems() {
-            Parallel.ForEach(TestList, test => test.ImageDiffsCount = CalculateImageDiffsCount(test));
+            Parallel.ForEach(TestList, test => {
+                test.Problem = int.MinValue;
+                test.ImageDiffsCount = CalculateImageDiffsCount(test);
+            });
             List<int> diffs = new List<int>();
             TestList.ForEach(t => diffs.Add(t.ImageDiffsCount));
             diffs.Sort();
