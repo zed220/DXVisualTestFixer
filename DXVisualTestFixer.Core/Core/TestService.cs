@@ -122,6 +122,7 @@ namespace DXVisualTestFixer.Core {
         public async Task UpdateTests(INotificationService notificationService) {
             CurrentFilter = null;
             ActualState = await LoadTestsAsync(farmIntegrator.GetAllTasks(configSerializer.GetConfig().Repositories), notificationService);
+            ((TestInfoContainer)ActualState).UpdateProblems();
         }
 
         async Task<ITestInfoContainer> LoadTestsAsync(List<IFarmTaskInfo> farmTasks, INotificationService notificationService) {
@@ -145,7 +146,6 @@ namespace DXVisualTestFixer.Core {
                 result.ElapsedTimes[cached.Repository] = cached.ElapsedTimes.Cast<IElapsedTimeInfo>().ToList();
                 result.Teams[cached.Repository] = cached.Teams;
             }
-            result.UpdateProblems();
             return result;
         }
         async Task<TestInfoCached> LoadTestsCoreAsync(IFarmTaskInfo farmTaskInfo) {
