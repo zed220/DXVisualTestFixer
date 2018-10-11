@@ -29,11 +29,16 @@ namespace DXVisualTestFixer.UI.Models {
         ImageSource GetImage() {
             if(SolutionPath == null || !File.Exists(SolutionPath))
                 return null;
-            Icon appIcon = Icon.ExtractAssociatedIcon(SolutionPath);
-            Bitmap bitmap = appIcon.ToBitmap();
-            IntPtr hBitmap = bitmap.GetHbitmap();
+            try {
+                Icon appIcon = Icon.ExtractAssociatedIcon(SolutionPath);
+                Bitmap bitmap = appIcon.ToBitmap();
+                IntPtr hBitmap = bitmap.GetHbitmap();
 
-            return Imaging.CreateBitmapSourceFromHBitmap(hBitmap, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+                return Imaging.CreateBitmapSourceFromHBitmap(hBitmap, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+            }
+            catch {
+                return null;
+            }
         }
         public void OpenSolution() {
             if(SolutionPath == null || !File.Exists(SolutionPath))
