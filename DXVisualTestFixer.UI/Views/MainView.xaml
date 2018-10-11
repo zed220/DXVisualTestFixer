@@ -218,7 +218,7 @@
                             <dxb:BarSubItem.ItemTemplate>
                                 <DataTemplate>
                                     <ContentControl>
-                                        <dxb:BarButtonItem Content="{Binding Version}" Command="{DXCommand Execute='OpenSolution()'}"/>
+                                        <dxb:BarButtonItem Content="{Binding Version}" Command="{DXCommand Execute='OpenSolution()'}" Glyph="{Binding Image}" GlyphSize="Small"/>
                                     </ContentControl>
                                 </DataTemplate>
                             </dxb:BarSubItem.ItemTemplate>
