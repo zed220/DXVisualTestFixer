@@ -400,6 +400,7 @@ namespace DXVisualTestFixer.Core {
         void UpdateTestStatus(TestInfo test) {
             if(test.Valid == TestState.Error)
                 return;
+            test.Valid = TestState.Valid;
             string actualTestResourceName = GetTestResourceName(test, true);
             if(actualTestResourceName == null) {
                 test.Valid = TestState.Invalid;
@@ -415,8 +416,10 @@ namespace DXVisualTestFixer.Core {
             }
             if(test.Valid == TestState.Invalid)
                 return;
-            if(IsImageEquals(test.ImageCurrentArr, test.ImageBeforeArr))
-                test.ImageEquals = true;
+            if(test.ImageBeforeArr != null) {
+                if(IsImageEquals(test.ImageCurrentArr, test.ImageBeforeArr))
+                    test.ImageEquals = true;
+            }
             if(!IsTextEquals(test.TextCurrent, File.ReadAllText(xmlPath), out _, out _)) {
                 test.Valid = TestState.Valid;
                 return;
