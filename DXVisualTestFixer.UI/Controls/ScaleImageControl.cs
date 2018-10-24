@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DXVisualTestFixer.UI.Behaviors;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -40,10 +41,10 @@ namespace DXVisualTestFixer.UI.Controls {
         static ScaleImageControl() {
             Type ownerType = typeof(ScaleImageControl);
             ImageSourceProperty = DependencyProperty.Register("ImageSource", typeof(BitmapSource), ownerType,
-                new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsRender,
+                new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange | FrameworkPropertyMetadataOptions.AffectsRender,
                 (d, e) => ((ScaleImageControl)d).OnImageSourceChanged()));
             ScaleProperty = DependencyProperty.Register("Scale", typeof(int), ownerType,
-                new FrameworkPropertyMetadata(1, FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsRender,
+                new FrameworkPropertyMetadata(1, FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange | FrameworkPropertyMetadataOptions.AffectsRender,
                 (d, e) => ((ScaleImageControl)d).OnImageSourceChanged()));
         }
 
@@ -95,16 +96,12 @@ namespace DXVisualTestFixer.UI.Controls {
         }
         static Bitmap ResizeImage(Image image, int scale) {
             var destRect = new Rectangle(0, 0, image.Width * scale, image.Height * scale);
-            var destImage = new Bitmap(destRect.Width, destRect.Height);
+            Bitmap destImage = new Bitmap(destRect.Width, destRect.Height);
 
             destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
 
             using(var graphics = Graphics.FromImage(destImage)) {
-                graphics.CompositingMode = CompositingMode.SourceCopy;
-                graphics.CompositingQuality = CompositingQuality.HighQuality;
                 graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
-                graphics.SmoothingMode = SmoothingMode.HighQuality;
-                graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
                 using(var wrapMode = new ImageAttributes()) {
                     wrapMode.SetWrapMode(WrapMode.TileFlipXY);
@@ -114,26 +111,26 @@ namespace DXVisualTestFixer.UI.Controls {
 
             return destImage;
         }
-        //PixelFormat format = PixelFormats.Bgr101010;
-        BitmapImage Convert(Bitmap src) {
-            MemoryStream ms = new MemoryStream();
-            ((Bitmap)src).Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
-            BitmapImage image = new BitmapImage();
-            image.BeginInit();
-            ms.Seek(0, SeekOrigin.Begin);
-            image.StreamSource = ms;
-            image.EndInit();
-            //format = image.Format;
-
-            return image;
+        BitmapSource Convert(Bitmap src) {
+            return System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(src.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
         }
 
         BitmapSource ScaleImage() {
             if(ImageSource == null)
                 return null;
-            Bitmap result = ResizeImage(BitmapSourceToBitmap(ImageSource), Scale);
-            return Convert(result);
+            return SafeScaleImage(Scale);
         }
+        BitmapSource SafeScaleImage(int scale) {
+            try {
+                Bitmap result = ResizeImage(BitmapSourceToBitmap(ImageSource), scale);
+                return Convert(result);
+            }
+            catch {
+                ImageScaleBehavior.ZoomOut();
+                return null;
+            }
+        }
+
 
         protected override void OnRender(DrawingContext drawingContext) {
             if(scaledImage == null)
