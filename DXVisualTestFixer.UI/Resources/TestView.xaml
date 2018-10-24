@@ -28,13 +28,14 @@
                 <behaviors:ScrollVIewerDragBehavior/>
                 <behaviors:ImageScaleBehavior/>
             </dxmvvm:Interaction.Behaviors>
-            <Image Source="{Binding Path=Content, Converter={StaticResource ArrayToImageConverter}, RelativeSource={RelativeSource TemplatedParent}}" Stretch="None">
+            <controls:ScaleImageControl ImageSource="{Binding Path=Content, Converter={StaticResource ArrayToImageConverter}, RelativeSource={RelativeSource TemplatedParent}}"/>
+            <!--<Image Source="{Binding Path=Content, Converter={StaticResource ArrayToImageConverter}, RelativeSource={RelativeSource TemplatedParent}}" Stretch="None">
                 <dxb:BarManager.DXContextMenu>
                     <dxb:PopupMenu>
                         <dxb:BarButtonItem Content="Copy Image To Clipboard" Glyph="{dx:DXImageOffice2013 Image=Copy_16x16.png}" Command="{Binding Converter={StaticResource ImageToClipboardConverter}}"/>
                     </dxb:PopupMenu>
                 </dxb:BarManager.DXContextMenu>
-            </Image>
+            </Image>-->
         </controls:DraggableScrollViewer>
     </DataTemplate>
 </ResourceDictionary>

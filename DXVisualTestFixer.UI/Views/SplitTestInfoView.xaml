@@ -66,12 +66,16 @@
                         </dxb:BarButtonItem>
                     </dxr:RibbonPageGroup>
                     <dxr:RibbonPageGroup Caption="Zoom">
-                        <dxb:BarButtonItem RibbonStyle="Large" Content="Zoom -10%" LargeGlyph="{dx:DXImageOffice2013 Image=ZoomOut_32x32.png}" GlyphSize="Large"
+                        <dxb:BarButtonItem RibbonStyle="Large" Content="Zoom Out" LargeGlyph="{dx:DXImageOffice2013 Image=ZoomOut_32x32.png}" GlyphSize="Large"
                                            Command="{DXCommand Execute='$behaviors:ImageScaleBehavior.ZoomOut()'}"/>
                         <dxb:BarButtonItem RibbonStyle="Large" Content="Zoom 100%" LargeGlyph="{dx:DXImageOffice2013 Image=Zoom100_32x32.png}" GlyphSize="Large"
                                            Command="{DXCommand Execute='$behaviors:ImageScaleBehavior.Zoom100()'}"/>
-                        <dxb:BarButtonItem RibbonStyle="Large" Content="Zoom +10%" LargeGlyph="{dx:DXImageOffice2013 Image=ZoomIn_32x32.png}" GlyphSize="Large"
+                        <dxb:BarButtonItem RibbonStyle="Large" Content="Zoom In" LargeGlyph="{dx:DXImageOffice2013 Image=ZoomIn_32x32.png}" GlyphSize="Large"
                                            Command="{DXCommand Execute='$behaviors:ImageScaleBehavior.ZoomIn()'}"/>
+                        <dxb:BarItemSeparator/>
+                        <dxb:BarCheckItem RibbonStyle="Large" Content="Perfect Pixel Zoom" LargeGlyph="{dx:DXImageOffice2013 Image=Zoom2_32x32.png}" GlyphSize="Large" 
+                                          IsChecked="{DXBinding Expr='$behaviors:ImageScaleBehavior.IsPerfectPixel', Mode=OneTime}"
+                                          Command="{DXCommand Execute='$behaviors:ImageScaleBehavior.ChangeScaleMode(@s.IsChecked)'}"/>
                     </dxr:RibbonPageGroup>
                 </dxr:RibbonPage>
             </dxr:RibbonDefaultPageCategory>
