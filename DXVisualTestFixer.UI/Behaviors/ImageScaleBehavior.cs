@@ -37,7 +37,7 @@ namespace DXVisualTestFixer.UI.Behaviors {
             TrackingControls.Add(TrackingControl);
             AssociatedObject.PreviewMouseWheel += AssociatedObject_PreviewMouseWheel;
             TrackingControl.LayoutTransform = new ScaleTransform();
-            //TrackingControl.LayoutTransform = new ScaleTransform() { ScaleX = Scale, ScaleY = Scale };
+
             SetScale(100);
         }
 
@@ -61,7 +61,7 @@ namespace DXVisualTestFixer.UI.Behaviors {
         }
         public static void ZoomIn() {
             int d = isPerfectPixel ? 100 : 10;
-            SetScale(Math.Min(400, scale + d));
+            SetScale(Math.Min(600, scale + d));
         }
         public static void Zoom100() {
             SetScale(100);
