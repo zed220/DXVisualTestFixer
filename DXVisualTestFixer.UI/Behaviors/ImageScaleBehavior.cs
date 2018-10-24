@@ -1,4 +1,5 @@
 ﻿using DevExpress.Mvvm.UI.Interactivity;
+using DXVisualTestFixer.UI.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,8 +12,11 @@ using System.Windows.Media;
 
 namespace DXVisualTestFixer.UI.Behaviors {
     public class ImageScaleBehavior : Behavior<ScrollViewer> {
-        static List<Image> TrackingImages = new List<Image>();
-        static int Scale = 100;
+        static List<ScaleImageControl> TrackingControls = new List<ScaleImageControl>();
+        static int scale = 100;
+        static bool isPerfectPixel = false;
+
+        public static bool IsPerfectPixel { get { return isPerfectPixel; } }
 
         protected override void OnAttached() {
             base.OnAttached();
@@ -27,12 +31,13 @@ namespace DXVisualTestFixer.UI.Behaviors {
             Initialize();
         }
 
-        Image Image { get { return (Image)AssociatedObject.Content; } }
+        ScaleImageControl TrackingControl { get { return (ScaleImageControl)AssociatedObject.Content; } }
 
         void Initialize() {
-            TrackingImages.Add(Image);
+            TrackingControls.Add(TrackingControl);
             AssociatedObject.PreviewMouseWheel += AssociatedObject_PreviewMouseWheel;
-            Image.LayoutTransform = new ScaleTransform() { ScaleX = Scale, ScaleY = Scale };
+            TrackingControl.LayoutTransform = new ScaleTransform();
+            //TrackingControl.LayoutTransform = new ScaleTransform() { ScaleX = Scale, ScaleY = Scale };
             SetScale(100);
         }
 
@@ -44,31 +49,47 @@ namespace DXVisualTestFixer.UI.Behaviors {
                 ZoomIn();
         }
 
+        public static void ChangeScaleMode(bool perfectPixel) {
+            SetScale(100);
+            isPerfectPixel = perfectPixel;
+        }
+
         public static void ZoomOut() {
-            SetScale(Math.Max(30, Scale - 10));
+            int d = isPerfectPixel ? 100 : 10;
+            int min = isPerfectPixel ? 100 : 30;
+            SetScale(Math.Max(min, scale - d));
         }
         public static void ZoomIn() {
-            SetScale(Math.Min(300, Scale + 10));
+            int d = isPerfectPixel ? 100 : 10;
+            SetScale(Math.Min(400, scale + d));
         }
         public static void Zoom100() {
             SetScale(100);
         }
         public static void SetScale(int scale) {
-            foreach(Image img in TrackingImages) {
-                ScaleTransform scaleTransform = img.LayoutTransform as ScaleTransform;
+            foreach(var trackingControl in TrackingControls) {
+                ScaleTransform scaleTransform = trackingControl.LayoutTransform as ScaleTransform;
                 if(scaleTransform == null)
                     return;
-                scaleTransform.ScaleX = scale / 100d;
-                scaleTransform.ScaleY = scale / 100d;
+                if(isPerfectPixel) {
+                    scaleTransform.ScaleX = 1;
+                    scaleTransform.ScaleY = 1;
+                    trackingControl.Scale = scale / 100;
+                }
+                else {
+                    trackingControl.Scale = 1;
+                    scaleTransform.ScaleX = scale / 100d;
+                    scaleTransform.ScaleY = scale / 100d;
+                }
             }
-            Scale = scale;
+            ImageScaleBehavior.scale = scale;
         }
 
         protected override void OnDetaching() {
             base.OnDetaching();
             AssociatedObject.PreviewMouseWheel -= AssociatedObject_PreviewMouseWheel;
-            if(TrackingImages.Contains(Image))
-                TrackingImages.Remove(Image);
+            if(TrackingControls.Contains(TrackingControl))
+                TrackingControls.Remove(TrackingControl);
         }
     }
 }
