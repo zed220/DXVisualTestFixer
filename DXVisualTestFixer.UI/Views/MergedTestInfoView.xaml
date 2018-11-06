@@ -104,17 +104,24 @@
         <dxdo:LayoutGroup Orientation="Vertical" ShowCaption="False">
             <dxdo:LayoutPanel ShowCaption="True" ShowCloseButton="False" ShowPinButton="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False">
                 <dxdo:LayoutPanel.Caption>
-                    <dxe:ComboBoxEdit DataContext="{Binding DataContext}" EditValue="{Binding MergerdTestViewType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsTextEditable="False">
-                        <dxe:ComboBoxEdit.ItemsSource>
-                            <sys:ArrayList>
-                                <common:MergerdTestViewType>Diff</common:MergerdTestViewType>
-                                <common:MergerdTestViewType>Before</common:MergerdTestViewType>
-                                <common:MergerdTestViewType>Current</common:MergerdTestViewType>
-                            </sys:ArrayList>
-                        </dxe:ComboBoxEdit.ItemsSource>
-                    </dxe:ComboBoxEdit>
+                    <StackPanel Orientation="Horizontal">
+                        <dxe:ComboBoxEdit DataContext="{Binding DataContext}" EditValue="{Binding MergerdTestViewType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsTextEditable="False" MinWidth="100">
+                            <dxe:ComboBoxEdit.ItemsSource>
+                                <sys:ArrayList>
+                                    <common:MergerdTestViewType>Diff</common:MergerdTestViewType>
+                                    <common:MergerdTestViewType>Before</common:MergerdTestViewType>
+                                    <common:MergerdTestViewType>Current</common:MergerdTestViewType>
+                                </sys:ArrayList>
+                            </dxe:ComboBoxEdit.ItemsSource>
+                        </dxe:ComboBoxEdit>
+                        <TextBlock Text="You can use Left/Right arrows to change current view" Margin="2, 0" VerticalAlignment="Center"/>
+                    </StackPanel>
                 </dxdo:LayoutPanel.Caption>
-                <Grid>
+                <Grid FocusManager.IsFocusScope="True">
+                    <dxmvvm:Interaction.Behaviors>
+                        <dxmvvm:KeyToCommand KeyGesture="Left" Command="{DXCommand Execute='ChangeView(true)'}" MarkRoutedEventsAsHandled="True" EventName="PreviewKeyDown"/>
+                        <dxmvvm:KeyToCommand KeyGesture="Right" Command="{DXCommand Execute='ChangeView(false)'}" MarkRoutedEventsAsHandled="True" EventName="PreviewKeyDown"/>
+                    </dxmvvm:Interaction.Behaviors>
                     <ContentControl x:Name="before" Content="{Binding Path=TestInfo.TestInfo.ImageBeforeArr}" ContentTemplate="{StaticResource ResourceKey=DraggableScrollViewerDataTemplate}"
                                     Visibility="{DXBinding Expr='MergerdTestViewType eq $common:MergerdTestViewType.Before', Converter={StaticResource VisibilityConverter}}"/>
                     <ContentControl x:Name="current" Content="{Binding Path=TestInfo.TestInfo.ImageCurrentArr}" ContentTemplate="{StaticResource ResourceKey=DraggableScrollViewerDataTemplate}"
