@@ -78,22 +78,14 @@ namespace DXVisualTestFixer.UI.Controls {
         }
 
         static Bitmap BitmapSourceToBitmap(BitmapSource srs) {
-            int width = srs.PixelWidth;
-            int height = srs.PixelHeight;
-            int stride = width * (srs.Format.BitsPerPixel / 8);
-            IntPtr ptr = IntPtr.Zero;
-            try {
-                ptr = Marshal.AllocHGlobal(height * stride);
-                srs.CopyPixels(new Int32Rect(0, 0, width, height), ptr, height * stride, stride);
-                using(var btm = new System.Drawing.Bitmap(width, height, stride, System.Drawing.Imaging.PixelFormat.Format32bppArgb, ptr)) {
-                    return new System.Drawing.Bitmap(btm);
-                }
-            }
-            finally {
-                if(ptr != IntPtr.Zero)
-                    Marshal.FreeHGlobal(ptr);
+            using(var outStream = new MemoryStream()) {
+                BitmapEncoder enc = new BmpBitmapEncoder();
+                enc.Frames.Add(BitmapFrame.Create(srs));
+                enc.Save(outStream);
+                return new Bitmap(outStream);
             }
         }
+
         static Bitmap ResizeImage(Image image, int scale) {
             var destRect = new Rectangle(0, 0, image.Width * scale, image.Height * scale);
             Bitmap destImage = new Bitmap(destRect.Width, destRect.Height);
