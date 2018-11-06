@@ -32,5 +32,21 @@ namespace DXVisualTestFixer.UI.ViewModels {
         public void OnNavigatedFrom(NavigationContext navigationContext) {
             
         }
+
+        public void ChangeView(bool reverse) {
+            MergerdTestViewType = GetNextMergedTestViewType(reverse);
+        }
+        MergerdTestViewType GetNextMergedTestViewType(bool reverse) {
+            switch(MergerdTestViewType) {
+                case MergerdTestViewType.Diff:
+                    return reverse ? MergerdTestViewType.Current : MergerdTestViewType.Before;
+                case MergerdTestViewType.Before:
+                    return reverse ? MergerdTestViewType.Diff : MergerdTestViewType.Current;
+                case MergerdTestViewType.Current:
+                    return reverse ? MergerdTestViewType.Before : MergerdTestViewType.Diff;
+                default:
+                    return MergerdTestViewType;
+            }
+        }
     }
 }
