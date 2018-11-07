@@ -76,9 +76,13 @@
                         <dxb:BarButtonItem RibbonStyle="Large" Content="Zoom In" LargeGlyph="{dx:DXImageOffice2013 Image=ZoomIn_32x32.png}" GlyphSize="Large"
                                            Command="{DXCommand Execute='$behaviors:ImageScaleBehavior.ZoomIn()'}"/>
                         <dxb:BarItemSeparator/>
-                        <dxb:BarCheckItem RibbonStyle="Large" Content="Perfect Pixel Zoom" LargeGlyph="{dx:DXImageOffice2013 Image=Zoom2_32x32.png}" GlyphSize="Large" 
+                        <dxb:BarCheckItem x:Name="barCheckItemPerfectPixel" RibbonStyle="Large" Content="Perfect Pixel Zoom" LargeGlyph="{dx:DXImageOffice2013 Image=Zoom2_32x32.png}" GlyphSize="Large" 
                                           IsChecked="{DXBinding Expr='$behaviors:ImageScaleBehavior.IsPerfectPixel', Mode=OneTime}"
                                           Command="{DXCommand Execute='$behaviors:ImageScaleBehavior.ChangeScaleMode(@s.IsChecked)'}"/>
+                        <dxb:BarCheckItem RibbonStyle="Large" Content="Show Grid Lines" LargeGlyph="{dx:DXImageGrayscale Image=ViewGridlines_32x32.png}" GlyphSize="Large" 
+                                          IsChecked="{DXBinding Expr='$behaviors:ImageScaleBehavior.ShowGridLines', Mode=OneTime}"
+                                          Command="{DXCommand Execute='$behaviors:ImageScaleBehavior.ChangeShowGridLines(@s.IsChecked)'}"
+                                          IsVisible="{Binding Path=IsChecked, ElementName=barCheckItemPerfectPixel}"/>
                     </dxr:RibbonPageGroup>
                     <dxr:RibbonPageGroup Caption="Current View">
                         <dxb:BarItemSelector  SelectedItem="{Binding MergerdTestViewType, Mode=TwoWay}">
