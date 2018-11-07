@@ -14,9 +14,9 @@ namespace DXVisualTestFixer.UI.Behaviors {
     public class ImageScaleBehavior : Behavior<ScrollViewer> {
         static List<ScaleImageControl> TrackingControls = new List<ScaleImageControl>();
         static int scale = 100;
-        static bool isPerfectPixel = false;
 
-        public static bool IsPerfectPixel { get { return isPerfectPixel; } }
+        public static bool IsPerfectPixel { get; private set; }
+        public static bool ShowGridLines { get; private set; }
 
         protected override void OnAttached() {
             base.OnAttached();
@@ -51,16 +51,20 @@ namespace DXVisualTestFixer.UI.Behaviors {
 
         public static void ChangeScaleMode(bool perfectPixel) {
             SetScale(100);
-            isPerfectPixel = perfectPixel;
+            IsPerfectPixel = perfectPixel;
+        }
+        public static void ChangeShowGridLines(bool showGridLines) {
+            ShowGridLines = showGridLines;
+            SetScale(scale);
         }
 
         public static void ZoomOut() {
-            int d = isPerfectPixel ? 100 : 10;
-            int min = isPerfectPixel ? 100 : 30;
+            int d = IsPerfectPixel ? 100 : 10;
+            int min = IsPerfectPixel ? 100 : 30;
             SetScale(Math.Max(min, scale - d));
         }
         public static void ZoomIn() {
-            int d = isPerfectPixel ? 100 : 10;
+            int d = IsPerfectPixel ? 100 : 10;
             SetScale(Math.Min(600, scale + d));
         }
         public static void Zoom100() {
@@ -71,10 +75,11 @@ namespace DXVisualTestFixer.UI.Behaviors {
                 ScaleTransform scaleTransform = trackingControl.LayoutTransform as ScaleTransform;
                 if(scaleTransform == null)
                     return;
-                if(isPerfectPixel) {
+                if(IsPerfectPixel) {
                     scaleTransform.ScaleX = 1;
                     scaleTransform.ScaleY = 1;
                     trackingControl.Scale = scale / 100;
+                    trackingControl.ShowGridLines = ShowGridLines;
                 }
                 else {
                     trackingControl.Scale = 1;
