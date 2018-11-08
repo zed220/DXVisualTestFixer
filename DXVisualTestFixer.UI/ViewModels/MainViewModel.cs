@@ -37,7 +37,6 @@ namespace DXVisualTestFixer.UI.ViewModels {
         ITestInfoModel _CurrentTest;
         ProgramStatus _Status;
         string _CurrentLogLine;
-        TestViewType _TestViewType;
         int _TestsToCommitCount;
         CriteriaOperator _CurrentFilter;
         ITestsService _TestService;
@@ -50,7 +49,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
         }
         public ITestInfoModel CurrentTest {
             get { return _CurrentTest; }
-            set { SetProperty(ref _CurrentTest, value, OnCurrentTestChanged); }
+            set { SetProperty(ref _CurrentTest, value); }
         }
         public ProgramStatus Status {
             get { return _Status; }
@@ -59,10 +58,6 @@ namespace DXVisualTestFixer.UI.ViewModels {
         public string CurrentLogLine {
             get { return _CurrentLogLine; }
             set { SetProperty(ref _CurrentLogLine, value); }
-        }
-        public TestViewType TestViewType {
-            get { return _TestViewType; }
-            set { SetProperty(ref _TestViewType, value, OnTestViewTypeChanged); }
         }
         public int TestsToCommitCount {
             get { return _TestsToCommitCount; }
@@ -195,17 +190,6 @@ namespace DXVisualTestFixer.UI.ViewModels {
             RefreshTestList();
         }
 
-        void OnTestViewTypeChanged() {
-            regionManager.Regions[Regions.TestInfo].RemoveAll();
-            OnCurrentTestChanged();
-        }
-        void OnCurrentTestChanged() {
-            if(CurrentTest == null)
-                return;
-            NavigationParameters p = new NavigationParameters();
-            p.Add(NavigationParameter_Test, CurrentTest);
-            regionManager.RequestNavigate(Regions.TestInfo, TestViewType == TestViewType.Split ? nameof(SplitTestInfoView) : nameof(MergedTestInfoView), p);
-        }
         void OnTestsChanged() {
             if(Tests == null) {
                 TestsToCommitCount = 0;
@@ -310,9 +294,6 @@ namespace DXVisualTestFixer.UI.ViewModels {
             foreach(var test in Tests)
                 test.CommitChange = false;
             TestService.ActualState?.ChangedTests?.Clear();
-        }
-        public void ChangeTestViewType(TestViewType testViewType) {
-            TestViewType = testViewType;
         }
 
         public void CommitTest(TestInfoModel testInfoModel) {

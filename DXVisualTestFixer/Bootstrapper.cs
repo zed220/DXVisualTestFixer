@@ -45,9 +45,6 @@ namespace DXVisualTestFixer {
             RegisterTypeIfMissing(typeof(IUpdateService), typeof(SquirrelUpdateService), true);
             RegisterTypeIfMissing(typeof(IDXNotification), typeof(DXNotification), false);
             RegisterTypeIfMissing(typeof(IDXConfirmation), typeof(DXConfirmation), false);
-
-            Container.RegisterTypeForNavigation<SplitTestInfoView>();
-            Container.RegisterTypeForNavigation<MergedTestInfoView>();
         }
 
         protected override RegionAdapterMappings ConfigureRegionAdapterMappings() {
@@ -58,8 +55,6 @@ namespace DXVisualTestFixer {
 
         protected override void ConfigureViewModelLocator() {
             base.ConfigureViewModelLocator();
-            ViewModelLocationProvider.Register(typeof(SplitTestInfoView).FullName, typeof(TestInfoViewModel));
-            ViewModelLocationProvider.Register(typeof(MergedTestInfoView).FullName, typeof(TestInfoViewModel));
 
             Container.Resolve<IRegionManager>().RegisterViewWithRegion(Regions.Main, typeof(MainView));
         }

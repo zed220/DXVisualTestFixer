@@ -164,6 +164,7 @@
     <Compile Include="Behaviors\UnusedFilesDragDropBehavior.cs" />
     <Compile Include="Common\FilePreviewTemplateSelector.cs" />
     <Compile Include="Controls\DraggableScrollViewer.cs" />
+    <Compile Include="Controls\ImageScalingControl.cs" />
     <Compile Include="Controls\ScaleImageControl.cs" />
     <Compile Include="Controls\TableViewAdvNavigation.cs" />
     <Compile Include="Converters\ArrayToImageConverter.cs" />
@@ -175,7 +176,6 @@
     <Compile Include="Converters\NotificationContentConverter.cs" />
     <Compile Include="Converters\StackPanelToTooltipConverter.cs" />
     <Compile Include="Converters\SummaryToCheckedStateConverter.cs" />
-    <Compile Include="Converters\TestViewTypeConverter.cs" />
     <Compile Include="Native\DiffLineBackgroundRenderer.cs" />
     <Compile Include="Native\ThemesProvider.cs" />
     <Compile Include="PrismCommon\LayoutPanelRegionAdapter.cs" />
@@ -196,7 +196,6 @@
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModels\ShellViewModel.cs" />
     <Compile Include="Models\SolutionModel.cs" />
-    <Compile Include="ViewModels\TestInfoViewModel.cs" />
     <Compile Include="Models\TestInfoModel.cs" />
     <Compile Include="Models\TimingModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
@@ -210,9 +209,6 @@
     <Compile Include="Views\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\MergedTestInfoView.xaml.cs">
-      <DependentUpon>MergedTestInfoView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\RepositoryAnalyzerView.xaml.cs">
       <DependentUpon>RepositoryAnalyzerView.xaml</DependentUpon>
     </Compile>
@@ -225,8 +221,8 @@
     <Compile Include="Views\Shell.xaml.cs">
       <DependentUpon>Shell.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SplitTestInfoView.xaml.cs">
-      <DependentUpon>SplitTestInfoView.xaml</DependentUpon>
+    <Compile Include="Views\TestInfoControl.xaml.cs">
+      <DependentUpon>TestInfoControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ViewRecourcesView.xaml.cs">
       <DependentUpon>ViewRecourcesView.xaml</DependentUpon>
@@ -237,7 +233,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Resources\TestView.xaml">
+    <Page Include="Resources\ImageScalingControlResources.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -257,10 +253,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\MergedTestInfoView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Views\RepositoryAnalyzerView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -277,7 +269,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\SplitTestInfoView.xaml">
+    <Page Include="Views\TestInfoControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

@@ -1,0 +1,222 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+                    xmlns:dxt="http://schemas.devexpress.com/winfx/2008/xaml/core/themekeys"
+                    xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+                    xmlns:behaviors="clr-namespace:DXVisualTestFixer.UI.Behaviors"
+                    xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+                    xmlns:converters="clr-namespace:DXVisualTestFixer.UI.Converters"
+                    xmlns:controls="clr-namespace:DXVisualTestFixer.UI.Controls"
+                    xmlns:dxr="http://schemas.devexpress.com/winfx/2008/xaml/ribbon"
+                    xmlns:sys="clr-namespace:System.Collections;assembly=mscorlib"
+                    xmlns:common="clr-namespace:DXVisualTestFixer.Common;assembly=DXVisualTestFixer.Common"
+                    xmlns:dxdo="http://schemas.devexpress.com/winfx/2008/xaml/docking"
+                    xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+                    xmlns:dxi="http://schemas.devexpress.com/winfx/2008/xaml/core/internal"
+                    xmlns:sys1="clr-namespace:System;assembly=mscorlib">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/DXVisualTestFixer.UI;component/Resources/LayoutPanel.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+    <Style TargetType="{x:Type dxi:TabBorder}">
+        <Setter Property="BorderThickness" Value="0,1,0,0"/>
+    </Style>
+    <converters:ImageToClipboardConverter x:Key="ImageToClipboardConverter"/>
+    <converters:MultiImageToClipboardConverter x:Key="MultiImageToClipboardConverter"/>
+    <converters:ArrayToImageConverter x:Key="ArrayToImageConverter"/>
+    <Style TargetType="{x:Type controls:DraggableScrollViewer}">
+        <Setter Property="Background">
+            <Setter.Value>
+                <LinearGradientBrush EndPoint="0,0" StartPoint="8,8" MappingMode="Absolute" SpreadMethod="Repeat">
+                    <GradientStop Color="#3FC6C6C6" Offset="0" />
+                    <GradientStop Color="#3FC6C6C6" Offset="0.5" />
+                    <GradientStop Color="White" Offset="0.5" />
+                    <GradientStop Color="White" Offset="1" />
+                </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <DataTemplate x:Key="DraggableScrollViewerDataTemplate">
+        <DataTemplate.Resources>
+            <dxmvvm:ObjectToObjectConverter x:Key="scrollModeConverter" DefaultSource="Legacy" DefaultTarget="{x:Null}">
+                <dxmvvm:MapItem Source="Draggable" Target="Hand"/>
+            </dxmvvm:ObjectToObjectConverter>
+        </DataTemplate.Resources>
+        <controls:DraggableScrollViewer HorizontalScrollBarVisibility="Auto" dx:ScrollBarExtensions.HandlesDefaultMouseScrolling="False" dx:ScrollBarExtensions.AllowMouseScrolling="False"
+                                        ScrollMode="{Binding Path=(controls:ImageScalingControl.ImageScalingControl).ScrollMode, RelativeSource={RelativeSource Self}}"
+                                        Cursor="{Binding Path=ScrollMode, RelativeSource={RelativeSource Self}, Converter={StaticResource scrollModeConverter}}">
+            <dxmvvm:Interaction.Behaviors>
+                <behaviors:ScrollVIewerDragBehavior/>
+                <behaviors:ImageScaleBehavior/>
+            </dxmvvm:Interaction.Behaviors>
+            <controls:ScaleImageControl ImageSource="{Binding Path=Content, Converter={StaticResource ArrayToImageConverter}, RelativeSource={RelativeSource TemplatedParent}}"/>
+        </controls:DraggableScrollViewer>
+    </DataTemplate>
+    <controls:ImageScalingControlTemplateSelector x:Key="imageScalingControlTemplateSelector">
+        <controls:ImageScalingControlTemplateSelector.MergedTemplate>
+            <DataTemplate>
+                <DataTemplate.Resources>
+                    <dxmvvm:ObjectToObjectConverter x:Key="VisibilityConverter" DefaultSource="False" DefaultTarget="Hidden">
+                        <dxmvvm:MapItem Source="True" Target="Visible"/>
+                    </dxmvvm:ObjectToObjectConverter>
+                </DataTemplate.Resources>
+                <Grid DataContext="{Binding Path=(controls:ImageScalingControl.ImageScalingControl), RelativeSource={RelativeSource Self}}">
+                    <dxr:RibbonControl>
+                        <dxr:RibbonDefaultPageCategory>
+                            <dxr:RibbonPage Caption="Main">
+                                <dxr:RibbonPageGroup Caption="Current View">
+                                    <dxb:BarItemSelector SelectedItem="{Binding MergedViewType, Mode=TwoWay}">
+                                        <dxb:BarItemSelector.ItemLinksSource>
+                                            <sys:ArrayList>
+                                                <controls:MergedTestViewType>Diff</controls:MergedTestViewType>
+                                                <controls:MergedTestViewType>Before</controls:MergedTestViewType>
+                                                <controls:MergedTestViewType>Current</controls:MergedTestViewType>
+                                            </sys:ArrayList>
+                                        </dxb:BarItemSelector.ItemLinksSource>
+                                        <dxb:BarItemSelector.ItemTemplate>
+                                            <DataTemplate>
+                                                <ContentControl>
+                                                    <dxb:BarCheckItem Content="{Binding}" RibbonStyle="SmallWithText"/>
+                                                </ContentControl>
+                                            </DataTemplate>
+                                        </dxb:BarItemSelector.ItemTemplate>
+                                    </dxb:BarItemSelector>
+                                </dxr:RibbonPageGroup>
+                            </dxr:RibbonPage>
+                        </dxr:RibbonDefaultPageCategory>
+                    </dxr:RibbonControl>
+                    <dxdo:LayoutPanel ShowCaption="True" ShowCloseButton="False" ShowPinButton="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False">
+                        <dxdo:LayoutPanel.Caption>
+                            <StackPanel Orientation="Horizontal">
+                                <dxe:ComboBoxEdit DataContext="{Binding Path=(controls:ImageScalingControl.ImageScalingControl), UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource Self}}" 
+                                                  EditValue="{Binding Path=MergedViewType, Mode=TwoWay}" IsTextEditable="False" MinWidth="100">
+                                    <dxe:ComboBoxEdit.ItemsSource>
+                                        <sys:ArrayList>
+                                            <controls:MergedTestViewType>Diff</controls:MergedTestViewType>
+                                            <controls:MergedTestViewType>Before</controls:MergedTestViewType>
+                                            <controls:MergedTestViewType>Current</controls:MergedTestViewType>
+                                        </sys:ArrayList>
+                                    </dxe:ComboBoxEdit.ItemsSource>
+                                </dxe:ComboBoxEdit>
+                                <TextBlock Text="You can use Left/Right arrows to change current view" Margin="2,0" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </dxdo:LayoutPanel.Caption>
+                        <Grid>
+                            <ContentControl x:Name="before"
+                                            Content="{Binding Path=TestInfoModel.TestInfo.ImageBeforeArr}" ContentTemplate="{StaticResource ResourceKey=DraggableScrollViewerDataTemplate}"
+                                            Visibility="{DXBinding Expr='MergedViewType eq $controls:MergedTestViewType.Before', Converter={StaticResource VisibilityConverter}}"/>
+                            <ContentControl x:Name="current"
+                                            Content="{Binding Path=TestInfoModel.TestInfo.ImageCurrentArr}" ContentTemplate="{StaticResource ResourceKey=DraggableScrollViewerDataTemplate}"
+                                        Visibility="{DXBinding Expr='MergedViewType eq $controls:MergedTestViewType.Current', Converter={StaticResource VisibilityConverter}}"/>
+                            <ContentControl x:Name="diff"
+                                            Content="{Binding Path=TestInfoModel.TestInfo.ImageDiffArr}" ContentTemplate="{StaticResource ResourceKey=DraggableScrollViewerDataTemplate}"
+                                            Visibility="{DXBinding Expr='MergedViewType eq $controls:MergedTestViewType.Diff', Converter={StaticResource VisibilityConverter}}"/>
+                        </Grid>
+                    </dxdo:LayoutPanel>
+                </Grid>
+            </DataTemplate>
+        </controls:ImageScalingControlTemplateSelector.MergedTemplate>
+        <controls:ImageScalingControlTemplateSelector.SplitTemplate>
+            <DataTemplate>
+                <dxdo:LayoutGroup DataContext="{Binding Path=(controls:ImageScalingControl.ImageScalingControl).TestInfoModel.TestInfo, RelativeSource={RelativeSource Self}}">
+                    <dxdo:LayoutGroup.Resources>
+                        <Style TargetType="{x:Type dxdo:LayoutPanel}">
+                            <Setter Property="ContentTemplate" Value="{StaticResource DraggableScrollViewerDataTemplate}"/>
+                        </Style>
+                    </dxdo:LayoutGroup.Resources>
+                    <dxdo:LayoutPanel ShowCaption="True" Caption="Before" ShowCloseButton="False" ShowPinButton="False" Content="{Binding ImageBeforeArr}" AllowSizing="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False"/>
+                    <dxdo:LayoutPanel ShowCaption="True" Caption="Current" ShowCloseButton="False" ShowPinButton="False"  Content="{Binding ImageCurrentArr}" AllowSizing="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False"/>
+                    <dxdo:LayoutPanel ShowCaption="True" Caption="Diff" ShowCloseButton="False" ShowPinButton="False" Content="{Binding ImageDiffArr}" AllowSizing="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False"/>
+                </dxdo:LayoutGroup>
+            </DataTemplate>
+        </controls:ImageScalingControlTemplateSelector.SplitTemplate>
+    </controls:ImageScalingControlTemplateSelector>
+    <ControlTemplate x:Key="imageScalingControlTemplate" TargetType="{x:Type controls:ImageScalingControl}">
+        <Grid DataContext="{Binding RelativeSource={RelativeSource TemplatedParent}}" FocusManager.IsFocusScope="True">
+            <dxmvvm:Interaction.Behaviors>
+                <dxmvvm:KeyToCommand KeyGesture="Left" Command="{DXCommand Execute='ChangeView(true)'}" MarkRoutedEventsAsHandled="True" EventName="PreviewKeyDown"/>
+                <dxmvvm:KeyToCommand KeyGesture="Right" Command="{DXCommand Execute='ChangeView(false)'}" MarkRoutedEventsAsHandled="True" EventName="PreviewKeyDown"/>
+            </dxmvvm:Interaction.Behaviors>
+            <dxr:RibbonControl>
+                <dxr:RibbonDefaultPageCategory>
+                    <dxr:RibbonPage Caption="Main">
+                        <dxr:RibbonPageGroup Caption="View Type">
+                            <dxb:BarItemSelector SelectedItem="{Binding ViewMode, Mode=TwoWay}">
+                                <dxb:BarItemSelector.ItemLinksSource>
+                                    <sys:ArrayList>
+                                        <controls:TestViewType>Split</controls:TestViewType>
+                                        <controls:TestViewType>Merged</controls:TestViewType>
+                                    </sys:ArrayList>
+                                </dxb:BarItemSelector.ItemLinksSource>
+                                <dxb:BarItemSelector.ItemTemplate>
+                                    <DataTemplate>
+                                        <ContentControl>
+                                            <dxb:BarCheckItem Content="{Binding}" RibbonStyle="SmallWithText"/>
+                                        </ContentControl>
+                                    </DataTemplate>
+                                </dxb:BarItemSelector.ItemTemplate>
+                            </dxb:BarItemSelector>
+                        </dxr:RibbonPageGroup>
+                        <dxr:RibbonPageGroup Caption="Scroll Mode">
+                            <dxb:BarItemSelector SelectedItem="{Binding Path=ScrollMode, Mode=TwoWay}">
+                                <dxb:BarItemSelector.ItemLinksSource>
+                                    <sys:ArrayList>
+                                        <controls:ScrollMode>Legacy</controls:ScrollMode>
+                                        <controls:ScrollMode>Draggable</controls:ScrollMode>
+                                    </sys:ArrayList>
+                                </dxb:BarItemSelector.ItemLinksSource>
+                                <dxb:BarItemSelector.ItemTemplate>
+                                    <DataTemplate>
+                                        <ContentControl>
+                                            <dxb:BarCheckItem Content="{Binding}" RibbonStyle="SmallWithText"/>
+                                        </ContentControl>
+                                    </DataTemplate>
+                                </dxb:BarItemSelector.ItemTemplate>
+                            </dxb:BarItemSelector>
+                        </dxr:RibbonPageGroup>
+                        <dxr:RibbonPageGroup Caption="Clipboard Tools" DataContext="{Binding TestInfoModel.TestInfo}">
+                            <dxb:BarButtonItem RibbonStyle="Large" Content="Copy Original" LargeGlyph="{dx:DXImageOffice2013 Image=Copy_32x32.png}" GlyphSize="Large"
+                                           Command="{Binding ImageBeforeArr, Converter={StaticResource ImageToClipboardConverter}}"/>
+                            <dxb:BarButtonItem RibbonStyle="Large" Content="Copy Current" LargeGlyph="{dx:DXImageOffice2013 Image=Copy_32x32.png}" GlyphSize="Large"
+                                           Command="{Binding ImageCurrentArr, Converter={StaticResource ImageToClipboardConverter}}"/>
+                            <dxb:BarButtonItem RibbonStyle="Large" Content="Copy Diff" LargeGlyph="{dx:DXImageOffice2013 Image=Copy_32x32.png}" GlyphSize="Large"
+                                           Command="{Binding ImageDiffArr, Converter={StaticResource ImageToClipboardConverter}}"/>
+                            <dxb:BarButtonItem RibbonStyle="Large" Content="Copy Split" LargeGlyph="{dx:DXImageOffice2013 Image=Copy_32x32.png}" GlyphSize="Large">
+                                <dxb:BarButtonItem.Command>
+                                    <MultiBinding Converter="{StaticResource MultiImageToClipboardConverter}">
+                                        <Binding Path="ImageBeforeArr"/>
+                                        <Binding Path="ImageCurrentArr"/>
+                                        <Binding Path="ImageDiffArr"/>
+                                        <Binding Path="Theme"/>
+                                        <Binding Path="Team"/>
+                                    </MultiBinding>
+                                </dxb:BarButtonItem.Command>
+                            </dxb:BarButtonItem>
+                        </dxr:RibbonPageGroup>
+                        <dxr:RibbonPageGroup Caption="Zoom">
+                            <dxb:BarButtonItem RibbonStyle="Large" Content="Zoom Out" LargeGlyph="{dx:DXImageOffice2013 Image=ZoomOut_32x32.png}" GlyphSize="Large"
+                                           Command="{DXCommand Execute='$behaviors:ImageScaleBehavior.ZoomOut()'}"/>
+                            <dxb:BarButtonItem RibbonStyle="Large" Content="Zoom 100%" LargeGlyph="{dx:DXImageOffice2013 Image=Zoom100_32x32.png}" GlyphSize="Large"
+                                           Command="{DXCommand Execute='$behaviors:ImageScaleBehavior.Zoom100()'}"/>
+                            <dxb:BarButtonItem RibbonStyle="Large" Content="Zoom In" LargeGlyph="{dx:DXImageOffice2013 Image=ZoomIn_32x32.png}" GlyphSize="Large"
+                                           Command="{DXCommand Execute='$behaviors:ImageScaleBehavior.ZoomIn()'}"/>
+                            <dxb:BarItemSeparator/>
+                            <dxb:BarCheckItem x:Name="barCheckItemPerfectPixel" RibbonStyle="Large" Content="Perfect Pixel Zoom" LargeGlyph="{dx:DXImageOffice2013 Image=Zoom2_32x32.png}" GlyphSize="Large" 
+                                          IsChecked="{DXBinding Expr='$behaviors:ImageScaleBehavior.IsPerfectPixel', Mode=OneTime}"
+                                          Command="{DXCommand Execute='$behaviors:ImageScaleBehavior.ChangeScaleMode(@s.IsChecked)'}"/>
+                            <dxb:BarCheckItem RibbonStyle="Large" Content="Show Grid Lines" LargeGlyph="{dx:DXImageGrayscale Image=ViewGridlines_32x32.png}" GlyphSize="Large" 
+                                          IsChecked="{DXBinding Expr='$behaviors:ImageScaleBehavior.ShowGridLines', Mode=OneTime}"
+                                          Command="{DXCommand Execute='$behaviors:ImageScaleBehavior.ChangeShowGridLines(@s.IsChecked)'}"
+                                          IsVisible="{Binding Path=IsChecked, ElementName=barCheckItemPerfectPixel}"/>
+                        </dxr:RibbonPageGroup>
+                    </dxr:RibbonPage>
+                </dxr:RibbonDefaultPageCategory>
+            </dxr:RibbonControl>
+            <ContentPresenter Content="{TemplateBinding ViewMode}" 
+                              ContentTemplateSelector="{StaticResource imageScalingControlTemplateSelector}" 
+                              controls:ImageScalingControl.ImageScalingControl="{Binding RelativeSource={RelativeSource TemplatedParent}}"/>
+        </Grid>
+    </ControlTemplate>
+    <Style TargetType="{x:Type controls:ImageScalingControl}">
+        <Setter Property="Template" Value="{StaticResource imageScalingControlTemplate}"/>
+    </Style>
+</ResourceDictionary>

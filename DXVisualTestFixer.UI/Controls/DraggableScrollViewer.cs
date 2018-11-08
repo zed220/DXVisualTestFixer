@@ -9,30 +9,23 @@ using System.Windows.Input;
 
 namespace DXVisualTestFixer.UI.Controls {
     public class DraggableScrollViewer : ScrollViewer {
-        public static readonly DependencyProperty DraggableModeProperty;
+        public static readonly DependencyProperty ScrollModeProperty;
 
         static DraggableScrollViewer() {
-            DraggableModeProperty = DependencyProperty.RegisterAttached("DraggableMode", typeof(bool), typeof(DraggableScrollViewer), new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.Inherits));
+            Type ownerType = typeof(DraggableScrollViewer);
+            ScrollModeProperty = DependencyProperty.Register("ScrollMode", typeof(ScrollMode), ownerType, new PropertyMetadata(ScrollMode.Draggable));
         }
 
-        public static bool GetDraggableMode(DependencyObject obj) {
-            return (bool)obj.GetValue(DraggableModeProperty);
-        }
-
-        public static void SetDraggableMode(DependencyObject obj, bool value) {
-            obj.SetValue(DraggableModeProperty, value);
-        }
-
-        public bool DraggableMode {
-            get { return GetDraggableMode(this); }
-            set { SetDraggableMode(this, value); }
+        public ScrollMode ScrollMode {
+            get { return (ScrollMode)GetValue(ScrollModeProperty); }
+            set { SetValue(ScrollModeProperty, value); }
         }
 
         Point scrollMousePoint = new Point();
         Point offset;
         protected override void OnPreviewMouseLeftButtonDown(MouseButtonEventArgs e) {
             base.OnPreviewMouseLeftButtonDown(e);
-            if(!DraggableMode)
+            if(ScrollMode == ScrollMode.Legacy)
                 return;
             scrollMousePoint = e.GetPosition(this);
             offset = new Point(HorizontalOffset, VerticalOffset);
@@ -40,7 +33,7 @@ namespace DXVisualTestFixer.UI.Controls {
         }
         protected override void OnPreviewMouseLeftButtonUp(MouseButtonEventArgs e) {
             base.OnPreviewMouseLeftButtonUp(e);
-            if(!DraggableMode)
+            if(ScrollMode == ScrollMode.Legacy)
                 return;
             ReleaseMouseCapture();
         }

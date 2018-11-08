@@ -17,8 +17,8 @@ namespace DXVisualTestFixer.UI.Views {
     /// <summary>
     /// Interaction logic for TestInfoView.xaml
     /// </summary>
-    public partial class SplitTestInfoView : UserControl {
-        public SplitTestInfoView() {
+    public partial class TestInfoControl : UserControl {
+        public TestInfoControl() {
             InitializeComponent();
         }
     }

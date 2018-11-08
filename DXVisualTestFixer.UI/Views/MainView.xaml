@@ -35,8 +35,6 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/DXVisualTestFixer.UI;component/Resources/Services.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-            <converters:TestViewTypeConverter x:Key="TestViewTypeConverterSplit" TrueValue="{x:Static common:TestViewType.Split}" FalseValue="{x:Static common:TestViewType.Merged}"/>
-            <converters:TestViewTypeConverter x:Key="TestViewTypeConverterMerged" TrueValue="{x:Static common:TestViewType.Merged}" FalseValue="{x:Static common:TestViewType.Split}"/>
             <converters:StackPanelToTooltipConverter x:Key="StackPanelToTooltipConverter"/>
             <Style TargetType="{x:Type dxe:ComboBoxEdit}">
                 <Setter Property="Margin" Value="4"/>
@@ -243,41 +241,6 @@
                             LargeGlyph="{dx:DXImageOffice2013 Image=Properties_32x32.png}">
                         </dxb:BarButtonItem>
                     </dxr:RibbonPageGroup>
-                    <dxr:RibbonPageGroup Caption="View Type">
-                        <dxb:BarItemSelector  SelectedItem="{Binding TestViewType, Mode=TwoWay}">
-                            <dxb:BarItemSelector.ItemLinksSource>
-                                <sys:ArrayList>
-                                    <common:TestViewType>Split</common:TestViewType>
-                                    <common:TestViewType>Merged</common:TestViewType>
-                                </sys:ArrayList>
-                            </dxb:BarItemSelector.ItemLinksSource>
-                            <dxb:BarItemSelector.ItemTemplate>
-                                <DataTemplate>
-                                    <ContentControl>
-                                        <dxb:BarCheckItem Content="{Binding}" RibbonStyle="SmallWithText"/>
-                                    </ContentControl>
-                                </DataTemplate>
-                            </dxb:BarItemSelector.ItemTemplate>
-                        </dxb:BarItemSelector>
-                    </dxr:RibbonPageGroup>
-                    <dxr:RibbonPageGroup Caption="Scroll Mode">
-                        <dxb:BarItemSelector  SelectedItem="{Binding Path=(controls:DraggableScrollViewer.DraggableMode), ElementName=TestInfo, Mode=TwoWay}">
-                            <dxb:BarItemSelector.ItemLinksSource>
-                                <sys:ArrayList>
-                                    <sys1:Boolean>False</sys1:Boolean>
-                                    <sys1:Boolean>True</sys1:Boolean>
-                                </sys:ArrayList>
-                            </dxb:BarItemSelector.ItemLinksSource>
-                            <dxb:BarItemSelector.ItemTemplate>
-                                <DataTemplate>
-                                    <ContentControl>
-                                        <dxb:BarCheckItem RibbonStyle="SmallWithText" 
-                                                          Content="{Binding Converter={dxmvvm:BooleanToObjectConverter TrueValue=Draggable, FalseValue=Legacy}}"/>
-                                    </ContentControl>
-                                </DataTemplate>
-                            </dxb:BarItemSelector.ItemTemplate>
-                        </dxb:BarItemSelector>
-                    </dxr:RibbonPageGroup>
                 </dxr:RibbonPage>
                 <dxr:RibbonPage Caption="Service">
                     <dxr:RibbonPageGroup Caption="Service">
@@ -397,8 +360,9 @@
                     </dxdo:LayoutPanel>
                 </dxdo:LayoutGroup>
                 <dxdo:LayoutGroup AllowDrag="False" Orientation="Vertical" AllowSplitters="False" Visibility="{Binding CurrentTest, Converter={dx:NullableToVisibilityConverter}}">
-                    <dxdo:LayoutPanel x:Name="TestInfo" prism:RegionManager.RegionName="{x:Static common:Regions.TestInfo}" ShowCaption="False" 
-                                      dxb:MergingProperties.ElementMergingBehavior="All"/>
+                    <dxdo:LayoutPanel ShowCaption="False" dxb:MergingProperties.ElementMergingBehavior="All">
+                        <local:TestInfoControl Visibility="{Binding CurrentTest, Converter={dx:NullableToVisibilityConverter}}"/>
+                    </dxdo:LayoutPanel>
                     <dxdo:LayoutPanel ShowBorder="False" ShowCaption="False" ItemWidth="Auto" ItemHeight="Auto">
                         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
                             <Button Content="Prev" Click="{DXEvent Handler='@e(view).MovePrevDataRow()'}" Width="100"/>
