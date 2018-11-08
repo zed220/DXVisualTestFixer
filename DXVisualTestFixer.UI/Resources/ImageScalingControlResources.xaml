@@ -45,7 +45,6 @@
             <dxmvvm:Interaction.Behaviors>
                 <behaviors:ScrollViewerRegistrationBehavior ImageScalingControl="{Binding Path=AssociatedObject.(controls:ImageScalingControl.ImageScalingControl), RelativeSource={RelativeSource Self}}"
                                                             ScrollViewerType="{Binding Path=AssociatedObject.(controls:ImageScalingControl.ScrollViewerType), RelativeSource={RelativeSource Self}}"/>
-                <behaviors:ImageScaleBehavior/>
             </dxmvvm:Interaction.Behaviors>
             <controls:ScaleImageControl ImageSource="{Binding Path=Content, Converter={StaticResource ArrayToImageConverter}, RelativeSource={RelativeSource TemplatedParent}}"/>
         </controls:DraggableScrollViewer>
@@ -193,19 +192,17 @@
                         </dxr:RibbonPageGroup>
                         <dxr:RibbonPageGroup Caption="Zoom">
                             <dxb:BarButtonItem RibbonStyle="Large" Content="Zoom Out" LargeGlyph="{dx:DXImageOffice2013 Image=ZoomOut_32x32.png}" GlyphSize="Large"
-                                           Command="{DXCommand Execute='$behaviors:ImageScaleBehavior.ZoomOut()'}"/>
+                                               Command="{DXCommand Execute='ZoomOut()'}"/>
                             <dxb:BarButtonItem RibbonStyle="Large" Content="Zoom 100%" LargeGlyph="{dx:DXImageOffice2013 Image=Zoom100_32x32.png}" GlyphSize="Large"
-                                           Command="{DXCommand Execute='$behaviors:ImageScaleBehavior.Zoom100()'}"/>
+                                               Command="{DXCommand Execute='Zoom100()'}"/>
                             <dxb:BarButtonItem RibbonStyle="Large" Content="Zoom In" LargeGlyph="{dx:DXImageOffice2013 Image=ZoomIn_32x32.png}" GlyphSize="Large"
-                                           Command="{DXCommand Execute='$behaviors:ImageScaleBehavior.ZoomIn()'}"/>
+                                               Command="{DXCommand Execute='ZoomIn()'}"/>
                             <dxb:BarItemSeparator/>
-                            <dxb:BarCheckItem x:Name="barCheckItemPerfectPixel" RibbonStyle="Large" Content="Perfect Pixel Zoom" LargeGlyph="{dx:DXImageOffice2013 Image=Zoom2_32x32.png}" GlyphSize="Large" 
-                                          IsChecked="{DXBinding Expr='$behaviors:ImageScaleBehavior.IsPerfectPixel', Mode=OneTime}"
-                                          Command="{DXCommand Execute='$behaviors:ImageScaleBehavior.ChangeScaleMode(@s.IsChecked)'}"/>
+                            <dxb:BarCheckItem RibbonStyle="Large" Content="Perfect Pixel Zoom" LargeGlyph="{dx:DXImageOffice2013 Image=Zoom2_32x32.png}" GlyphSize="Large" 
+                                              IsChecked="{Binding IsPerfectPixel, Mode=TwoWay}"/>
                             <dxb:BarCheckItem RibbonStyle="Large" Content="Show Grid Lines" LargeGlyph="{dx:DXImageGrayscale Image=ViewGridlines_32x32.png}" GlyphSize="Large" 
-                                          IsChecked="{DXBinding Expr='$behaviors:ImageScaleBehavior.ShowGridLines', Mode=OneTime}"
-                                          Command="{DXCommand Execute='$behaviors:ImageScaleBehavior.ChangeShowGridLines(@s.IsChecked)'}"
-                                          IsVisible="{Binding Path=IsChecked, ElementName=barCheckItemPerfectPixel}"/>
+                                              IsChecked="{Binding ShowGridLines, Mode=TwoWay}"
+                                              IsVisible="{Binding Path=IsPerfectPixel}"/>
                         </dxr:RibbonPageGroup>
                     </dxr:RibbonPage>
                 </dxr:RibbonDefaultPageCategory>

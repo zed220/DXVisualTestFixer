@@ -120,7 +120,7 @@ namespace DXVisualTestFixer.UI.Controls {
                 return Convert(result);
             }
             catch {
-                ImageScaleBehavior.ZoomOut();
+                ImageScalingControl.GetImageScalingControl(this).ZoomOut();
                 return null;
             }
         }
