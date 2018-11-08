@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace DXVisualTestFixer.UI.Views {
+namespace DXVisualTestFixer.UI.Controls {
     /// <summary>
     /// Interaction logic for TestInfoView.xaml
     /// </summary>

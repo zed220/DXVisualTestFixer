@@ -9,11 +9,9 @@
                     xmlns:controls="clr-namespace:DXVisualTestFixer.UI.Controls"
                     xmlns:dxr="http://schemas.devexpress.com/winfx/2008/xaml/ribbon"
                     xmlns:sys="clr-namespace:System.Collections;assembly=mscorlib"
-                    xmlns:common="clr-namespace:DXVisualTestFixer.Common;assembly=DXVisualTestFixer.Common"
                     xmlns:dxdo="http://schemas.devexpress.com/winfx/2008/xaml/docking"
                     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
-                    xmlns:dxi="http://schemas.devexpress.com/winfx/2008/xaml/core/internal"
-                    xmlns:sys1="clr-namespace:System;assembly=mscorlib">
+                    xmlns:dxi="http://schemas.devexpress.com/winfx/2008/xaml/core/internal">
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/DXVisualTestFixer.UI;component/Resources/LayoutPanel.xaml"/>
     </ResourceDictionary.MergedDictionaries>
@@ -43,9 +41,10 @@
         </DataTemplate.Resources>
         <controls:DraggableScrollViewer HorizontalScrollBarVisibility="Auto" dx:ScrollBarExtensions.HandlesDefaultMouseScrolling="False" dx:ScrollBarExtensions.AllowMouseScrolling="False"
                                         ScrollMode="{Binding Path=(controls:ImageScalingControl.ImageScalingControl).ScrollMode, RelativeSource={RelativeSource Self}}"
-                                        Cursor="{Binding Path=ScrollMode, RelativeSource={RelativeSource Self}, Converter={StaticResource scrollModeConverter}}">
+                                        Cursor="{Binding Path=(controls:ImageScalingControl.ImageScalingControl).ScrollMode, RelativeSource={RelativeSource Self}, Converter={StaticResource scrollModeConverter}}">
             <dxmvvm:Interaction.Behaviors>
-                <behaviors:ScrollVIewerDragBehavior/>
+                <behaviors:ScrollViewerRegistrationBehavior ImageScalingControl="{Binding Path=AssociatedObject.(controls:ImageScalingControl.ImageScalingControl), RelativeSource={RelativeSource Self}}"
+                                                            ScrollViewerType="{Binding Path=AssociatedObject.(controls:ImageScalingControl.ScrollViewerType), RelativeSource={RelativeSource Self}}"/>
                 <behaviors:ImageScaleBehavior/>
             </dxmvvm:Interaction.Behaviors>
             <controls:ScaleImageControl ImageSource="{Binding Path=Content, Converter={StaticResource ArrayToImageConverter}, RelativeSource={RelativeSource TemplatedParent}}"/>
@@ -101,13 +100,13 @@
                             </StackPanel>
                         </dxdo:LayoutPanel.Caption>
                         <Grid>
-                            <ContentControl x:Name="before"
+                            <ContentControl controls:ImageScalingControl.ScrollViewerType="Before"
                                             Content="{Binding Path=TestInfoModel.TestInfo.ImageBeforeArr}" ContentTemplate="{StaticResource ResourceKey=DraggableScrollViewerDataTemplate}"
                                             Visibility="{DXBinding Expr='MergedViewType eq $controls:MergedTestViewType.Before', Converter={StaticResource VisibilityConverter}}"/>
-                            <ContentControl x:Name="current"
+                            <ContentControl controls:ImageScalingControl.ScrollViewerType="Current"
                                             Content="{Binding Path=TestInfoModel.TestInfo.ImageCurrentArr}" ContentTemplate="{StaticResource ResourceKey=DraggableScrollViewerDataTemplate}"
-                                        Visibility="{DXBinding Expr='MergedViewType eq $controls:MergedTestViewType.Current', Converter={StaticResource VisibilityConverter}}"/>
-                            <ContentControl x:Name="diff"
+                                            Visibility="{DXBinding Expr='MergedViewType eq $controls:MergedTestViewType.Current', Converter={StaticResource VisibilityConverter}}"/>
+                            <ContentControl controls:ImageScalingControl.ScrollViewerType="Diff"
                                             Content="{Binding Path=TestInfoModel.TestInfo.ImageDiffArr}" ContentTemplate="{StaticResource ResourceKey=DraggableScrollViewerDataTemplate}"
                                             Visibility="{DXBinding Expr='MergedViewType eq $controls:MergedTestViewType.Diff', Converter={StaticResource VisibilityConverter}}"/>
                         </Grid>
@@ -123,9 +122,9 @@
                             <Setter Property="ContentTemplate" Value="{StaticResource DraggableScrollViewerDataTemplate}"/>
                         </Style>
                     </dxdo:LayoutGroup.Resources>
-                    <dxdo:LayoutPanel ShowCaption="True" Caption="Before" ShowCloseButton="False" ShowPinButton="False" Content="{Binding ImageBeforeArr}" AllowSizing="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False"/>
-                    <dxdo:LayoutPanel ShowCaption="True" Caption="Current" ShowCloseButton="False" ShowPinButton="False"  Content="{Binding ImageCurrentArr}" AllowSizing="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False"/>
-                    <dxdo:LayoutPanel ShowCaption="True" Caption="Diff" ShowCloseButton="False" ShowPinButton="False" Content="{Binding ImageDiffArr}" AllowSizing="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False"/>
+                    <dxdo:LayoutPanel controls:ImageScalingControl.ScrollViewerType="Before" ShowCaption="True" Caption="Before" ShowCloseButton="False" ShowPinButton="False" Content="{Binding ImageBeforeArr}" AllowSizing="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False"/>
+                    <dxdo:LayoutPanel controls:ImageScalingControl.ScrollViewerType="Current" ShowCaption="True" Caption="Current" ShowCloseButton="False" ShowPinButton="False"  Content="{Binding ImageCurrentArr}" AllowSizing="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False"/>
+                    <dxdo:LayoutPanel controls:ImageScalingControl.ScrollViewerType="Diff" ShowCaption="True" Caption="Diff" ShowCloseButton="False" ShowPinButton="False" Content="{Binding ImageDiffArr}" AllowSizing="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False"/>
                 </dxdo:LayoutGroup>
             </DataTemplate>
         </controls:ImageScalingControlTemplateSelector.SplitTemplate>

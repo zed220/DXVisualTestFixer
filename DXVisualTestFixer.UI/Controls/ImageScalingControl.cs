@@ -1,6 +1,10 @@
-﻿using DXVisualTestFixer.UI.ViewModels;
+﻿using DevExpress.Mvvm.Native;
+using DevExpress.Xpf.Bars.Native;
+using DXVisualTestFixer.UI.ViewModels;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,7 +12,46 @@ using System.Windows;
 using System.Windows.Controls;
 
 namespace DXVisualTestFixer.UI.Controls {
-    public partial class ImageScalingControl : Control {
+    public class ImageScalingControl : Control {
+
+        #region Inner Classes
+
+        class ScrollViewerScrollSynchronizer {
+            DraggableScrollViewer before, current, diff;
+                        
+            public void Register(MergedTestViewType scrollViewerType, DraggableScrollViewer scrollViewer) {
+                switch(scrollViewerType) {
+                    case MergedTestViewType.Diff:
+                        Unregister(diff);
+                        diff = scrollViewer;
+                        break;
+                    case MergedTestViewType.Before:
+                        Unregister(before);
+                        before = scrollViewer;
+                        break;
+                    case MergedTestViewType.Current:
+                        Unregister(current);
+                        current = scrollViewer;
+                        break;
+                }
+                scrollViewer.ScrollChanged += scrollChanged;
+            }
+            public void Unregister(DraggableScrollViewer scrollViewer) {
+                if(scrollViewer == null)
+                    return;
+                scrollViewer.ScrollChanged -= scrollChanged;
+            }
+
+            void scrollChanged(object sender, ScrollChangedEventArgs e) {
+                foreach(DraggableScrollViewer sv in new List<DraggableScrollViewer>() { before, current, diff }.Where(x => x != null)) {
+                    sv.ScrollToHorizontalOffset(e.HorizontalOffset);
+                    sv.ScrollToVerticalOffset(e.VerticalOffset);
+                }
+            }
+        }
+
+        #endregion
+
         public static readonly DependencyProperty ViewModeProperty;
         public static readonly DependencyProperty MergedViewTypeProperty;
         public static readonly DependencyProperty ScaleProperty;
@@ -17,6 +60,8 @@ namespace DXVisualTestFixer.UI.Controls {
         public static readonly DependencyProperty ScrollModeProperty;
         public static readonly DependencyProperty TestInfoModelProperty;
         public static readonly DependencyProperty ImageScalingControlProperty;
+
+        public static readonly DependencyProperty ScrollViewerTypeProperty;
 
         static ImageScalingControl() {
             Type ownerType = typeof(ImageScalingControl);
@@ -28,15 +73,23 @@ namespace DXVisualTestFixer.UI.Controls {
             ShowGridLinesProperty = DependencyProperty.Register("ShowGridLines", typeof(bool), ownerType, new PropertyMetadata(false));
             ScrollModeProperty = DependencyProperty.Register("ScrollMode", typeof(ScrollMode), ownerType, new PropertyMetadata(ScrollMode.Draggable));
             ImageScalingControlProperty = DependencyProperty.RegisterAttached("ImageScalingControl", typeof(ImageScalingControl), ownerType, new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.Inherits));
+
+            ScrollViewerTypeProperty = DependencyProperty.RegisterAttached("ScrollViewerType", typeof(MergedTestViewType), ownerType, new FrameworkPropertyMetadata(MergedTestViewType.Before, FrameworkPropertyMetadataOptions.Inherits));
+
+            DefaultStyleKeyProperty.OverrideMetadata(ownerType, new FrameworkPropertyMetadata(ownerType));
         }
-
-
 
         public static ImageScalingControl GetImageScalingControl(DependencyObject obj) {
             return (ImageScalingControl)obj.GetValue(ImageScalingControlProperty);
         }
         public static void SetImageScalingControl(DependencyObject obj, ImageScalingControl value) {
             obj.SetValue(ImageScalingControlProperty, value);
+        }
+        public static MergedTestViewType GetScrollViewerType(DependencyObject obj) {
+            return (MergedTestViewType)obj.GetValue(ScrollViewerTypeProperty);
+        }
+        public static void SetScrollViewerType(DependencyObject obj, MergedTestViewType value) {
+            obj.SetValue(ScrollViewerTypeProperty, value);
         }
 
         public TestInfoModel TestInfoModel {
@@ -68,24 +121,10 @@ namespace DXVisualTestFixer.UI.Controls {
             set { SetValue(ScrollModeProperty, value); }
         }
 
-        //ScrollViewer scrollViewerBefore, scrollViewerCurrent, scrollViewerDiff;
-        //ScaleImageControl imageBefore, imageCurrent, imageDiff;
+        ScrollViewerScrollSynchronizer scrollViewerScrollSynchronizer = new ScrollViewerScrollSynchronizer();
 
-        public override void OnApplyTemplate() {
-            base.OnApplyTemplate();
-            //scrollViewerBefore = GetTemplateChild<ScrollViewer>(GetTemplateChild, "PART_ScrollViewerBefore");
-            //scrollViewerCurrent = GetTemplateChild<ScrollViewer>(GetTemplateChild, "PART_ScrollViewerCurrent");
-            //scrollViewerDiff = GetTemplateChild<ScrollViewer>(GetTemplateChild, "PART_ScrollViewerDiff");
-            //imageBefore = GetTemplateChild<ScaleImageControl>(GetTemplateChild, "PART_ImageBefore");
-            //imageCurrent = GetTemplateChild<ScaleImageControl>(GetTemplateChild, "PART_ImageCurrent");
-            //imageDiff = GetTemplateChild<ScaleImageControl>(GetTemplateChild, "PART_ImageDiff");
-        }
-
-        static T GetTemplateChild<T>(Func<string, DependencyObject> getChild, string name) where T : DependencyObject {
-            var result = getChild(name) as T;
-            if(result == null)
-                throw new ArgumentNullException(name);
-            return result;
+        public void StartTrackingScrollViewer(DraggableScrollViewer scrollViewer, MergedTestViewType scrollViewerType) {
+            scrollViewerScrollSynchronizer.Register(scrollViewerType, scrollViewer);
         }
 
         public void ChangeView(bool reverse) {

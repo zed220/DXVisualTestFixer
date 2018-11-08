@@ -361,7 +361,7 @@
                 </dxdo:LayoutGroup>
                 <dxdo:LayoutGroup AllowDrag="False" Orientation="Vertical" AllowSplitters="False" Visibility="{Binding CurrentTest, Converter={dx:NullableToVisibilityConverter}}">
                     <dxdo:LayoutPanel ShowCaption="False" dxb:MergingProperties.ElementMergingBehavior="All">
-                        <local:TestInfoControl Visibility="{Binding CurrentTest, Converter={dx:NullableToVisibilityConverter}}"/>
+                        <controls:TestInfoControl Visibility="{Binding CurrentTest, Converter={dx:NullableToVisibilityConverter}}"/>
                     </dxdo:LayoutPanel>
                     <dxdo:LayoutPanel ShowBorder="False" ShowCaption="False" ItemWidth="Auto" ItemHeight="Auto">
                         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
