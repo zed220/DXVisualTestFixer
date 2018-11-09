@@ -1,24 +1,22 @@
-﻿using DXVisualTestFixer.Services;
-using System.Windows;
-using Prism.Unity;
-using Microsoft.Practices.Unity;
-using Prism.Mvvm;
-using Prism.Regions;
-using DevExpress.Xpf.Docking;
-using DXVisualTestFixer.PrismCommon;
-using DevExpress.Mvvm.UI;
+﻿using DevExpress.Utils.CommonDialogs;
 using DevExpress.Xpf.Dialogs;
-using DXVisualTestFixer.Core;
-using DXVisualTestFixer.UI.Views;
+using DevExpress.Xpf.Docking;
 using DXVisualTestFixer.Common;
-using DXVisualTestFixer.UI.PrismCommon;
-using DXVisualTestFixer.UI.ViewModels;
-using DXVisualTestFixer.UI.Services;
-using DXVisualTestFixer.Farm;
+using DXVisualTestFixer.Core;
 using DXVisualTestFixer.Core.Configuration;
-using DXVisualTestFixer.UI.Native;
+using DXVisualTestFixer.Farm;
+using DXVisualTestFixer.PrismCommon;
+using DXVisualTestFixer.Services;
 using DXVisualTestFixer.UI.Common;
-using DevExpress.Utils.CommonDialogs;
+using DXVisualTestFixer.UI.Native;
+using DXVisualTestFixer.UI.PrismCommon;
+using DXVisualTestFixer.UI.Services;
+using DXVisualTestFixer.UI.ViewModels;
+using DXVisualTestFixer.UI.Views;
+using Microsoft.Practices.Unity;
+using Prism.Regions;
+using Prism.Unity;
+using System.Windows;
 
 namespace DXVisualTestFixer {
     public class Bootstrapper : UnityBootstrapper {
