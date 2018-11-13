@@ -33,7 +33,7 @@ namespace DXVisualTestFixer.UI.Controls.Native {
         }
         public void ZoomIn() {
             int d = IsPerfectPixel ? 100 : 10;
-            SetScale(Math.Min(600, scale + d));
+            SetScale(Math.Min(1000, scale + d));
         }
         public void Zoom100() {
             SetScale(100);

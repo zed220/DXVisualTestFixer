@@ -11,13 +11,17 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using PixelFormat = System.Windows.Media.PixelFormat;
+using Image = System.Drawing.Image;
 using Size = System.Windows.Size;
+using Point = System.Windows.Point;
+using System.Windows.Controls.Primitives;
 
 namespace DXVisualTestFixer.UI.Controls {
-    public class ScaleImageControl : FrameworkElement {
+    public class ScaleImageControl : FrameworkElement, IScrollInfo {
         public static readonly DependencyProperty ImageSourceProperty;
         public static readonly DependencyProperty ScaleProperty;
         public static readonly DependencyProperty ShowGridLinesProperty;
@@ -25,13 +29,13 @@ namespace DXVisualTestFixer.UI.Controls {
         static ScaleImageControl() {
             Type ownerType = typeof(ScaleImageControl);
             ImageSourceProperty = DependencyProperty.Register("ImageSource", typeof(BitmapSource), ownerType,
-                new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange | FrameworkPropertyMetadataOptions.AffectsRender,
-                (d, e) => ((ScaleImageControl)d).Refresh()));
+                new FrameworkPropertyMetadata(null,
+                FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange | FrameworkPropertyMetadataOptions.AffectsRender));
             ScaleProperty = DependencyProperty.Register("Scale", typeof(int), ownerType,
-                new FrameworkPropertyMetadata(1, FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange | FrameworkPropertyMetadataOptions.AffectsRender,
-                (d, e) => ((ScaleImageControl)d).Refresh()));
-            ShowGridLinesProperty = DependencyProperty.Register("ShowGridLines", typeof(bool), ownerType, new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange | FrameworkPropertyMetadataOptions.AffectsRender,
-                (d, e) => ((ScaleImageControl)d).Refresh()));
+                new FrameworkPropertyMetadata(1,
+                FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange | FrameworkPropertyMetadataOptions.AffectsRender));
+            ShowGridLinesProperty = DependencyProperty.Register("ShowGridLines", typeof(bool), ownerType,
+                new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange | FrameworkPropertyMetadataOptions.AffectsRender));
         }
 
         public BitmapSource ImageSource {
@@ -48,20 +52,19 @@ namespace DXVisualTestFixer.UI.Controls {
         }
 
         ImageSource scaledImage = null;
-        void Refresh() {
-            scaledImage = ScaleImage();
-        }
+        Size currentSize = Size.Empty;
 
         protected override Size MeasureOverride(Size availableSize) {
-            if(scaledImage == null)
+            if(ImageSource == null)
                 return Size.Empty;
-            return new Size(scaledImage.Width, scaledImage.Height);
+            ScrollOwner.InvalidateScrollInfo();
+            return currentSize = new Size(Math.Min(ImageSource.PixelWidth * Scale, availableSize.Width), Math.Min(ImageSource.PixelHeight * Scale, availableSize.Height));
         }
 
         static Bitmap BitmapSourceToBitmap(BitmapSource srs) {
             using(var outStream = new MemoryStream()) {
                 BitmapEncoder enc = new BmpBitmapEncoder();
-                enc.Frames.Add(BitmapFrame.Create(srs));
+                enc.Frames.Add(BitmapFrame.Create(srs, null, null, null));
                 enc.Save(outStream);
                 return new Bitmap(outStream);
             }
@@ -74,30 +77,52 @@ namespace DXVisualTestFixer.UI.Controls {
             }
         }
 
-        static Bitmap ResizeImage(Image image, int scale, bool showGridLines) {
-            var destRect = new Rectangle(0, 0, image.Width * scale, image.Height * scale);
+        static Bitmap GetSourceImagePart(Image image, int scale, Point offset, Size viewportSize) {
+            offset = CorrectOffset(image, scale, offset, viewportSize);
+
+            Size scaledViewportSize = new Size(viewportSize.Width / scale + 1, viewportSize.Height / scale + 1);
+
+            var viewportWidth = (int)scaledViewportSize.Width;
+            var viewportHeight = (int)scaledViewportSize.Height;
+
+            var width = viewportWidth > image.Width ? image.Width : viewportWidth;
+            var height = viewportHeight > image.Height ? image.Height : viewportHeight;
+
+            var destRect = new Rectangle(0, 0, width, height);
             Bitmap destImage = new Bitmap(destRect.Width, destRect.Height);
-
             destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
-
-            using(var graphics = Graphics.FromImage(destImage)) {
-                graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
-                graphics.CompositingQuality = CompositingQuality.AssumeLinear;
-                graphics.SmoothingMode = SmoothingMode.None;
-                graphics.PixelOffsetMode = PixelOffsetMode.Half;
-                graphics.PageUnit = GraphicsUnit.Pixel;
+            using(var graphics = CreateGraphics(destImage)) {
                 using(var wrapMode = new ImageAttributes()) {
                     wrapMode.SetWrapMode(WrapMode.TileFlipXY);
-                    graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
+                    graphics.DrawImage(image, destRect, (int)offset.X, (int)offset.Y, destRect.Width, destRect.Height, GraphicsUnit.Pixel, wrapMode);
+                }
+            }
+            return destImage;
+        }
+
+        static Point CorrectOffset(Image image, int scale, Point offset, Size viewportSize) {
+            return new Point(offset.X / scale, offset.Y / scale);
+            //var targetRightBottomCornerX = Math.Min(viewportSize.Width, image.Width * scale);
+        }
+        
+        static Bitmap ResizeImage(Image image, int scale, Size viewportSize, Point offset, bool showGridLines) {
+            var imagePart = GetSourceImagePart(image, scale, offset, viewportSize);
+            Bitmap destImage = new Bitmap(imagePart.Width * scale, imagePart.Height * scale);
+            var destRect = new Rectangle(0, 0, imagePart.Width * scale, imagePart.Height * scale);
+
+            using(var graphics = CreateGraphics(destImage)) {
+                using(var wrapMode = new ImageAttributes()) {
+                    wrapMode.SetWrapMode(WrapMode.TileFlipXY);
+                    graphics.DrawImage(imagePart, destRect, 0, 0, imagePart.Width, imagePart.Height, GraphicsUnit.Pixel, wrapMode);
                     if(showGridLines && scale > 1) {
                         float thickness = 1f;
                         var pen = new System.Drawing.Pen(System.Drawing.Color.Gray, thickness);
                         pen.Alignment = PenAlignment.Right;
                         for(int x = scale; x < destRect.Width; x += scale) {
-                            graphics.DrawLine(pen, x, 0, x, destRect.Width);
+                            graphics.DrawLine(pen, x, 0, x, destRect.Height);
                         }
                         for(int y = scale; y < destRect.Height; y += scale) {
-                            graphics.DrawLine(pen, 0, y, destRect.Height, y);
+                            graphics.DrawLine(pen, 0, y, destRect.Width, y);
                         }
                     }
                 }
@@ -105,30 +130,66 @@ namespace DXVisualTestFixer.UI.Controls {
 
             return destImage;
         }
+        static Graphics CreateGraphics(Bitmap destImage) {
+            var graphics = Graphics.FromImage(destImage);
+            graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
+            graphics.CompositingQuality = CompositingQuality.AssumeLinear;
+            graphics.SmoothingMode = SmoothingMode.None;
+            graphics.PixelOffsetMode = PixelOffsetMode.Half;
+            graphics.PageUnit = GraphicsUnit.Pixel;
+            return graphics;
+        }
+
         BitmapSource Convert(Bitmap src) {
             return System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(src.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
         }
 
-        BitmapSource ScaleImage() {
+        struct ImageRenderParameters {
+            public ImageRenderParameters(int scale, Size currentSize, double horizontalOffset, double verticalOffset, bool showGridLines) : this() {
+                Scale = scale;
+                CurrentSize = currentSize;
+                HorizontalOffset = horizontalOffset;
+                VerticalOffset = verticalOffset;
+                ShowGridLines = showGridLines;
+            }
+
+            public int Scale { get; }
+            public Size CurrentSize { get; }
+            public double HorizontalOffset { get; }
+            public double VerticalOffset { get; }
+            public bool ShowGridLines { get; }
+
+            public override bool Equals(object obj) {
+                if(!(obj is ImageRenderParameters)) {
+                    return false;
+                }
+
+                var parameters = (ImageRenderParameters)obj;
+                return Scale == parameters.Scale &&
+                       EqualityComparer<Size>.Default.Equals(CurrentSize, parameters.CurrentSize) &&
+                       HorizontalOffset == parameters.HorizontalOffset &&
+                       VerticalOffset == parameters.VerticalOffset &&
+                       ShowGridLines == parameters.ShowGridLines;
+            }
+        }
+
+        ImageRenderParameters renderParameters = new ImageRenderParameters();
+
+        ImageSource ScaleImage() {
             if(ImageSource == null)
                 return null;
-            return SafeScaleImage();
+            ImageRenderParameters newRenderParameters = new ImageRenderParameters(Scale, currentSize, HorizontalOffset, VerticalOffset, ShowGridLines);
+            if(renderParameters.Equals(newRenderParameters))
+                return scaledImage;
+            renderParameters = newRenderParameters;
+            Bitmap result = ResizeImage(BitmapSourceToBitmap(ImageSource), Scale, currentSize, new Point(HorizontalOffset, VerticalOffset), ShowGridLines);
+            return Convert(result);
         }
-        BitmapSource SafeScaleImage() {
-            try {
-                Bitmap result = ResizeImage(BitmapSourceToBitmap(ImageSource), Scale, ShowGridLines);
-                return Convert(result);
-            }
-            catch {
-                ImageScalingControl.GetImageScalingControl(this).ZoomOut();
-                return null;
-            }
-        }
-
 
         protected override void OnRender(DrawingContext drawingContext) {
-            if(scaledImage == null)
+            if(ImageSource == null)
                 return;
+            scaledImage = ScaleImage();
             drawingContext.DrawImage(scaledImage, new Rect(new Size(scaledImage.Width, scaledImage.Height)));
             //if(Scale < 3)
             //    return;
@@ -140,6 +201,105 @@ namespace DXVisualTestFixer.UI.Controls {
             //for(int y = Scale - 1; y < scaledImage.Height; y += Scale) {
             //    drawingContext.DrawLine(pen, new System.Windows.Point(0, y - thickness / 2), new System.Windows.Point(scaledImage.Width, y - thickness / 2));
             //}
+        }
+
+
+        public bool CanVerticallyScroll {
+            get;
+            set;
+        }
+
+        public bool CanHorizontallyScroll {
+            get;
+            set;
+        }
+
+        public double ExtentWidth {
+            get { return ImageSource.PixelWidth * Scale; }
+        }
+
+        public double ExtentHeight {
+            get { return ImageSource.PixelHeight * Scale; }
+        }
+
+        public double ViewportWidth {
+            get { return currentSize.Width; }
+        }
+
+        public double ViewportHeight {
+            get { return currentSize.Height; }
+        }
+
+        public double HorizontalOffset {
+            get;
+            set;
+        }
+        public double VerticalOffset {
+            get;
+            set;
+        }
+
+        public ScrollViewer ScrollOwner {
+            get;
+            set;
+        }
+
+        public void LineUp() {
+            SetVerticalOffset(VerticalOffset - 30);
+            ScrollOwner.InvalidateScrollInfo();
+        }
+        public void LineDown() {
+            SetVerticalOffset(VerticalOffset + 30);
+            ScrollOwner.InvalidateScrollInfo();
+        }
+        public void LineLeft() {
+            SetHorizontalOffset(HorizontalOffset - 30);
+            ScrollOwner.InvalidateScrollInfo();
+        }
+        public void LineRight() {
+            SetHorizontalOffset(HorizontalOffset + 30);
+            ScrollOwner.InvalidateScrollInfo();
+        }
+
+        public void PageUp() {
+        }
+        public void PageDown() {
+        }
+        public void PageLeft() {
+        }
+        public void PageRight() {
+        }
+
+        public void MouseWheelUp() {
+            SetVerticalOffset(VerticalOffset - 120);
+            ScrollOwner.InvalidateScrollInfo();
+        }
+
+        public void MouseWheelDown() {
+            SetVerticalOffset(VerticalOffset + 120);
+            ScrollOwner.InvalidateScrollInfo();
+        }
+        public void MouseWheelLeft() {
+            SetHorizontalOffset(HorizontalOffset - 120);
+            ScrollOwner.InvalidateScrollInfo();
+        }
+        public void MouseWheelRight() {
+            SetHorizontalOffset(HorizontalOffset + 120);
+            ScrollOwner.InvalidateScrollInfo();
+        }
+
+        public void SetHorizontalOffset(double offset) {
+            HorizontalOffset = Math.Max(0, Math.Min(offset, ExtentWidth - ViewportWidth));
+            InvalidateVisual();
+        }
+
+        public void SetVerticalOffset(double offset) {
+            VerticalOffset = Math.Max(0, Math.Min(offset, ExtentHeight - ViewportHeight));
+            InvalidateVisual();
+        }
+
+        public Rect MakeVisible(Visual visual, Rect rectangle) {
+            throw new NotImplementedException();
         }
     }
 }
