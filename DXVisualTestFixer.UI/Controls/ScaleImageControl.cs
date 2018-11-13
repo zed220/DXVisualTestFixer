@@ -102,7 +102,6 @@ namespace DXVisualTestFixer.UI.Controls {
 
         static Point CorrectOffset(Image image, int scale, Point offset, Size viewportSize) {
             return new Point(offset.X / scale, offset.Y / scale);
-            //var targetRightBottomCornerX = Math.Min(viewportSize.Width, image.Width * scale);
         }
         
         static Bitmap ResizeImage(Image image, int scale, Size viewportSize, Point offset, bool showGridLines) {
@@ -170,6 +169,16 @@ namespace DXVisualTestFixer.UI.Controls {
                        HorizontalOffset == parameters.HorizontalOffset &&
                        VerticalOffset == parameters.VerticalOffset &&
                        ShowGridLines == parameters.ShowGridLines;
+            }
+
+            public override int GetHashCode() {
+                var hashCode = 1855489041;
+                hashCode = hashCode * -1521134295 + Scale.GetHashCode();
+                hashCode = hashCode * -1521134295 + EqualityComparer<Size>.Default.GetHashCode(CurrentSize);
+                hashCode = hashCode * -1521134295 + HorizontalOffset.GetHashCode();
+                hashCode = hashCode * -1521134295 + VerticalOffset.GetHashCode();
+                hashCode = hashCode * -1521134295 + ShowGridLines.GetHashCode();
+                return hashCode;
             }
         }
 
