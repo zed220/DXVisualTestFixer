@@ -30,12 +30,17 @@ namespace DXVisualTestFixer.UI.Controls {
             Type ownerType = typeof(ScaleImageControl);
             ImageSourceProperty = DependencyProperty.Register("ImageSource", typeof(BitmapSource), ownerType,
                 new FrameworkPropertyMetadata(null,
-                FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange | FrameworkPropertyMetadataOptions.AffectsRender));
+                FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange | FrameworkPropertyMetadataOptions.AffectsRender,
+                (d, e) =>((ScaleImageControl)d).OnImageSourceChanged()));
             ScaleProperty = DependencyProperty.Register("Scale", typeof(int), ownerType,
                 new FrameworkPropertyMetadata(1,
                 FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange | FrameworkPropertyMetadataOptions.AffectsRender));
             ShowGridLinesProperty = DependencyProperty.Register("ShowGridLines", typeof(bool), ownerType,
                 new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange | FrameworkPropertyMetadataOptions.AffectsRender));
+        }
+
+        void OnImageSourceChanged() {
+            renderParameters = new ImageRenderParameters();
         }
 
         public BitmapSource ImageSource {
@@ -224,11 +229,11 @@ namespace DXVisualTestFixer.UI.Controls {
         }
 
         public double ExtentWidth {
-            get { return ImageSource.PixelWidth * Scale; }
+            get { return ImageSource?.PixelWidth * Scale ?? 0; }
         }
 
         public double ExtentHeight {
-            get { return ImageSource.PixelHeight * Scale; }
+            get { return ImageSource?.PixelHeight * Scale ?? 0; }
         }
 
         public double ViewportWidth {
