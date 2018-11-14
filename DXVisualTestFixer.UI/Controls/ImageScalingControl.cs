@@ -83,10 +83,12 @@ namespace DXVisualTestFixer.UI.Controls {
 
         ScrollViewerScrollSynchronizer scrollViewerScrollSynchronizer = new ScrollViewerScrollSynchronizer();
         ImageScaleSynchronizer imageScaleSynchronizer = new ImageScaleSynchronizer();
+        FocusedPixelSynchronizer focusedPixelSynchronizer = new FocusedPixelSynchronizer();
 
         public void StartTrackingScrollViewer(DraggableScrollViewer scrollViewer, MergedTestViewType scrollViewerType) {
             scrollViewerScrollSynchronizer.Register(scrollViewerType, scrollViewer);
             imageScaleSynchronizer.Register(scrollViewerType, scrollViewer);
+            focusedPixelSynchronizer.Register(scrollViewerType, scrollViewer);
         }
 
         public void ChangeView(bool reverse) {
@@ -103,7 +105,7 @@ namespace DXVisualTestFixer.UI.Controls {
         }
 
         void OnIsPerfectPixelChanged() {
-            imageScaleSynchronizer.IsPerfectPixel = IsPerfectPixel;
+            imageScaleSynchronizer.IsPerfectPixel = focusedPixelSynchronizer.IsEnabled = IsPerfectPixel;
         }
         void OnShowGridLinesChanged() {
             imageScaleSynchronizer.ShowGridLines = ShowGridLines;

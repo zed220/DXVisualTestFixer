@@ -164,6 +164,7 @@
     <Compile Include="Controls\DraggableScrollViewer.cs" />
     <Compile Include="Controls\ImageScalingControl.cs" />
     <Compile Include="Controls\Native\ControlsRegistrator.cs" />
+    <Compile Include="Controls\Native\FocusedPixelSynchronizer.cs" />
     <Compile Include="Controls\Native\ImageScaleSynchronizer.cs" />
     <Compile Include="Controls\ScaleImageControl.cs" />
     <Compile Include="Controls\Native\ScrollViewerScrollSynchronizer.cs" />

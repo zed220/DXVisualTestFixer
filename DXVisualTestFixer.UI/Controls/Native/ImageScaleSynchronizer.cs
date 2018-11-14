@@ -59,7 +59,7 @@ namespace DXVisualTestFixer.UI.Controls.Native {
             foreach(var trackingControl in GetActualControls().Select(x => TreeHelper.GetChild<ScaleImageControl>(x)).Where(x => x != null)) {
                 ScaleTransform scaleTransform = trackingControl.LayoutTransform as ScaleTransform;
                 if(scaleTransform == null)
-                    trackingControl.LayoutTransform  = scaleTransform = new ScaleTransform();
+                    trackingControl.LayoutTransform = scaleTransform = new ScaleTransform();
                 if(IsPerfectPixel) {
                     scaleTransform.ScaleX = 1;
                     scaleTransform.ScaleY = 1;

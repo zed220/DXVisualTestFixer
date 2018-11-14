@@ -25,6 +25,8 @@ namespace DXVisualTestFixer.UI.Controls {
         public static readonly DependencyProperty ImageSourceProperty;
         public static readonly DependencyProperty ScaleProperty;
         public static readonly DependencyProperty ShowGridLinesProperty;
+        public static readonly DependencyProperty ShowHighlightedPointProperty;
+        public static readonly DependencyProperty HighlightedPointProperty;
 
         static ScaleImageControl() {
             Type ownerType = typeof(ScaleImageControl);
@@ -36,7 +38,11 @@ namespace DXVisualTestFixer.UI.Controls {
                 new FrameworkPropertyMetadata(1,
                 FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange | FrameworkPropertyMetadataOptions.AffectsRender));
             ShowGridLinesProperty = DependencyProperty.Register("ShowGridLines", typeof(bool), ownerType,
-                new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange | FrameworkPropertyMetadataOptions.AffectsRender));
+                new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange | FrameworkPropertyMetadataOptions.AffectsRender));
+            ShowHighlightedPointProperty = DependencyProperty.Register("ShowHighlightedPoint", typeof(bool), ownerType,
+                new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange | FrameworkPropertyMetadataOptions.AffectsRender));
+            HighlightedPointProperty = DependencyProperty.Register("HighlightedPoint", typeof(Point), ownerType, new FrameworkPropertyMetadata(default(Point), 
+                FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange | FrameworkPropertyMetadataOptions.AffectsRender));
         }
 
         void OnImageSourceChanged() {
@@ -54,6 +60,14 @@ namespace DXVisualTestFixer.UI.Controls {
         public bool ShowGridLines {
             get { return (bool)GetValue(ShowGridLinesProperty); }
             set { SetValue(ShowGridLinesProperty, value); }
+        }
+        public bool ShowHighlightedPoint {
+            get { return (bool)GetValue(ShowHighlightedPointProperty); }
+            set { SetValue(ShowHighlightedPointProperty, value); }
+        }
+        public Point HighlightedPoint {
+            get { return (Point)GetValue(HighlightedPointProperty); }
+            set { SetValue(HighlightedPointProperty, value); }
         }
 
         ImageSource scaledImage = null;
@@ -200,11 +214,29 @@ namespace DXVisualTestFixer.UI.Controls {
             return Convert(result);
         }
 
+        void DrawImage(DrawingContext drawingContext) {
+            scaledImage = ScaleImage();
+            drawingContext.DrawImage(scaledImage, new Rect(new Size(scaledImage.Width, scaledImage.Height)));
+        }
+        void DrawHighlightedPoint(DrawingContext drawingContext) {
+            if(!ShowHighlightedPoint)
+                return;
+            var brush = new SolidColorBrush(Colors.Black);
+
+            Func<double, int> getPixel = p => {
+                int res = (int)p / Scale;
+                return res * Scale;
+            };
+
+            Point leftUpCorner = new Point(getPixel(HighlightedPoint.X), getPixel(HighlightedPoint.Y));
+            drawingContext.DrawRectangle(new SolidColorBrush(Colors.Transparent), new System.Windows.Media.Pen(brush, 1), new Rect(leftUpCorner.X, leftUpCorner.Y, Scale, Scale));
+        }
+
         protected override void OnRender(DrawingContext drawingContext) {
             if(ImageSource == null)
                 return;
-            scaledImage = ScaleImage();
-            drawingContext.DrawImage(scaledImage, new Rect(new Size(scaledImage.Width, scaledImage.Height)));
+            DrawImage(drawingContext);
+            DrawHighlightedPoint(drawingContext);
             //if(Scale < 3)
             //    return;
             //double thickness = 1;
