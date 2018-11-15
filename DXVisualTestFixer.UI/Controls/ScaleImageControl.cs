@@ -96,37 +96,38 @@ namespace DXVisualTestFixer.UI.Controls {
         //    }
         //}
 
-        static Bitmap GetSourceImagePart(Image image, int scale, Point offset, Size viewportSize) {
-            offset = CorrectOffset(image, scale, offset, viewportSize);
+        static Bitmap GetSourceImagePart(BitmapSource imageSource, int scale, Point offset, Size viewportSize) {
+            using(var image = BitmapSourceToBitmap(imageSource)) {
+                offset = CorrectOffset(image, scale, offset, viewportSize);
 
-            Size scaledViewportSize = new Size(viewportSize.Width / scale + 1, viewportSize.Height / scale + 1);
+                Size scaledViewportSize = new Size(viewportSize.Width / scale + 1, viewportSize.Height / scale + 1);
 
-            var viewportWidth = (int)scaledViewportSize.Width;
-            var viewportHeight = (int)scaledViewportSize.Height;
+                var viewportWidth = (int)scaledViewportSize.Width;
+                var viewportHeight = (int)scaledViewportSize.Height;
 
-            var width = viewportWidth > image.Width ? image.Width : viewportWidth;
-            var height = viewportHeight > image.Height ? image.Height : viewportHeight;
+                var width = viewportWidth > image.Width ? image.Width : viewportWidth;
+                var height = viewportHeight > image.Height ? image.Height : viewportHeight;
 
-            var destRect = new Rectangle(0, 0, width, height);
-            Bitmap destImage = new Bitmap(destRect.Width, destRect.Height);
-            destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
-            using(var graphics = CreateGraphics(destImage)) {
-                using(var wrapMode = new ImageAttributes()) {
-                    wrapMode.SetWrapMode(WrapMode.TileFlipXY);
-                    graphics.DrawImage(image, destRect, (int)offset.X, (int)offset.Y, destRect.Width, destRect.Height, GraphicsUnit.Pixel, wrapMode);
+                var destRect = new Rectangle(0, 0, width, height);
+                Bitmap destImage = new Bitmap(destRect.Width, destRect.Height);
+                destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
+                using(var graphics = CreateGraphics(destImage)) {
+                    using(var wrapMode = new ImageAttributes()) {
+                        wrapMode.SetWrapMode(WrapMode.TileFlipXY);
+                        graphics.DrawImage(image, destRect, (int)offset.X, (int)offset.Y, destRect.Width, destRect.Height, GraphicsUnit.Pixel, wrapMode);
+                    }
                 }
+                return destImage;
             }
-            return destImage;
         }
 
         static Point CorrectOffset(Image image, int scale, Point offset, Size viewportSize) {
             return new Point(offset.X / scale, offset.Y / scale);
         }
 
-        static Bitmap ResizeImage(Image image, int scale, Size viewportSize, Point offset, bool showGridLines) {
-            using(image) {
-                using(var imagePart = GetSourceImagePart(image, scale, offset, viewportSize)) {
-                    Bitmap destImage = new Bitmap(imagePart.Width * scale, imagePart.Height * scale);
+        static BitmapSource ResizeImage(BitmapSource imageSource, int scale, Size viewportSize, Point offset, bool showGridLines) {
+            using(var imagePart = GetSourceImagePart(imageSource, scale, offset, viewportSize)) {
+                using(var destImage = new Bitmap(imagePart.Width * scale, imagePart.Height * scale)) {
                     var destRect = new Rectangle(0, 0, imagePart.Width * scale, imagePart.Height * scale);
 
                     using(var graphics = CreateGraphics(destImage)) {
@@ -147,7 +148,7 @@ namespace DXVisualTestFixer.UI.Controls {
                             }
                         }
                     }
-                    return destImage;
+                    return Convert(destImage);
                 }
             }
         }
@@ -161,8 +162,14 @@ namespace DXVisualTestFixer.UI.Controls {
             return graphics;
         }
 
-        BitmapSource Convert(Bitmap src) {
-            return System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(src.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+        [System.Runtime.InteropServices.DllImport("gdi32.dll")]
+        public static extern bool DeleteObject(IntPtr hObject);
+
+        static BitmapSource Convert(Bitmap src) {
+            var intPtr = src.GetHbitmap();
+            var result = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(intPtr, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+            DeleteObject(intPtr);
+            return result;
         }
 
         struct ImageRenderParameters {
@@ -215,9 +222,7 @@ namespace DXVisualTestFixer.UI.Controls {
             if(renderParameters.Equals(newRenderParameters))
                 return;
             renderParameters = newRenderParameters;
-            using(Bitmap result = ResizeImage(BitmapSourceToBitmap(ImageSource), Scale, currentSize, new Point(HorizontalOffset, VerticalOffset), ShowGridLines)) {
-                scaledImage = Convert(result);
-            }
+            scaledImage = ResizeImage(ImageSource, Scale, currentSize, new Point(HorizontalOffset, VerticalOffset), ShowGridLines);
         }
 
         void DrawImage(DrawingContext drawingContext) {
