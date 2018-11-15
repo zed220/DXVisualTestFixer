@@ -33,7 +33,7 @@ namespace DXVisualTestFixer.UI.Controls {
             ImageSourceProperty = DependencyProperty.Register("ImageSource", typeof(BitmapSource), ownerType,
                 new FrameworkPropertyMetadata(null,
                 FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange | FrameworkPropertyMetadataOptions.AffectsRender,
-                (d, e) =>((ScaleImageControl)d).OnImageSourceChanged()));
+                (d, e) => ((ScaleImageControl)d).OnImageSourceChanged()));
             ScaleProperty = DependencyProperty.Register("Scale", typeof(int), ownerType,
                 new FrameworkPropertyMetadata(1,
                 FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange | FrameworkPropertyMetadataOptions.AffectsRender));
@@ -41,7 +41,7 @@ namespace DXVisualTestFixer.UI.Controls {
                 new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange | FrameworkPropertyMetadataOptions.AffectsRender));
             ShowHighlightedPointProperty = DependencyProperty.Register("ShowHighlightedPoint", typeof(bool), ownerType,
                 new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange | FrameworkPropertyMetadataOptions.AffectsRender));
-            HighlightedPointProperty = DependencyProperty.Register("HighlightedPoint", typeof(Point), ownerType, new FrameworkPropertyMetadata(default(Point), 
+            HighlightedPointProperty = DependencyProperty.Register("HighlightedPoint", typeof(Point), ownerType, new FrameworkPropertyMetadata(default(Point),
                 FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange | FrameworkPropertyMetadataOptions.AffectsRender));
         }
 
@@ -89,12 +89,12 @@ namespace DXVisualTestFixer.UI.Controls {
             }
         }
 
-        static byte[] ImageToByteArray(Image imageIn) {
-            using(var ms = new MemoryStream()) {
-                imageIn.Save(ms, imageIn.RawFormat);
-                return ms.ToArray();
-            }
-        }
+        //static byte[] ImageToByteArray(Image imageIn) {
+        //    using(var ms = new MemoryStream()) {
+        //        imageIn.Save(ms, imageIn.RawFormat);
+        //        return ms.ToArray();
+        //    }
+        //}
 
         static Bitmap GetSourceImagePart(Image image, int scale, Point offset, Size viewportSize) {
             offset = CorrectOffset(image, scale, offset, viewportSize);
@@ -122,31 +122,34 @@ namespace DXVisualTestFixer.UI.Controls {
         static Point CorrectOffset(Image image, int scale, Point offset, Size viewportSize) {
             return new Point(offset.X / scale, offset.Y / scale);
         }
-        
-        static Bitmap ResizeImage(Image image, int scale, Size viewportSize, Point offset, bool showGridLines) {
-            var imagePart = GetSourceImagePart(image, scale, offset, viewportSize);
-            Bitmap destImage = new Bitmap(imagePart.Width * scale, imagePart.Height * scale);
-            var destRect = new Rectangle(0, 0, imagePart.Width * scale, imagePart.Height * scale);
 
-            using(var graphics = CreateGraphics(destImage)) {
-                using(var wrapMode = new ImageAttributes()) {
-                    wrapMode.SetWrapMode(WrapMode.TileFlipXY);
-                    graphics.DrawImage(imagePart, destRect, 0, 0, imagePart.Width, imagePart.Height, GraphicsUnit.Pixel, wrapMode);
-                    if(showGridLines && scale > 1) {
-                        float thickness = 1f;
-                        var pen = new System.Drawing.Pen(System.Drawing.Color.Gray, thickness);
-                        pen.Alignment = PenAlignment.Right;
-                        for(int x = scale; x < destRect.Width; x += scale) {
-                            graphics.DrawLine(pen, x, 0, x, destRect.Height);
-                        }
-                        for(int y = scale; y < destRect.Height; y += scale) {
-                            graphics.DrawLine(pen, 0, y, destRect.Width, y);
+        static Bitmap ResizeImage(Image image, int scale, Size viewportSize, Point offset, bool showGridLines) {
+            using(image) {
+                using(var imagePart = GetSourceImagePart(image, scale, offset, viewportSize)) {
+                    Bitmap destImage = new Bitmap(imagePart.Width * scale, imagePart.Height * scale);
+                    var destRect = new Rectangle(0, 0, imagePart.Width * scale, imagePart.Height * scale);
+
+                    using(var graphics = CreateGraphics(destImage)) {
+                        using(var wrapMode = new ImageAttributes()) {
+                            wrapMode.SetWrapMode(WrapMode.TileFlipXY);
+                            graphics.DrawImage(imagePart, destRect, 0, 0, imagePart.Width, imagePart.Height, GraphicsUnit.Pixel, wrapMode);
+                            if(showGridLines && scale > 1) {
+                                float thickness = 1f;
+                                using(var pen = new System.Drawing.Pen(System.Drawing.Color.Gray, thickness)) {
+                                    pen.Alignment = PenAlignment.Right;
+                                    for(int x = scale; x < destRect.Width; x += scale) {
+                                        graphics.DrawLine(pen, x, 0, x, destRect.Height);
+                                    }
+                                    for(int y = scale; y < destRect.Height; y += scale) {
+                                        graphics.DrawLine(pen, 0, y, destRect.Width, y);
+                                    }
+                                }
+                            }
                         }
                     }
+                    return destImage;
                 }
             }
-
-            return destImage;
         }
         static Graphics CreateGraphics(Bitmap destImage) {
             var graphics = Graphics.FromImage(destImage);
@@ -203,19 +206,22 @@ namespace DXVisualTestFixer.UI.Controls {
 
         ImageRenderParameters renderParameters = new ImageRenderParameters();
 
-        ImageSource ScaleImage() {
-            if(ImageSource == null)
-                return null;
+        void UpdateScaledImage() {
+            if(ImageSource == null) {
+                scaledImage = null;
+                return;
+            }
             ImageRenderParameters newRenderParameters = new ImageRenderParameters(Scale, currentSize, HorizontalOffset, VerticalOffset, ShowGridLines);
             if(renderParameters.Equals(newRenderParameters))
-                return scaledImage;
+                return;
             renderParameters = newRenderParameters;
-            Bitmap result = ResizeImage(BitmapSourceToBitmap(ImageSource), Scale, currentSize, new Point(HorizontalOffset, VerticalOffset), ShowGridLines);
-            return Convert(result);
+            using(Bitmap result = ResizeImage(BitmapSourceToBitmap(ImageSource), Scale, currentSize, new Point(HorizontalOffset, VerticalOffset), ShowGridLines)) {
+                scaledImage = Convert(result);
+            }
         }
 
         void DrawImage(DrawingContext drawingContext) {
-            scaledImage = ScaleImage();
+            UpdateScaledImage();
             drawingContext.DrawImage(scaledImage, new Rect(new Size(scaledImage.Width, scaledImage.Height)));
         }
         void DrawHighlightedPoint(DrawingContext drawingContext) {
