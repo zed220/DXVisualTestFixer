@@ -27,6 +27,7 @@ namespace DXVisualTestFixer.UI.Controls {
         public static readonly DependencyProperty ShowGridLinesProperty;
         public static readonly DependencyProperty ShowHighlightedPointProperty;
         public static readonly DependencyProperty HighlightedPointProperty;
+        public static readonly DependencyProperty HighlightedColorProperty;
 
         static ScaleImageControl() {
             Type ownerType = typeof(ScaleImageControl);
@@ -43,10 +44,11 @@ namespace DXVisualTestFixer.UI.Controls {
                 new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange | FrameworkPropertyMetadataOptions.AffectsRender));
             HighlightedPointProperty = DependencyProperty.Register("HighlightedPoint", typeof(Point), ownerType, new FrameworkPropertyMetadata(default(Point),
                 FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange | FrameworkPropertyMetadataOptions.AffectsRender));
+            HighlightedColorProperty = DependencyProperty.Register("HighlightedColor", typeof(System.Windows.Media.Color), ownerType, new PropertyMetadata(default(System.Windows.Media.Color)));
         }
 
         void OnImageSourceChanged() {
-            renderParameters = new ImageRenderParameters();
+            scaledImageInfo = null;
         }
 
         public BitmapSource ImageSource {
@@ -69,8 +71,11 @@ namespace DXVisualTestFixer.UI.Controls {
             get { return (Point)GetValue(HighlightedPointProperty); }
             set { SetValue(HighlightedPointProperty, value); }
         }
+        public System.Windows.Media.Color HighlightedColor {
+            get { return (System.Windows.Media.Color)GetValue(HighlightedColorProperty); }
+            set { SetValue(HighlightedColorProperty, value); }
+        }
 
-        ImageSource scaledImage = null;
         Size currentSize = Size.Empty;
 
         protected override Size MeasureOverride(Size availableSize) {
@@ -210,37 +215,83 @@ namespace DXVisualTestFixer.UI.Controls {
                 return hashCode;
             }
         }
+        class ScaledImageInfo {
+            readonly Lazy<(byte[] pixels, int stride)> imageBytesLazy;
 
-        ImageRenderParameters renderParameters = new ImageRenderParameters();
+            public ScaledImageInfo(BitmapSource scaledImage, ImageRenderParameters renderParameters) {
+                ScaledImage = scaledImage;
+                RenderParameters = renderParameters;
+                RectLazy = new Lazy<Rect>(() => new Rect(new Size(ScaledImage.Width, ScaledImage.Height)));
+                imageBytesLazy = new Lazy<(byte[], int)>(GetImageBytes);
+            }
+
+            public BitmapSource ScaledImage { get; }
+            public Lazy<Rect> RectLazy { get; }
+            public ImageRenderParameters RenderParameters { get; }
+
+            (byte[], int) GetImageBytes() {
+                int stride = ScaledImage.PixelWidth * 4;
+                int size = ScaledImage.PixelHeight * stride;
+                byte[] pixels = new byte[size];
+                ScaledImage.CopyPixels(pixels, stride, 0);
+                return (pixels, stride);
+            }
+
+            public bool TryGetColor(Point point, out System.Windows.Media.Color color) {
+                Func<double, int> getPixel = p => {
+                    int res = (int)p / RenderParameters.Scale;
+                    return res * RenderParameters.Scale;
+                };
+                var bytes = imageBytesLazy.Value;
+                int index = getPixel(point.Y) * bytes.stride + 4 * getPixel(point.X);
+                Point pixel = new Point(getPixel(point.X), getPixel(point.Y));
+
+                color = default(System.Windows.Media.Color);
+                if(!IsInBound(bytes.pixels, index + 2) || !IsInBound(bytes.pixels, index + 1) || !IsInBound(bytes.pixels, index))
+                    return false;
+                color = System.Windows.Media.Color.FromArgb(255, bytes.pixels[index + 2], bytes.pixels[index + 1], bytes.pixels[index]);
+                return true;
+            }
+            static bool IsInBound(byte[] arr, int index) {
+                return index < arr.Length && index >= 0;
+            }
+        }
+
+        ScaledImageInfo scaledImageInfo;
 
         void UpdateScaledImage() {
             if(ImageSource == null) {
-                scaledImage = null;
+                scaledImageInfo = null;
                 return;
             }
             ImageRenderParameters newRenderParameters = new ImageRenderParameters(Scale, currentSize, HorizontalOffset, VerticalOffset, ShowGridLines);
-            if(renderParameters.Equals(newRenderParameters))
+            if(scaledImageInfo != null && scaledImageInfo.RenderParameters.Equals(newRenderParameters))
                 return;
-            renderParameters = newRenderParameters;
-            scaledImage = ResizeImage(ImageSource, Scale, currentSize, new Point(HorizontalOffset, VerticalOffset), ShowGridLines);
+            var scaledImage = ResizeImage(ImageSource, Scale, currentSize, new Point(HorizontalOffset, VerticalOffset), ShowGridLines);
+            scaledImageInfo = new ScaledImageInfo(scaledImage, newRenderParameters);
         }
 
         void DrawImage(DrawingContext drawingContext) {
             UpdateScaledImage();
-            drawingContext.DrawImage(scaledImage, new Rect(new Size(scaledImage.Width, scaledImage.Height)));
+            drawingContext.DrawImage(scaledImageInfo.ScaledImage, scaledImageInfo.RectLazy.Value);
         }
         void DrawHighlightedPoint(DrawingContext drawingContext) {
             if(!ShowHighlightedPoint)
                 return;
-            var brush = new SolidColorBrush(Colors.Black);
-
             Func<double, int> getPixel = p => {
                 int res = (int)p / Scale;
-                return res * Scale;
+                return res * Scale + 1;
             };
-
+            var brush = new SolidColorBrush(Colors.Black);
             Point leftUpCorner = new Point(getPixel(HighlightedPoint.X), getPixel(HighlightedPoint.Y));
             drawingContext.DrawRectangle(new SolidColorBrush(Colors.Transparent), new System.Windows.Media.Pen(brush, 1), new Rect(leftUpCorner.X, leftUpCorner.Y, Scale, Scale));
+        }
+        void UpdateHighlightedColor() {
+            if(ImageSource == null || !ShowHighlightedPoint)
+                return;
+            var color = default(System.Windows.Media.Color);
+            if(scaledImageInfo.TryGetColor(HighlightedPoint, out color))
+                HighlightedColor = color;
         }
 
         protected override void OnRender(DrawingContext drawingContext) {
@@ -248,6 +299,7 @@ namespace DXVisualTestFixer.UI.Controls {
                 return;
             DrawImage(drawingContext);
             DrawHighlightedPoint(drawingContext);
+            UpdateHighlightedColor();
             //if(Scale < 3)
             //    return;
             //double thickness = 1;
@@ -260,7 +312,7 @@ namespace DXVisualTestFixer.UI.Controls {
             //}
         }
 
-
+        #region IScrollInfo
         public bool CanVerticallyScroll {
             get;
             set;
@@ -358,5 +410,6 @@ namespace DXVisualTestFixer.UI.Controls {
         public Rect MakeVisible(Visual visual, Rect rectangle) {
             throw new NotImplementedException();
         }
+        #endregion
     }
 }

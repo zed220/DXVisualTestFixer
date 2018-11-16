@@ -36,6 +36,9 @@
                 <ResourceDictionary Source="/DXVisualTestFixer.UI;component/Resources/Services.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <converters:StackPanelToTooltipConverter x:Key="StackPanelToTooltipConverter"/>
+            <dxmvvm:ObjectToObjectConverter x:Key="ribbonMergeConverter" DefaultTarget="All">
+                <dxmvvm:MapItem Source="{x:Null}" Target="None"/>
+            </dxmvvm:ObjectToObjectConverter>
             <Style TargetType="{x:Type dxe:ComboBoxEdit}">
                 <Setter Property="Margin" Value="4"/>
             </Style>
@@ -360,7 +363,7 @@
                     </dxdo:LayoutPanel>
                 </dxdo:LayoutGroup>
                 <dxdo:LayoutGroup AllowDrag="False" Orientation="Vertical" AllowSplitters="False" Visibility="{Binding CurrentTest, Converter={dx:NullableToVisibilityConverter}}">
-                    <dxdo:LayoutPanel ShowCaption="False" dxb:MergingProperties.ElementMergingBehavior="All">
+                    <dxdo:LayoutPanel ShowCaption="False" dxb:MergingProperties.ElementMergingBehavior="{Binding CurrentTest, Converter={StaticResource ribbonMergeConverter}}">
                         <controls:TestInfoControl Visibility="{Binding CurrentTest, Converter={dx:NullableToVisibilityConverter}}"/>
                     </dxdo:LayoutPanel>
                     <dxdo:LayoutPanel ShowBorder="False" ShowCaption="False" ItemWidth="Auto" ItemHeight="Auto">

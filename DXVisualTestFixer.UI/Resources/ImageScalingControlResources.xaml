@@ -39,16 +39,31 @@
                 <dxmvvm:MapItem Source="Draggable" Target="Hand"/>
             </dxmvvm:ObjectToObjectConverter>
         </DataTemplate.Resources>
-        <controls:DraggableScrollViewer HorizontalScrollBarVisibility="Auto" dx:ScrollBarExtensions.HandlesDefaultMouseScrolling="False" dx:ScrollBarExtensions.AllowMouseScrolling="False"
-                                        CanContentScroll="True"
-                                        ScrollMode="{Binding Path=(controls:ImageScalingControl.ImageScalingControl).ScrollMode, RelativeSource={RelativeSource Self}}"
-                                        Cursor="{Binding Path=(controls:ImageScalingControl.ImageScalingControl).ScrollMode, RelativeSource={RelativeSource Self}, Converter={StaticResource scrollModeConverter}}">
-            <dxmvvm:Interaction.Behaviors>
-                <behaviors:ScrollViewerRegistrationBehavior ImageScalingControl="{Binding Path=AssociatedObject.(controls:ImageScalingControl.ImageScalingControl), RelativeSource={RelativeSource Self}}"
-                                                            ScrollViewerType="{Binding Path=AssociatedObject.(controls:ImageScalingControl.ScrollViewerType), RelativeSource={RelativeSource Self}}"/>
-            </dxmvvm:Interaction.Behaviors>
-            <controls:ScaleImageControl ImageSource="{Binding Path=Content, Converter={StaticResource ArrayToImageConverter}, RelativeSource={RelativeSource TemplatedParent}}"/>
-        </controls:DraggableScrollViewer>
+        <Grid>
+            <controls:DraggableScrollViewer HorizontalScrollBarVisibility="Auto" dx:ScrollBarExtensions.HandlesDefaultMouseScrolling="False" dx:ScrollBarExtensions.AllowMouseScrolling="False"
+                                            CanContentScroll="True"
+                                            ScrollMode="{Binding Path=(controls:ImageScalingControl.ImageScalingControl).ScrollMode, RelativeSource={RelativeSource Self}}"
+                                            Cursor="{Binding Path=(controls:ImageScalingControl.ImageScalingControl).ScrollMode, RelativeSource={RelativeSource Self}, Converter={StaticResource scrollModeConverter}}">
+                <dxmvvm:Interaction.Behaviors>
+                    <behaviors:ScrollViewerRegistrationBehavior ImageScalingControl="{Binding Path=AssociatedObject.(controls:ImageScalingControl.ImageScalingControl), RelativeSource={RelativeSource Self}}"
+                                                                ScrollViewerType="{Binding Path=AssociatedObject.(controls:ImageScalingControl.ScrollViewerType), RelativeSource={RelativeSource Self}}"/>
+                </dxmvvm:Interaction.Behaviors>
+                <controls:ScaleImageControl x:Name="popupTarget" ImageSource="{Binding Path=Content, Converter={StaticResource ArrayToImageConverter}, RelativeSource={RelativeSource TemplatedParent}}"/>
+            </controls:DraggableScrollViewer>
+            <Popup PlacementTarget="{Binding ElementName=popupTarget}" Placement="RelativePoint"
+                   IsHitTestVisible="False" Focusable="False" AllowsTransparency="True"
+                   PlacementRectangle="{Binding HighlightedPoint, ElementName=popupTarget, Converter={converters:PointToRectConverter}}">
+                <Popup.IsOpen>
+                    <MultiBinding Converter="{converters:HighlightedColorPopupIsOpenConverter}">
+                        <Binding Path="ImageSource" ElementName="popupTarget"/>
+                        <Binding Path="ShowHighlightedPoint" ElementName="popupTarget"/>
+                    </MultiBinding>
+                </Popup.IsOpen>
+                <Border CornerRadius="2" Background="White" Padding="2">
+                    <dxe:PopupColorEdit ShowBorder="False" Focusable="False" Color="{Binding HighlightedColor, ElementName=popupTarget}" IsHitTestVisible="False" AllowDefaultButton="False"/>
+                </Border>
+            </Popup>
+        </Grid>
     </DataTemplate>
     <controls:ImageScalingControlTemplateSelector x:Key="imageScalingControlTemplateSelector">
         <controls:ImageScalingControlTemplateSelector.MergedTemplate>

@@ -170,12 +170,14 @@
     <Compile Include="Controls\Native\ScrollViewerScrollSynchronizer.cs" />
     <Compile Include="Controls\TableViewAdvNavigation.cs" />
     <Compile Include="Converters\ArrayToImageConverter.cs" />
+    <Compile Include="Converters\BaseValueConverter.cs" />
     <Compile Include="Converters\DpiErrorConverter.cs" />
     <Compile Include="Converters\FilePathToTextConverter.cs" />
     <Compile Include="Converters\FilePathToImageSourceConverter.cs" />
     <Compile Include="Converters\ImageToClipboardConverter.cs" />
     <Compile Include="Converters\MultiImageToClipboardConverter.cs" />
     <Compile Include="Converters\NotificationContentConverter.cs" />
+    <Compile Include="Converters\PointToRectConverter.cs" />
     <Compile Include="Converters\StackPanelToTooltipConverter.cs" />
     <Compile Include="Converters\SummaryToCheckedStateConverter.cs" />
     <Compile Include="Native\DiffLineBackgroundRenderer.cs" />
