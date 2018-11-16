@@ -173,6 +173,10 @@ namespace DXVisualTestFixer.UI.ViewModels {
                 Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
                     notificationService.DoNotification("Add repositories in settings", "Add repositories in settings");
                     ShowSettings();
+                    if(Config.Repositories == null || Config.Repositories.Length == 0) {
+                        notificationService.DoNotification("Add repositories in settings", "Add repositories in settings");
+                        return;
+                    }
                     RefreshTestList();
                 }));
                 return;
