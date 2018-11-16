@@ -195,10 +195,8 @@ namespace DXVisualTestFixer.UI.ViewModels {
                 TestsToCommitCount = 0;
                 CurrentTest = null;
                 CurrentFilter = null;
-                regionManager.Regions[Regions.FilterPanel].RemoveAll();
             }
             else {
-                regionManager.AddToRegion(Regions.FilterPanel, ServiceLocator.Current.TryResolve<FilterPanelView>());
                 CurrentTest = Tests.FirstOrDefault();
             }
         }

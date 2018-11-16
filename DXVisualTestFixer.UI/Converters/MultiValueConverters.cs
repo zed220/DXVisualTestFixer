@@ -1,6 +1,10 @@
-﻿using DevExpress.Xpf.Grid;
+﻿using DevExpress.Xpf.Core.FilteringUI;
+using DevExpress.Xpf.Grid;
+using DXVisualTestFixer.Common;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Windows.Data;
 using System.Windows.Markup;
 

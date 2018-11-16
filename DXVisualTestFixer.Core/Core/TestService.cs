@@ -82,7 +82,8 @@ namespace DXVisualTestFixer.Core {
                 HashSet<string> namedProblemsList = null;
                 if(!namedProblems.TryGetValue(test.Problem, out namedProblemsList))
                     namedProblemsList = new HashSet<string>();
-                test.ProblemName = $"#{test.Problem} ({string.Join(", ", namedProblemsList)})";
+                var problemNumber = string.Format("{0:D2}", test.Problem);
+                test.ProblemName = $"#{problemNumber} ({string.Join(", ", namedProblemsList)})";
             }
         }
         int CalculateImageDiffsCount(TestInfo test) {

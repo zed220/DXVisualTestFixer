@@ -52,6 +52,10 @@ namespace DXVisualTestFixer.UI.Models {
                 info.ErrorType = ErrorType.Default;
                 return false;
             }
+            if(String.IsNullOrWhiteSpace(Version)) {
+                info.ErrorText = $"Version \"{Version}\" does not valid. Enter valid value";
+                return false;
+            }
             if(Repository.IsNewVersion(Version)) {
                 string configPath = System.IO.Path.Combine(Path, "VisualTestsConfig.xml");
                 if(!File.Exists(configPath)) {

@@ -55,6 +55,7 @@ namespace DXVisualTestFixer.Common {
         bool CommitChange { get; set; }
         string TeamName { get; }
         int Problem { get; }
+        string ProblemName { get; }
         int Dpi { get; }
         string Version { get; }
         TestInfo TestInfo { get; }

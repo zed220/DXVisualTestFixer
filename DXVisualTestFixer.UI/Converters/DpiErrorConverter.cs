@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using DevExpress.Xpf.Core.FilteringUI;
+using System;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -9,16 +9,17 @@ using System.Windows.Data;
 namespace DXVisualTestFixer.UI.Converters {
     public class DpiErrorConverter : IValueConverter {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
-            if(!(value is int))
-                return value;
-            switch((int)value) {
-                case 0:
-                    return "Error";
-                case 96:
-                    return "Default";
-                default:
-                    return value.ToString();
+            if(value is FilterValueInfo info && info.Value is int i) {
+                switch(i) {
+                    case 0:
+                        return "Error";
+                    case 96:
+                        return "Default";
+                    default:
+                        return i.ToString();
+                }
             }
+            return value;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {

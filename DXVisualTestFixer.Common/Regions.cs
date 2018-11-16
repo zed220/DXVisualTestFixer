@@ -7,6 +7,5 @@ using System.Threading.Tasks;
 namespace DXVisualTestFixer.Common {
     public static class Regions {
         public static string Main => nameof(Main);
-        public static string FilterPanel => nameof(FilterPanel);
     }
 }

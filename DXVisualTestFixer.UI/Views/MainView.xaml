@@ -23,6 +23,7 @@
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:common="clr-namespace:DXVisualTestFixer.Common;assembly=DXVisualTestFixer.Common"
              xmlns:prismcommon="clr-namespace:DXVisualTestFixer.UI.PrismCommon"
+             xmlns:dxfui="http://schemas.devexpress.com/winfx/2008/xaml/core/filteringui"
              xmlns:dxt="http://schemas.devexpress.com/winfx/2008/xaml/core/themekeys"
              xmlns:core="http://schemas.dxvisualtests.com/winfx/2008/xaml/core"
              xmlns:root="clr-namespace:DXVisualTestFixer.UI"
@@ -34,6 +35,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/DXVisualTestFixer.UI;component/Resources/Services.xaml"/>
+                <ResourceDictionary Source="/DXVisualTestFixer.UI;component/Resources/FilterPanelControlResources.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <converters:StackPanelToTooltipConverter x:Key="StackPanelToTooltipConverter"/>
             <dxmvvm:ObjectToObjectConverter x:Key="ribbonMergeConverter" DefaultTarget="All">
@@ -272,11 +274,14 @@
         <dxdo:DockLayoutManager Grid.Row="1">
             <dxdo:LayoutGroup AllowDrag="False">
                 <dxdo:LayoutGroup AllowDrag="False" Orientation="Vertical" ItemWidth="300" AllowSplitters="False">
-                    <dxdo:LayoutPanel ShowCaption="False" ItemHeight="Auto" Caption="Filters" Visibility="{Binding Tests, Converter={dx:NullableToVisibilityConverter}}"
-                                      prism:RegionManager.RegionName="{x:Static common:Regions.FilterPanel}"/>
+                    <dxdo:LayoutPanel ShowCaption="False" ItemHeight="Auto" Caption="Filters" Visibility="{Binding Tests, Converter={dx:NullableToVisibilityConverter}}">
+                        <controls:FilterPanelControl dxfui:FilterElement.Context="{Binding FilteringContext, ElementName=PART_GridTests}"
+                                                     HasFixedTests="{Binding Tests, Converter={converters:HasFixedTestsConverter}}"/>
+                    </dxdo:LayoutPanel>
                     <dxdo:LayoutPanel ShowCaption="False" ItemHeight="*">
-                        <dxg:GridControl ItemsSource="{Binding Tests}" CurrentItem="{Binding CurrentTest, Mode=TwoWay}" AutoExpandAllGroups="True" ShowBorder="False" 
-                                         ShowLoadingPanel="{DXBinding Expr='Status != $viewModels:ProgramStatus.Idle'}" FixedFilter="{Binding CurrentFilter}" AllowLiveDataShaping="True">
+                        <dxg:GridControl x:Name="PART_GridTests" ItemsSource="{Binding Tests}" CurrentItem="{Binding CurrentTest, Mode=TwoWay}" AutoExpandAllGroups="True" ShowBorder="False" 
+                                         ShowLoadingPanel="{DXBinding Expr='Status != $viewModels:ProgramStatus.Idle'}" FixedFilter="{Binding CurrentFilter}" AllowLiveDataShaping="True"
+                                         ShowAllTableValuesInFilterPopup="True" FilterString="[$ ]([Valid])">
                             <dxg:GridColumn FieldName="Version" GroupIndex="0" MergeWithPreviousGroup="False" Header="Version"/>
                             <dxg:GridColumn FieldName="TeamName" GroupIndex="1" MergeWithPreviousGroup="True" Header="Team"/>
                             <dxg:GridColumn FieldName="TestInfo.Name" GroupIndex="2" MergeWithPreviousGroup="False" Header="Name"/>
@@ -333,6 +338,13 @@
                                     </DataTemplate>
                                 </dxg:GridColumn.CellTemplate>
                             </dxg:GridColumn>
+                            <dxg:GridColumn FieldName="Valid" Visible="False">
+                                <dxg:GridColumn.PredefinedFilters>
+                                    <dxfui:PredefinedFilterCollection>
+                                        <dxfui:PredefinedFilter Name=" " Filter="?p != 'Fixed'"/>
+                                    </dxfui:PredefinedFilterCollection>
+                                </dxg:GridColumn.PredefinedFilters>
+                            </dxg:GridColumn>
                             <dxg:GridControl.TotalSummary>
                                 <dxg:GridSummaryItem SummaryType="Count" Alignment="Left"/>
                             </dxg:GridControl.TotalSummary>
@@ -340,7 +352,8 @@
                                 <controls:TableViewAdvNavigation x:Name="view" AllowEditing="True" ShowVerticalLines="False" ShowIndicator="False" ShowHorizontalLines="False" ShowColumnHeaders="False" 
                                                                  ShowGroupPanel="False" ShowFixedTotalSummary="True" RowDoubleClick="{DXEvent Handler='@s.ProcessDoubleClick(@args)'}"
                                                                  PreviewKeyDown="{DXEvent Handler='@s.ProcessKeyDown(@args)'}" GroupSummaryDisplayMode="Default"
-                                                                 GroupRowCheckBoxFieldName="CommitChange">
+                                                                 GroupRowCheckBoxFieldName="CommitChange"
+                                                                 ShowFilterPanelMode="Never">
                                     <dxb:BarManager.DXContextMenu>
                                         <dxb:PopupMenu>
                                             <dxb:BarButtonItem Content="Commit All In Viewport" Glyph="{dx:DXImage Image=SelectAll_16x16.png}" Command="{DXCommand Execute='@e(view).CommitAllInViewport()'}"/>
