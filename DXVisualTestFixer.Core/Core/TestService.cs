@@ -89,11 +89,12 @@ namespace DXVisualTestFixer.Core {
         int CalculateImageDiffsCount(TestInfo test) {
             if(test.ImageDiffArr == null || test.ImageBeforeArr == null || test.ImageCurrentArr == null)
                 return int.MaxValue;
-            var imgBefore = ImageHelper.CreateImageFromArray(test.ImageBeforeArr);
-            var imgCurrent = ImageHelper.CreateImageFromArray(test.ImageCurrentArr);
-            if(imgBefore.Size != imgCurrent.Size)
-                return int.MaxValue;
-            return ImageHelper.DeltaUnsafe(imgBefore, imgCurrent);
+            using(var imgBefore = ImageHelper.CreateImageFromArray(test.ImageBeforeArr))
+                using(var imgCurrent = ImageHelper.CreateImageFromArray(test.ImageCurrentArr)) {
+                    if(imgBefore.Size != imgCurrent.Size)
+                        return int.MaxValue;
+                    return ImageHelper.DeltaUnsafe(imgBefore, imgCurrent);
+                }
         }
     }
     public class TestsService : BindableBase, ITestsService {
@@ -378,9 +379,9 @@ namespace DXVisualTestFixer.Core {
         }
 
         static bool IsImageEquals(byte[] left, byte[] right) {
-            Bitmap imgLeft = ImageHelper.CreateImageFromArray(left);
-            Bitmap imgRight = ImageHelper.CreateImageFromArray(right);
-            return ImageHelper.CompareUnsafe(imgLeft, imgRight);
+            using(var imgLeft = ImageHelper.CreateImageFromArray(left))
+                using(var imgRight = ImageHelper.CreateImageFromArray(right))
+                    return ImageHelper.CompareUnsafe(imgLeft, imgRight);
         }
         static bool LoadImage(string path, Action<byte[]> saveAction) {
             if(!File.Exists(path)) {
