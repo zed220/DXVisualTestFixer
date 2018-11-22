@@ -26,7 +26,7 @@
                 <Setter Property="IncrementalFiltering" Value="True"/>
                 <Setter Property="AllowDefaultButton" Value="True"/>
                 <Setter Property="ValidateOnTextInput" Value="True"/>
-                <Setter Property="AllowLiveDataShaping" Value="False"/>
+                <Setter Property="AllowLiveDataShaping" Value="True"/>
                 <Setter Property="ItemsSource" Value="{Binding FilterValues}"/>
                 <Setter Property="EditValue" Value="{Binding SelectedFilterValues, UpdateSourceTrigger=PropertyChanged}"/>
                 <Setter Property="ShowNullText" Value="True"/>
@@ -85,7 +85,7 @@
         </ControlTemplate.Resources>
         <dxdo:LayoutGroup ShowCaption="False" AllowDrag="False" Orientation="Vertical">
             <dxdo:LayoutControlItem Caption="Dpi">
-                <dxfui:CheckedListFilterElement FieldName="Dpi">
+                <dxfui:CheckedListFilterElement FieldName="Dpi" SelectAllWhenFilterIsNull="True">
                     <dxfui:CheckedListFilterElement.FilterModelTemplate>
                         <DataTemplate>
                             <dxe:ComboBoxEdit DisplayTextConverter="{StaticResource DpiErrorConverter}" NullText="Select DPI here">
@@ -102,7 +102,7 @@
                 </dxfui:CheckedListFilterElement>
             </dxdo:LayoutControlItem>
             <dxdo:LayoutControlItem Caption="Teams">
-                <dxfui:CheckedListFilterElement FieldName="TeamName">
+                <dxfui:CheckedListFilterElement FieldName="TeamName" SelectAllWhenFilterIsNull="True">
                     <dxfui:CheckedListFilterElement.FilterModelTemplate>
                         <DataTemplate>
                             <dxe:ComboBoxEdit NullText="Select Team here"/>
@@ -111,7 +111,7 @@
                 </dxfui:CheckedListFilterElement>
             </dxdo:LayoutControlItem>
             <dxdo:LayoutControlItem Caption="Versions">
-                <dxfui:CheckedListFilterElement FieldName="Version">
+                <dxfui:CheckedListFilterElement FieldName="Version" SelectAllWhenFilterIsNull="True">
                     <dxfui:CheckedListFilterElement.FilterModelTemplate>
                         <DataTemplate>
                             <dxe:ComboBoxEdit NullText="Select Version here"/>
