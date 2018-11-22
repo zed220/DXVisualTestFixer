@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>DXVisualTests_UI_Addin_Dependencies</id>
-        <version>18.2.0.16</version>
+        <version>18.2.0.17</version>
         <title>DXVisualTests UI Addin Dependencies</title>
         <authors>DevExpress</authors>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
