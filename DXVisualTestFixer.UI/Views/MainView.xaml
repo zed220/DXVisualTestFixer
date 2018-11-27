@@ -305,21 +305,50 @@
                             <dxg:GridColumn FieldName="TestInfo.Theme" Width="*" Header="Theme" AllowEditing="False">
                                 <dxg:GridColumn.CellTemplate>
                                     <DataTemplate>
-                                        <StackPanel Orientation="Horizontal">
+                                        <DataTemplate.Resources>
+                                            <Style TargetType="{x:Type Border}">
+                                                <Setter Property="Padding" Value="3"/>
+                                                <Setter Property="BorderThickness" Value="0"/>
+                                                <Setter Property="CornerRadius" Value="3"/>
+                                                <Setter Property="Margin" Value="2,0,0,0"/>
+                                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                            </Style>
+                                        </DataTemplate.Resources>
+                                        <Grid HorizontalAlignment="Left">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
                                             <dxe:TextEdit x:Name="PART_Editor"/>
-                                            <dxe:TextEdit EditMode="InplaceInactive" Margin="2,0,0,0">
-                                                <dxe:TextEdit.EditValue>
-                                                    <Binding Path="RowData.Row.TestInfo.Optimized">
-                                                        <Binding.Converter>
-                                                            <dxmvvm:ObjectToObjectConverter DefaultSource="False" DefaultTarget="{x:Null}">
-                                                                <dxmvvm:MapItem Source="True" Target="(optimized)"/>
-                                                            </dxmvvm:ObjectToObjectConverter>
-                                                        </Binding.Converter>
-                                                    </Binding>
-                                                </dxe:TextEdit.EditValue>
-                                            </dxe:TextEdit>
-                                            <dxe:TextEdit EditMode="InplaceInactive" Margin="2,0,0,0" EditValue="{Binding Path=RowData.Row.Dpi, Mode=OneWay}">
-                                                <dxe:TextEdit.Visibility>
+                                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                                <Border Background="LightGray" Visibility="{Binding Path=RowData.Row.TestInfo.Optimized, Converter={dx:BooleanToVisibilityConverter}}">
+                                                    <TextBlock Text="Optimized" Foreground="Black" FontSize="8"/>
+                                                </Border>
+                                                <Border Background="Gray">
+                                                    <Border.Visibility>
+                                                        <Binding Path="RowData.Row.Dpi">
+                                                            <Binding.Converter>
+                                                                <dxmvvm:ObjectToObjectConverter DefaultTarget="Visible">
+                                                                    <dxmvvm:MapItem Source="96" Target="Collapsed"/>
+                                                                    <dxmvvm:MapItem Source="0" Target="Collapsed"/>
+                                                                </dxmvvm:ObjectToObjectConverter>
+                                                            </Binding.Converter>
+                                                        </Binding>
+                                                    </Border.Visibility>
+                                                    <TextBlock Text="{Binding RowData.Row.Dpi}" Foreground="White" FontSize="8"/>
+                                                </Border>
+                                                <Border Background="Green" Visibility="{Binding Path=RowData.Row.ImageEquals, Converter={dxmvvm:BooleanToVisibilityConverter}}">
+                                                    <TextBlock Text="IMG EQ" Foreground="White" FontSize="8"/>
+                                                </Border>
+                                            </StackPanel>
+                                        </Grid>
+                                        <!--<StackPanel Orientation="Horizontal">
+                                            <dxe:TextEdit x:Name="PART_Editor"/>
+                                            <Border Background="Gray" Visibility="{Binding Path=RowData.Row.TestInfo.Optimized, Converter={dx:BooleanToVisibilityConverter}}">
+                                                <TextBlock Text="Optimized" Foreground="White" FontSize="8"/>
+                                            </Border>
+                                            <Border Background="Black">
+                                                <Border.Visibility>
                                                     <Binding Path="RowData.Row.Dpi">
                                                         <Binding.Converter>
                                                             <dxmvvm:ObjectToObjectConverter DefaultTarget="Visible">
@@ -328,13 +357,13 @@
                                                             </dxmvvm:ObjectToObjectConverter>
                                                         </Binding.Converter>
                                                     </Binding>
-                                                </dxe:TextEdit.Visibility>
-                                            </dxe:TextEdit>
-                                            <Border Background="Green" CornerRadius="3" BorderThickness="0" VerticalAlignment="Center" Padding="3" 
-                                                    Visibility="{Binding Path=RowData.Row.ImageEquals, Converter={dxmvvm:BooleanToVisibilityConverter}}">
+                                                </Border.Visibility>
+                                                <TextBlock Text="{Binding RowData.Row.Dpi}" Foreground="White" FontSize="8"/>
+                                            </Border>
+                                            <Border Background="Green" Visibility="{Binding Path=RowData.Row.ImageEquals, Converter={dxmvvm:BooleanToVisibilityConverter}}">
                                                 <TextBlock Text="IMG EQ" Foreground="White" FontSize="8"/>
                                             </Border>
-                                        </StackPanel>
+                                        </StackPanel>-->
                                     </DataTemplate>
                                 </dxg:GridColumn.CellTemplate>
                             </dxg:GridColumn>

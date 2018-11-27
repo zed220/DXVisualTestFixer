@@ -1,4 +1,5 @@
-﻿using DevExpress.Xpf.Core;
+﻿using DevExpress.Xpf.Bars;
+using DevExpress.Xpf.Core;
 
 namespace DXVisualTestFixer.UI.Views {
     /// <summary>
@@ -7,6 +8,7 @@ namespace DXVisualTestFixer.UI.Views {
     /// 
     public partial class Shell : ThemedWindow {
         public Shell() {
+            LightweightBarItemLinkControl.StaticIsEnabled = false;
             InitializeComponent();
         }
     }
