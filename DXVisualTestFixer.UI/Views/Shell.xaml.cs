@@ -8,7 +8,6 @@ namespace DXVisualTestFixer.UI.Views {
     /// 
     public partial class Shell : ThemedWindow {
         public Shell() {
-            LightweightBarItemLinkControl.StaticIsEnabled = false;
             InitializeComponent();
         }
     }
