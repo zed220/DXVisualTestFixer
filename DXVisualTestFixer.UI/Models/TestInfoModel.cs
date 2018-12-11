@@ -18,6 +18,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
         public TestInfo TestInfo { get; private set; }
         public TestState Valid { get { return TestInfo.Valid; } }
         public string Version { get { return TestInfo.Version; } }
+        public bool Optimized { get { return TestInfo.Optimized; } }
         public string TeamName { get { return TestInfo.Team.Name; } }
         public int Dpi { get { return TestInfo.Dpi; } }
         public int Problem { get { return TestInfo.Problem; } }

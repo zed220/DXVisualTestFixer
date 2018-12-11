@@ -128,6 +128,23 @@
                     </dxfui:CheckedListFilterElement.FilterModelTemplate>
                 </dxfui:CheckedListFilterElement>
             </dxdo:LayoutControlItem>
+            <dxdo:LayoutControlItem Caption="Optimized">
+                <dxfui:CheckedListFilterElement FieldName="Optimized">
+                    <dxfui:CheckedListFilterElement.FilterModelTemplate>
+                        <DataTemplate>
+                            <dxe:ComboBoxEdit DisplayTextConverter="{converters:OptimizedDisplayTextConverter}" NullText="Select Optimized here">
+                                <dxe:ComboBoxEdit.ItemTemplate>
+                                    <DataTemplate>
+                                        <dxfui:ValueCountContentControl Count="{Binding Count}">
+                                            <TextBlock Text="{Binding Converter={converters:OptimizedDisplayTextConverter}}"/>
+                                        </dxfui:ValueCountContentControl>
+                                    </DataTemplate>
+                                </dxe:ComboBoxEdit.ItemTemplate>
+                            </dxe:ComboBoxEdit>
+                        </DataTemplate>
+                    </dxfui:CheckedListFilterElement.FilterModelTemplate>
+                </dxfui:CheckedListFilterElement>
+            </dxdo:LayoutControlItem>
             <dxdo:LayoutControlItem Caption="Show Fixed" Visibility="{Binding HasFixedTests, Converter={dx:BooleanToVisibilityConverter}, RelativeSource={RelativeSource TemplatedParent}}">
                 <dxfui:PredefinedFiltersElement FieldName="Valid" ShowCounts="False">
                     <dxfui:PredefinedFiltersElement.FilterModelTemplate>

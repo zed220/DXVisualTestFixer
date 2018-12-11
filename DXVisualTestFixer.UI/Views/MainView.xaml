@@ -321,7 +321,7 @@
                                             </Grid.ColumnDefinitions>
                                             <dxe:TextEdit x:Name="PART_Editor"/>
                                             <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                                <Border Background="LightGray" Visibility="{Binding Path=RowData.Row.TestInfo.Optimized, Converter={dx:BooleanToVisibilityConverter}}">
+                                                <Border Background="LightGray" Visibility="{Binding Path=RowData.Row.Optimized, Converter={dx:BooleanToVisibilityConverter}}">
                                                     <TextBlock Text="Optimized" Foreground="Black" FontSize="8"/>
                                                 </Border>
                                                 <Border Background="Gray">

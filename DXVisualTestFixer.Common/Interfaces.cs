@@ -56,6 +56,7 @@ namespace DXVisualTestFixer.Common {
         string TeamName { get; }
         int Problem { get; }
         string ProblemName { get; }
+        bool Optimized { get; }
         int Dpi { get; }
         string Version { get; }
         TestInfo TestInfo { get; }
