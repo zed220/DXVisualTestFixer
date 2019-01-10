@@ -381,7 +381,7 @@
                                 <controls:TableViewAdvNavigation x:Name="view" AllowEditing="True" ShowVerticalLines="False" ShowIndicator="False" ShowHorizontalLines="False" ShowColumnHeaders="False" 
                                                                  ShowGroupPanel="False" ShowFixedTotalSummary="True" RowDoubleClick="{DXEvent Handler='@s.ProcessDoubleClick(@args)'}"
                                                                  PreviewKeyDown="{DXEvent Handler='@s.ProcessKeyDown(@args)'}" GroupSummaryDisplayMode="Default"
-                                                                 GroupRowCheckBoxFieldName="CommitChange"
+                                                                 GroupRowCheckBoxFieldName="CommitChange" SearchPanelHighlightResults="False"
                                                                  ShowFilterPanelMode="Never">
                                     <dxb:BarManager.DXContextMenu>
                                         <dxb:PopupMenu>

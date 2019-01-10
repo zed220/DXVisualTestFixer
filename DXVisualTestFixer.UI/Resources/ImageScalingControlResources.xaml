@@ -35,7 +35,7 @@
     </Style>
     <DataTemplate x:Key="DraggableScrollViewerDataTemplate">
         <DataTemplate.Resources>
-            <dxmvvm:ObjectToObjectConverter x:Key="scrollModeConverter" DefaultSource="Legacy" DefaultTarget="{x:Null}">
+            <dxmvvm:ObjectToObjectConverter x:Key="scrollModeConverter" DefaultTarget="{x:Null}">
                 <dxmvvm:MapItem Source="Draggable" Target="Hand"/>
             </dxmvvm:ObjectToObjectConverter>
         </DataTemplate.Resources>
@@ -102,7 +102,7 @@
                         <dxdo:LayoutPanel.Caption>
                             <StackPanel Orientation="Horizontal">
                                 <dxe:ComboBoxEdit DataContext="{Binding Path=(controls:ImageScalingControl.ImageScalingControl), UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource Self}}" 
-                                                  EditValue="{Binding Path=MergedViewType, Mode=TwoWay}" IsTextEditable="False" MinWidth="100">
+                                                  EditValue="{Binding Path=MergedViewType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsTextEditable="False" MinWidth="100">
                                     <dxe:ComboBoxEdit.ItemsSource>
                                         <sys:ArrayList>
                                             <controls:MergedTestViewType>Diff</controls:MergedTestViewType>
