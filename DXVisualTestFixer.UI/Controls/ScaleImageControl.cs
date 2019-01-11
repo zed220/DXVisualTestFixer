@@ -332,11 +332,11 @@ namespace DXVisualTestFixer.UI.Controls {
         }
 
         public double ViewportWidth {
-            get { return currentSize.Width; }
+            get { return ImageSource != null ? currentSize.Width : 0; }
         }
 
         public double ViewportHeight {
-            get { return currentSize.Height; }
+            get { return ImageSource != null ? currentSize.Height : 0; }
         }
 
         public double HorizontalOffset {
