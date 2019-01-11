@@ -126,7 +126,8 @@ namespace DXVisualTestFixer.Core {
 
         public async Task UpdateTests(INotificationService notificationService) {
             CurrentFilter = null;
-            ActualState = await LoadTestsAsync(farmIntegrator.GetAllTasks(configSerializer.GetConfig().Repositories), notificationService);
+            var allTasks = await farmIntegrator.GetAllTasks(configSerializer.GetConfig().Repositories);
+            ActualState = await LoadTestsAsync(allTasks, notificationService);
             ((TestInfoContainer)ActualState).UpdateProblems();
         }
 

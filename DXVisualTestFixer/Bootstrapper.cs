@@ -4,7 +4,7 @@ using DevExpress.Xpf.Docking;
 using DXVisualTestFixer.Common;
 using DXVisualTestFixer.Core;
 using DXVisualTestFixer.Core.Configuration;
-using DXVisualTestFixer.Farm;
+using DXVisualTestFixer.FarmIntegrator2;
 using DXVisualTestFixer.PrismCommon;
 using DXVisualTestFixer.Services;
 using DXVisualTestFixer.UI.Common;

@@ -86,9 +86,7 @@ namespace DXVisualTestFixer.Common {
         FarmIntegrationStatus BuildStatus { get; }
     }
     public interface IFarmIntegrator {
-        void Start(Action<IFarmRefreshedEventArgs> invalidateCallback);
-        void Stop();
-        List<IFarmTaskInfo> GetAllTasks(Repository[] repositories);
+        Task<List<IFarmTaskInfo>> GetAllTasks(Repository[] repositories);
     }
     public interface ITestsService : INotifyPropertyChanged {
         ITestInfoContainer ActualState { get; }

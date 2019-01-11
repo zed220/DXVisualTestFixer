@@ -6,13 +6,7 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DXVisualTestFixer", "DXVisualTestFixer\DXVisualTestFixer.csproj", "{7BA74650-A045-4FA3-A1F9-2D7FBAD50A4F}"
 	ProjectSection(ProjectDependencies) = postProject
 		{6E5E8BC1-A7A3-4DED-AD5E-4C8A09870875} = {6E5E8BC1-A7A3-4DED-AD5E-4C8A09870875}
-		{71F9005B-5CFF-40AA-BDE8-14CF4ED621B2} = {71F9005B-5CFF-40AA-BDE8-14CF4ED621B2}
 		{A3D50801-F65F-4201-8AEE-7254DAE4732F} = {A3D50801-F65F-4201-8AEE-7254DAE4732F}
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DXVisualTestFixer.FarmIntegrator", "DXVisualTestFixer.FarmIntegrator\DXVisualTestFixer.FarmIntegrator.csproj", "{71F9005B-5CFF-40AA-BDE8-14CF4ED621B2}"
-	ProjectSection(ProjectDependencies) = postProject
-		{BCEC7D6C-B798-4DC7-A803-EBC75B0EFBBD} = {BCEC7D6C-B798-4DC7-A803-EBC75B0EFBBD}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DXVisualTestFixer.Core", "DXVisualTestFixer.Core\DXVisualTestFixer.Core.csproj", "{A3D50801-F65F-4201-8AEE-7254DAE4732F}"
@@ -27,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DXVisualTestFixer.UI", "DXV
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DXVisualTestFixer.Common", "DXVisualTestFixer.Common\DXVisualTestFixer.Common.csproj", "{BCEC7D6C-B798-4DC7-A803-EBC75B0EFBBD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DXVisualTestFixer.FarmIntegrator2", "DXVisualTestFixer.FarmIntegrator2\DXVisualTestFixer.FarmIntegrator2.csproj", "{A3DE4F31-4D45-4CDB-9460-39F77F05E42F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,12 +36,6 @@ Global
 		{7BA74650-A045-4FA3-A1F9-2D7FBAD50A4F}.DebugPublish|Any CPU.Build.0 = DebugPublish|Any CPU
 		{7BA74650-A045-4FA3-A1F9-2D7FBAD50A4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7BA74650-A045-4FA3-A1F9-2D7FBAD50A4F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{71F9005B-5CFF-40AA-BDE8-14CF4ED621B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{71F9005B-5CFF-40AA-BDE8-14CF4ED621B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{71F9005B-5CFF-40AA-BDE8-14CF4ED621B2}.DebugPublish|Any CPU.ActiveCfg = DebugPublish|Any CPU
-		{71F9005B-5CFF-40AA-BDE8-14CF4ED621B2}.DebugPublish|Any CPU.Build.0 = DebugPublish|Any CPU
-		{71F9005B-5CFF-40AA-BDE8-14CF4ED621B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{71F9005B-5CFF-40AA-BDE8-14CF4ED621B2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A3D50801-F65F-4201-8AEE-7254DAE4732F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A3D50801-F65F-4201-8AEE-7254DAE4732F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A3D50801-F65F-4201-8AEE-7254DAE4732F}.DebugPublish|Any CPU.ActiveCfg = DebugPublish|Any CPU
@@ -64,6 +54,12 @@ Global
 		{BCEC7D6C-B798-4DC7-A803-EBC75B0EFBBD}.DebugPublish|Any CPU.Build.0 = DebugPublish|Any CPU
 		{BCEC7D6C-B798-4DC7-A803-EBC75B0EFBBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BCEC7D6C-B798-4DC7-A803-EBC75B0EFBBD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3DE4F31-4D45-4CDB-9460-39F77F05E42F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3DE4F31-4D45-4CDB-9460-39F77F05E42F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3DE4F31-4D45-4CDB-9460-39F77F05E42F}.DebugPublish|Any CPU.ActiveCfg = DebugPublish|Any CPU
+		{A3DE4F31-4D45-4CDB-9460-39F77F05E42F}.DebugPublish|Any CPU.Build.0 = DebugPublish|Any CPU
+		{A3DE4F31-4D45-4CDB-9460-39F77F05E42F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3DE4F31-4D45-4CDB-9460-39F77F05E42F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

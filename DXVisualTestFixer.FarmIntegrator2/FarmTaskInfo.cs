@@ -5,8 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DXVisualTestFixer.Farm {
-    public class FarmTaskInfo : IFarmTaskInfo {
+namespace DXVisualTestFixer.FarmIntegrator2 {
+    class FarmTaskInfo : IFarmTaskInfo {
         public FarmTaskInfo(Repository repository, string url) {
             Repository = repository;
             Url = url;

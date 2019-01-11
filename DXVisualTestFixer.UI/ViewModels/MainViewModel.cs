@@ -113,22 +113,10 @@ namespace DXVisualTestFixer.UI.ViewModels {
             CurrentLogLine = args.Message;
         }
 
-        async void FarmRefreshed(IFarmRefreshedEventArgs args) {
-            if(args == null) {
-                await Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(async () => {
-                    loggingService.SendMessage("Finishing farm integrator");
-                    farmIntegrator.Stop();
-                    loggingService.SendMessage("Farm integrator succes");
-                    await UpdateAllTests().ConfigureAwait(false);
-                }));
-            }
-            else {
-                await Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(async () => {
-                    loggingService.SendMessage("Retrying farm integrator");
-                    farmIntegrator.Stop();
-                    RefreshTestList();
-                }));
-            }
+        async void FarmRefreshed() {
+            await Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(async () => {
+                await UpdateAllTests().ConfigureAwait(false);
+            }));
         }
 
         async Task UpdateAllTests() {
@@ -287,7 +275,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
             loggingService.SendMessage("Waiting response from farm integrator");
             Tests = null;
             Status = ProgramStatus.Loading;
-            farmIntegrator.Start(FarmRefreshed);
+            Task.Factory.StartNew(FarmRefreshed).ConfigureAwait(false);
         }
 
         public void ClearCommits() {

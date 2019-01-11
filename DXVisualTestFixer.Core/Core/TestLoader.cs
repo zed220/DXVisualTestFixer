@@ -41,27 +41,37 @@ namespace DXVisualTestFixer.Core {
             XmlDocument myXmlDocument = new XmlDocument();
             myXmlDocument.Load(realUrl.Replace("ViewBuildReport.aspx", "XmlBuildLog.xml"));
             List<Task<List<CorpDirTestInfo>>> failedTestsTasks = new List<Task<List<CorpDirTestInfo>>>();
-            foreach(XmlElement testCaseXml in FindFailedTests(myXmlDocument)) {
-                string testNameAndNamespace = testCaseXml.GetAttribute("name");
-                XmlNode failureNode = testCaseXml.FindByName("failure");
-                failedTestsTasks.Add(Task.Factory.StartNew<List<CorpDirTestInfo>>(() => {
-                    XmlNode resultNode = failureNode.FindByName("message");
-                    XmlNode stackTraceNode = failureNode.FindByName("stack-trace");
-                    List<CorpDirTestInfo> localRes = new List<CorpDirTestInfo>();
-                    ParseMessage(taskInfo, testNameAndNamespace, resultNode.InnerText, stackTraceNode.InnerText, localRes);
-                    return localRes;
-                }));
-            }
-            if(failedTestsTasks.Count > 0) {
-                Task.WaitAll(failedTestsTasks.ToArray());
-                failedTestsTasks.ForEach(t => failedTests.AddRange(t.Result));
-            }
-            else {
-                if(!Repository.IsNewVersion(taskInfo.Repository.Version) || !taskInfo.Success)
-                    failedTests.Add(CorpDirTestInfo.CreateError(taskInfo, "BuildError", "BuildError", "BuildError"));
+            if(!IsSuccessBuild(myXmlDocument)) {
+                foreach(XmlElement testCaseXml in FindFailedTests(myXmlDocument)) {
+                    string testNameAndNamespace = testCaseXml.GetAttribute("name");
+                    XmlNode failureNode = testCaseXml.FindByName("failure");
+                    failedTestsTasks.Add(Task.Factory.StartNew<List<CorpDirTestInfo>>(() => {
+                        XmlNode resultNode = failureNode.FindByName("message");
+                        XmlNode stackTraceNode = failureNode.FindByName("stack-trace");
+                        List<CorpDirTestInfo> localRes = new List<CorpDirTestInfo>();
+                        ParseMessage(taskInfo, testNameAndNamespace, resultNode.InnerText, stackTraceNode.InnerText, localRes);
+                        return localRes;
+                    }));
+                }
+                if(failedTestsTasks.Count > 0) {
+                    Task.WaitAll(failedTestsTasks.ToArray());
+                    failedTestsTasks.ForEach(t => failedTests.AddRange(t.Result));
+                }
+                else {
+                    if(!Repository.IsNewVersion(taskInfo.Repository.Version) || !taskInfo.Success)
+                        failedTests.Add(CorpDirTestInfo.CreateError(taskInfo, "BuildError", "BuildError", "BuildError"));
+                }
             }
             return new CorpDirTestInfoContainer(failedTests, FindUsedFiles(myXmlDocument).ToList(), FindElapsedTimes(myXmlDocument), FindTeams(taskInfo.Repository.Version, myXmlDocument));
         }
+
+        private static bool IsSuccessBuild(XmlDocument myXmlDocument) {
+            XmlNode buildNode = FindBuildNode(myXmlDocument);
+            if(buildNode == null)
+                return false;
+            return !buildNode.TryGetAttibute("error", out string _);
+        }
+
         static IEnumerable<XmlElement> FindFailedTests(XmlDocument myXmlDocument) {
             XmlNode buildNode = FindBuildNode(myXmlDocument);
             if(buildNode == null)

@@ -244,9 +244,6 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
-    <Reference Include="ThoughtWorks.CruiseControl.Remote">
-      <HintPath>..\lib\DXFarm\ThoughtWorks.CruiseControl.Remote.dll</HintPath>
-    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -315,9 +312,9 @@
       <Project>{a3d50801-f65f-4201-8aee-7254dae4732f}</Project>
       <Name>DXVisualTestFixer.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DXVisualTestFixer.FarmIntegrator\DXVisualTestFixer.FarmIntegrator.csproj">
-      <Project>{71f9005b-5cff-40aa-bde8-14cf4ed621b2}</Project>
-      <Name>DXVisualTestFixer.FarmIntegrator</Name>
+    <ProjectReference Include="..\DXVisualTestFixer.FarmIntegrator2\DXVisualTestFixer.FarmIntegrator2.csproj">
+      <Project>{a3de4f31-4d45-4cdb-9460-39f77f05e42f}</Project>
+      <Name>DXVisualTestFixer.FarmIntegrator2</Name>
     </ProjectReference>
     <ProjectReference Include="..\DXVisualTestFixer.UI\DXVisualTestFixer.UI.csproj">
       <Project>{6e5e8bc1-a7a3-4ded-ad5e-4c8a09870875}</Project>
