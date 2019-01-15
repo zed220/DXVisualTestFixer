@@ -31,10 +31,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>DXVisualTestFixer_TemporaryKey.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugPublish|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
@@ -105,7 +106,6 @@
     <Compile Include="Core\TestService.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="DXVisualTestFixer_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <Content Include="XmlConfigs\16.1_CoreAndEditors.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
