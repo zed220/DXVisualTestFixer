@@ -23,6 +23,9 @@
                     <dxg:GridColumn FieldName="Prefix" Visible="False"/>
                     <dxg:GridColumn FieldName="Team" GroupIndex="0" ShowGroupedColumn="True"/>
                     <dxg:GridColumn FieldName="Time" SortOrder="Descending" IsSmart="True"/>
+                    <dxg:GridControl.TotalSummary>
+                        <dxg:GridSummaryItem SummaryType="Sum" FieldName="Time" DisplayFormat="{}Total Time: {0}" Alignment="Right"/>
+                    </dxg:GridControl.TotalSummary>
                     <dxg:GridControl.GroupSummary>
                         <dxg:GridSummaryItem SummaryType="Sum" FieldName="Time"/>
                         <dxg:GridSummaryItem SummaryType="Average" FieldName="Time"/>
@@ -30,7 +33,7 @@
                         <dxg:GridSummaryItem SummaryType="Min" FieldName="Time"/>
                     </dxg:GridControl.GroupSummary>
                     <dxg:GridControl.View>
-                        <dxg:TableView AllowPartialGrouping="True"/>
+                        <dxg:TableView AllowPartialGrouping="True" ShowFixedTotalSummary="True"/>
                     </dxg:GridControl.View>
                 </dxg:GridControl>
             </dxdo:LayoutPanel>
