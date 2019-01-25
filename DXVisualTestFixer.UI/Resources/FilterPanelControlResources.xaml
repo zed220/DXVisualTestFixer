@@ -27,6 +27,11 @@
                 <Setter Property="AllowDefaultButton" Value="True"/>
                 <Setter Property="ValidateOnTextInput" Value="True"/>
                 <Setter Property="AllowLiveDataShaping" Value="True"/>
+                <Setter Property="DisplayTextConverter">
+                    <Setter.Value>
+                        <converters:FilterTokenDisplayTextConverter/>
+                    </Setter.Value>
+                </Setter>
                 <Setter Property="ItemsSource" Value="{Binding FilterValues}"/>
                 <Setter Property="EditValue" Value="{Binding SelectedFilterValues, UpdateSourceTrigger=PropertyChanged}"/>
                 <Setter Property="ShowNullText" Value="True"/>
@@ -88,7 +93,12 @@
                 <dxfui:CheckedListFilterElement FieldName="Dpi" SelectAllWhenFilterIsNull="True">
                     <dxfui:CheckedListFilterElement.FilterModelTemplate>
                         <DataTemplate>
-                            <dxe:ComboBoxEdit DisplayTextConverter="{StaticResource DpiErrorConverter}" NullText="Select DPI Here">
+                            <dxe:ComboBoxEdit NullText="Select DPI Here">
+                                <dxe:ComboBoxEdit.DisplayTextConverter>
+                                    <converters:FilterTokenDisplayTextConverter>
+                                        <converters:PredefinedFilterToken StrValue="96" DisplayText="Default"/>
+                                    </converters:FilterTokenDisplayTextConverter>
+                                </dxe:ComboBoxEdit.DisplayTextConverter>
                                 <dxe:ComboBoxEdit.ItemTemplate>
                                     <DataTemplate>
                                         <dxfui:ValueCountContentControl Count="{Binding Count}">
@@ -123,7 +133,11 @@
                 <dxfui:CheckedListFilterElement FieldName="ProblemName">
                     <dxfui:CheckedListFilterElement.FilterModelTemplate>
                         <DataTemplate>
-                            <dxe:ComboBoxEdit NullText="Select Problems Here"/>
+                            <dxe:ComboBoxEdit NullText="Select Problems Here">
+                                <dxe:ComboBoxEdit.StyleSettings>
+                                    <dxe:CheckedTokenComboBoxStyleSettings AllowEditTokens="False" EnableTokenWrapping="True" VerticalAlignment="Center" ShowSelectAllItem="True" FilterOutSelectedTokens="True"/>
+                                </dxe:ComboBoxEdit.StyleSettings>
+                            </dxe:ComboBoxEdit>
                         </DataTemplate>
                     </dxfui:CheckedListFilterElement.FilterModelTemplate>
                 </dxfui:CheckedListFilterElement>
@@ -132,7 +146,13 @@
                 <dxfui:CheckedListFilterElement FieldName="Optimized">
                     <dxfui:CheckedListFilterElement.FilterModelTemplate>
                         <DataTemplate>
-                            <dxe:ComboBoxEdit DisplayTextConverter="{converters:OptimizedDisplayTextConverter}" NullText="Select Optimized Modes Here">
+                            <dxe:ComboBoxEdit NullText="Select Optimized Modes Here">
+                                <dxe:ComboBoxEdit.DisplayTextConverter>
+                                    <converters:FilterTokenDisplayTextConverter>
+                                        <converters:PredefinedFilterToken StrValue="False" DisplayText="Default"/>
+                                        <converters:PredefinedFilterToken StrValue="True" DisplayText="Optimized"/>
+                                    </converters:FilterTokenDisplayTextConverter>
+                                </dxe:ComboBoxEdit.DisplayTextConverter>
                                 <dxe:ComboBoxEdit.ItemTemplate>
                                     <DataTemplate>
                                         <dxfui:ValueCountContentControl Count="{Binding Count}">

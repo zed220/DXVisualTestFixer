@@ -46,74 +46,74 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DevExpress.CodeParser.v18.2, Version=18.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.18.2.0.21\lib\net40\DevExpress.CodeParser.v18.2.dll</HintPath>
+    <Reference Include="DevExpress.CodeParser.v18.2, Version=18.2.205.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.18.2.0.23\lib\net40\DevExpress.CodeParser.v18.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Data.v18.2, Version=18.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.18.2.0.21\lib\net40\DevExpress.Data.v18.2.dll</HintPath>
+    <Reference Include="DevExpress.Data.v18.2, Version=18.2.205.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.18.2.0.23\lib\net40\DevExpress.Data.v18.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Diagram.v18.2.Core, Version=18.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.18.2.0.21\lib\net40\DevExpress.Diagram.v18.2.Core.dll</HintPath>
+    <Reference Include="DevExpress.Diagram.v18.2.Core, Version=18.2.205.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.18.2.0.23\lib\net40\DevExpress.Diagram.v18.2.Core.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Dialogs.v18.2.Core, Version=18.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.18.2.0.21\lib\net40\DevExpress.Dialogs.v18.2.Core.dll</HintPath>
+    <Reference Include="DevExpress.Dialogs.v18.2.Core, Version=18.2.205.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.18.2.0.23\lib\net40\DevExpress.Dialogs.v18.2.Core.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Images.v18.2, Version=18.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.18.2.0.21\lib\net40\DevExpress.Images.v18.2.dll</HintPath>
+    <Reference Include="DevExpress.Images.v18.2, Version=18.2.205.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.18.2.0.23\lib\net40\DevExpress.Images.v18.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Mvvm.v18.2, Version=18.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.18.2.0.21\lib\net40\DevExpress.Mvvm.v18.2.dll</HintPath>
+    <Reference Include="DevExpress.Mvvm.v18.2, Version=18.2.205.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.18.2.0.23\lib\net40\DevExpress.Mvvm.v18.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Pdf.v18.2.Core, Version=18.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.18.2.0.21\lib\net40\DevExpress.Pdf.v18.2.Core.dll</HintPath>
+    <Reference Include="DevExpress.Pdf.v18.2.Core, Version=18.2.205.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.18.2.0.23\lib\net40\DevExpress.Pdf.v18.2.Core.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Printing.v18.2.Core, Version=18.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.18.2.0.21\lib\net40\DevExpress.Printing.v18.2.Core.dll</HintPath>
+    <Reference Include="DevExpress.Printing.v18.2.Core, Version=18.2.205.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.18.2.0.23\lib\net40\DevExpress.Printing.v18.2.Core.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Accordion.v18.2, Version=18.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.18.2.0.21\lib\net40\DevExpress.Xpf.Accordion.v18.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Accordion.v18.2, Version=18.2.205.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.18.2.0.23\lib\net40\DevExpress.Xpf.Accordion.v18.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Controls.v18.2, Version=18.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.18.2.0.21\lib\net40\DevExpress.Xpf.Controls.v18.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Controls.v18.2, Version=18.2.205.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.18.2.0.23\lib\net40\DevExpress.Xpf.Controls.v18.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Core.v18.2, Version=18.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.18.2.0.21\lib\net40\DevExpress.Xpf.Core.v18.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Core.v18.2, Version=18.2.205.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.18.2.0.23\lib\net40\DevExpress.Xpf.Core.v18.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Diagram.v18.2, Version=18.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.18.2.0.21\lib\net40\DevExpress.Xpf.Diagram.v18.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Diagram.v18.2, Version=18.2.205.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.18.2.0.23\lib\net40\DevExpress.Xpf.Diagram.v18.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Dialogs.v18.2, Version=18.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.18.2.0.21\lib\net40\DevExpress.Xpf.Dialogs.v18.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Dialogs.v18.2, Version=18.2.205.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.18.2.0.23\lib\net40\DevExpress.Xpf.Dialogs.v18.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Docking.v18.2, Version=18.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.18.2.0.21\lib\net40\DevExpress.Xpf.Docking.v18.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Docking.v18.2, Version=18.2.205.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.18.2.0.23\lib\net40\DevExpress.Xpf.Docking.v18.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.DocumentViewer.v18.2.Core, Version=18.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.18.2.0.21\lib\net40\DevExpress.Xpf.DocumentViewer.v18.2.Core.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.DocumentViewer.v18.2.Core, Version=18.2.205.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.18.2.0.23\lib\net40\DevExpress.Xpf.DocumentViewer.v18.2.Core.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Grid.v18.2, Version=18.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.18.2.0.21\lib\net40\DevExpress.Xpf.Grid.v18.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Grid.v18.2, Version=18.2.205.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.18.2.0.23\lib\net40\DevExpress.Xpf.Grid.v18.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Grid.v18.2.Core, Version=18.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.18.2.0.21\lib\net40\DevExpress.Xpf.Grid.v18.2.Core.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Grid.v18.2.Core, Version=18.2.205.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.18.2.0.23\lib\net40\DevExpress.Xpf.Grid.v18.2.Core.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Layout.v18.2.Core, Version=18.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.18.2.0.21\lib\net40\DevExpress.Xpf.Layout.v18.2.Core.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Layout.v18.2.Core, Version=18.2.205.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.18.2.0.23\lib\net40\DevExpress.Xpf.Layout.v18.2.Core.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.LayoutControl.v18.2, Version=18.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.18.2.0.21\lib\net40\DevExpress.Xpf.LayoutControl.v18.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.LayoutControl.v18.2, Version=18.2.205.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.18.2.0.23\lib\net40\DevExpress.Xpf.LayoutControl.v18.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.NavBar.v18.2, Version=18.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.18.2.0.21\lib\net40\DevExpress.Xpf.NavBar.v18.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.NavBar.v18.2, Version=18.2.205.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.18.2.0.23\lib\net40\DevExpress.Xpf.NavBar.v18.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.PropertyGrid.v18.2, Version=18.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.18.2.0.21\lib\net40\DevExpress.Xpf.PropertyGrid.v18.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.PropertyGrid.v18.2, Version=18.2.205.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.18.2.0.23\lib\net40\DevExpress.Xpf.PropertyGrid.v18.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Ribbon.v18.2, Version=18.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.18.2.0.21\lib\net40\DevExpress.Xpf.Ribbon.v18.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Ribbon.v18.2, Version=18.2.205.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.18.2.0.23\lib\net40\DevExpress.Xpf.Ribbon.v18.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Themes.VS2017Light.v18.2, Version=18.2.204.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.18.2.0.21\lib\net40\DevExpress.Xpf.Themes.VS2017Light.v18.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Themes.VS2017Light.v18.2, Version=18.2.205.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.18.2.0.23\lib\net40\DevExpress.Xpf.Themes.VS2017Light.v18.2.dll</HintPath>
     </Reference>
     <Reference Include="ICSharpCode.AvalonEdit, Version=5.0.3.0, Culture=neutral, PublicKeyToken=9cc39be672370310, processorArchitecture=MSIL">
       <HintPath>..\packages\AvalonEdit.5.0.4\lib\Net40\ICSharpCode.AvalonEdit.dll</HintPath>
@@ -176,6 +176,7 @@
     <Compile Include="Converters\DpiErrorConverter.cs" />
     <Compile Include="Converters\FilePathToTextConverter.cs" />
     <Compile Include="Converters\FilePathToImageSourceConverter.cs" />
+    <Compile Include="Converters\FilterTokenDisplayTextConverter.cs" />
     <Compile Include="Converters\HasFixedTestsConverter.cs" />
     <Compile Include="Converters\ImageToClipboardConverter.cs" />
     <Compile Include="Converters\MultiImageToClipboardConverter.cs" />

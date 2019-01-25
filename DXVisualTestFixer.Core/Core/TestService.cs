@@ -46,11 +46,14 @@ namespace DXVisualTestFixer.Core {
         public Dictionary<Repository, List<IElapsedTimeInfo>> ElapsedTimes { get; }
         public Dictionary<Repository, List<Team>> Teams { get; }
         public List<TestInfo> ChangedTests { get; }
-        public void UpdateProblems() {
-            Parallel.ForEach(TestList, test => {
-                test.Problem = int.MinValue;
-                test.ImageDiffsCount = CalculateImageDiffsCount(test);
-            });
+        public async Task UpdateProblems() {
+            await Task.Factory.StartNew(() => {
+                Parallel.ForEach(TestList, test => {
+                    test.Problem = int.MinValue;
+                    test.ImageDiffsCount = CalculateImageDiffsCount(test);
+                });
+            }).ConfigureAwait(false);
+
             List<int> diffs = new List<int>();
             TestList.ForEach(t => diffs.Add(t.ImageDiffsCount));
             diffs.Sort();
@@ -127,8 +130,11 @@ namespace DXVisualTestFixer.Core {
         public async Task UpdateTests(INotificationService notificationService) {
             CurrentFilter = null;
             var allTasks = await farmIntegrator.GetAllTasks(configSerializer.GetConfig().Repositories);
-            ActualState = await LoadTestsAsync(allTasks, notificationService);
-            ((TestInfoContainer)ActualState).UpdateProblems();
+            var actualState = await LoadTestsAsync(allTasks, notificationService);
+            loggingService.SendMessage($"Start updating problems");
+            await ((TestInfoContainer)actualState).UpdateProblems();
+            loggingService.SendMessage($"Almost there");
+            ActualState = actualState;
         }
 
         async Task<ITestInfoContainer> LoadTestsAsync(List<IFarmTaskInfo> farmTasks, INotificationService notificationService) {
