@@ -37,6 +37,9 @@
                 <ResourceDictionary Source="/DXVisualTestFixer.UI;component/Resources/Services.xaml"/>
                 <ResourceDictionary Source="/DXVisualTestFixer.UI;component/Resources/FilterPanelControlResources.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+            <dxmvvm:ObjectToObjectConverter x:Key="StatusToVisibilityConverter" DefaultTarget="Collapsed">
+                <dxmvvm:MapItem Source="Loading" Target="Visible"/>
+            </dxmvvm:ObjectToObjectConverter>
             <converters:StackPanelToTooltipConverter x:Key="StackPanelToTooltipConverter"/>
             <dxmvvm:ObjectToObjectConverter x:Key="ribbonMergeConverter" DefaultTarget="All">
                 <dxmvvm:MapItem Source="{x:Null}" Target="None"/>
@@ -176,7 +179,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <dxr:RibbonControl RibbonStyle="Office2010" ToolbarShowMode="ShowAbove" AllowCustomization="False" MinimizationButtonVisibility="Collapsed" RibbonHeaderVisibility="Visible" 
-                           IsEnabled="{DXBinding Expr='Status == $viewModels:ProgramStatus.Idle'}" ToolbarShowCustomizationButton="False" ShowApplicationButton="False"
+                           ToolbarShowCustomizationButton="False" ShowApplicationButton="False"
                            AsyncMergingEnabled="True">
             <dxr:RibbonDefaultPageCategory>
                 <dxr:RibbonPage Caption="Main">
@@ -280,9 +283,8 @@
                     </dxdo:LayoutPanel>
                     <dxdo:LayoutPanel ShowCaption="False" ItemHeight="*">
                         <dxg:GridControl x:Name="PART_GridTests" ItemsSource="{Binding Tests}" CurrentItem="{Binding CurrentTest, Mode=TwoWay}" AutoExpandAllGroups="True" ShowBorder="False" 
-                                         ShowLoadingPanel="{DXBinding Expr='Status != $viewModels:ProgramStatus.Idle'}" FixedFilter="{Binding CurrentFilter}" AllowLiveDataShaping="True"
-                                         ShowAllTableValuesInFilterPopup="True" FilterString="[$ ]([Valid])"
-                                         IsEnabled="{DXBinding Expr='Status == $viewModels:ProgramStatus.Idle'}">
+                                         FixedFilter="{Binding CurrentFilter}" AllowLiveDataShaping="True"
+                                         ShowAllTableValuesInFilterPopup="True" FilterString="[$ ]([Valid])">
                             <dxg:GridColumn FieldName="Version" GroupIndex="0" MergeWithPreviousGroup="False" Header="Version"/>
                             <dxg:GridColumn FieldName="TeamName" GroupIndex="1" MergeWithPreviousGroup="True" Header="Team"/>
                             <dxg:GridColumn FieldName="TestInfo.Name" GroupIndex="2" MergeWithPreviousGroup="False" Header="Name"/>
@@ -433,5 +435,8 @@
                 <dxb:BarStaticItem Content="{Binding CurrentLogLine}" AutoSizeMode="None" IsVisible="{DXBinding Expr='@s.Content ne $string.Empty'}"/>
             </dxr:RibbonStatusBarControl.LeftItems>
         </dxr:RibbonStatusBarControl>
+        <Grid x:Name="loadingControl" IsHitTestVisible="True" Grid.RowSpan="3" Background="Transparent" Visibility="{Binding Status, Converter={StaticResource StatusToVisibilityConverter}}">
+            <dx:WaitIndicator DeferedVisibility="True"/>
+        </Grid>
     </Grid>
 </UserControl>
