@@ -16,6 +16,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
         readonly ITestsService testsService;
 
         List<TestInfo> _ChangedTests;
+        bool _IsAutoCommit = true;
 
         public IEnumerable<UICommand> DialogCommands { get; private set; }
 
@@ -27,6 +28,11 @@ namespace DXVisualTestFixer.UI.ViewModels {
         public bool Confirmed { get; set; }
         public string Title { get;  set; }
         public object Content { get; set; }
+
+        public bool IsAutoCommit {
+            get { return _IsAutoCommit; }
+            set { SetProperty(ref _IsAutoCommit, value); }
+        }
 
         public IEnumerable<UICommand> Commands { get; }
 

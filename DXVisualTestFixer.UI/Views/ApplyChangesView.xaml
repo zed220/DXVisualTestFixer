@@ -6,19 +6,27 @@
              xmlns:local="clr-namespace:DXVisualTestFixer.UI.Views"
              xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
              xmlns:prism="http://prismlibrary.com/"
+             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
              prism:ViewModelLocator.AutoWireViewModel="False"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <dxg:GridControl ItemsSource="{Binding ChangedTests}" AutoExpandAllGroups="True" ShowBorder="False">
-        <dxg:GridColumn FieldName="Version" GroupIndex="0" MergeWithPreviousGroup="True"/>
-        <dxg:GridColumn FieldName="Team.Name" GroupIndex="1" MergeWithPreviousGroup="True"/>
-        <dxg:GridColumn FieldName="Name" GroupIndex="2" MergeWithPreviousGroup="True"/>
-        <dxg:GridColumn FieldName="Theme" Width="*"/>
-        <dxg:GridControl.TotalSummary>
-            <dxg:GridSummaryItem SummaryType="Count" Alignment="Left"/>
-        </dxg:GridControl.TotalSummary>
-        <dxg:GridControl.View>
-            <dxg:TableView AllowEditing="False" ShowVerticalLines="False" ShowIndicator="False" ShowHorizontalLines="False" ShowColumnHeaders="False" ShowGroupPanel="False" ShowFixedTotalSummary="True"/>
-        </dxg:GridControl.View>
-    </dxg:GridControl>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <dxg:GridControl ItemsSource="{Binding ChangedTests}" AutoExpandAllGroups="True" ShowBorder="False">
+            <dxg:GridColumn FieldName="Version" GroupIndex="0" MergeWithPreviousGroup="True"/>
+            <dxg:GridColumn FieldName="Team.Name" GroupIndex="1" MergeWithPreviousGroup="True"/>
+            <dxg:GridColumn FieldName="Name" GroupIndex="2" MergeWithPreviousGroup="True"/>
+            <dxg:GridColumn FieldName="Theme" Width="*"/>
+            <dxg:GridControl.TotalSummary>
+                <dxg:GridSummaryItem SummaryType="Count" Alignment="Left"/>
+            </dxg:GridControl.TotalSummary>
+            <dxg:GridControl.View>
+                <dxg:TableView AllowEditing="False" ShowVerticalLines="False" ShowIndicator="False" ShowHorizontalLines="False" ShowColumnHeaders="False" ShowGroupPanel="False" ShowFixedTotalSummary="True"/>
+            </dxg:GridControl.View>
+        </dxg:GridControl>
+        <dxe:CheckEdit Grid.Row="1" Content="Commit and push into git server" IsChecked="{Binding IsAutoCommit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+    </Grid>
 </UserControl>

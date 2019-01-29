@@ -252,13 +252,13 @@ namespace DXVisualTestFixer.UI.ViewModels {
             if(!confirmation.Confirmed)
                 return;
             Status = ProgramStatus.Loading;
-            Task.Factory.StartNew(ApplyChangesCore);
+            Task.Factory.StartNew(() => ApplyChangesCore(confirmation.IsAutoCommit));
         }
-        async Task ApplyChangesCore() {
-            if(!(await ActualizeRepositories()))
+        async Task ApplyChangesCore(bool commitIntoGitRepo) {
+            if(commitIntoGitRepo && !(await ActualizeRepositories()))
                 return;
             await Task.Factory.StartNew(() => TestService.ActualState.ChangedTests.ForEach(ApplyTest));
-            if(!(await PushTestsInRepository()))
+            if(commitIntoGitRepo && !(await PushTestsInRepository()))
                 return;
             TestsToCommitCount = 0;
             UpdateContent();
