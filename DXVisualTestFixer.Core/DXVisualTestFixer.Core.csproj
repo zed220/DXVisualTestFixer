@@ -114,6 +114,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="git2-a904fc6.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Content Include="XmlConfigs\16.1_CoreAndEditors.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
