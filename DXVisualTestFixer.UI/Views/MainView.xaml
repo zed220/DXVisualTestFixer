@@ -281,7 +281,8 @@
                     <dxdo:LayoutPanel ShowCaption="False" ItemHeight="*">
                         <dxg:GridControl x:Name="PART_GridTests" ItemsSource="{Binding Tests}" CurrentItem="{Binding CurrentTest, Mode=TwoWay}" AutoExpandAllGroups="True" ShowBorder="False" 
                                          ShowLoadingPanel="{DXBinding Expr='Status != $viewModels:ProgramStatus.Idle'}" FixedFilter="{Binding CurrentFilter}" AllowLiveDataShaping="True"
-                                         ShowAllTableValuesInFilterPopup="True" FilterString="[$ ]([Valid])">
+                                         ShowAllTableValuesInFilterPopup="True" FilterString="[$ ]([Valid])"
+                                         IsEnabled="{DXBinding Expr='Status == $viewModels:ProgramStatus.Idle'}">
                             <dxg:GridColumn FieldName="Version" GroupIndex="0" MergeWithPreviousGroup="False" Header="Version"/>
                             <dxg:GridColumn FieldName="TeamName" GroupIndex="1" MergeWithPreviousGroup="True" Header="Team"/>
                             <dxg:GridColumn FieldName="TestInfo.Name" GroupIndex="2" MergeWithPreviousGroup="False" Header="Name"/>

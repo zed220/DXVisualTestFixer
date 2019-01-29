@@ -35,6 +35,7 @@ namespace DXVisualTestFixer {
             RegisterTypeIfMissing(typeof(ILoadingProgressController), typeof(LoadingProgressController), true);
             RegisterTypeIfMissing(typeof(ILoggingService), typeof(LoggingService), true);
             RegisterTypeIfMissing(typeof(ITestsService), typeof(TestsService), true);
+            RegisterTypeIfMissing(typeof(IGitWorker), typeof(GitWorker), true);
             RegisterTypeIfMissing(typeof(IFarmIntegrator), typeof(FarmIntegrator), true);
             RegisterTypeIfMissing(typeof(IVersionService), typeof(VersionService), true);
             RegisterTypeIfMissing(typeof(ISettingsViewModel), typeof(SettingsViewModel), false);

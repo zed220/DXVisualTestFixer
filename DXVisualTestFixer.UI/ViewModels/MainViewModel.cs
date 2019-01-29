@@ -41,6 +41,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
         CriteriaOperator _CurrentFilter;
         ITestsService _TestService;
         List<SolutionModel> _Solutions;
+        IGitWorker _GitWorker;
         #endregion
 
         public List<ITestInfoModel> Tests {
@@ -90,7 +91,8 @@ namespace DXVisualTestFixer.UI.ViewModels {
                              IFarmIntegrator farmIntegrator, 
                              IConfigSerializer configSerializer, 
                              ILoadingProgressController loadingProgressController, 
-                             ITestsService testsService) {
+                             ITestsService testsService,
+                             IGitWorker gitWorker) {
             Dispatcher = Dispatcher.CurrentDispatcher;
             this.notificationService = notificationService;
             this.regionManager = regionManager;
@@ -99,6 +101,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
             this.configSerializer = configSerializer;
             LoadingProgressController = loadingProgressController;
             TestService = testsService;
+            _GitWorker = gitWorker;
             TestService.PropertyChanged += TestService_PropertyChanged;
             loggingService.MessageReserved += OnLoggingMessageReserved;
             UpdateConfig();
@@ -248,10 +251,42 @@ namespace DXVisualTestFixer.UI.ViewModels {
             ApplyChangesRequest.Raise(confirmation);
             if(!confirmation.Confirmed)
                 return;
-            TestService.ActualState.ChangedTests.ForEach(ApplyTest);
+            Status = ProgramStatus.Loading;
+            Task.Factory.StartNew(ApplyChangesCore);
+        }
+        async Task ApplyChangesCore() {
+            if(!(await ActualizeRepositories()))
+                return;
+            await Task.Factory.StartNew(() => TestService.ActualState.ChangedTests.ForEach(ApplyTest));
+            if(!(await PushTestsInRepository()))
+                return;
             TestsToCommitCount = 0;
             UpdateContent();
+            Status = ProgramStatus.Idle;
         }
+        async Task<bool> ActualizeRepositories() {
+            foreach(var group in TestService.ActualState.ChangedTests.GroupBy(t => t.Repository)) {
+                if(!_GitWorker.SetHttpRepository(group.Key)) {
+                    notificationService.DoNotification("Updating reposiroty source failed", $"Cann't update source (origin or upstream) for repository {group.Key.Version} that located at {group.Key.Path}", MessageBoxImage.Error);
+                    return await Task.FromResult(false);
+                }
+                if(await _GitWorker.Update(group.Key) == GitUpdateResult.Error) {
+                    notificationService.DoNotification("Updating failed", $"Repository {group.Key.Version} in {group.Key.Path} cann't update", MessageBoxImage.Error);
+                    return await Task.FromResult(false);
+                }
+            }
+            return await Task.FromResult(true);
+        }
+        async Task<bool> PushTestsInRepository() {
+            foreach(var group in TestService.ActualState.ChangedTests.GroupBy(t => t.Repository)) {
+                if(await _GitWorker.Commit(group.Key) == GitCommitResult.Error) {
+                    notificationService.DoNotification("Pushing failed", $"Cann't push repository {group.Key.Version} that located at {group.Key.Path}", MessageBoxImage.Error);
+                    return await Task.FromResult(false);
+                }
+            }
+            return await Task.FromResult(true);
+        }
+
         bool ShowCheckOutMessageBox(string text) {
             return CheckConfirmation(ConfirmationRequest, "Readonly file detected", "Please checkout file in DXVCS \n" + text);
         }

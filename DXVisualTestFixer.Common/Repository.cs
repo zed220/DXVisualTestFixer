@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace DXVisualTestFixer.Common {
     public class Repository {
@@ -8,6 +9,10 @@ namespace DXVisualTestFixer.Common {
         public string Path { get; set; }
         public static bool IsNewVersion(string version) {
             return Convert.ToInt32(version.Split('.')[0]) >= 18;
+        }
+
+        public bool IsValid() {
+            return File.Exists(System.IO.Path.Combine(Path, "VisualTestsConfig.xml"));
         }
 
         public string GetTaskName() {

@@ -123,7 +123,7 @@ namespace DXVisualTestFixer.Core {
             get { return _CurrentFilter; }
             set {
                 _CurrentFilter = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentFilter)));
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(CurrentFilter)));
             }
         }
 
@@ -226,7 +226,7 @@ namespace DXVisualTestFixer.Core {
         }
 
         static TestInfo TryCreateTestInfo(CorpDirTestInfo corpDirTestInfo, List<Team> teams) {
-            TestInfo testInfo = new TestInfo();
+            TestInfo testInfo = new TestInfo(corpDirTestInfo.FarmTaskInfo.Repository);
             testInfo.Version = corpDirTestInfo.FarmTaskInfo.Repository.Version;
             testInfo.Name = corpDirTestInfo.TestName;
             testInfo.NameWithNamespace = corpDirTestInfo.TestNameWithNamespace;
@@ -273,8 +273,6 @@ namespace DXVisualTestFixer.Core {
         }
 
         static object lockLoadFromDisk = new object();
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         static void LoadTextFile(string path, Action<string> saveAction) {
             string pathWithExtension = Path.ChangeExtension(path, ".xml");

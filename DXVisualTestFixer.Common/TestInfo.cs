@@ -2,6 +2,10 @@
 
 namespace DXVisualTestFixer.Common {
     public class TestInfo {
+        public TestInfo(Repository repository) {
+            Repository = repository;
+        }
+
         StringBuilder _InvalidLogBuilder;
         StringBuilder InvalidLogBuilder { get {
                 if(_InvalidLogBuilder == null)
@@ -12,6 +16,7 @@ namespace DXVisualTestFixer.Common {
         public string Name { get; set; }
         public string NameWithNamespace { get; set; }
         public string ResourceFolderName { get; set; }
+        public Repository Repository { get; }
         public Team Team { get; set; }
         public TeamInfo TeamInfo { get; set; }
         public string Theme { get; set; }

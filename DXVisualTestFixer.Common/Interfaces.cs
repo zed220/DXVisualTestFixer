@@ -118,4 +118,9 @@ namespace DXVisualTestFixer.Common {
         string Content { get; }
         MessageBoxImage Image { get; }
     }
+    public interface IGitWorker {
+        bool SetHttpRepository(Repository repository);
+        Task<GitUpdateResult> Update(Repository repository);
+        Task<GitCommitResult> Commit(Repository repository);
+    }
 }

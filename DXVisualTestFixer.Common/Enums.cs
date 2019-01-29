@@ -11,4 +11,14 @@
         Exception = 2,
         Unknown = 3
     }
+    public enum GitUpdateResult {
+        None,
+        Updated,
+        Error
+    }
+    public enum GitCommitResult {
+        None,
+        Committed,
+        Error
+    }
 }
