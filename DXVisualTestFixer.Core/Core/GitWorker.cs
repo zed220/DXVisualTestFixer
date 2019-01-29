@@ -79,10 +79,11 @@ namespace DXVisualTestFixer.Core {
             }
         }
         void CommitCore(CommonRepository repository) {
+            string userName = System.Security.Principal.WindowsIdentity.GetCurrent().Name.Split('\\').Last();
             using(var repo = new Repository(repository.Path)) {
                 Signature author = new Signature("DXVisualTestsBot", "None@None.com", DateTime.Now);
                 Signature committer = author;
-                Commit commit = repo.Commit("Update tests", author, committer);
+                Commit commit = repo.Commit($"Update tests ({userName})", author, committer);
             }
         }
         bool PushCore(CommonRepository repository) {
