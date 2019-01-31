@@ -116,7 +116,8 @@ namespace DXVisualTestFixer.UI.ViewModels {
             CurrentLogLine = args.Message;
         }
 
-        async void FarmRefreshed() {
+        async void FarmRefresh() {
+            await ActualizeRepositories().ConfigureAwait(false);
             await Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(async () => {
                 await UpdateAllTests().ConfigureAwait(false);
             }));
@@ -265,13 +266,13 @@ namespace DXVisualTestFixer.UI.ViewModels {
             Status = ProgramStatus.Idle;
         }
         async Task<bool> ActualizeRepositories() {
-            foreach(var group in TestService.ActualState.ChangedTests.GroupBy(t => t.Repository)) {
-                if(!_GitWorker.SetHttpRepository(group.Key)) {
-                    notificationService.DoNotification("Updating reposiroty source failed", $"Cann't update source (origin or upstream) for repository {group.Key.Version} that located at {group.Key.Path}", MessageBoxImage.Error);
+            foreach(var repo in /*TestService.ActualState.ChangedTests.GroupBy(t => t.Repository)*/ Config.Repositories) {
+                if(!_GitWorker.SetHttpRepository(repo)) {
+                    notificationService.DoNotification("Updating reposiroty source failed", $"Cann't update source (origin or upstream) for repository {repo.Version} that located at {repo.Path}", MessageBoxImage.Error);
                     return await Task.FromResult(false);
                 }
-                if(await _GitWorker.Update(group.Key) == GitUpdateResult.Error) {
-                    notificationService.DoNotification("Updating failed", $"Repository {group.Key.Version} in {group.Key.Path} cann't update", MessageBoxImage.Error);
+                if(await _GitWorker.Update(repo) == GitUpdateResult.Error) {
+                    notificationService.DoNotification("Updating failed", $"Repository {repo.Version} in {repo.Path} cann't update", MessageBoxImage.Error);
                     return await Task.FromResult(false);
                 }
             }
@@ -310,7 +311,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
             loggingService.SendMessage("Waiting response from farm integrator");
             Tests = null;
             Status = ProgramStatus.Loading;
-            Task.Factory.StartNew(FarmRefreshed).ConfigureAwait(false);
+            Task.Factory.StartNew(FarmRefresh).ConfigureAwait(false);
         }
 
         public void ClearCommits() {

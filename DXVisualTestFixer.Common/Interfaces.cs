@@ -122,5 +122,6 @@ namespace DXVisualTestFixer.Common {
         bool SetHttpRepository(Repository repository);
         Task<GitUpdateResult> Update(Repository repository);
         Task<GitCommitResult> Commit(Repository repository);
+        Task<bool> Clone(Repository repository);
     }
 }

@@ -102,5 +102,29 @@ namespace DXVisualTestFixer.Core {
                 return true;
             }
         }
+        public async Task<bool> Clone(CommonRepository repository) {
+            if(!CommonRepository.IsNewVersion(repository.Version))
+                return await Task.FromResult(false);
+            if(repository.IsValid())
+                return await Task.FromResult(true);
+            CloneCore(repository);
+            if(!CheckoutBranchCore(repository))
+                return await Task.FromResult(false);
+            return await Task.FromResult(repository.IsValid());
+        }
+        void CloneCore(CommonRepository repository) {
+            var co = new CloneOptions();
+            co.CredentialsProvider = (_url, _user, _cred) => new UsernamePasswordCredentials { Username = "DXVisualTestsBot", Password = "DXVisualTestsBot1234" };
+            Repository.Clone("http://gitserver/XPF/VisualTests.git", repository.Path, co);
+        }
+        bool CheckoutBranchCore(CommonRepository repository) {
+            using(var repo = new Repository(repository.Path)) {
+                var branch = repo.Branches[$"20{repository.Version}"];
+                if(branch == null)
+                    return false;
+                Branch currentBranch = Commands.Checkout(repo, branch);
+                return true;
+            }
+        }
     }
 }
