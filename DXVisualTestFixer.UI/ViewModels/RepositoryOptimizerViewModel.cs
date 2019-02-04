@@ -68,15 +68,13 @@ namespace DXVisualTestFixer.UI.ViewModels {
 
         void UpdateUnusedFiles(Dictionary<Repository, List<string>> usedFilesByRep, Dictionary<Repository, List<Team>> teams) {
             HashSet<string> usedFiles = GetUsedFiles(usedFilesByRep, testsService);
-            UnusedFiles = GetActualFiles(usedFilesByRep.Keys.Select(rep => rep.Version).Distinct().Where(v => Repository.IsNewVersion(v)).ToList(), usedFiles, teams);
+            UnusedFiles = GetActualFiles(usedFilesByRep.Keys.Select(rep => rep.Version).Distinct().ToList(), usedFiles, teams);
             Status = ProgramStatus.Idle;
         }
 
         ObservableCollection<RepositoryFileModel> GetActualFiles(List<string> usedVersions, HashSet<string> usedFiles, Dictionary<Repository, List<Team>> teams) {
             ObservableCollection<RepositoryFileModel> result = new ObservableCollection<RepositoryFileModel>();
             foreach(var repository in teams.Keys) {
-                if(!Repository.IsNewVersion(repository.Version))
-                    continue;
                 foreach(Team team in teams[repository]) {
                     if(!usedVersions.Contains(team.Version))
                         continue;

@@ -18,6 +18,7 @@
              xmlns:prismcommon="clr-namespace:DXVisualTestFixer.UI.PrismCommon"
              xmlns:converters="clr-namespace:DXVisualTestFixer.UI.Converters"
              xmlns:common="clr-namespace:DXVisualTestFixer.Common;assembly=DXVisualTestFixer.Common"
+             xmlns:controls="clr-namespace:DXVisualTestFixer.UI.Controls"
              prism:ViewModelLocator.AutoWireViewModel="False"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
@@ -25,6 +26,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/DXVisualTestFixer.UI;component/Resources/Services.xaml"/>
+                <ResourceDictionary Source="/DXVisualTestFixer.UI;component/Resources/LoadingButtonResources.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
@@ -42,7 +44,6 @@
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <GroupBox Header="Auto loader" Margin="5">
@@ -51,36 +52,62 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <TextBlock Margin="10">
-                        <Run>Select work directory. For example:</Run>
-                        <Run FontWeight="Bold">"c:\work" what contains "c:\work\2017.1" or "c:\work\2017.1\common", "c:\work\2018.1", etc</Run>
+                                <Run>Select work directory. Sources will be downloaded in it. For example:</Run>
+                                <Run FontWeight="DemiBold">"c:\work"</Run>
                             </TextBlock>
-                            <Button Grid.Row="1" Padding="5" Margin="5" Content="Auto Load Repositories From Work Directory" Click="{DXEvent Handler='LoadFromWorkingFolder()'}"/>
+                            <TextBlock Grid.Row="1" Padding="5" Text="{Binding WorkingDirectory, StringFormat='Current Working Directory: {0}'}"/>
+                            <Button Grid.Row="2" Padding="5" Margin="5" Content="Change Work Directory" Click="{DXEvent Handler='SelectWorkDirectory()'}"/>
                         </Grid>
                     </dx:BackgroundPanel>
                 </GroupBox>
-                <dxg:GridControl Grid.Row="2" ItemsSource="{Binding Repositories}">
-                    <dxg:GridColumn FieldName="Version">
-                        <dxg:GridColumn.EditSettings>
-                            <dxe:ComboBoxEditSettings ItemsSource="{x:Static common:Repository.Versions}"/>
-                        </dxg:GridColumn.EditSettings>
-                    </dxg:GridColumn>
-                    <dxg:GridColumn FieldName="Path" Width="*">
-                        <dxg:GridColumn.CellTemplate>
-                            <DataTemplate>
-                                <dxe:ButtonEdit x:Name="PART_Editor">
-                                    <dxmvvm:Interaction.Behaviors>
-                                        <behaviors:BrowseDirBehavior/>
-                                    </dxmvvm:Interaction.Behaviors>
-                                </dxe:ButtonEdit>
-                            </DataTemplate>
-                        </dxg:GridColumn.CellTemplate>
-                    </dxg:GridColumn>
-                    <dxg:GridControl.View>
-                        <dxg:TableView NewItemRowPosition="Bottom" ShowDataNavigator="True" />
-                    </dxg:GridControl.View>
-                </dxg:GridControl>
+                <dxe:ListBoxEdit Grid.Row="1" ItemsSource="{Binding Repositories}">
+                    <dxe:ListBoxEdit.ItemContainerStyle>
+                        <Style TargetType="{x:Type dxe:ListBoxEditItem}">
+                            <Setter Property="Margin" Value="5"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type dxe:ListBoxEditItem}">
+                                        <ContentPresenter Content="{Binding}" ContentTemplate="{TemplateBinding ContentTemplate}"/>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </dxe:ListBoxEdit.ItemContainerStyle>
+                    <dxe:ListBoxEdit.ItemTemplate>
+                        <DataTemplate>
+                            <Border CornerRadius="5" Background="LightBlue">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{Binding Version}" FontSize="30" VerticalAlignment="Center"/>
+                                    <controls:LoadingButton Grid.Column="1" Click="{DXEvent Handler='Download()'}">
+                                        <controls:LoadingButton.LoadingState>
+                                            <Binding Path="DownloadState">
+                                                <Binding.Converter>
+                                                    <dxmvvm:ObjectToObjectConverter DefaultTarget="Disabled">
+                                                        <dxmvvm:MapItem Source="ReadyToDownload" Target="Enabled"/>
+                                                        <dxmvvm:MapItem Source="Downloading" Target="Loading"/>
+                                                        <dxmvvm:MapItem Source="Downloaded" Target="Loaded"/>
+                                                    </dxmvvm:ObjectToObjectConverter>
+                                                </Binding.Converter>
+                                            </Binding>
+                                        </controls:LoadingButton.LoadingState>
+                                    </controls:LoadingButton>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </dxe:ListBoxEdit.ItemTemplate>
+                    <dxe:ListBoxEdit.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </dxe:ListBoxEdit.ItemsPanel>
+                </dxe:ListBoxEdit>
             </Grid>
         </dx:DXTabItem>
         <!--<dx:DXTabItem Header="Application">

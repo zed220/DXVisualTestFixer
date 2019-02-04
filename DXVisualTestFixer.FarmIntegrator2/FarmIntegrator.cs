@@ -12,14 +12,8 @@ namespace DXVisualTestFixer.FarmIntegrator2 {
             return await Task.Factory.StartNew(() => {
                 var result = new List<IFarmTaskInfo>();
                 CruiseServerClientBase serverRemotingClient = new CruiseServerRemotingClient("tcp://ccnet.devexpress.devx:21234/CruiseManager.rem");
-                foreach(var repository in repositories) {
-                    if(Repository.IsNewVersion(repository.Version)) {
-                        result.Add(new FarmTaskInfo(repository, GetUrl(serverRemotingClient, repository.GetTaskName_New())));
-                        continue;
-                    }
+                foreach(var repository in repositories)
                     result.Add(new FarmTaskInfo(repository, GetUrl(serverRemotingClient, repository.GetTaskName())));
-                    result.Add(new FarmTaskInfo(repository, GetUrl(serverRemotingClient, repository.GetTaskName_Optimized())));
-                }
                 return result;
             }).ConfigureAwait(false);
         }

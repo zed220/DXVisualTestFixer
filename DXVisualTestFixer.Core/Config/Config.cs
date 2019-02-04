@@ -16,6 +16,11 @@ namespace DXVisualTestFixer.Core.Configuration {
         public string LastVersion { get; set; }
         public string InstallPath { get; set; }
         public string ThemeName { get; set; } = "Office2016White";
+        public string WorkingDirectory { get; set; } = @"C:\Work";
+
+        public IEnumerable<Repository> GetLocalRepositories() {
+            return Repositories.Where(r => r.IsDownloaded());
+        }
 
         public static Config GenerateDefault(IConfigSerializer configSerializer) {
             var result = Validate(new Config());
@@ -29,6 +34,19 @@ namespace DXVisualTestFixer.Core.Configuration {
                 config.LastVersion = ServiceLocator.Current.GetInstance<IVersionService>().Version.ToString();
             if(string.IsNullOrEmpty(config.InstallPath))
                 config.InstallPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            if(string.IsNullOrEmpty(config.WorkingDirectory))
+                config.WorkingDirectory = @"C:\Work";
+            var currentRepos = config.Repositories.Where(repo => Repository.Versions.Contains(repo.Version)).ToArray();
+            if(currentRepos.Length != config.Repositories.Length)
+                config.Repositories = currentRepos;
+            var reposToDownload = new List<Repository>();
+            foreach(var version in Repository.Versions) {
+                if(config.Repositories.Select(r => r.Version).Contains(version))
+                    continue;
+                reposToDownload.Add(new Repository() { Version = version, Path = System.IO.Path.Combine(config.WorkingDirectory, $"20{version}_VisualTests") });
+            }
+            if(reposToDownload.Count > 0)
+                config.Repositories = Enumerable.Concat(config.Repositories, reposToDownload).ToArray();
             return config;
         }
     }

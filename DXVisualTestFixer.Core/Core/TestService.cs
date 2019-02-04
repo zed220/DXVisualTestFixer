@@ -129,7 +129,7 @@ namespace DXVisualTestFixer.Core {
 
         public async Task UpdateTests(INotificationService notificationService) {
             CurrentFilter = null;
-            var allTasks = await farmIntegrator.GetAllTasks(configSerializer.GetConfig().Repositories);
+            var allTasks = await farmIntegrator.GetAllTasks(configSerializer.GetConfig().GetLocalRepositories().ToArray());
             var actualState = await LoadTestsAsync(allTasks, notificationService);
             loggingService.SendMessage($"Start updating problems");
             await ((TestInfoContainer)actualState).UpdateProblems();

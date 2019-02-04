@@ -143,7 +143,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
                 return;
             }
             List<SolutionModel> actualSolutions = new List<SolutionModel>();
-            foreach(var repository in Config.Repositories)
+            foreach(var repository in Config.GetLocalRepositories())
                 actualSolutions.Add(new SolutionModel(repository.Version, repository.Path));
             Solutions = actualSolutions;
         }
@@ -161,11 +161,11 @@ namespace DXVisualTestFixer.UI.ViewModels {
         }
 
         void UpdateContent() {
-            if(Config.Repositories == null || Config.Repositories.Length == 0) {
+            if(Config.GetLocalRepositories().ToList().Count == 0) {
                 Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
                     notificationService.DoNotification("Add repositories in settings", "Add repositories in settings");
                     ShowSettings();
-                    if(Config.Repositories == null || Config.Repositories.Length == 0) {
+                    if(Config.GetLocalRepositories().ToList().Count == 0) {
                         notificationService.DoNotification("Add repositories in settings", "Add repositories in settings");
                         return;
                     }
@@ -173,10 +173,10 @@ namespace DXVisualTestFixer.UI.ViewModels {
                 }));
                 return;
             }
-            foreach(var repoModel in Config.Repositories.Select(rep => new RepositoryModel(rep))) {
-                if(!repoModel.IsValid()) {
+            foreach(var repo in Config.Repositories) {
+                if(!repo.IsDownloaded()) {
                     Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
-                        notificationService.DoNotification("Invalid Settings", "Modify repositories in settings", MessageBoxImage.Warning);
+                        notificationService.DoNotification("Missing Repositories", "Download repositories in Settings", MessageBoxImage.Warning);
                         ShowSettings();
                         RefreshTestList();
                     }));
@@ -266,9 +266,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
             Status = ProgramStatus.Idle;
         }
         async Task<bool> ActualizeRepositories() {
-            foreach(var repo in /*TestService.ActualState.ChangedTests.GroupBy(t => t.Repository)*/ Config.Repositories) {
-                if(!Repository.IsNewVersion(repo.Version))
-                    continue;
+            foreach(var repo in Config.GetLocalRepositories()) {
                 if(!_GitWorker.SetHttpRepository(repo)) {
                     notificationService.DoNotification("Updating reposiroty source failed", $"Cann't update source (origin or upstream) for repository {repo.Version} that located at {repo.Path}", MessageBoxImage.Error);
                     return await Task.FromResult(false);
