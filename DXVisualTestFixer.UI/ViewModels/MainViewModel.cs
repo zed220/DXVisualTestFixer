@@ -267,6 +267,8 @@ namespace DXVisualTestFixer.UI.ViewModels {
         }
         async Task<bool> ActualizeRepositories() {
             foreach(var repo in /*TestService.ActualState.ChangedTests.GroupBy(t => t.Repository)*/ Config.Repositories) {
+                if(!Repository.IsNewVersion(repo.Version))
+                    continue;
                 if(!_GitWorker.SetHttpRepository(repo)) {
                     notificationService.DoNotification("Updating reposiroty source failed", $"Cann't update source (origin or upstream) for repository {repo.Version} that located at {repo.Path}", MessageBoxImage.Error);
                     return await Task.FromResult(false);
