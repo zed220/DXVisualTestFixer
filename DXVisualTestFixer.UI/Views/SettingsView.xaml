@@ -52,12 +52,14 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <TextBlock Margin="10">
                                 <Run>Select work directory. Sources will be downloaded in it. For example:</Run>
-                                <Run FontWeight="Bold">"c:\work"</Run>
+                                <Run FontWeight="DemiBold">"c:\work"</Run>
                             </TextBlock>
-                            <Button Grid.Row="1" Padding="5" Margin="5" Content="Select Work Directory" Click="{DXEvent Handler='SelectWorkDirectory()'}"/>
+                            <TextBlock Grid.Row="1" Padding="5" Text="{Binding WorkingDirectory, StringFormat='Current Working Directory: {0}'}"/>
+                            <Button Grid.Row="2" Padding="5" Margin="5" Content="Change Work Directory" Click="{DXEvent Handler='SelectWorkDirectory()'}"/>
                         </Grid>
                     </dx:BackgroundPanel>
                 </GroupBox>

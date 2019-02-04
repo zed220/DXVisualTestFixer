@@ -18,6 +18,10 @@ namespace DXVisualTestFixer.Core.Configuration {
         public string ThemeName { get; set; } = "Office2016White";
         public string WorkingDirectory { get; set; } = @"C:\Work";
 
+        public IEnumerable<Repository> GetLocalRepositories() {
+            return Repositories.Where(r => r.IsDownloaded());
+        }
+
         public static Config GenerateDefault(IConfigSerializer configSerializer) {
             var result = Validate(new Config());
             configSerializer.SaveConfig(result);

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Threading;
 
 namespace DXVisualTestFixer.UI.Models {
-    public class RepositoryModel : BindableBase, IDXDataErrorInfo {
+    public class RepositoryModel : BindableBase {
         readonly Dispatcher dispatcher;
         public readonly Repository Repository;
 
@@ -44,39 +44,6 @@ namespace DXVisualTestFixer.UI.Models {
             UpdateDownloadState();
         }
 
-        public void GetError(ErrorInfo info) { }
-
-        public void GetPropertyError(string propertyName, ErrorInfo info) {
-            info.ErrorText = null;
-            info.ErrorType = ErrorType.None;
-            if(propertyName == nameof(Path)) {
-                IsValid(info);
-            }
-        }
-        public bool IsValid(ErrorInfo info = null) {
-            if(info == null)
-                info = new ErrorInfo();
-            if(!Directory.Exists(Path)) {
-                info.ErrorText = $"Directory \"{Path}\" does not exists. Example value: \"c:\\Work\\2017.1\\XPF\". Since the 18.1 version you must use specific repository - XPF\\VisualTests";
-                info.ErrorType = ErrorType.Default;
-                return false;
-            }
-            if(String.IsNullOrWhiteSpace(Version)) {
-                info.ErrorText = $"Version \"{Version}\" does not valid. Enter valid value";
-                return false;
-            }
-            string configPath = System.IO.Path.Combine(Path, "VisualTestsConfig.xml");
-            if(!File.Exists(configPath)) {
-                info.ErrorText = $"File \"VisualTestsConfig.xml\" does not exists in directory \"{Path}\".\nSince the 18.1 version you must use specific git repository:\n" +
-                    "git@gitserver:XPF/VisualTests.git\n" +
-                    "Don't create fork, use as is.\n" +
-                    "Contact Zinovyev for additional info";
-                info.ErrorType = ErrorType.Default;
-                return false;
-            }
-            return true;
-        }
-
         public static void ActualizeRepositories(ICollection<RepositoryModel> Repositories, string filePath) {
             List<string> savedVersions = Repositories.Select(r => r.Version).ToList();
             foreach(var ver in Repository.Versions.Where(v => !savedVersions.Contains(v))) {
@@ -97,7 +64,7 @@ namespace DXVisualTestFixer.UI.Models {
         }
 
         DownloadState GetDownloadState() {
-            if(!Directory.Exists(Path))
+            if(!Directory.Exists(Path) || !Directory.EnumerateFileSystemEntries(Path).Any())
                 return DownloadState.ReadyToDownload;
             if(File.Exists(System.IO.Path.Combine(Path, "VisualTestsConfig.xml")))
                 return DownloadState.Downloaded;

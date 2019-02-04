@@ -13,7 +13,7 @@ using Repository = LibGit2Sharp.Repository;
 namespace DXVisualTestFixer.Core {
     public class GitWorker : IGitWorker {
         public bool SetHttpRepository(CommonRepository repository) {
-            if(!repository.IsValid())
+            if(!repository.IsDownloaded())
                 return false;
             using(var repo = new Repository(repository.Path)) {
                 foreach(Remote remote in repo.Network.Remotes.ToList()) {
@@ -25,7 +25,7 @@ namespace DXVisualTestFixer.Core {
         }
 
         public async Task<GitUpdateResult> Update(CommonRepository repository) {
-            if(!repository.IsValid())
+            if(!repository.IsDownloaded())
                 return await Task.FromResult(GitUpdateResult.Error);
             FetchCore(repository);
             if(!PullCore(repository))
@@ -64,7 +64,7 @@ namespace DXVisualTestFixer.Core {
         }
 
         public async Task<GitCommitResult> Commit(CommonRepository repository) {
-            if(!repository.IsValid())
+            if(!repository.IsDownloaded())
                 return await Task.FromResult(GitCommitResult.Error);
             StageCore(repository);
             CommitCore(repository);
@@ -103,13 +103,13 @@ namespace DXVisualTestFixer.Core {
             }
         }
         public async Task<bool> Clone(CommonRepository repository) {
-            if(repository.IsValid())
+            if(repository.IsDownloaded())
                 return await Task.FromResult(true);
             if(!Directory.Exists(repository.Path))
                 Directory.CreateDirectory(repository.Path);
             if(!CloneCore(repository))
                 return await Task.FromResult(false);
-            return await Task.FromResult(repository.IsValid());
+            return await Task.FromResult(repository.IsDownloaded());
         }
         bool CloneCore(CommonRepository repository) {
             var co = new CloneOptions();

@@ -25,7 +25,12 @@ namespace DXVisualTestFixer.UI.ViewModels {
         ObservableCollection<RepositoryModel> _Repositories;
         string _ThemeName;
         string _WorkingDirectory;
+        bool _IsLoading;
 
+        public bool IsLoading {
+            get { return _IsLoading; }
+            private set { SetProperty(ref _IsLoading, value); }
+        }
         public IConfig Config {
             get { return _Config; }
             private set { SetProperty(ref _Config, value, OnConfigChanged); }
@@ -40,7 +45,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
         }
         public string WorkingDirectory {
             get { return _WorkingDirectory; }
-            set { SetProperty(ref _WorkingDirectory, value, () => Config.WorkingDirectory = WorkingDirectory); }
+            set { SetProperty(ref _WorkingDirectory, value, OnWorkingDirectoryChanged); }
         }
 
         public IEnumerable<UICommand> Commands { get; }
@@ -55,8 +60,16 @@ namespace DXVisualTestFixer.UI.ViewModels {
             this.configSerializer = configSerializer;
             Config = configSerializer.GetConfig();
             Commands = UICommand.GenerateFromMessageButton(MessageButton.OKCancel, new DialogService(), MessageResult.OK, MessageResult.Cancel);
-            Commands.Where(c => c.IsDefault).Single().Command = new DelegateCommand(Save);
-            Commands.Where(c => c.IsCancel).Single().Command = new DelegateCommand(Cancel);
+            Commands.Where(c => c.IsDefault).Single().Command = new DelegateCommand(Save, () => !IsAnyRepositoryDownloading());
+            Commands.Where(c => c.IsCancel).Single().Command = new DelegateCommand(Cancel, () => !IsAnyRepositoryDownloading());
+        }
+
+        void OnWorkingDirectoryChanged() {
+            Config.WorkingDirectory = WorkingDirectory;
+            foreach(var repo in Repositories.Where(r => r.DownloadState == DownloadState.ReadyToDownload)) {
+                repo.Path = System.IO.Path.Combine(WorkingDirectory, $"20{repo.Version}_VisualTests");
+                repo.UpdateDownloadState();
+            }
         }
 
         void OnConfigChanged() {
@@ -79,12 +92,23 @@ namespace DXVisualTestFixer.UI.ViewModels {
         bool IsChanged() {
             return !configSerializer.IsConfigEquals(configSerializer.GetConfig(false), Config);
         }
+        bool IsAnyRepositoryDownloading() {
+            foreach(var repo in Repositories) {
+                if(repo.DownloadState == DownloadState.Downloading)
+                    return true;
+            }
+            return false;
+        }
         void Save() {
+            if(IsAnyRepositoryDownloading())
+                return;
             if(!IsChanged())
                 return;
             Confirmed = true;
         }
         void Cancel() {
+            if(IsAnyRepositoryDownloading())
+                return;
             if(!IsChanged())
                 return;
             if(CheckConfirmation(ConfirmationRequest, "Save changes?", "Save changes?"))
@@ -102,22 +126,5 @@ namespace DXVisualTestFixer.UI.ViewModels {
             foreach(var repository in Repositories)
                 repository.UpdateDownloadState();
         }
-
-        //public void LoadFromWorkingFolder() {
-        //    var dialog = ServiceLocator.Current.TryResolve<IFolderBrowserDialog>();
-        //    var result = dialog.ShowDialog();
-        //    if(result != DialogResult.OK)
-        //        return;
-        //    if(!Directory.Exists(dialog.SelectedPath))
-        //        return;
-        //    RepositoryModel.ActualizeRepositories(Repositories, dialog.SelectedPath);
-        //}
-        //public void Clone181() {
-        //    var git = ServiceLocator.Current.GetInstance<IGitWorker>();
-        //    Repository repo = new Repository();
-        //    repo.Path = @"C:\Work\2018.1_VisualTests";
-        //    repo.Version = "18.1";
-        //    git.Clone(repo);
-        //}
     }
 }
