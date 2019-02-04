@@ -32,9 +32,17 @@ namespace DXVisualTestFixer.Core.Configuration {
                 config.InstallPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             if(string.IsNullOrEmpty(config.WorkingDirectory))
                 config.WorkingDirectory = @"C:\Work";
-            var supportedRepos = config.Repositories.Where(repo => Repository.Versions.Contains(repo.Version)).ToArray();
-            if(supportedRepos.Length != config.Repositories.Length)
-                config.Repositories = supportedRepos;
+            var currentRepos = config.Repositories.Where(repo => Repository.Versions.Contains(repo.Version)).ToArray();
+            if(currentRepos.Length != config.Repositories.Length)
+                config.Repositories = currentRepos;
+            var reposToDownload = new List<Repository>();
+            foreach(var version in Repository.Versions) {
+                if(config.Repositories.Select(r => r.Version).Contains(version))
+                    continue;
+                reposToDownload.Add(new Repository() { Version = version, Path = System.IO.Path.Combine(config.WorkingDirectory, $"20{version}_VisualTests") });
+            }
+            if(reposToDownload.Count > 0)
+                config.Repositories = Enumerable.Concat(config.Repositories, reposToDownload).ToArray();
             return config;
         }
     }

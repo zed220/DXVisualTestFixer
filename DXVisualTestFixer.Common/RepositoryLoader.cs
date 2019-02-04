@@ -19,7 +19,7 @@ namespace DXVisualTestFixer.Common {
     }
 
     class RepositoryLoader : FileStringLoaderBase {
-        public RepositoryLoader() : base(@"\\corp\internal\common\visualTests_squirrel\versions_temp.xml") {
+        public RepositoryLoader() : base(@"\\corp\internal\common\visualTests_squirrel\versions.xml") {
         }
 
         protected override List<string> LoadIfFileNotFound() {
