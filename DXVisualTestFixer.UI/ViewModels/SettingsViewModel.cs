@@ -24,6 +24,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
         IConfig _Config;
         ObservableCollection<RepositoryModel> _Repositories;
         string _ThemeName;
+        string _WorkingDirectory;
 
         public IConfig Config {
             get { return _Config; }
@@ -36,6 +37,10 @@ namespace DXVisualTestFixer.UI.ViewModels {
         public string ThemeName {
             get { return _ThemeName; }
             set { SetProperty(ref _ThemeName, value, () => Config.ThemeName = ThemeName); }
+        }
+        public string WorkingDirectory {
+            get { return _WorkingDirectory; }
+            set { SetProperty(ref _WorkingDirectory, value, () => Config.WorkingDirectory = WorkingDirectory); }
         }
 
         public IEnumerable<UICommand> Commands { get; }
@@ -57,6 +62,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
         void OnConfigChanged() {
             LoadRepositories();
             ThemeName = Config.ThemeName;
+            WorkingDirectory = Config.WorkingDirectory;
         }
 
         void LoadRepositories() {
@@ -85,14 +91,33 @@ namespace DXVisualTestFixer.UI.ViewModels {
                 Save();
         }
 
-        public void LoadFromWorkingFolder() {
+        public void SelectWorkDirectory() {
             var dialog = ServiceLocator.Current.TryResolve<IFolderBrowserDialog>();
             var result = dialog.ShowDialog();
             if(result != DialogResult.OK)
                 return;
             if(!Directory.Exists(dialog.SelectedPath))
                 return;
-            RepositoryModel.ActualizeRepositories(Repositories, dialog.SelectedPath);
+            WorkingDirectory = dialog.SelectedPath;
+            foreach(var repository in Repositories)
+                repository.UpdateDownloadState();
         }
+
+        //public void LoadFromWorkingFolder() {
+        //    var dialog = ServiceLocator.Current.TryResolve<IFolderBrowserDialog>();
+        //    var result = dialog.ShowDialog();
+        //    if(result != DialogResult.OK)
+        //        return;
+        //    if(!Directory.Exists(dialog.SelectedPath))
+        //        return;
+        //    RepositoryModel.ActualizeRepositories(Repositories, dialog.SelectedPath);
+        //}
+        //public void Clone181() {
+        //    var git = ServiceLocator.Current.GetInstance<IGitWorker>();
+        //    Repository repo = new Repository();
+        //    repo.Path = @"C:\Work\2018.1_VisualTests";
+        //    repo.Version = "18.1";
+        //    git.Clone(repo);
+        //}
     }
 }

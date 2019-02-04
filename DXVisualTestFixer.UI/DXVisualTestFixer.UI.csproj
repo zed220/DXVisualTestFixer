@@ -165,6 +165,7 @@
     <Compile Include="Controls\DraggableScrollViewer.cs" />
     <Compile Include="Controls\FilterPanelControl.cs" />
     <Compile Include="Controls\ImageScalingControl.cs" />
+    <Compile Include="Controls\LoadingButton.cs" />
     <Compile Include="Controls\Native\ControlsRegistrator.cs" />
     <Compile Include="Controls\Native\FocusedPixelSynchronizer.cs" />
     <Compile Include="Controls\Native\ImageScaleSynchronizer.cs" />
@@ -234,6 +235,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Resources\FilterPanelControlResources.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\LoadingButtonResources.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

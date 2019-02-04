@@ -16,6 +16,7 @@ namespace DXVisualTestFixer.Core.Configuration {
         public string LastVersion { get; set; }
         public string InstallPath { get; set; }
         public string ThemeName { get; set; } = "Office2016White";
+        public string WorkingDirectory { get; set; } = @"C:\Work";
 
         public static Config GenerateDefault(IConfigSerializer configSerializer) {
             var result = Validate(new Config());
@@ -29,6 +30,8 @@ namespace DXVisualTestFixer.Core.Configuration {
                 config.LastVersion = ServiceLocator.Current.GetInstance<IVersionService>().Version.ToString();
             if(string.IsNullOrEmpty(config.InstallPath))
                 config.InstallPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            if(string.IsNullOrEmpty(config.WorkingDirectory))
+                config.WorkingDirectory = @"C:\Work";
             return config;
         }
     }

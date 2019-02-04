@@ -58,7 +58,7 @@ namespace DXVisualTestFixer.Core {
                     failedTestsTasks.ForEach(t => failedTests.AddRange(t.Result));
                 }
                 else {
-                    if(!Repository.IsNewVersion(taskInfo.Repository.Version) || !taskInfo.Success)
+                    if(!taskInfo.Success)
                         failedTests.Add(CorpDirTestInfo.CreateError(taskInfo, "BuildError", "BuildError", "BuildError"));
                 }
             }

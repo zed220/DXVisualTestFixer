@@ -52,7 +52,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 
         void UpdateUsedFiles(Dictionary<Repository, List<string>> usedFilesByRep, Dictionary<Repository, List<Team>> teams) {
             HashSet<string> usedFiles = RepositoryOptimizerViewModel.GetUsedFiles(usedFilesByRep, testsService);
-            UsedFiles = GetActualFiles(usedFilesByRep.Keys.Select(rep => rep.Version).Distinct().Where(v => Repository.IsNewVersion(v)).ToList(), usedFiles, teams);
+            UsedFiles = GetActualFiles(usedFilesByRep.Keys.Select(rep => rep.Version).Distinct().ToList(), usedFiles, teams);
             if(UsedFiles.Count > 0)
                 CurrentFile = UsedFiles[0];
             Status = ProgramStatus.Idle;
@@ -61,8 +61,6 @@ namespace DXVisualTestFixer.UI.ViewModels {
         List<RepositoryFileModel> GetActualFiles(List<string> usedVersions, HashSet<string> usedFiles, Dictionary<Repository, List<Team>> teams) {
             List<RepositoryFileModel> result = new List<RepositoryFileModel>();
             foreach(var repository in teams.Keys) {
-                if(!Repository.IsNewVersion(repository.Version))
-                    continue;
                 foreach(Team team in teams[repository]) {
                     if(!usedVersions.Contains(team.Version))
                         continue;

@@ -74,6 +74,7 @@ namespace DXVisualTestFixer.Common {
     public interface IConfig {
         string ThemeName { get; set; }
         Repository[] Repositories { get; set; }
+        string WorkingDirectory { get; set; }
     }
     public interface ISettingsViewModel : IConfirmation {
         IConfig Config { get; }

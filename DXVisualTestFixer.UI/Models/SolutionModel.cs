@@ -17,7 +17,7 @@ namespace DXVisualTestFixer.UI.Models {
 
         public SolutionModel(string version, string path) {
             Version = version;
-            Path = GetRealPath(path);
+            Path = System.IO.Path.Combine(path, "VisualTests");
             SolutionPath = Directory.EnumerateFiles(Path, "*.sln", SearchOption.TopDirectoryOnly).FirstOrDefault();
             Image = GetImage();
         }
@@ -63,10 +63,6 @@ namespace DXVisualTestFixer.UI.Models {
         }
         public void OpenFolder() {
             Process.Start(Path);
-        }
-        string GetRealPath(string path) {
-            string folderName = Repository.IsNewVersion(Version) ? "VisualTests" : "DevExpress.Xpf.VisualTests";
-            return System.IO.Path.Combine(path, folderName);
         }
     }
 }
