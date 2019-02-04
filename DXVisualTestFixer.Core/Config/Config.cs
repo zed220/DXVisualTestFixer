@@ -32,6 +32,9 @@ namespace DXVisualTestFixer.Core.Configuration {
                 config.InstallPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             if(string.IsNullOrEmpty(config.WorkingDirectory))
                 config.WorkingDirectory = @"C:\Work";
+            var supportedRepos = config.Repositories.Where(repo => Repository.Versions.Contains(repo.Version)).ToArray();
+            if(supportedRepos.Length != config.Repositories.Length)
+                config.Repositories = supportedRepos;
             return config;
         }
     }
