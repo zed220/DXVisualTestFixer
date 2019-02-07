@@ -19,7 +19,7 @@ namespace DXVisualTestFixer.Core.Configuration {
         public string WorkingDirectory { get; set; } = @"C:\Work";
 
         public IEnumerable<Repository> GetLocalRepositories() {
-            return Repositories.Where(r => r.IsDownloaded());
+            return Repositories != null ? Repositories.Where(r => r.IsDownloaded()) : new Repository[0];
         }
 
         public static Config GenerateDefault(IConfigSerializer configSerializer) {
@@ -36,17 +36,19 @@ namespace DXVisualTestFixer.Core.Configuration {
                 config.InstallPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             if(string.IsNullOrEmpty(config.WorkingDirectory))
                 config.WorkingDirectory = @"C:\Work";
-            var currentRepos = config.Repositories.Where(repo => Repository.Versions.Contains(repo.Version)).ToArray();
-            if(currentRepos.Length != config.Repositories.Length)
-                config.Repositories = currentRepos;
-            var reposToDownload = new List<Repository>();
-            foreach(var version in Repository.Versions) {
-                if(config.Repositories.Select(r => r.Version).Contains(version))
-                    continue;
-                reposToDownload.Add(new Repository() { Version = version, Path = System.IO.Path.Combine(config.WorkingDirectory, $"20{version}_VisualTests") });
+            if(config.Repositories != null) {
+                var currentRepos = config.Repositories.Where(repo => Repository.Versions.Contains(repo.Version)).ToArray();
+                if(currentRepos.Length != config.Repositories.Length)
+                    config.Repositories = currentRepos;
+                var reposToDownload = new List<Repository>();
+                foreach(var version in Repository.Versions) {
+                    if(config.Repositories.Select(r => r.Version).Contains(version))
+                        continue;
+                    reposToDownload.Add(new Repository() {Version = version, Path = System.IO.Path.Combine(config.WorkingDirectory, $"20{version}_VisualTests")});
+                }
+                if(reposToDownload.Count > 0)
+                    config.Repositories = Enumerable.Concat(config.Repositories, reposToDownload).ToArray();
             }
-            if(reposToDownload.Count > 0)
-                config.Repositories = Enumerable.Concat(config.Repositories, reposToDownload).ToArray();
             return config;
         }
     }
