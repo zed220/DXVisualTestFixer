@@ -229,7 +229,7 @@
                                 </DataTemplate>
                             </dxb:BarSubItem.ItemTemplate>
                         </dxb:BarSubItem>
-                        <dxb:BarSubItem Content="Open Folder" Glyph="pack://application:,,,/DevExpress.Images.v17.2;component/DevAV/Actions/OpenDoc_16x16.png" RibbonStyle="SmallWithText"
+                        <dxb:BarSubItem Content="Open Folder" Glyph="pack://application:,,,/DevExpress.Images.v18.2;component/DevAV/Actions/OpenDoc_16x16.png" RibbonStyle="SmallWithText"
                                         ItemLinksSource="{Binding Solutions}">
                             <dxb:BarSubItem.ItemTemplate>
                                 <DataTemplate>
