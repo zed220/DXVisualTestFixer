@@ -268,11 +268,11 @@ namespace DXVisualTestFixer.UI.ViewModels {
         async Task<bool> ActualizeRepositories() {
             foreach(var repo in Config.GetLocalRepositories()) {
                 if(!_GitWorker.SetHttpRepository(repo)) {
-                    notificationService.DoNotification("Updating reposiroty source failed", $"Cann't update source (origin or upstream) for repository {repo.Version} that located at {repo.Path}", MessageBoxImage.Error);
+                    notificationService.DoNotification("Updating repository source failed", $"Can't update source (origin or upstream) for repository {repo.Version} that located at {repo.Path}", MessageBoxImage.Error);
                     return await Task.FromResult(false);
                 }
                 if(await _GitWorker.Update(repo) == GitUpdateResult.Error) {
-                    notificationService.DoNotification("Updating failed", $"Repository {repo.Version} in {repo.Path} cann't update", MessageBoxImage.Error);
+                    notificationService.DoNotification("Updating failed", $"Repository {repo.Version} in {repo.Path} can't update", MessageBoxImage.Error);
                     return await Task.FromResult(false);
                 }
             }
@@ -281,7 +281,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
         async Task<bool> PushTestsInRepository() {
             foreach(var group in TestService.ActualState.ChangedTests.GroupBy(t => t.Repository)) {
                 if(await _GitWorker.Commit(group.Key) == GitCommitResult.Error) {
-                    notificationService.DoNotification("Pushing failed", $"Cann't push repository {group.Key.Version} that located at {group.Key.Path}", MessageBoxImage.Error);
+                    notificationService.DoNotification("Pushing failed", $"Can't push repository {group.Key.Version} that located at {group.Key.Path}", MessageBoxImage.Error);
                     return await Task.FromResult(false);
                 }
             }

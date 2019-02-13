@@ -70,6 +70,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
                 repo.Path = System.IO.Path.Combine(WorkingDirectory, $"20{repo.Version}_VisualTests");
                 repo.UpdateDownloadState();
             }
+            RepositoryModel.ActualizeRepositories(Repositories, WorkingDirectory);
         }
 
         void OnConfigChanged() {

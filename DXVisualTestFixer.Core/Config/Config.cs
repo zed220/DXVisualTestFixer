@@ -12,14 +12,14 @@ using System.Threading.Tasks;
 namespace DXVisualTestFixer.Core.Configuration {
     class Config : IConfig {
         public const string ConfigFileName = "ui.config";
-        public Repository[] Repositories { get; set; }
+        public Repository[] Repositories { get; set; } = new Repository[0];
         public string LastVersion { get; set; }
         public string InstallPath { get; set; }
         public string ThemeName { get; set; } = "Office2016White";
         public string WorkingDirectory { get; set; } = @"C:\Work";
 
         public IEnumerable<Repository> GetLocalRepositories() {
-            return Repositories.Where(r => r.IsDownloaded());
+            return Repositories?.Where(r => r.IsDownloaded()) ?? Enumerable.Empty<Repository>();
         }
 
         public static Config GenerateDefault(IConfigSerializer configSerializer) {
@@ -36,6 +36,8 @@ namespace DXVisualTestFixer.Core.Configuration {
                 config.InstallPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             if(string.IsNullOrEmpty(config.WorkingDirectory))
                 config.WorkingDirectory = @"C:\Work";
+            if(config.Repositories == null)
+                config.Repositories = new Repository[0];
             var currentRepos = config.Repositories.Where(repo => Repository.Versions.Contains(repo.Version)).ToArray();
             if(currentRepos.Length != config.Repositories.Length)
                 config.Repositories = currentRepos;
