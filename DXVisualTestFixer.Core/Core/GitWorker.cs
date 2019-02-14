@@ -79,12 +79,31 @@ namespace DXVisualTestFixer.Core {
             }
         }
         void CommitCore(CommonRepository repository) {
-            string userName = System.Security.Principal.WindowsIdentity.GetCurrent().Name.Split('\\').Last();
             using(var repo = new Repository(repository.Path)) {
-                Signature author = new Signature("DXVisualTestsBot", "None@None.com", DateTime.Now);
-                Signature committer = author;
-                Commit commit = repo.Commit($"Update tests ({userName})", author, committer);
+                Signature author = TryGetAuthor(repo);
+                Signature committer = CreateDefaultSignature();
+                string userNamePath = string.Empty;
+                if(author == null) {
+                    author = CreateDefaultSignature();
+                    userNamePath = string.Format(" ({0})", System.Security.Principal.WindowsIdentity.GetCurrent().Name.Split('\\').Last());
+                }
+                Commit commit = repo.Commit($"Update tests{userNamePath}", author, committer);
             }
+        }
+        static Signature TryGetAuthor(Repository repo) {
+            var config = repo.Config;
+            if(!config.HasConfig(ConfigurationLevel.Global))
+                return null;
+            string userName = config.GetValueOrDefault("user.name", ConfigurationLevel.Global, (string)null);
+            if(string.IsNullOrEmpty(userName))
+                return null;
+            string email = config.GetValueOrDefault("user.email", ConfigurationLevel.Global, (string)null);
+            if(string.IsNullOrEmpty(email))
+                return null;
+            return new Signature(userName, email, DateTime.Now);
+        }
+        static Signature CreateDefaultSignature() {
+            return new Signature("DXVisualTestsBot", "None@None.com", DateTime.Now);
         }
         bool PushCore(CommonRepository repository) {
             using(var repo = new Repository(repository.Path)) {
