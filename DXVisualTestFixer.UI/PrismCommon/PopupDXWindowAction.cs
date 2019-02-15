@@ -12,7 +12,7 @@ using System.Windows;
 namespace DXVisualTestFixer.UI.PrismCommon {
     public class PopupDXDialogWindowAction : PopupWindowAction {
         protected override Window CreateWindow() {
-            return new DXDialogWindow();
+            return new ThemedWindow();
         }
     }
 }
