@@ -117,10 +117,18 @@ namespace DXVisualTestFixer.UI.ViewModels {
         }
 
         async void FarmRefresh() {
-            await ActualizeRepositories().ConfigureAwait(false);
-            await Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(async () => {
-                await UpdateAllTests().ConfigureAwait(false);
-            }));
+            try {
+                await ActualizeRepositories().ConfigureAwait(false);
+                await Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(async () => {
+                    await UpdateAllTests().ConfigureAwait(false);
+                }));
+            }
+            catch(Exception e) {
+                Dispatcher.Invoke(() => {
+                    notificationService.DoNotification("Error", e.Message, MessageBoxImage.Error);
+                    Application.Current.MainWindow.Close();
+                });
+            }
         }
 
         async Task UpdateAllTests() {
