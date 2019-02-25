@@ -18,6 +18,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
         readonly INotificationService notificationService;
 
         bool _HasUpdate;
+        bool _IsInUpdate;
 
         public InteractionRequest<INotification> NotificationRequest { get; } = new InteractionRequest<INotification>();
 
@@ -43,8 +44,14 @@ namespace DXVisualTestFixer.UI.ViewModels {
         }
 
         void UpdateService_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
-            if(e.PropertyName == nameof(IUpdateService.HasUpdate))
-                HasUpdate = updateService.HasUpdate;
+            switch(e.PropertyName) {
+                case nameof(IUpdateService.HasUpdate):
+                    HasUpdate = updateService.HasUpdate;
+                    break;
+                case nameof(IUpdateService.IsInUpdate):
+                    IsInUpdate = updateService.IsInUpdate;
+                    break;
+            }
         }
 
         void Update() {
@@ -56,6 +63,10 @@ namespace DXVisualTestFixer.UI.ViewModels {
         public bool HasUpdate {
             get { return _HasUpdate; }
             set { SetProperty(ref _HasUpdate, value); }
+        }
+        public bool IsInUpdate {
+            get { return _IsInUpdate; }
+            set { SetProperty(ref _IsInUpdate, value); }
         }
     }
 }

@@ -14,6 +14,7 @@ namespace DXVisualTestFixer.Common {
     public class TeamInfo {
         public string ServerFolderName { get; set; }
         public string TestResourcesPath { get; set; }
+        public string TestResourcesPath_Optimized { get; set; }
         public int Dpi { get; set; }
         public bool? Optimized { get; set; }
     }

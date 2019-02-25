@@ -132,6 +132,11 @@ namespace DXVisualTestFixer.Core {
                 string testResourcesPath;
                 if(!teamNode.TryGetAttibute("TestResourcesPath", out testResourcesPath))
                     continue;
+                testResourcesPath = Path.Combine(resourcesFolder, testResourcesPath);
+                string testResourcesPath_optimized = null;
+                teamNode.TryGetAttibute("TestResourcesPath_Optimized", out testResourcesPath_optimized);
+                if(testResourcesPath_optimized != null)
+                    testResourcesPath_optimized = Path.Combine(resourcesFolder, testResourcesPath_optimized);
                 var projectInfosNode = teamNode.FindByName("ProjectInfos");
                 if(projectInfosNode == null)
                     continue;
@@ -144,7 +149,7 @@ namespace DXVisualTestFixer.Core {
                     Team team;
                     if(!result.TryGetValue(teamName, out team))
                         result[teamName] = team = new Team() { Name = teamName, Version = version };
-                    team.TeamInfos.Add(new TeamInfo() { Dpi = dpi, Optimized = optimized, ServerFolderName = serverFolderName, TestResourcesPath = Path.Combine(resourcesFolder, testResourcesPath) });
+                    team.TeamInfos.Add(new TeamInfo() { Dpi = dpi, Optimized = optimized, ServerFolderName = serverFolderName, TestResourcesPath = testResourcesPath, TestResourcesPath_Optimized = testResourcesPath_optimized });
                 }
             }
             return result.Values.Count == 0 ? null : result.Values.ToList();

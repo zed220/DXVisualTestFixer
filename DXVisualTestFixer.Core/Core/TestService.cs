@@ -204,7 +204,7 @@ namespace DXVisualTestFixer.Core {
 
         TestInfo LoadTestInfo(CorpDirTestInfo corpDirTestInfo, List<Team> teams) {
             loggingService.SendMessage($"Start load test v{corpDirTestInfo.FarmTaskInfo.Repository.Version} {corpDirTestInfo.TestName}.{corpDirTestInfo.ThemeName}");
-            TestInfo testInfo = TryCreateTestInfo(corpDirTestInfo, teams ?? TeamConfigsReader.GetAllTeams());
+            TestInfo testInfo = TryCreateTestInfo(corpDirTestInfo, teams);
             loggingService.SendMessage($"End load test v{corpDirTestInfo.FarmTaskInfo.Repository.Version} {corpDirTestInfo.TestName}.{corpDirTestInfo.ThemeName}");
             if(testInfo != null) {
                 UpdateTestStatus(testInfo);
@@ -454,7 +454,8 @@ namespace DXVisualTestFixer.Core {
                 test.LogCustomError($"Config not found for version \"{test.Version}\"");
                 return null;
             }
-            string actualTestResourcesPath = Path.Combine(repository.Path, test.TeamInfo.TestResourcesPath, test.ResourceFolderName);
+            string testResourcesPath = test.Optimized && test.TeamInfo.TestResourcesPath_Optimized != null ? test.TeamInfo.TestResourcesPath_Optimized : test.TeamInfo.TestResourcesPath;
+            string actualTestResourcesPath = Path.Combine(repository.Path, testResourcesPath, test.ResourceFolderName);
             if(!Directory.Exists(actualTestResourcesPath)) {
                 if(checkDirectoryExists) {
                     test.LogDirectoryNotFound(actualTestResourcesPath);

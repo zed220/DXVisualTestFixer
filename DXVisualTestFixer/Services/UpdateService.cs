@@ -51,11 +51,15 @@ namespace DXVisualTestFixer.Services {
     public abstract class UpdateServiceBase : BindableBase, IUpdateService {
         DispatcherTimer Timer;
         bool _HasUpdate;
-        bool isInUpdate;
+        bool _IsInUpdate;
 
         public bool HasUpdate {
             get { return _HasUpdate; }
             private set { SetProperty(ref _HasUpdate, value); }
+        }
+        public bool IsInUpdate {
+            get { return _IsInUpdate; }
+            private set { SetProperty(ref _IsInUpdate, value); }
         }
         public bool IsNetworkDeployment { get; set; }
 
@@ -76,11 +80,11 @@ namespace DXVisualTestFixer.Services {
         async Task CheckUpdate() {
             if(HasUpdate)
                 return;
-            if(isInUpdate)
+            if(IsInUpdate)
                 return;
-            isInUpdate = true;
+            IsInUpdate = true;
             HasUpdate = await CheckUpdateCore();
-            isInUpdate = false;
+            IsInUpdate = false;
 
         }
 

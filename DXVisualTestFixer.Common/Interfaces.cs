@@ -23,6 +23,7 @@ namespace DXVisualTestFixer.Common {
         void Start();
         void Stop();
         bool HasUpdate { get; }
+        bool IsInUpdate { get; }
         bool IsNetworkDeployment { get; }
         void Update();
     }
