@@ -91,7 +91,18 @@
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="dxg:GroupValuePresenter">
-                            <StackPanel x:Name="PART_GroupValuesPanel" Orientation="Horizontal" VerticalAlignment="Center" Margin="{DynamicResource {dxgt:GroupRowThemeKey ResourceKey=GroupRowContentMargin}}"/>
+                            <StackPanel Orientation="Horizontal" x:Name="PART_RootPanel">
+                                <StackPanel x:Name="PART_GroupValuesPanel" Orientation="Horizontal" VerticalAlignment="Center" Margin="{DynamicResource {dxgt:GroupRowThemeKey ResourceKey=GroupRowContentMargin}}"/>
+                                <TextBlock Margin="1,0,0,0">
+                                    <TextBlock.Text>
+                                        <MultiBinding Converter="{converters:TimingsConverter}">
+                                            <Binding Path="."/>
+                                            <Binding Path="GroupValues[0]"/>
+                                            <Binding Path="IsMouseOver" ElementName="PART_RootPanel"/>
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                            </StackPanel>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>

@@ -80,6 +80,7 @@
     <Compile Include="RepositoryLoader.cs" />
     <Compile Include="Team.cs" />
     <Compile Include="TestInfo.cs" />
+    <Compile Include="TimingInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

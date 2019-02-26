@@ -42,6 +42,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
         ITestsService _TestService;
         List<SolutionModel> _Solutions;
         IGitWorker _GitWorker;
+        Dictionary<string, TimingInfo> _TimingInfo = new Dictionary<string, TimingInfo>();
         #endregion
 
         public List<ITestInfoModel> Tests {
@@ -76,6 +77,11 @@ namespace DXVisualTestFixer.UI.ViewModels {
             get { return _Solutions; }
             set { SetProperty(ref _Solutions, value); }
         }
+        public Dictionary<string, TimingInfo> TimingInfo {
+            get { return _TimingInfo; }
+            set { SetProperty(ref _TimingInfo, value); }
+        }
+
         public ILoadingProgressController LoadingProgressController { get; }
 
         public InteractionRequest<IConfirmation> ConfirmationRequest { get; } = new InteractionRequest<IConfirmation>();
@@ -140,6 +146,8 @@ namespace DXVisualTestFixer.UI.ViewModels {
             loggingService.SendMessage("");
             await Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
                 Tests = tests;
+                foreach(var info in testInfoContainer.Timings)
+                    TimingInfo[info.Key.Version] = info.Value;
                 Status = ProgramStatus.Idle;
                 LoadingProgressController.Stop();
             }));

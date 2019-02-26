@@ -10,17 +10,21 @@ using System.Xml;
 
 namespace DXVisualTestFixer.Core {
     public class CorpDirTestInfoContainer {
-        public CorpDirTestInfoContainer(List<CorpDirTestInfo> failedTests, List<string> usedFiles, List<IElapsedTimeInfo> elapsedTimes, List<Team> teams) {
+        public CorpDirTestInfoContainer(List<CorpDirTestInfo> failedTests, List<string> usedFiles, List<IElapsedTimeInfo> elapsedTimes, List<Team> teams, (DateTime sources, DateTime tests)? buildTime) {
             FailedTests = failedTests;
             UsedFiles = usedFiles;
             ElapsedTimes = elapsedTimes;
             Teams = teams;
+            SourcesBuildTime = buildTime?.sources;
+            TestsBuildTime = buildTime?.tests;
         }
 
         public List<CorpDirTestInfo> FailedTests { get; }
         public List<string> UsedFiles { get; }
         public List<IElapsedTimeInfo> ElapsedTimes { get; }
         public List<Team> Teams { get; }
+        public DateTime? SourcesBuildTime { get; }
+        public DateTime? TestsBuildTime { get; }
     }
     class ElapsedTimeInfo : IElapsedTimeInfo {
         public ElapsedTimeInfo(string name, TimeSpan time) {
@@ -62,7 +66,7 @@ namespace DXVisualTestFixer.Core {
                         failedTests.Add(CorpDirTestInfo.CreateError(taskInfo, "BuildError", "BuildError", "BuildError"));
                 }
             }
-            return new CorpDirTestInfoContainer(failedTests, FindUsedFiles(myXmlDocument).ToList(), FindElapsedTimes(myXmlDocument), FindTeams(taskInfo.Repository.Version, myXmlDocument));
+            return new CorpDirTestInfoContainer(failedTests, FindUsedFiles(myXmlDocument).ToList(), FindElapsedTimes(myXmlDocument), FindTeams(taskInfo.Repository.Version, myXmlDocument), FindTimings(myXmlDocument));
         }
 
         private static bool IsSuccessBuild(XmlDocument myXmlDocument) {
@@ -70,6 +74,26 @@ namespace DXVisualTestFixer.Core {
             if(buildNode == null)
                 return false;
             return !buildNode.TryGetAttibute("error", out string _);
+        }
+        static (DateTime sources, DateTime tests)? FindTimings(XmlDocument myXmlDocument) {
+            XmlNode buildNode = FindBuildNode(myXmlDocument);
+            if(buildNode == null)
+                return null;
+            var timingsNode = buildNode.FindByName("Timings");
+            if(timingsNode == null)
+                return null;
+            try {
+                return (GetDateTimeFromTimingsString(timingsNode.FindByName("Sources").InnerText), GetDateTimeFromTimingsString(timingsNode.FindByName("Tests").InnerText));
+            }
+            catch {
+                return null;
+            }
+        }
+        static DateTime GetDateTimeFromTimingsString(string dateStr) {
+            var dateAndTime = dateStr.Split('_');
+            var dateSplit = dateAndTime[0].Split('-');
+            var timeSplit = dateAndTime[1].Split('-');
+            return new DateTime(Convert.ToInt32(dateSplit[0]), Convert.ToInt32(dateSplit[1]), Convert.ToInt32(dateSplit[2]), Convert.ToInt32(timeSplit[0]), Convert.ToInt32(timeSplit[1]), 0);
         }
 
         static IEnumerable<XmlElement> FindFailedTests(XmlDocument myXmlDocument) {

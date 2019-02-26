@@ -187,6 +187,7 @@
     <Compile Include="Converters\PointToRectConverter.cs" />
     <Compile Include="Converters\StackPanelToTooltipConverter.cs" />
     <Compile Include="Converters\MultiValueConverters.cs" />
+    <Compile Include="Converters\TimingsConverter.cs" />
     <Compile Include="Native\DiffLineBackgroundRenderer.cs" />
     <Compile Include="Native\ThemesProvider.cs" />
     <Compile Include="PrismCommon\LayoutPanelRegionAdapter.cs" />

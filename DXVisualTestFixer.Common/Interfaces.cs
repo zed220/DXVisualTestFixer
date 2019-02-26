@@ -111,6 +111,7 @@ namespace DXVisualTestFixer.Common {
         Dictionary<Repository, List<IElapsedTimeInfo>> ElapsedTimes { get; }
         Dictionary<Repository, List<Team>> Teams { get; }
         List<TestInfo> ChangedTests { get; }
+        Dictionary<Repository, TimingInfo> Timings { get; }
     }
     public interface IConfigSerializer {
         IConfig GetConfig(bool useCache = true);

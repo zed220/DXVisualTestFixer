@@ -1,4 +1,6 @@
 ﻿using DevExpress.Xpf.Grid;
+using DXVisualTestFixer.Common;
+using DXVisualTestFixer.UI.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -21,6 +23,11 @@ namespace DXVisualTestFixer.UI.Converters {
                 result += data.DisplayText + " ";
             }
             result.Remove(result.Length - 1, 1);
+            if(rowData.GroupLevel == 0 && rowData.View.DataContext is MainViewModel viewModel) {
+                var version = rowData.GroupValues.FirstOrDefault()?.Value?.ToString();
+                if(viewModel.TimingInfo.TryGetValue(version, out TimingInfo timingInfo))
+                    result += " " + TimingsConverter.FormatTimings(timingInfo.Sources, timingInfo.Tests);
+            }
             return result;
         }
 
