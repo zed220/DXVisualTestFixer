@@ -91,18 +91,7 @@
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="dxg:GroupValuePresenter">
-                            <StackPanel Orientation="Horizontal" x:Name="PART_RootPanel">
                                 <StackPanel x:Name="PART_GroupValuesPanel" Orientation="Horizontal" VerticalAlignment="Center" Margin="{DynamicResource {dxgt:GroupRowThemeKey ResourceKey=GroupRowContentMargin}}"/>
-                                <TextBlock Margin="1,0,0,0">
-                                    <TextBlock.Text>
-                                        <MultiBinding Converter="{converters:TimingsConverter}">
-                                            <Binding Path="."/>
-                                            <Binding Path="GroupValues[0]"/>
-                                            <Binding Path="IsMouseOver" ElementName="PART_RootPanel"/>
-                                        </MultiBinding>
-                                    </TextBlock.Text>
-                                </TextBlock>
-                            </StackPanel>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
@@ -444,6 +433,37 @@
                     </dxb:BarEditItem.EditSettings>
                 </dxb:BarEditItem>
                 <dxb:BarStaticItem Content="{Binding CurrentLogLine}" AutoSizeMode="None" IsVisible="{DXBinding Expr='@s.Content ne $string.Empty'}"/>
+                <dxb:BarStaticItem Content="{Binding TimingInfo}" IsVisible="{Binding Path=LoadingProgressController.IsEnabled, Converter={dxmvvm:BooleanNegationConverter}}">
+                    <dxb:BarStaticItem.ContentTemplate>
+                        <DataTemplate>
+                            <ItemsControl ItemsSource="{Binding}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock TextTrimming="CharacterEllipsis">
+                                            <TextBlock.Inlines>
+                                                <Run Text="-=["/>
+                                                <Run Text="Version:"/>
+                                                <Run Text="{Binding Repository.Version, Mode=OneWay}" FontWeight="Bold"/>
+                                                <Run Text=","/>
+                                                <Run Text="Sources:"/>
+                                                <Run Text="{Binding Sources, StringFormat={}{0:yyyy-MM-dd H:mm}, Mode=OneWay}" FontWeight="Bold"/>
+                                                <Run Text=","/>
+                                                <Run Text="Tests:"/>
+                                                <Run Text="{Binding Tests, StringFormat={}{0:yyyy-MM-dd H:mm}, Mode=OneWay}" FontWeight="Bold"/>
+                                                <Run Text="]=- "/>
+                                            </TextBlock.Inlines>
+                                        </TextBlock>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </DataTemplate>
+                    </dxb:BarStaticItem.ContentTemplate>
+                </dxb:BarStaticItem>
             </dxr:RibbonStatusBarControl.LeftItems>
         </dxr:RibbonStatusBarControl>
         <Grid x:Name="loadingControl" IsHitTestVisible="True" Grid.RowSpan="3" Background="Transparent" Visibility="{Binding Status, Converter={StaticResource StatusToVisibilityConverter}}">

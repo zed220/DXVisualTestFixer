@@ -43,14 +43,14 @@ namespace DXVisualTestFixer.Core {
             ElapsedTimes = new Dictionary<Repository, List<IElapsedTimeInfo>>();
             Teams = new Dictionary<Repository, List<Team>>();
             ChangedTests = new List<TestInfo>();
-            Timings = new Dictionary<Repository, TimingInfo>();
+            Timings = new List<TimingInfo>();
         }
 
         public List<TestInfo> TestList { get; }
         public Dictionary<Repository, List<string>> UsedFiles { get; }
         public Dictionary<Repository, List<IElapsedTimeInfo>> ElapsedTimes { get; }
         public Dictionary<Repository, List<Team>> Teams { get; }
-        public Dictionary<Repository, TimingInfo> Timings { get; }
+        public List<TimingInfo> Timings { get; }
         public List<TestInfo> ChangedTests { get; }
         public async Task UpdateProblems() {
             await Task.Factory.StartNew(() => {
@@ -158,12 +158,13 @@ namespace DXVisualTestFixer.Core {
                 allTasks.Add(task);
             }
             TestInfoContainer result = new TestInfoContainer();
+            result.Timings.Clear();
             foreach(TestInfoCached cached in await Task.WhenAll(allTasks.ToArray()).ConfigureAwait(false)) {
                 result.TestList.AddRange(cached.TestList);
                 result.UsedFiles[cached.Repository] = cached.UsedFiles;
                 result.ElapsedTimes[cached.Repository] = cached.ElapsedTimes.Cast<IElapsedTimeInfo>().ToList();
                 result.Teams[cached.Repository] = cached.Teams;
-                result.Timings[cached.Repository] = new TimingInfo(cached.SourcesBuildTime, cached.TestsBuildTime);
+                result.Timings.Add(new TimingInfo(cached.Repository, cached.SourcesBuildTime, cached.TestsBuildTime));
             }
             return result;
         }
