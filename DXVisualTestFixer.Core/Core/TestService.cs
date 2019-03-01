@@ -204,9 +204,18 @@ namespace DXVisualTestFixer.Core {
         }
         static Task<string> CapureRealUrl(string url) {
             return Task.Factory.StartNew<string>(() => {
-                HtmlWeb htmlWeb = new HtmlWeb();
-                HtmlDocument htmlSnippet = htmlWeb.Load(url);
-                return htmlWeb.ResponseUri.ToString();
+                Exception exc = null;
+                for(int i = 0; i < 10; i++) {
+                    try {
+                        HtmlWeb htmlWeb = new HtmlWeb();
+                        HtmlDocument htmlSnippet = htmlWeb.Load(url);
+                        return htmlWeb.ResponseUri.ToString();
+                    }
+                    catch(Exception e) {
+                        exc = e;
+                    }
+                }
+                throw exc ?? new InvalidOperationException("Somthing went wrong on downloading info from sever");
             });
         }
 
