@@ -97,6 +97,7 @@
                                 <dxe:ComboBoxEdit.DisplayTextConverter>
                                     <converters:FilterTokenDisplayTextConverter>
                                         <converters:PredefinedFilterToken StrValue="96" DisplayText="Default"/>
+                                        <converters:PredefinedFilterToken StrValue="0" DisplayText="Error"/>
                                     </converters:FilterTokenDisplayTextConverter>
                                 </dxe:ComboBoxEdit.DisplayTextConverter>
                                 <dxe:ComboBoxEdit.ItemTemplate>
