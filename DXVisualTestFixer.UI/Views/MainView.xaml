@@ -186,7 +186,7 @@
                     <dxr:RibbonPageGroup Caption="Work">
                         <dxb:BarButtonItem RibbonStyle="Large" 
                                            GlyphSize="Large" 
-                                           Content="Sync Tests Info"
+                                           Content="Refresh"
                                            KeyGesture="F5" dxb:BarManager.KeyGestureWorkingMode="AllKeyGesture"
                                            Command="{DXCommand Execute='RefreshTestList()'}"
                                            LargeGlyph="{dx:DXImageOffice2013 Image=Refresh_32x32.png}">
