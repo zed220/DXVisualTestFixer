@@ -67,7 +67,12 @@ namespace DXVisualTestFixer.Core {
             if(!repository.IsDownloaded())
                 return await Task.FromResult(GitCommitResult.Error);
             StageCore(repository);
-            CommitCore(repository);
+            try {
+                CommitCore(repository);
+            }
+            catch {
+                return await Task.FromResult(GitCommitResult.Error);
+            }
             if(!(PushCore(repository)))
                 return await Task.FromResult(GitCommitResult.Error);
             return await Task.FromResult(GitCommitResult.None);

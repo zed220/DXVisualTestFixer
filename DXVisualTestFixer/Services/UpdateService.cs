@@ -20,6 +20,8 @@ namespace DXVisualTestFixer.Services {
     public class SquirrelUpdateService : UpdateServiceBase {
         const string serverfolder = @"\\corp\internal\common\visualtests_squirrel";
 
+        public SquirrelUpdateService(INotificationService notificationService) : base(notificationService) { }
+
         public override void Update() {
             UpdateManager.RestartApp();
         }
@@ -49,6 +51,9 @@ namespace DXVisualTestFixer.Services {
     }
 
     public abstract class UpdateServiceBase : BindableBase, IUpdateService {
+        readonly INotificationService notificationService;
+        readonly Dispatcher dispatcher;
+
         DispatcherTimer Timer;
         bool _HasUpdate;
         bool _IsInUpdate;
@@ -63,7 +68,8 @@ namespace DXVisualTestFixer.Services {
         }
         public bool IsNetworkDeployment { get; set; }
 
-        public UpdateServiceBase() {
+        public UpdateServiceBase(INotificationService notificationService) {
+            dispatcher = Dispatcher.CurrentDispatcher;
             IsNetworkDeployment = GetIsNetworkDeployment();
             if(!IsNetworkDeployment) {
                 HasUpdate = true;
@@ -83,7 +89,16 @@ namespace DXVisualTestFixer.Services {
             if(IsInUpdate)
                 return;
             IsInUpdate = true;
-            HasUpdate = await CheckUpdateCore();
+            try {
+                HasUpdate = await CheckUpdateCore();
+            }
+            catch(Exception e) {
+                dispatcher.Invoke(() => {
+                    notificationService?.DoNotification("Update error", e.Message, System.Windows.MessageBoxImage.Error);
+                    Timer.Stop();
+                });
+                
+            }
             IsInUpdate = false;
 
         }
@@ -104,46 +119,5 @@ namespace DXVisualTestFixer.Services {
         }
 
         public abstract void Update();
-    }
-
-    public class ClickOnceUpdateService : UpdateServiceBase {
-        protected override bool GetIsNetworkDeployment() {
-            return ApplicationDeployment.IsNetworkDeployed;
-        }
-
-        protected override async Task<bool> CheckUpdateCore() {
-            UpdateCheckInfo info = null;
-            ApplicationDeployment ad = ApplicationDeployment.CurrentDeployment;
-            try {
-                info = ad.CheckForDetailedUpdate();
-            }
-            catch(DeploymentDownloadException) {
-                return false;
-            }
-            catch(InvalidDeploymentException) {
-                return false;
-            }
-            catch(InvalidOperationException) {
-                return false;
-            }
-            if(!info.UpdateAvailable) {
-                return false;
-            }
-            bool handled = false;
-            AsyncCompletedEventHandler handler = (sender, e) => {
-                handled = true;
-            };
-            ad.UpdateCompleted += handler;
-            ad.UpdateAsync();
-            while(!handled)
-                await Task.Delay(100);
-            ad.UpdateCompleted -= handler;
-            return true;
-        }
-
-        public override void Update() {
-            System.Windows.Application.Current.Shutdown();
-            System.Windows.Forms.Application.Restart();
-        }
     }
 }
