@@ -6,7 +6,7 @@
     <Style x:Key="DialogWindowStyle" TargetType="{x:Type dx:ThemedWindow}">
         <Setter Property="Width" Value="1000"/>
         <Setter Property="Height" Value="800"/>
-        <Setter Property="DialogButtonsSource" Value="{Binding Path=Commands, Converter={converters:CommandListReverseConverter}}"/>
+        <Setter Property="DialogButtonsSource" Value="{Binding Path=Commands}"/>
     </Style>
     <Style x:Key="NotificationWindowStyle" TargetType="{x:Type dx:ThemedWindow}" BasedOn="{StaticResource DialogWindowStyle}">
         <Setter Property="Width" Value="500"/>
