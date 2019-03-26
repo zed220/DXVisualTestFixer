@@ -244,10 +244,16 @@
                         <dxb:BarButtonItem
                             RibbonStyle="Large" 
                             GlyphSize="Large" 
-                            Content="Settings"
+                            Content="Config"
                             Command="{DXCommand Execute='ShowSettings()'}"
-                            LargeGlyph="{dx:DXImageOffice2013 Image=Properties_32x32.png}">
-                        </dxb:BarButtonItem>
+                            LargeGlyph="{dx:DXImageOffice2013 Image=Properties_32x32.png}"/>
+                        <dxb:BarCheckItem
+                            RibbonStyle="Large" 
+                            GlyphSize="Large" 
+                            Content="Smart Grouping"
+                            IsChecked="{DXBinding '@e(view).AllowPartialGrouping'}"
+                            LargeGlyph="{dx:DXImageOffice2013 Image=Group_32x32.png}"
+                            Hint="Hide groups with single child"/>
                     </dxr:RibbonPageGroup>
                 </dxr:RibbonPage>
                 <dxr:RibbonPage Caption="Service">
@@ -285,9 +291,9 @@
                         <dxg:GridControl x:Name="PART_GridTests" ItemsSource="{Binding Tests}" CurrentItem="{Binding CurrentTest, Mode=TwoWay}" AutoExpandAllGroups="True" ShowBorder="False" 
                                          FixedFilter="{Binding CurrentFilter}" AllowLiveDataShaping="True"
                                          ShowAllTableValuesInFilterPopup="True" FilterString="[$ ]([Valid])">
-                            <dxg:GridColumn FieldName="Version" GroupIndex="0" MergeWithPreviousGroup="False" Header="Version"/>
-                            <dxg:GridColumn FieldName="TeamName" GroupIndex="1" MergeWithPreviousGroup="True" Header="Team"/>
-                            <dxg:GridColumn FieldName="TestInfo.Name" GroupIndex="2" MergeWithPreviousGroup="False" Header="Name"/>
+                            <dxg:GridColumn FieldName="Version" GroupIndex="0" MergeWithPreviousGroup="False" Header="Version" Visible="False" AllowSearchPanel="True"/>
+                            <dxg:GridColumn FieldName="TeamName" GroupIndex="1" MergeWithPreviousGroup="True" Header="Team" Visible="False" AllowSearchPanel="True"/>
+                            <dxg:GridColumn FieldName="TestInfo.Name" GroupIndex="2" MergeWithPreviousGroup="False" Header="Name" Visible="False" AllowSearchPanel="True"/>
                             <dxg:GridColumn FieldName="CommitChange" Header="Commit" Width="29">
                                 <dxg:GridColumn.CellTemplate>
                                     <DataTemplate>
@@ -345,28 +351,6 @@
                                                 </Border>
                                             </StackPanel>
                                         </Grid>
-                                        <!--<StackPanel Orientation="Horizontal">
-                                            <dxe:TextEdit x:Name="PART_Editor"/>
-                                            <Border Background="Gray" Visibility="{Binding Path=RowData.Row.TestInfo.Optimized, Converter={dx:BooleanToVisibilityConverter}}">
-                                                <TextBlock Text="Optimized" Foreground="White" FontSize="8"/>
-                                            </Border>
-                                            <Border Background="Black">
-                                                <Border.Visibility>
-                                                    <Binding Path="RowData.Row.Dpi">
-                                                        <Binding.Converter>
-                                                            <dxmvvm:ObjectToObjectConverter DefaultTarget="Visible">
-                                                                <dxmvvm:MapItem Source="96" Target="Collapsed"/>
-                                                                <dxmvvm:MapItem Source="0" Target="Collapsed"/>
-                                                            </dxmvvm:ObjectToObjectConverter>
-                                                        </Binding.Converter>
-                                                    </Binding>
-                                                </Border.Visibility>
-                                                <TextBlock Text="{Binding RowData.Row.Dpi}" Foreground="White" FontSize="8"/>
-                                            </Border>
-                                            <Border Background="Green" Visibility="{Binding Path=RowData.Row.ImageEquals, Converter={dxmvvm:BooleanToVisibilityConverter}}">
-                                                <TextBlock Text="IMG EQ" Foreground="White" FontSize="8"/>
-                                            </Border>
-                                        </StackPanel>-->
                                     </DataTemplate>
                                 </dxg:GridColumn.CellTemplate>
                             </dxg:GridColumn>
@@ -384,8 +368,7 @@
                                 <controls:TableViewAdvNavigation x:Name="view" AllowEditing="True" ShowVerticalLines="False" ShowIndicator="False" ShowHorizontalLines="False" ShowColumnHeaders="False" 
                                                                  ShowGroupPanel="False" ShowFixedTotalSummary="True" RowDoubleClick="{DXEvent Handler='@s.ProcessDoubleClick(@args)'}"
                                                                  PreviewKeyDown="{DXEvent Handler='@s.ProcessKeyDown(@args)'}" GroupSummaryDisplayMode="Default"
-                                                                 GroupRowCheckBoxFieldName="CommitChange" SearchPanelHighlightResults="False"
-                                                                 ShowFilterPanelMode="Never">
+                                                                 GroupRowCheckBoxFieldName="CommitChange" ShowFilterPanelMode="Never">
                                     <dxb:BarManager.DXContextMenu>
                                         <dxb:PopupMenu>
                                             <dxb:BarButtonItem Content="Commit All In Viewport" Glyph="{dx:DXImage Image=SelectAll_16x16.png}" Command="{DXCommand Execute='@e(view).CommitAllInViewport()'}"/>
