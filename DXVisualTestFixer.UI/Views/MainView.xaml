@@ -305,7 +305,7 @@
                                     </DataTemplate>
                                 </dxg:GridColumn.CellTemplate>
                             </dxg:GridColumn>
-                            <dxg:GridColumn FieldName="TestInfo.Theme" Width="*" Header="Theme" AllowEditing="False">
+                            <dxg:GridColumn FieldName="Theme" Width="*" Header="Theme" AllowEditing="False">
                                 <dxg:GridColumn.CellTemplate>
                                     <DataTemplate>
                                         <DataTemplate.Resources>

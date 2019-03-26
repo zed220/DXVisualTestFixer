@@ -35,7 +35,7 @@ namespace DXVisualTestFixer.UI.Controls {
                 return;
             if(Grid.IsGroupRowHandle(e.HitInfo.RowHandle))
                 return;
-            if(e.HitInfo.Column.FieldName != "TestInfo.Theme")
+            if(e.HitInfo.Column.FieldName != "Theme")
                 return;
             e.Handled = true;
             InverceCommitChange(e.HitInfo.RowHandle);

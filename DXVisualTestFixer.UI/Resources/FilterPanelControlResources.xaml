@@ -22,6 +22,7 @@
     <ControlTemplate x:Key="filterPanelControlTemplate" TargetType="{x:Type controls:FilterPanelControl}">
         <ControlTemplate.Resources>
             <Style TargetType="{x:Type dxe:ComboBoxEdit}">
+                <Setter Property="MaxHeight" Value="100"/>
                 <Setter Property="IsTextEditable" Value="False"/>
                 <Setter Property="IncrementalFiltering" Value="True"/>
                 <Setter Property="AllowDefaultButton" Value="True"/>
@@ -126,6 +127,15 @@
                     <dxfui:CheckedListFilterElement.FilterModelTemplate>
                         <DataTemplate>
                             <dxe:ComboBoxEdit NullText="Select Versions Here"/>
+                        </DataTemplate>
+                    </dxfui:CheckedListFilterElement.FilterModelTemplate>
+                </dxfui:CheckedListFilterElement>
+            </dxdo:LayoutControlItem>
+            <dxdo:LayoutControlItem Caption="Themes">
+                <dxfui:CheckedListFilterElement FieldName="Theme">
+                    <dxfui:CheckedListFilterElement.FilterModelTemplate>
+                        <DataTemplate>
+                            <dxe:ComboBoxEdit NullText="Select Themes Here"/>
                         </DataTemplate>
                     </dxfui:CheckedListFilterElement.FilterModelTemplate>
                 </dxfui:CheckedListFilterElement>
