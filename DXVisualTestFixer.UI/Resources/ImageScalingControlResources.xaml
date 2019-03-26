@@ -54,7 +54,7 @@
                    IsHitTestVisible="False" Focusable="False" AllowsTransparency="True"
                    PlacementRectangle="{Binding HighlightedPoint, ElementName=popupTarget, Converter={converters:PointToRectConverter}}">
                 <Popup.IsOpen>
-                    <MultiBinding Converter="{converters:HighlightedColorPopupIsOpenConverter}">
+                    <MultiBinding Converter="{converters:HighlightedColorPopupIsOpenConverter}" Mode="OneWay">
                         <Binding Path="ImageSource" ElementName="popupTarget"/>
                         <Binding Path="ShowHighlightedPoint" ElementName="popupTarget"/>
                     </MultiBinding>

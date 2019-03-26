@@ -14,10 +14,10 @@ using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 
 namespace DXVisualTestFixer.UI.Converters {
-    public class MultiImageToClipboardConverter : IMultiValueConverter {
+    public class MultiImageToClipboardConverter : BaseMultiValueConverter {
         const int textHeight = 20;
 
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
+        public override object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
             if(values.Length != 5)
                 return null;
             byte[] imgBeforeArr = values[0] as byte[];
@@ -84,10 +84,6 @@ namespace DXVisualTestFixer.UI.Converters {
                     return new Bitmap(outStream);
                 }
             }
-        }
-
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) {
-            throw new NotImplementedException();
         }
     }
 }

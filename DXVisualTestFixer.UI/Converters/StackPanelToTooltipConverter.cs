@@ -11,8 +11,8 @@ using System.Windows.Controls;
 using System.Windows.Data;
 
 namespace DXVisualTestFixer.UI.Converters {
-    public class StackPanelToTooltipConverter : IMultiValueConverter {
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
+    public class StackPanelToTooltipConverter : BaseMultiValueConverter {
+        public override object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
             if(values == null || values.Length == 0)
                 return null;
             GroupRowData rowData = values[0] as GroupRowData;
@@ -24,10 +24,6 @@ namespace DXVisualTestFixer.UI.Converters {
             }
             result.Remove(result.Length - 1, 1);
             return result;
-        }
-
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) {
-            throw new NotImplementedException();
         }
     }
 }
