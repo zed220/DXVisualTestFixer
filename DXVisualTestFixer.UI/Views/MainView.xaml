@@ -291,6 +291,9 @@
                         <dxg:GridControl x:Name="PART_GridTests" ItemsSource="{Binding Tests}" CurrentItem="{Binding CurrentTest, Mode=TwoWay}" AutoExpandAllGroups="True" ShowBorder="False" 
                                          FixedFilter="{Binding CurrentFilter}" AllowLiveDataShaping="True"
                                          ShowAllTableValuesInFilterPopup="True" FilterString="[$ ]([Valid])">
+                            <dxmvvm:Interaction.Behaviors>
+                                <behaviors:GridControlClearFilterBehavior/>
+                            </dxmvvm:Interaction.Behaviors>
                             <dxg:GridColumn FieldName="Version" GroupIndex="0" MergeWithPreviousGroup="False" Header="Version" Visible="False" AllowSearchPanel="True"/>
                             <dxg:GridColumn FieldName="TeamName" GroupIndex="1" MergeWithPreviousGroup="True" Header="Team" Visible="False" AllowSearchPanel="True"/>
                             <dxg:GridColumn FieldName="TestInfo.Name" GroupIndex="2" MergeWithPreviousGroup="False" Header="Name" Visible="False" AllowSearchPanel="True"/>
@@ -323,7 +326,7 @@
                                                 <Setter Property="VerticalAlignment" Value="Center"/>
                                             </Style>
                                         </DataTemplate.Resources>
-                                        <Grid HorizontalAlignment="Left">
+                                        <Grid HorizontalAlignment="Left" ToolTip="{Binding Path=RowData.Row.ProblemName, StringFormat={}{0}}">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*"/>
                                                 <ColumnDefinition Width="Auto"/>
@@ -361,6 +364,7 @@
                                     </dxfui:PredefinedFilterCollection>
                                 </dxg:GridColumn.PredefinedFilters>
                             </dxg:GridColumn>
+                            <dxg:GridColumn FieldName="ProblemName" Visible="False"/>
                             <dxg:GridControl.TotalSummary>
                                 <dxg:GridSummaryItem SummaryType="Count" Alignment="Left"/>
                             </dxg:GridControl.TotalSummary>
