@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 
 namespace DXVisualTestFixer.Common {
     public class TestInfo {
@@ -23,11 +24,15 @@ namespace DXVisualTestFixer.Common {
         public string Fixture { get; set; }
         public string Version { get; set; }
         public int Dpi { get; set; }
-        public byte[] ImageBeforeArr { get; set; }
-        public byte[] ImageCurrentArr { get; set; }
+        public Lazy<byte[]> ImageBeforeArrLazy { get; set; }
+        public byte[] ImageBeforeSHA { get; set; }
+        public Lazy<byte[]> ImageCurrentArrLazy { get; set; }
+        public byte[] ImageCurrentSHA { get; set; }
         public byte[] ImageDiffArr { get; set; }
-        public string TextBefore { get; set; }
-        public string TextCurrent { get; set; }
+        public Lazy<string> TextBeforeLazy { get; set; }
+        public byte[] TextBeforeSHA { get; set; }
+        public Lazy<string> TextCurrentLazy { get; set; }
+        public byte[] TextCurrentSHA { get; set; }
         public bool Optimized { get; set; }
         public string TextDiff { get; set; }
         public string TextDiffFull { get; set; }

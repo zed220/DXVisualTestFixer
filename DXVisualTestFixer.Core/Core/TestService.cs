@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -96,10 +97,10 @@ namespace DXVisualTestFixer.Core {
             }
         }
         int CalculateImageDiffsCount(TestInfo test) {
-            if(test.ImageDiffArr == null || test.ImageBeforeArr == null || test.ImageCurrentArr == null)
+            if(test.ImageDiffArr == null || test.ImageBeforeArrLazy.Value == null || test.ImageCurrentArrLazy.Value == null)
                 return int.MaxValue;
-            using(var imgBefore = ImageHelper.CreateImageFromArray(test.ImageBeforeArr))
-                using(var imgCurrent = ImageHelper.CreateImageFromArray(test.ImageCurrentArr)) {
+            using(var imgBefore = ImageHelper.CreateImageFromArray(test.ImageBeforeArrLazy.Value))
+                using(var imgCurrent = ImageHelper.CreateImageFromArray(test.ImageCurrentArrLazy.Value)) {
                     if(imgBefore.Size != imgCurrent.Size)
                         return int.MaxValue;
                     return ImageHelper.DeltaUnsafe(imgBefore, imgCurrent);
@@ -278,25 +279,32 @@ namespace DXVisualTestFixer.Core {
                 if(testInfo.TeamInfo.Optimized.HasValue)
                     testInfo.Optimized = testInfo.TeamInfo.Optimized.Value;
             }
-            LoadTextFile(corpDirTestInfo.InstantTextEditPath, s => { testInfo.TextBefore = s; });
-            LoadTextFile(corpDirTestInfo.CurrentTextEditPath, s => { testInfo.TextCurrent = s; });
+            testInfo.TextBeforeLazy = new Lazy<string>(() => LoadTextFile(corpDirTestInfo.InstantTextEditPath));
+            testInfo.TextBeforeSHA = LoadBytes(corpDirTestInfo.InstantTextEditSHAPath);
+            testInfo.TextCurrentLazy = new Lazy<string>(() => LoadTextFile(corpDirTestInfo.CurrentTextEditPath));
+            testInfo.TextCurrentSHA = LoadBytes(corpDirTestInfo.CurrentTextEditSHAPath);
             BuildTextDiff(testInfo);
-            LoadImage(corpDirTestInfo.InstantImagePath, s => { testInfo.ImageBeforeArr = s; });
-            LoadImage(corpDirTestInfo.CurrentImagePath, s => { testInfo.ImageCurrentArr = s; });
-            LoadImage(corpDirTestInfo.ImageDiffPath, s => { testInfo.ImageDiffArr = s; });
+
+            testInfo.ImageBeforeArrLazy = new Lazy<byte[]>(() => LoadBytes(corpDirTestInfo.InstantImagePath));
+            testInfo.ImageBeforeSHA = LoadBytes(corpDirTestInfo.InstantImageSHAPath);
+            testInfo.ImageCurrentArrLazy = new Lazy<byte[]>(() => LoadBytes(corpDirTestInfo.CurrentImagePath));
+            testInfo.ImageCurrentSHA = LoadBytes(corpDirTestInfo.CurrentImageSHAPath);
+
+            testInfo.ImageDiffArr = LoadBytes(corpDirTestInfo.ImageDiffPath);
             //if(TestValid(testInfo))
             //    testInfo.Valid = true;
             return testInfo;
         }
 
         static object lockLoadFromDisk = new object();
+        static object lockLoadFromNet = new object();
 
-        static void LoadTextFile(string path, Action<string> saveAction) {
+        static string LoadTextFile(string path) {
             string pathWithExtension = Path.ChangeExtension(path, ".xml");
             if(!File.Exists(pathWithExtension)) {
                 //log
                 //Debug.WriteLine("fire LoadTextFile");
-                return;
+                return null;
             }
             string text;
             if(!path.StartsWith(@"\\corp")) {
@@ -304,22 +312,66 @@ namespace DXVisualTestFixer.Core {
                     text = File.ReadAllText(pathWithExtension);
                 }
             }
-            else
-                text = File.ReadAllText(pathWithExtension);
-            saveAction(text);
+            else {
+                lock(lockLoadFromNet) {
+                    text = File.ReadAllText(pathWithExtension);
+                }
+            }
+            return text;
+        }
+        static byte[] LoadBytes(string path) {
+            if(!File.Exists(path))
+                return null;
+            byte[] bytes;
+            if(!path.StartsWith(@"\\corp")) {
+                lock(lockLoadFromDisk) {
+                    bytes = File.ReadAllBytes(path);
+                }
+            }
+            else {
+                lock(lockLoadFromNet) {
+                    bytes = File.ReadAllBytes(path);
+                }
+            }
+            return bytes;
+        }
+        static bool CompareSHA256(byte[] instant, byte[] current) {
+            if(instant == null || current == null)
+                return false;
+            if(instant.Length != current.Length)
+                return false;
+            for(int i = 0; i < instant.Length; i++)
+                if(instant[i] != current[i])
+                    return false;
+            return true;
+        }
+        static byte[] GetSHA256(Stream stream, bool dispose = false) {
+            if(stream == null)
+                return null;
+            stream.Seek(0, SeekOrigin.Begin);
+            byte[] result = null;
+            using(SHA256 sha256Hash = SHA256.Create()) {
+                result = sha256Hash.ComputeHash(stream);
+            }
+            stream.Seek(0, SeekOrigin.Begin);
+            if(dispose)
+                stream.Dispose();
+            return result;
         }
         static void BuildTextDiff(TestInfo testInfo) {
-            if(String.IsNullOrEmpty(testInfo.TextBefore) && String.IsNullOrEmpty(testInfo.TextCurrent))
+            if(CompareSHA256(testInfo.TextBeforeSHA, testInfo.TextCurrentSHA))
                 return;
-            if(String.IsNullOrEmpty(testInfo.TextBefore)) {
-                testInfo.TextDiff = testInfo.TextCurrent;
+            if(String.IsNullOrEmpty(testInfo.TextBeforeLazy.Value) && String.IsNullOrEmpty(testInfo.TextCurrentLazy.Value))
                 return;
-            }
-            if(String.IsNullOrEmpty(testInfo.TextCurrent)) {
-                testInfo.TextDiff = testInfo.TextBefore;
+            if(String.IsNullOrEmpty(testInfo.TextBeforeLazy.Value)) {
+                testInfo.TextDiff = testInfo.TextCurrentLazy.Value;
                 return;
             }
-            if(!IsTextEquals(testInfo.TextBefore, testInfo.TextCurrent, out string differences, out string fullDifferences)) {
+            if(String.IsNullOrEmpty(testInfo.TextCurrentLazy.Value)) {
+                testInfo.TextDiff = testInfo.TextBeforeLazy.Value;
+                return;
+            }
+            if(!IsTextEquals(testInfo.TextBeforeLazy.Value, testInfo.TextCurrentLazy.Value, out string differences, out string fullDifferences)) {
                 testInfo.TextDiff = differences;
                 testInfo.TextDiffFull = fullDifferences;
             }
@@ -405,21 +457,6 @@ namespace DXVisualTestFixer.Core {
                 using(var imgRight = ImageHelper.CreateImageFromArray(right))
                     return ImageHelper.CompareUnsafe(imgLeft, imgRight);
         }
-        static bool LoadImage(string path, Action<byte[]> saveAction) {
-            if(!File.Exists(path)) {
-                return false;
-            }
-            byte[] bytes;
-            if(!path.StartsWith(@"\\corp")) {
-                lock(lockLoadFromDisk) {
-                    bytes = File.ReadAllBytes(path);
-                }
-            }
-            else
-                bytes = File.ReadAllBytes(path);
-            saveAction(bytes);
-            return true;
-        }
 
         void UpdateTestStatus(TestInfo test) {
             if(test.Valid == TestState.Error)
@@ -440,21 +477,32 @@ namespace DXVisualTestFixer.Core {
             }
             if(test.Valid == TestState.Invalid)
                 return;
-            if(test.ImageBeforeArr != null) {
-                if(IsImageEquals(test.ImageCurrentArr, test.ImageBeforeArr))
+            if(CompareSHA256(test.ImageBeforeSHA, test.ImageCurrentSHA))
+                test.ImageEquals = true;
+            if(test.ImageBeforeArrLazy.Value != null) {
+                if(IsImageEquals(test.ImageCurrentArrLazy.Value, test.ImageBeforeArrLazy.Value))
                     test.ImageEquals = true;
             }
-            if(!IsTextEquals(test.TextCurrent, File.ReadAllText(xmlPath), out _, out _)) {
+            if(CompareSHA256(test.TextBeforeSHA, test.TextCurrentSHA)) {
                 test.Valid = TestState.Valid;
                 return;
             }
-            byte[] imageSource = null;
-            if(!LoadImage(imagePath, img => imageSource = img)) {
+            if(!IsTextEquals(test.TextCurrentLazy.Value, File.ReadAllText(xmlPath), out _, out _)) {
+                test.Valid = TestState.Valid;
+                return;
+            }
+            byte[] imageSource = LoadBytes(imagePath);
+            if(imageSource == null) {
                 test.LogCustomError($"File Can not load: \"{imagePath}\"");
                 test.Valid = TestState.Invalid;
                 return;
             }
-            if(IsImageEquals(test.ImageCurrentArr, imageSource)) {
+            byte[] imageSourceSHA = LoadBytes(imagePath + ".sha");
+            if(CompareSHA256(imageSourceSHA, test.ImageCurrentSHA)) {
+                test.Valid = TestState.Fixed;
+                return;
+            }
+            if(IsImageEquals(test.ImageCurrentArrLazy.Value, imageSource)) {
                 test.Valid = TestState.Fixed;
                 return;
             }
@@ -512,8 +560,25 @@ namespace DXVisualTestFixer.Core {
                 return false;
             if(!SafeDeleteFile(imagePath, checkoutFunc))
                 return false;
-            File.WriteAllText(xmlPath, test.TextCurrent);
-            File.WriteAllBytes(imagePath, test.ImageCurrentArr);
+            string xmlSHAPath = xmlPath + ".sha";
+            if(!SafeDeleteFile(xmlSHAPath, checkoutFunc))
+                return false;
+            string imageSHAPath = imagePath + ".sha";
+            if(!SafeDeleteFile(imageSHAPath, checkoutFunc))
+                return false;
+            File.WriteAllText(xmlPath, test.TextCurrentLazy.Value);
+            if(test.TextCurrentSHA == null) {
+                using(MemoryStream ms = new MemoryStream()) {
+                    using(StreamWriter sw = new StreamWriter(ms)) {
+                        sw.Write(test.TextCurrentLazy.Value);
+                        ms.Seek(0, SeekOrigin.Begin);
+                        test.TextCurrentSHA = GetSHA256(ms, false);
+                    }
+                }
+            }
+            File.WriteAllBytes(xmlSHAPath, test.TextCurrentSHA);
+            File.WriteAllBytes(imagePath, test.ImageCurrentArrLazy.Value);
+            File.WriteAllBytes(imageSHAPath, test.ImageCurrentSHA ?? GetSHA256(new MemoryStream(test.ImageCurrentArrLazy.Value), true));
             return true;
         }
         static bool SafeDeleteFile(string path, Func<string, bool> checkoutFunc) {

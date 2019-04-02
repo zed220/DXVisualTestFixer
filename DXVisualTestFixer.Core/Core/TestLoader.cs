@@ -216,17 +216,6 @@ namespace DXVisualTestFixer.Core {
                     yield return node;
             }
         }
-        static string LoadXmlString(string xmlUri) {
-            HtmlWeb htmlWeb = new HtmlWeb();
-            var r = htmlWeb.Load(xmlUri);
-            using(Stream s = new MemoryStream()) {
-                r.Save(s);
-                s.Seek(0, SeekOrigin.Begin);
-                using(StreamReader reader = new StreamReader(s)) {
-                    return reader.ReadToEnd();
-                }
-            }
-        }
         public static void ParseMessage(IFarmTaskInfo farmTaskInfo, string testNameAndNamespace, string message, string stackTrace, List<CorpDirTestInfo> resultList) {
             if(!message.StartsWith("Exception - NUnit.Framework.AssertionException")) {
                 resultList.Add(CorpDirTestInfo.CreateError(farmTaskInfo, testNameAndNamespace, message, stackTrace));
@@ -256,26 +245,35 @@ namespace DXVisualTestFixer.Core {
                     continue;
                 if(File.Exists(cleanPath)) {
                     result.Add(cleanPath);
+                    continue;
                 }
-                else {
-                    if(cleanPath.Contains("InstantBitmap.png")) {
-                        cleanPath = cleanPath.Split(new[] { "InstantBitmap.png" }, StringSplitOptions.RemoveEmptyEntries).First() + "InstantBitmap.png";
-                        if(File.Exists(cleanPath))
-                            result.Add(cleanPath);
-                    }
-                    if(cleanPath.Contains("BitmapDif.png")) {
-                        cleanPath = cleanPath.Split(new[] { "BitmapDif.png" }, StringSplitOptions.RemoveEmptyEntries).First() + "BitmapDif.png";
-                        if(File.Exists(cleanPath))
-                            result.Add(cleanPath);
-                    }
-                    if(cleanPath.Contains("CurrentBitmap.png")) {
-                        cleanPath = cleanPath.Split(new[] { "CurrentBitmap.png" }, StringSplitOptions.RemoveEmptyEntries).First() + "CurrentBitmap.png";
-                        if(File.Exists(cleanPath))
-                            result.Add(cleanPath);
-                    }
+                if(cleanPath.Contains("InstantBitmap.png.sha")) {
+                    SafeAddPath("InstantBitmap.png.sha", cleanPath, result);
+                    continue;
+                }
+                if(cleanPath.Contains("InstantBitmap.png")) {
+                    SafeAddPath("InstantBitmap.png", cleanPath, result);
+                    continue;
+                }
+                if(cleanPath.Contains("BitmapDif.png")) {
+                    SafeAddPath("BitmapDif.png", cleanPath, result);
+                    continue;
+                }
+                if(cleanPath.Contains("CurrentBitmap.png.sha")) {
+                    SafeAddPath("CurrentBitmap.png.sha", cleanPath, result);
+                    continue;
+                }
+                if(cleanPath.Contains("CurrentBitmap.png")) {
+                    SafeAddPath("CurrentBitmap.png", cleanPath, result);
+                    continue;
                 }
             }
             return result;
+        }
+        static void SafeAddPath(string fileName, string pathCandidate, List<string> paths) {
+            var cleanPath = pathCandidate.Split(new[] { fileName }, StringSplitOptions.RemoveEmptyEntries).First() + fileName;
+            if(File.Exists(cleanPath))
+                paths.Add(cleanPath);
         }
     }
 }

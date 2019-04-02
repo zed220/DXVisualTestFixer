@@ -81,6 +81,7 @@ namespace DXVisualTestFixer.Core {
             using(var repo = new Repository(repository.Path)) {
                 Commands.Stage(repo, "*.png");
                 Commands.Stage(repo, "*.xml");
+                Commands.Stage(repo, "*.sha");
             }
         }
         void CommitCore(CommonRepository repository) {

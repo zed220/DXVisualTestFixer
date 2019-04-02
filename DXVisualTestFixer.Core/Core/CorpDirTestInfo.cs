@@ -14,9 +14,13 @@ namespace DXVisualTestFixer.Core {
         public IFarmTaskInfo FarmTaskInfo { get; private set; }
 
         public string CurrentTextEditPath { get; private set; }
+        public string CurrentTextEditSHAPath { get; private set; }
         public string InstantTextEditPath { get; private set; }
+        public string InstantTextEditSHAPath { get; private set; }
         public string CurrentImagePath { get; private set; }
+        public string CurrentImageSHAPath { get; private set; }
         public string InstantImagePath { get; private set; }
+        public string InstantImageSHAPath { get; private set; }
         public string ImageDiffPath { get; private set; }
 
         public string TeamName { get; private set; }
@@ -55,16 +59,32 @@ namespace DXVisualTestFixer.Core {
             temp.TestName = GetTestName(testNameAndNamespace);
             temp.TestNameWithNamespace = testNameAndNamespace;
             foreach(var path in corpPaths) {
+                if(path.EndsWith("CurrentTextEdit.xml.sha")) {
+                    temp.CurrentTextEditSHAPath = path;
+                    continue;
+                }
                 if(path.EndsWith("CurrentTextEdit.xml")) {
                     temp.CurrentTextEditPath = path;
+                    continue;
+                }
+                if(path.EndsWith("InstantTextEdit.xml.sha")) {
+                    temp.InstantTextEditSHAPath = path;
                     continue;
                 }
                 if(path.EndsWith("InstantTextEdit.xml")) {
                     temp.InstantTextEditPath = path;
                     continue;
                 }
+                if(path.EndsWith("CurrentBitmap.png.sha")) {
+                    temp.CurrentImageSHAPath = path;
+                    continue;
+                }
                 if(path.EndsWith("CurrentBitmap.png")) {
                     temp.CurrentImagePath = path;
+                    continue;
+                }
+                if(path.EndsWith("InstantBitmap.png.sha")) {
+                    temp.InstantImageSHAPath = path;
                     continue;
                 }
                 if(path.EndsWith("InstantBitmap.png")) {
