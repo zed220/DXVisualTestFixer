@@ -13,22 +13,39 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace DXVisualTestFixer.UI.Converters {
-    public class ImageToClipboardConverter : IValueConverter {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
+    public abstract class ImageToClipboardConverterBase : BaseValueConverter {
+        public sealed override object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
             if(value == null)
                 return null;
             return new DelegateCommand(() => {
-                PngBitmapDecoder pngd = null;
-                using(MemoryStream ms = new MemoryStream((byte[])value)) {
-                    pngd = new PngBitmapDecoder(ms, BitmapCreateOptions.None, BitmapCacheOption.None);
-                    BitmapSource bitmapSource = pngd.Frames[0];
-                    Clipboard.SetImage(bitmapSource);
-                }
+                UpdateClipboard((byte[])value);
             });
         }
+        protected abstract void UpdateClipboard(byte[] value);
+    }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
-            throw new NotImplementedException();
+    public class ImageToClipboardConverter : ImageToClipboardConverterBase {
+        protected override void UpdateClipboard(byte[] value) {
+            using(MemoryStream ms = new MemoryStream(value)) {
+                var pngd = new PngBitmapDecoder(ms, BitmapCreateOptions.None, BitmapCacheOption.None);
+                Clipboard.SetImage(pngd.Frames[0]);
+            }
+        }
+    }
+
+    public class ImageToTempFileConverter : ImageToClipboardConverterBase {
+        protected override void UpdateClipboard(byte[] value) {
+            var tempFilePath = GetTempImageFilePath("image");
+            File.WriteAllBytes(tempFilePath, value);
+            Clipboard.SetText(tempFilePath);
+        }
+
+        public static string GetTempImageFilePath(string fileName) {
+            string tempDirectory = null;
+            while(tempDirectory == null || Directory.Exists(tempDirectory))
+                tempDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+            Directory.CreateDirectory(tempDirectory);
+            return Path.Combine(tempDirectory, $"{fileName}.png");
         }
     }
 }

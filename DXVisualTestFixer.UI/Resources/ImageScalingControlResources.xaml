@@ -206,6 +206,25 @@
                                 </dxb:BarButtonItem.Command>
                             </dxb:BarButtonItem>
                         </dxr:RibbonPageGroup>
+                        <dxr:RibbonPageGroup Caption="Create Temp File And Get Path" DataContext="{Binding TestInfoModel.TestInfo}">
+                            <dxb:BarButtonItem RibbonStyle="Large" Content="For Original" LargeGlyph="{dx:DXImageOffice2013 Image=Copy_32x32.png}" GlyphSize="Large"
+                                           Command="{Binding ImageBeforeArrLazy.Value, Converter={converters:ImageToTempFileConverter}}"/>
+                            <dxb:BarButtonItem RibbonStyle="Large" Content="For Current" LargeGlyph="{dx:DXImageOffice2013 Image=Copy_32x32.png}" GlyphSize="Large"
+                                           Command="{Binding ImageCurrentArrLazy.Value, Converter={converters:ImageToTempFileConverter}}"/>
+                            <dxb:BarButtonItem RibbonStyle="Large" Content="For Diff" LargeGlyph="{dx:DXImageOffice2013 Image=Copy_32x32.png}" GlyphSize="Large"
+                                           Command="{Binding ImageDiffArr, Converter={converters:ImageToTempFileConverter}}"/>
+                            <dxb:BarButtonItem RibbonStyle="Large" Content="For Split" LargeGlyph="{dx:DXImageOffice2013 Image=Copy_32x32.png}" GlyphSize="Large">
+                                <dxb:BarButtonItem.Command>
+                                    <MultiBinding Converter="{converters:MultiImageToTempFileConverter}">
+                                        <Binding Path="ImageBeforeArrLazy.Value"/>
+                                        <Binding Path="ImageCurrentArrLazy.Value"/>
+                                        <Binding Path="ImageDiffArr"/>
+                                        <Binding Path="Theme"/>
+                                        <Binding Path="Team"/>
+                                    </MultiBinding>
+                                </dxb:BarButtonItem.Command>
+                            </dxb:BarButtonItem>
+                        </dxr:RibbonPageGroup>
                         <dxr:RibbonPageGroup Caption="Zoom">
                             <dxb:BarButtonItem RibbonStyle="Large" Content="Zoom Out" LargeGlyph="{dx:DXImageOffice2013 Image=ZoomOut_32x32.png}" GlyphSize="Large"
                                                Command="{DXCommand Execute='ZoomOut()'}"/>

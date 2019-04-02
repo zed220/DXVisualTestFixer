@@ -14,7 +14,7 @@ using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 
 namespace DXVisualTestFixer.UI.Converters {
-    public class MultiImageToClipboardConverter : BaseMultiValueConverter {
+    public abstract class MultiImageToClipboardConverterBase : BaseMultiValueConverter {
         const int textHeight = 20;
 
         public override object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
@@ -46,7 +46,7 @@ namespace DXVisualTestFixer.UI.Converters {
                     Draw(g, diffImage, "DIFF", textHeight, size.Height - textHeight, ref left);
                 }
                 var targetImage = Imaging.CreateBitmapSourceFromHBitmap(b.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromWidthAndHeight(size.Width, size.Height));
-                Clipboard.SetImage(targetImage);
+                UpdateClipboard(theme, targetImage);
             });
         }
 
@@ -83,6 +83,28 @@ namespace DXVisualTestFixer.UI.Converters {
                     enc.Save(outStream);
                     return new Bitmap(outStream);
                 }
+            }
+        }
+
+        protected abstract void UpdateClipboard(string theme, BitmapSource image);
+    }
+
+    public class MultiImageToClipboardConverter : MultiImageToClipboardConverterBase {
+        protected override void UpdateClipboard(string theme, BitmapSource image) {
+            Clipboard.SetImage(image);
+        }
+    }
+
+    public class MultiImageToTempFileConverter : MultiImageToClipboardConverterBase {
+        protected override void UpdateClipboard(string theme, BitmapSource image) {
+            PngBitmapEncoder encoder = new PngBitmapEncoder();
+            using(MemoryStream stream = new MemoryStream()) {
+                encoder.Frames.Add(BitmapFrame.Create(image));
+                encoder.Save(stream);
+                var filePath = ImageToTempFileConverter.GetTempImageFilePath(theme ?? "image");
+                stream.Seek(0, SeekOrigin.Begin);
+                File.WriteAllBytes(filePath, stream.ToArray());
+                Clipboard.SetText(filePath);
             }
         }
     }
