@@ -15,12 +15,16 @@ namespace DXVisualTestFixer.Core {
 
         public string CurrentTextEditPath { get; private set; }
         public string CurrentTextEditSHAPath { get; private set; }
+        public byte[] CurrentTextEditSHA { get; private set; }
         public string InstantTextEditPath { get; private set; }
         public string InstantTextEditSHAPath { get; private set; }
+        public byte[] InstantTextEditSHA { get; private set; }
         public string CurrentImagePath { get; private set; }
         public string CurrentImageSHAPath { get; private set; }
+        public byte[] CurrentImageSHA { get; private set; }
         public string InstantImagePath { get; private set; }
         public string InstantImageSHAPath { get; private set; }
+        public byte[] InstantImageSHA { get; private set; }
         public string ImageDiffPath { get; private set; }
 
         public string TeamName { get; private set; }
@@ -52,7 +56,7 @@ namespace DXVisualTestFixer.Core {
             result.TestNameWithNamespace = testNameAndNamespace;
             return result;
         }
-        public static bool TryCreate(IFarmTaskInfo farmTaskInfo, string testNameAndNamespace, List<string> corpPaths, out CorpDirTestInfo result) {
+        public static bool TryCreate(IFarmTaskInfo farmTaskInfo, string testNameAndNamespace, List<string> corpPaths, List<string> shaList, out CorpDirTestInfo result) {
             result = null;
             CorpDirTestInfo temp = new CorpDirTestInfo();
             temp.FarmTaskInfo = farmTaskInfo;
@@ -96,6 +100,28 @@ namespace DXVisualTestFixer.Core {
                     continue;
                 }
             }
+            foreach(var sha in shaList) {
+                //AppendSHA256Base64(sb, "xml_current", currentTxtSHA);
+                //AppendSHA256Base64(sb, "xml_instant", instantTxtSHA);
+                //AppendSHA256Base64(sb, "png_current", currentImageSHA);
+                //AppendSHA256Base64(sb, "png_instant", instantImageSHA);
+                if(sha.StartsWith("xml_current")) {
+                    temp.CurrentTextEditSHA = ExtractSHA(sha);
+                    continue;
+                }
+                if(sha.StartsWith("xml_instant")) {
+                    temp.InstantTextEditSHA = ExtractSHA(sha);
+                    continue;
+                }
+                if(sha.StartsWith("png_current")) {
+                    temp.CurrentImageSHA = ExtractSHA(sha);
+                    continue;
+                }
+                if(sha.StartsWith("png_instant")) {
+                    temp.InstantImageSHA = ExtractSHA(sha);
+                    continue;
+                }
+            }
             if(temp.CurrentTextEditPath != null && temp.CurrentImagePath != null) {// && temp.ImageDiffPath != null
                                                                                    //&& temp.InstantTextEditPath != null && temp.InstantImagePath != null
                 temp.ServerFolderName = temp.CurrentTextEditPath.Split(new string[] { @"\\corp\builds\testbuilds\" }, StringSplitOptions.RemoveEmptyEntries).First().Split('\\').First();
@@ -121,6 +147,11 @@ namespace DXVisualTestFixer.Core {
                 return true;
             }
             return false;
+        }
+        static byte[] ExtractSHA(string str) {
+            if(!str.Contains(":") || !str.Contains("{") || !str.Contains("}"))
+                return null;
+            return Convert.FromBase64String(str.Split(new[] { "{" }, StringSplitOptions.RemoveEmptyEntries).Last().Split(new[] { "}" }, StringSplitOptions.RemoveEmptyEntries).First());
         }
         static bool TryUpdateThemeAndFolderName(string folderNameAndTheme, CorpDirTestInfo result) {
             List<string> allThemes = ServiceLocator.Current.GetInstance<IThemesProvider>().AllThemes.ToList();

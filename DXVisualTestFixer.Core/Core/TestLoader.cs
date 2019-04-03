@@ -229,12 +229,19 @@ namespace DXVisualTestFixer.Core {
         static void ParseMessagePart(IFarmTaskInfo farmTaskInfo, string testNameAndNamespace, string message, List<CorpDirTestInfo> resultList) {
             List<string> paths = message.Split(new[] { @"\\corp" }, StringSplitOptions.RemoveEmptyEntries).ToList();
             List<string> resultPaths = PatchPaths(paths);
+            List<string> shaList = PatchSHA(message.Split(new[] { @"sha-" }, StringSplitOptions.RemoveEmptyEntries).ToList());
             CorpDirTestInfo info = null;
-            if(!CorpDirTestInfo.TryCreate(farmTaskInfo, testNameAndNamespace, resultPaths, out info))
+            if(!CorpDirTestInfo.TryCreate(farmTaskInfo, testNameAndNamespace, resultPaths, shaList, out info))
                 return;
             resultList.Add(info);
         }
-
+        static List<string> PatchSHA(List<string> shaList) {
+            var result = new List<string>();
+            foreach(var sha in shaList) {
+                result.Add(sha.Replace("\r", String.Empty).Replace("\n", String.Empty));
+            }
+            return result;
+        }
         static List<string> PatchPaths(List<string> resultPaths) {
             List<string> result = new List<string>();
             foreach(var pathCandidate in resultPaths) {

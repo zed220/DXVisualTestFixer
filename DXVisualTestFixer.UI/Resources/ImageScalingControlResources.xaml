@@ -122,7 +122,7 @@
                                             Content="{Binding Path=TestInfoModel.TestInfo.ImageCurrentArrLazy.Value}" ContentTemplate="{StaticResource ResourceKey=DraggableScrollViewerDataTemplate}"
                                             Visibility="{DXBinding Expr='MergedViewType eq $controls:MergedTestViewType.Current', Converter={StaticResource VisibilityConverter}}"/>
                             <ContentControl controls:ImageScalingControl.ScrollViewerType="Diff"
-                                            Content="{Binding Path=TestInfoModel.TestInfo.ImageDiffArr}" ContentTemplate="{StaticResource ResourceKey=DraggableScrollViewerDataTemplate}"
+                                            Content="{Binding Path=TestInfoModel.TestInfo.ImageDiffArrLazy.Value}" ContentTemplate="{StaticResource ResourceKey=DraggableScrollViewerDataTemplate}"
                                             Visibility="{DXBinding Expr='MergedViewType eq $controls:MergedTestViewType.Diff', Converter={StaticResource VisibilityConverter}}"/>
                         </Grid>
                     </dxdo:LayoutPanel>
@@ -139,7 +139,7 @@
                     </dxdo:LayoutGroup.Resources>
                     <dxdo:LayoutPanel controls:ImageScalingControl.ScrollViewerType="Before" ShowCaption="True" Caption="Before" ShowCloseButton="False" ShowPinButton="False" Content="{Binding ImageBeforeArrLazy.Value}" AllowSizing="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False"/>
                     <dxdo:LayoutPanel controls:ImageScalingControl.ScrollViewerType="Current" ShowCaption="True" Caption="Current" ShowCloseButton="False" ShowPinButton="False"  Content="{Binding ImageCurrentArrLazy.Value}" AllowSizing="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False"/>
-                    <dxdo:LayoutPanel controls:ImageScalingControl.ScrollViewerType="Diff" ShowCaption="True" Caption="Diff" ShowCloseButton="False" ShowPinButton="False" Content="{Binding ImageDiffArr}" AllowSizing="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False"/>
+                    <dxdo:LayoutPanel controls:ImageScalingControl.ScrollViewerType="Diff" ShowCaption="True" Caption="Diff" ShowCloseButton="False" ShowPinButton="False" Content="{Binding ImageDiffArrLazy.Value}" AllowSizing="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False"/>
                 </dxdo:LayoutGroup>
             </DataTemplate>
         </controls:ImageScalingControlTemplateSelector.SplitTemplate>
@@ -193,13 +193,13 @@
                             <dxb:BarButtonItem RibbonStyle="Large" Content="Copy Current" LargeGlyph="{dx:DXImageOffice2013 Image=Copy_32x32.png}" GlyphSize="Large"
                                            Command="{Binding ImageCurrentArrLazy.Value, Converter={StaticResource ImageToClipboardConverter}}"/>
                             <dxb:BarButtonItem RibbonStyle="Large" Content="Copy Diff" LargeGlyph="{dx:DXImageOffice2013 Image=Copy_32x32.png}" GlyphSize="Large"
-                                           Command="{Binding ImageDiffArr, Converter={StaticResource ImageToClipboardConverter}}"/>
+                                           Command="{Binding ImageDiffArrLazy.Value, Converter={StaticResource ImageToClipboardConverter}}"/>
                             <dxb:BarButtonItem RibbonStyle="Large" Content="Copy Split" LargeGlyph="{dx:DXImageOffice2013 Image=Copy_32x32.png}" GlyphSize="Large">
                                 <dxb:BarButtonItem.Command>
                                     <MultiBinding Converter="{StaticResource MultiImageToClipboardConverter}">
                                         <Binding Path="ImageBeforeArrLazy.Value"/>
                                         <Binding Path="ImageCurrentArrLazy.Value"/>
-                                        <Binding Path="ImageDiffArr"/>
+                                        <Binding Path="ImageDiffArrLazy.Value"/>
                                         <Binding Path="Theme"/>
                                         <Binding Path="Team"/>
                                     </MultiBinding>
@@ -212,13 +212,13 @@
                             <dxb:BarButtonItem RibbonStyle="Large" Content="For Current" LargeGlyph="{dx:DXImageOffice2013 Image=Copy_32x32.png}" GlyphSize="Large"
                                            Command="{Binding ImageCurrentArrLazy.Value, Converter={converters:ImageToTempFileConverter}}"/>
                             <dxb:BarButtonItem RibbonStyle="Large" Content="For Diff" LargeGlyph="{dx:DXImageOffice2013 Image=Copy_32x32.png}" GlyphSize="Large"
-                                           Command="{Binding ImageDiffArr, Converter={converters:ImageToTempFileConverter}}"/>
+                                           Command="{Binding ImageDiffArrLazy.Value, Converter={converters:ImageToTempFileConverter}}"/>
                             <dxb:BarButtonItem RibbonStyle="Large" Content="For Split" LargeGlyph="{dx:DXImageOffice2013 Image=Copy_32x32.png}" GlyphSize="Large">
                                 <dxb:BarButtonItem.Command>
                                     <MultiBinding Converter="{converters:MultiImageToTempFileConverter}">
                                         <Binding Path="ImageBeforeArrLazy.Value"/>
                                         <Binding Path="ImageCurrentArrLazy.Value"/>
-                                        <Binding Path="ImageDiffArr"/>
+                                        <Binding Path="ImageDiffArrLazy.Value"/>
                                         <Binding Path="Theme"/>
                                         <Binding Path="Team"/>
                                     </MultiBinding>

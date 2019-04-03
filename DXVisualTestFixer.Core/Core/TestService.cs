@@ -64,6 +64,7 @@ namespace DXVisualTestFixer.Core {
             List<int> diffs = new List<int>();
             TestList.ForEach(t => diffs.Add(t.ImageDiffsCount));
             diffs.Sort();
+            diffs = diffs.Distinct().ToList();
             Dictionary<int, int> problems = new Dictionary<int, int>();
             int proplemNumber = 1;
             int currentD = 0;
@@ -97,14 +98,15 @@ namespace DXVisualTestFixer.Core {
             }
         }
         int CalculateImageDiffsCount(TestInfo test) {
-            if(test.ImageDiffArr == null || test.ImageBeforeArrLazy.Value == null || test.ImageCurrentArrLazy.Value == null)
+            if(test.ImageDiffArrLazy.Value == null)
                 return int.MaxValue;
-            using(var imgBefore = ImageHelper.CreateImageFromArray(test.ImageBeforeArrLazy.Value))
-                using(var imgCurrent = ImageHelper.CreateImageFromArray(test.ImageCurrentArrLazy.Value)) {
-                    if(imgBefore.Size != imgCurrent.Size)
-                        return int.MaxValue;
-                    return ImageHelper.DeltaUnsafe(imgBefore, imgCurrent);
-                }
+            if(TestsService.CompareSHA256(test.ImageBeforeSHA, test.ImageCurrentSHA))
+                return int.MaxValue;
+            if(test.ImageBeforeSHA == null || test.ImageCurrentSHA == null)
+                return int.MaxValue;
+            using(var imgDiff = ImageHelper.CreateImageFromArray(test.ImageDiffArrLazy.Value)) {
+                return ImageHelper.RedCount(imgDiff);
+            }
         }
     }
     public class TestsService : BindableBase, ITestsService {
@@ -139,7 +141,7 @@ namespace DXVisualTestFixer.Core {
             var allTasks = await farmIntegrator.GetAllTasks(configSerializer.GetConfig().GetLocalRepositories().ToArray());
             var actualState = await LoadTestsAsync(allTasks, notificationService);
             loggingService.SendMessage($"Start updating problems");
-            await ((TestInfoContainer)actualState).UpdateProblems();
+            //await ((TestInfoContainer)actualState).UpdateProblems();
             loggingService.SendMessage($"Almost there");
             ActualState = actualState;
         }
@@ -251,7 +253,8 @@ namespace DXVisualTestFixer.Core {
             testInfo.ResourceFolderName = corpDirTestInfo.ResourceFolderName;
             if(corpDirTestInfo.TeamName == CorpDirTestInfo.ErrorTeamName) {
                 testInfo.Valid = TestState.Error;
-                testInfo.TextDiff = "+" + testInfo.Name + Environment.NewLine + Environment.NewLine + corpDirTestInfo.ErrorText;
+                testInfo.TextDiffLazy = new Lazy<string>(() => "+" + testInfo.Name + Environment.NewLine + Environment.NewLine + corpDirTestInfo.ErrorText);
+                testInfo.TextDiffFullLazy = new Lazy<string>(() => string.Empty);
                 testInfo.Theme = "Error";
                 testInfo.Dpi = 0;
                 testInfo.Team = new Team() { Name = CorpDirTestInfo.ErrorTeamName, Version = corpDirTestInfo.FarmTaskInfo.Repository.Version };
@@ -261,7 +264,8 @@ namespace DXVisualTestFixer.Core {
             Team team = testInfo.Team = GetTeam(teams, corpDirTestInfo.FarmTaskInfo.Repository.Version, corpDirTestInfo.ServerFolderName, out info);
             if(team == null) {
                 testInfo.Valid = TestState.Error;
-                testInfo.TextDiff = "+" + testInfo.Name + Environment.NewLine + Environment.NewLine + corpDirTestInfo.ErrorText;
+                testInfo.TextDiffLazy = new Lazy<string>(() => "+" + testInfo.Name + Environment.NewLine + Environment.NewLine + corpDirTestInfo.ErrorText);
+                testInfo.TextDiffFullLazy = new Lazy<string>(() => string.Empty);
                 testInfo.Theme = "Error";
                 testInfo.Dpi = 0;
                 testInfo.Team = new Team() { Name = CorpDirTestInfo.ErrorTeamName, Version = corpDirTestInfo.FarmTaskInfo.Repository.Version };
@@ -280,17 +284,17 @@ namespace DXVisualTestFixer.Core {
                     testInfo.Optimized = testInfo.TeamInfo.Optimized.Value;
             }
             testInfo.TextBeforeLazy = new Lazy<string>(() => LoadTextFile(corpDirTestInfo.InstantTextEditPath));
-            testInfo.TextBeforeSHA = LoadBytes(corpDirTestInfo.InstantTextEditSHAPath);
+            testInfo.TextBeforeSHA = corpDirTestInfo.InstantTextEditSHA ?? LoadBytes(corpDirTestInfo.InstantTextEditSHAPath);
             testInfo.TextCurrentLazy = new Lazy<string>(() => LoadTextFile(corpDirTestInfo.CurrentTextEditPath));
-            testInfo.TextCurrentSHA = LoadBytes(corpDirTestInfo.CurrentTextEditSHAPath);
-            BuildTextDiff(testInfo);
+            testInfo.TextCurrentSHA = corpDirTestInfo.CurrentTextEditSHA ?? LoadBytes(corpDirTestInfo.CurrentTextEditSHAPath);
+            InitializeTextDiff(testInfo);
 
             testInfo.ImageBeforeArrLazy = new Lazy<byte[]>(() => LoadBytes(corpDirTestInfo.InstantImagePath));
-            testInfo.ImageBeforeSHA = LoadBytes(corpDirTestInfo.InstantImageSHAPath);
+            testInfo.ImageBeforeSHA = corpDirTestInfo.InstantImageSHA ?? LoadBytes(corpDirTestInfo.InstantImageSHAPath);
             testInfo.ImageCurrentArrLazy = new Lazy<byte[]>(() => LoadBytes(corpDirTestInfo.CurrentImagePath));
-            testInfo.ImageCurrentSHA = LoadBytes(corpDirTestInfo.CurrentImageSHAPath);
+            testInfo.ImageCurrentSHA = corpDirTestInfo.CurrentImageSHA ?? LoadBytes(corpDirTestInfo.CurrentImageSHAPath);
 
-            testInfo.ImageDiffArr = LoadBytes(corpDirTestInfo.ImageDiffPath);
+            testInfo.ImageDiffArrLazy = new Lazy<byte[]>(() => LoadBytes(corpDirTestInfo.ImageDiffPath));
             //if(TestValid(testInfo))
             //    testInfo.Valid = true;
             return testInfo;
@@ -335,7 +339,7 @@ namespace DXVisualTestFixer.Core {
             }
             return bytes;
         }
-        static bool CompareSHA256(byte[] instant, byte[] current) {
+        public static bool CompareSHA256(byte[] instant, byte[] current) {
             if(instant == null || current == null)
                 return false;
             if(instant.Length != current.Length)
@@ -357,24 +361,6 @@ namespace DXVisualTestFixer.Core {
             if(dispose)
                 stream.Dispose();
             return result;
-        }
-        static void BuildTextDiff(TestInfo testInfo) {
-            if(CompareSHA256(testInfo.TextBeforeSHA, testInfo.TextCurrentSHA))
-                return;
-            if(String.IsNullOrEmpty(testInfo.TextBeforeLazy.Value) && String.IsNullOrEmpty(testInfo.TextCurrentLazy.Value))
-                return;
-            if(String.IsNullOrEmpty(testInfo.TextBeforeLazy.Value)) {
-                testInfo.TextDiff = testInfo.TextCurrentLazy.Value;
-                return;
-            }
-            if(String.IsNullOrEmpty(testInfo.TextCurrentLazy.Value)) {
-                testInfo.TextDiff = testInfo.TextBeforeLazy.Value;
-                return;
-            }
-            if(!IsTextEquals(testInfo.TextBeforeLazy.Value, testInfo.TextCurrentLazy.Value, out string differences, out string fullDifferences)) {
-                testInfo.TextDiff = differences;
-                testInfo.TextDiffFull = fullDifferences;
-            }
         }
         static bool IsTextEquals(string left, string right, out string diff, out string fullDiff) {
             if(left == right) {
@@ -451,11 +437,34 @@ namespace DXVisualTestFixer.Core {
             }
             return sbCompact.ToString();
         }
+        static void InitializeTextDiff(TestInfo testInfo) {
+            testInfo.TextDiffLazy = new Lazy<string>(() => String.Empty);
+            testInfo.TextDiffFullLazy = new Lazy<string>(() => String.Empty);
+            if(CompareSHA256(testInfo.TextBeforeSHA, testInfo.TextCurrentSHA))
+                return;
 
-        static bool IsImageEquals(byte[] left, byte[] right) {
-            using(var imgLeft = ImageHelper.CreateImageFromArray(left))
-                using(var imgRight = ImageHelper.CreateImageFromArray(right))
-                    return ImageHelper.CompareUnsafe(imgLeft, imgRight);
+            testInfo.TextDiffLazy = new Lazy<string>(() => {
+                if(String.IsNullOrEmpty(testInfo.TextBeforeLazy.Value) && String.IsNullOrEmpty(testInfo.TextCurrentLazy.Value))
+                    return String.Empty;
+                if(String.IsNullOrEmpty(testInfo.TextBeforeLazy.Value))
+                    return testInfo.TextCurrentLazy.Value;
+                if(String.IsNullOrEmpty(testInfo.TextCurrentLazy.Value))
+                    return testInfo.TextBeforeLazy.Value;
+                if(!IsTextEquals(testInfo.TextBeforeLazy.Value, testInfo.TextCurrentLazy.Value, out string differences, out string fullDifferences))
+                    return differences;
+                return String.Empty;
+            });
+            testInfo.TextDiffFullLazy = new Lazy<string>(() => {
+                if(String.IsNullOrEmpty(testInfo.TextBeforeLazy.Value) && String.IsNullOrEmpty(testInfo.TextCurrentLazy.Value))
+                    return String.Empty;
+                if(String.IsNullOrEmpty(testInfo.TextBeforeLazy.Value))
+                    return testInfo.TextCurrentLazy.Value;
+                if(String.IsNullOrEmpty(testInfo.TextCurrentLazy.Value))
+                    return testInfo.TextBeforeLazy.Value;
+                if(!IsTextEquals(testInfo.TextBeforeLazy.Value, testInfo.TextCurrentLazy.Value, out string differences, out string fullDifferences))
+                    return fullDifferences;
+                return String.Empty;
+            });
         }
 
         void UpdateTestStatus(TestInfo test) {
@@ -468,44 +477,37 @@ namespace DXVisualTestFixer.Core {
                 return;
             }
             string xmlPath = GetXmlFilePath(actualTestResourceName, test, true);
-            if(xmlPath == null) {
-                test.Valid = TestState.Invalid;
-            }
             string imagePath = GetImageFilePath(actualTestResourceName, test, true);
-            if(imagePath == null) {
+            if(xmlPath == null || imagePath == null) {
                 test.Valid = TestState.Invalid;
-            }
-            if(test.Valid == TestState.Invalid)
-                return;
-            if(CompareSHA256(test.ImageBeforeSHA, test.ImageCurrentSHA))
-                test.ImageEquals = true;
-            if(test.ImageBeforeArrLazy.Value != null) {
-                if(IsImageEquals(test.ImageCurrentArrLazy.Value, test.ImageBeforeArrLazy.Value))
-                    test.ImageEquals = true;
-            }
-            if(CompareSHA256(test.TextBeforeSHA, test.TextCurrentSHA)) {
-                test.Valid = TestState.Valid;
                 return;
             }
-            if(!IsTextEquals(test.TextCurrentLazy.Value, File.ReadAllText(xmlPath), out _, out _)) {
-                test.Valid = TestState.Valid;
-                return;
-            }
-            byte[] imageSource = LoadBytes(imagePath);
-            if(imageSource == null) {
+            if(!File.Exists(imagePath)) {
                 test.LogCustomError($"File Can not load: \"{imagePath}\"");
                 test.Valid = TestState.Invalid;
+            }
+            if(!File.Exists(xmlPath)) {
+                test.LogCustomError($"File Can not load: \"{xmlPath}\"");
+                test.Valid = TestState.Invalid;
+            }
+            if(test.Valid == TestState.Invalid) {
+                test.LogCustomError($"Is it new test?");
                 return;
             }
-            byte[] imageSourceSHA = LoadBytes(imagePath + ".sha");
-            if(CompareSHA256(imageSourceSHA, test.ImageCurrentSHA)) {
+            if(CompareSHA256(test.ImageBeforeSHA, test.ImageCurrentSHA))
+                test.ImageEquals = true;
+            bool imageFixed = test.ImageEquals;
+            if(!imageFixed)
+                imageFixed = CompareSHA256(LoadBytes(imagePath + ".sha"), test.ImageCurrentSHA);
+            bool textEquals = CompareSHA256(test.TextBeforeSHA, test.TextCurrentSHA);
+            bool textFixed = textEquals;
+            if(!textFixed)
+                textFixed = CompareSHA256(LoadBytes(xmlPath + ".sha"), test.TextCurrentSHA);
+            if(imageFixed && textFixed) {
                 test.Valid = TestState.Fixed;
                 return;
             }
-            if(IsImageEquals(test.ImageCurrentArrLazy.Value, imageSource)) {
-                test.Valid = TestState.Fixed;
-                return;
-            }
+            test.Valid = TestState.Valid;
         }
         public string GetResourcePath(Repository repository, string relativePath) {
             return Path.Combine(repository.Path, relativePath);

@@ -43,14 +43,14 @@
                     <dx:DXTabItem Header="Diff Compact">
                         <avalonedit:TextEditor DataContext="{Binding TestInfo}" FontFamily="Consolas" IsReadOnly="True">
                             <dxmvvm:Interaction.Behaviors>
-                                <behaviors:AvalonEditTextBindingBehavior Text="{Binding Path=TextDiff}"/>
+                                <behaviors:AvalonEditTextBindingBehavior Text="{Binding Path=TextDiffLazy.Value}"/>
                             </dxmvvm:Interaction.Behaviors>
                         </avalonedit:TextEditor>
                     </dx:DXTabItem>
                     <dx:DXTabItem Header="Diff Full">
                         <avalonedit:TextEditor DataContext="{Binding TestInfo}" FontFamily="Consolas" IsReadOnly="True">
                             <dxmvvm:Interaction.Behaviors>
-                                <behaviors:AvalonEditTextBindingBehavior Text="{Binding Path=TextDiffFull}"/>
+                                <behaviors:AvalonEditTextBindingBehavior Text="{Binding Path=TextDiffFullLazy.Value}"/>
                             </dxmvvm:Interaction.Behaviors>
                         </avalonedit:TextEditor>
                     </dx:DXTabItem>

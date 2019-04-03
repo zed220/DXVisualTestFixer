@@ -85,6 +85,27 @@ namespace DXVisualTestFixer.Native {
                 b2.UnlockBits(bd2);
             }
         }
+        public static unsafe int RedCount(Bitmap bitmap) {
+            var bd = bitmap.LockBits(new Rectangle(new Point(0, 0), bitmap.Size), ImageLockMode.ReadOnly, bitmap.PixelFormat);
+            try {
+                IntPtr bdScan0 = bd.Scan0;
+
+                int stride = bd.Stride;
+                int len = stride * bitmap.Height;
+                int result = 0;
+                byte* x = (byte*)bdScan0.ToPointer();
+                int l = len;
+                for(int i = 0; i < l / 4; i++, x += 4) {
+                    if(*((uint*)x) == 0b11111111111111110000000000000000)//red
+                        result++;
+                }
+                return result;
+            }
+            finally {
+                bitmap.UnlockBits(bd);
+            }
+        }
+
         public static Bitmap CreateImageFromArray(byte[] arr) {
             using(MemoryStream s = new MemoryStream(arr)) {
                 return Image.FromStream(s) as Bitmap;
