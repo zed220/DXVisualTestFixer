@@ -26,6 +26,7 @@ namespace DXVisualTestFixer.Core {
         public string InstantImageSHAPath { get; private set; }
         public byte[] InstantImageSHA { get; private set; }
         public string ImageDiffPath { get; private set; }
+        public int? DiffCount { get; private set; }
 
         public string TeamName { get; private set; }
         public string ServerFolderName { get; private set; }
@@ -56,12 +57,13 @@ namespace DXVisualTestFixer.Core {
             result.TestNameWithNamespace = testNameAndNamespace;
             return result;
         }
-        public static bool TryCreate(IFarmTaskInfo farmTaskInfo, string testNameAndNamespace, List<string> corpPaths, List<string> shaList, out CorpDirTestInfo result) {
+        public static bool TryCreate(IFarmTaskInfo farmTaskInfo, string testNameAndNamespace, List<string> corpPaths, List<string> shaList, int? diffCount, out CorpDirTestInfo result) {
             result = null;
             CorpDirTestInfo temp = new CorpDirTestInfo();
             temp.FarmTaskInfo = farmTaskInfo;
             temp.TestName = GetTestName(testNameAndNamespace);
             temp.TestNameWithNamespace = testNameAndNamespace;
+            temp.DiffCount = diffCount;
             foreach(var path in corpPaths) {
                 if(path.EndsWith("CurrentTextEdit.xml.sha")) {
                     temp.CurrentTextEditSHAPath = path;

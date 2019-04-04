@@ -230,10 +230,16 @@ namespace DXVisualTestFixer.Core {
             List<string> paths = message.Split(new[] { @"\\corp" }, StringSplitOptions.RemoveEmptyEntries).ToList();
             List<string> resultPaths = PatchPaths(paths);
             List<string> shaList = PatchSHA(message.Split(new[] { @"sha-" }, StringSplitOptions.RemoveEmptyEntries).ToList());
+            int? diffCount = TryGetDiffCount(message.Split(new[] { @"diffCount=" }, StringSplitOptions.RemoveEmptyEntries).ToList().LastOrDefault());
             CorpDirTestInfo info = null;
-            if(!CorpDirTestInfo.TryCreate(farmTaskInfo, testNameAndNamespace, resultPaths, shaList, out info))
+            if(!CorpDirTestInfo.TryCreate(farmTaskInfo, testNameAndNamespace, resultPaths, shaList, diffCount, out info))
                 return;
             resultList.Add(info);
+        }
+        static int? TryGetDiffCount(string str) {
+            if(Int32.TryParse(str, out int res))
+                return res;
+            return null;
         }
         static List<string> PatchSHA(List<string> shaList) {
             var result = new List<string>();

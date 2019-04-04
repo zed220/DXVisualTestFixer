@@ -57,7 +57,7 @@ namespace DXVisualTestFixer.Core {
             await Task.Factory.StartNew(() => {
                 Parallel.ForEach(TestList, test => {
                     test.Problem = int.MinValue;
-                    test.ImageDiffsCount = CalculateImageDiffsCount(test);
+                    test.ImageDiffsCount = test.PredefinedImageDiffsCount ?? CalculateImageDiffsCount(test);
                 });
             }).ConfigureAwait(false);
 
@@ -141,7 +141,7 @@ namespace DXVisualTestFixer.Core {
             var allTasks = await farmIntegrator.GetAllTasks(configSerializer.GetConfig().GetLocalRepositories().ToArray());
             var actualState = await LoadTestsAsync(allTasks, notificationService);
             loggingService.SendMessage($"Start updating problems");
-            //await ((TestInfoContainer)actualState).UpdateProblems();
+            await ((TestInfoContainer)actualState).UpdateProblems();
             loggingService.SendMessage($"Almost there");
             ActualState = actualState;
         }
@@ -274,6 +274,7 @@ namespace DXVisualTestFixer.Core {
             testInfo.TeamInfo = info;
             testInfo.Dpi = info.Dpi;
             testInfo.Theme = corpDirTestInfo.ThemeName;
+            testInfo.PredefinedImageDiffsCount = corpDirTestInfo.DiffCount;
             if(Convert.ToInt32(testInfo.Version.Split('.')[0]) < 18) {
                 if(testInfo.TeamInfo.Optimized.HasValue)
                     testInfo.Optimized = !corpDirTestInfo.FarmTaskInfo.Url.Contains("UnoptimizedMode");

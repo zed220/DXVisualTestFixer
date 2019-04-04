@@ -47,6 +47,7 @@ namespace DXVisualTestFixer.Common {
         public TestState Valid { get; set; }
         public bool ImageEquals { get; set; }
         public int ImageDiffsCount { get; set; }
+        public int? PredefinedImageDiffsCount { get; set; }
         public int Problem { get; set; } = int.MinValue;
         public string ProblemName { get; set; }
         public string InvalidLog { get { return InvalidLogBuilder.ToString(); } }
