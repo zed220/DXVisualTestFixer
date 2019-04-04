@@ -227,10 +227,12 @@ namespace DXVisualTestFixer.Core {
             }
         }
         static void ParseMessagePart(IFarmTaskInfo farmTaskInfo, string testNameAndNamespace, string message, List<CorpDirTestInfo> resultList) {
-            List<string> paths = message.Split(new[] { @"\\corp" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+            List<string> parts = message.Split(new[] { "\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+            List<string> paths = parts.Where(x => x.Contains(@"\\corp")).Select(x => x.Replace(@"\\corp", String.Empty)).ToList();
+
             List<string> resultPaths = PatchPaths(paths);
-            List<string> shaList = PatchSHA(message.Split(new[] { @"sha-" }, StringSplitOptions.RemoveEmptyEntries).ToList());
-            int? diffCount = TryGetDiffCount(message.Split(new[] { @"diffCount=" }, StringSplitOptions.RemoveEmptyEntries).ToList().LastOrDefault());
+            List<string> shaList = PatchSHA(parts.Where(x => x.Contains("sha-")).Select(x => x.Replace("sha-", String.Empty)).ToList());
+            int? diffCount = TryGetDiffCount(parts.Where(x => x.Contains("diffCount=")).Select(x => x.Replace("diffCount=", String.Empty)).LastOrDefault());
             CorpDirTestInfo info = null;
             if(!CorpDirTestInfo.TryCreate(farmTaskInfo, testNameAndNamespace, resultPaths, shaList, diffCount, out info))
                 return;
