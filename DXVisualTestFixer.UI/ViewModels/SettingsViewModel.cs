@@ -119,7 +119,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
         public void SelectWorkDirectory() {
             var dialog = ServiceLocator.Current.TryResolve<IFolderBrowserDialog>();
             var result = dialog.ShowDialog();
-            if(result != DialogResult.OK)
+            if(result != DevExpress.Utils.CommonDialogs.Internal.DialogResult.OK)
                 return;
             if(!Directory.Exists(dialog.SelectedPath))
                 return;
