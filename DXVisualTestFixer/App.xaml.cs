@@ -10,6 +10,7 @@ namespace DXVisualTestFixer {
         public App() {
             LogifyAlert.Instance.ApiKey = "1CFEC5BD43E34C5AB6A58911736E8360";
             LogifyAlert.Instance.ConfirmSendReport = true;
+            LogifyAlert.Instance.CollectBreadcrumbs = true;
             LogifyAlert.Instance.Run();
             ApplicationThemeHelper.UseLegacyDefaultTheme = true;
         }
