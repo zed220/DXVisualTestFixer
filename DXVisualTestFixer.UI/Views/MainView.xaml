@@ -372,7 +372,7 @@
                                 <controls:TableViewAdvNavigation x:Name="view" AllowEditing="True" ShowVerticalLines="False" ShowIndicator="False" ShowHorizontalLines="False" ShowColumnHeaders="False" 
                                                                  ShowGroupPanel="False" ShowFixedTotalSummary="True" RowDoubleClick="{DXEvent Handler='@s.ProcessDoubleClick(@args)'}"
                                                                  PreviewKeyDown="{DXEvent Handler='@s.ProcessKeyDown(@args)'}" GroupSummaryDisplayMode="Default"
-                                                                 ShowNoRecordsBlock="{DXBinding 'Status == $viewModels:ProgramStatus.Idle'}"
+                                                                 ShowNoRecordsBlock="{DXBinding 'Status == $viewModels:ProgramStatus.Idle'}" SearchPanelHighlightResults="False"
                                                                  SearchPanelHorizontalAlignment="Stretch" GroupRowCheckBoxFieldName="CommitChange" ShowFilterPanelMode="Never">
                                     <dxb:BarManager.DXContextMenu>
                                         <dxb:PopupMenu>
