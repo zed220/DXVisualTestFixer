@@ -570,18 +570,13 @@ namespace DXVisualTestFixer.Core {
             if(!SafeDeleteFile(imageSHAPath, checkoutFunc))
                 return false;
             File.WriteAllText(xmlPath, test.TextCurrentLazy.Value);
-            if(test.TextCurrentSHA == null) {
-                using(MemoryStream ms = new MemoryStream()) {
-                    using(StreamWriter sw = new StreamWriter(ms)) {
-                        sw.Write(test.TextCurrentLazy.Value);
-                        ms.Seek(0, SeekOrigin.Begin);
-                        test.TextCurrentSHA = GetSHA256(ms, false);
-                    }
-                }
-            }
+            if(test.TextCurrentSHA == null)
+                test.TextCurrentSHA = GetSHA256(new MemoryStream(File.ReadAllBytes(xmlPath)));
+            if(test.ImageCurrentSHA == null)
+                test.ImageCurrentSHA = GetSHA256(new MemoryStream(test.ImageCurrentArrLazy.Value));
             File.WriteAllBytes(xmlSHAPath, test.TextCurrentSHA);
             File.WriteAllBytes(imagePath, test.ImageCurrentArrLazy.Value);
-            File.WriteAllBytes(imageSHAPath, test.ImageCurrentSHA ?? GetSHA256(new MemoryStream(test.ImageCurrentArrLazy.Value), true));
+            File.WriteAllBytes(imageSHAPath, test.ImageCurrentSHA);
             return true;
         }
         static bool SafeDeleteFile(string path, Func<string, bool> checkoutFunc) {
