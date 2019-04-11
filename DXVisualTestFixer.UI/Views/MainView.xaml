@@ -91,7 +91,7 @@
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="dxg:GroupValuePresenter">
-                                <StackPanel x:Name="PART_GroupValuesPanel" Orientation="Horizontal" VerticalAlignment="Center" Margin="{DynamicResource {dxgt:GroupRowThemeKey ResourceKey=GroupRowContentMargin}}"/>
+                            <StackPanel x:Name="PART_GroupValuesPanel" Orientation="Horizontal" VerticalAlignment="Center" Margin="{DynamicResource {dxgt:GroupRowThemeKey ResourceKey=GroupRowContentMargin}}"/>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
@@ -174,245 +174,275 @@
     </i:Interaction.Triggers>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <dxr:RibbonControl RibbonStyle="Office2010" ToolbarShowMode="ShowAbove" AllowCustomization="False" MinimizationButtonVisibility="Collapsed" RibbonHeaderVisibility="Visible" 
+        <Grid Visibility="{DXBinding 'Status == $viewModels:ProgramStatus.Idle ? $Visibility.Visible : $Visibility.Collapsed'}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <dxr:RibbonControl RibbonStyle="Office2010" ToolbarShowMode="ShowAbove" AllowCustomization="False" MinimizationButtonVisibility="Collapsed" RibbonHeaderVisibility="Visible" 
                            ToolbarShowCustomizationButton="False" ShowApplicationButton="False"
                            AsyncMergingEnabled="True">
-            <dxr:RibbonDefaultPageCategory>
-                <dxr:RibbonPage Caption="Main">
-                    <dxr:RibbonPageGroup Caption="Work">
-                        <dxb:BarButtonItem RibbonStyle="Large" 
+                <dxr:RibbonDefaultPageCategory>
+                    <dxr:RibbonPage Caption="Main">
+                        <dxr:RibbonPageGroup Caption="Work">
+                            <dxb:BarButtonItem RibbonStyle="Large" 
                                            GlyphSize="Large" 
                                            Content="Refresh"
                                            KeyGesture="F5" dxb:BarManager.KeyGestureWorkingMode="AllKeyGesture"
                                            Command="{DXCommand Execute='RefreshTestList()'}"
                                            LargeGlyph="{dx:DXImageOffice2013 Image=Refresh_32x32.png}">
-                        </dxb:BarButtonItem>
-                        <dxb:BarButtonItem
+                            </dxb:BarButtonItem>
+                            <dxb:BarButtonItem
                             RibbonStyle="Large" 
                             GlyphSize="Large" 
                             Content="Apply Changes"
                             Command="{DXCommand Execute='ApplyChanges()'}"
                             LargeGlyph="{dx:DXImageOffice2013 Image=Apply_32x32.png}"
+                            KeyGesture="Ctrl+S"
                             IsEnabled="{DXBinding Expr='TestsToCommitCount gt 0'}">
-                            <dxb:BarButtonItem.GlyphTemplate>
-                                <DataTemplate>
-                                    <Grid>
-                                        <dx:DXImage Source="{dx:DXImageOffice2013 Image=Apply_32x32.png}"/>
-                                        <Border Width="16" Height="16" CornerRadius="8" BorderThickness="1" Background="Green" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,0,-3,0"
+                                <dxb:BarButtonItem.GlyphTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <dx:DXImage Source="{dx:DXImageOffice2013 Image=Apply_32x32.png}"/>
+                                            <Border Width="16" Height="16" CornerRadius="8" BorderThickness="1" Background="Green" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,0,-3,0"
                                                 BorderBrush="White">
-                                            <Border.Visibility>
-                                                <Binding Path="TestsToCommitCount">
-                                                    <Binding.Converter>
-                                                        <dxmvvm:ObjectToObjectConverter DefaultTarget="Visible">
-                                                            <dxmvvm:MapItem Source="0" Target="Collapsed"/>
-                                                        </dxmvvm:ObjectToObjectConverter>
-                                                    </Binding.Converter>
-                                                </Binding>
-                                            </Border.Visibility>
-                                            <TextBlock TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding TestsToCommitCount}" FontSize="9" Foreground="White"/>
-                                        </Border>
-                                    </Grid>
-                                </DataTemplate>
-                            </dxb:BarButtonItem.GlyphTemplate>
-                        </dxb:BarButtonItem>
-                        <dxb:BarSubItem Content="Open Solution" Glyph="pack://application:,,,/DXVisualTestFixer.UI;component/Images/CSS_Small.png" RibbonStyle="SmallWithText" 
+                                                <Border.Visibility>
+                                                    <Binding Path="TestsToCommitCount">
+                                                        <Binding.Converter>
+                                                            <dxmvvm:ObjectToObjectConverter DefaultTarget="Visible">
+                                                                <dxmvvm:MapItem Source="0" Target="Collapsed"/>
+                                                            </dxmvvm:ObjectToObjectConverter>
+                                                        </Binding.Converter>
+                                                    </Binding>
+                                                </Border.Visibility>
+                                                <TextBlock TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding TestsToCommitCount}" FontSize="9" Foreground="White"/>
+                                            </Border>
+                                        </Grid>
+                                    </DataTemplate>
+                                </dxb:BarButtonItem.GlyphTemplate>
+                            </dxb:BarButtonItem>
+                            <dxb:BarSubItem Content="Open Solution" Glyph="pack://application:,,,/DXVisualTestFixer.UI;component/Images/CSS_Small.png" RibbonStyle="SmallWithText" 
                                         ItemLinksSource="{Binding Solutions}">
-                            <dxb:BarSubItem.ItemTemplate>
-                                <DataTemplate>
-                                    <ContentControl>
-                                        <dxb:BarButtonItem Content="{Binding Version}" Command="{DXCommand Execute='OpenSolution()'}" Glyph="{Binding Image}" GlyphSize="Small"/>
-                                    </ContentControl>
-                                </DataTemplate>
-                            </dxb:BarSubItem.ItemTemplate>
-                        </dxb:BarSubItem>
-                        <dxb:BarSubItem Content="Open Folder" Glyph="pack://application:,,,/DevExpress.Images.v18.2;component/DevAV/Actions/OpenDoc_16x16.png" RibbonStyle="SmallWithText"
+                                <dxb:BarSubItem.ItemTemplate>
+                                    <DataTemplate>
+                                        <ContentControl>
+                                            <dxb:BarButtonItem Content="{Binding Version}" Command="{DXCommand Execute='OpenSolution()'}" Glyph="{Binding Image}" GlyphSize="Small"/>
+                                        </ContentControl>
+                                    </DataTemplate>
+                                </dxb:BarSubItem.ItemTemplate>
+                            </dxb:BarSubItem>
+                            <dxb:BarSubItem Content="Open Folder" Glyph="pack://application:,,,/DevExpress.Images.v18.2;component/DevAV/Actions/OpenDoc_16x16.png" RibbonStyle="SmallWithText"
                                         ItemLinksSource="{Binding Solutions}">
-                            <dxb:BarSubItem.ItemTemplate>
-                                <DataTemplate>
-                                    <ContentControl>
-                                        <dxb:BarButtonItem Content="{Binding Version}" Command="{DXCommand Execute='OpenFolder()'}"/>
-                                    </ContentControl>
-                                </DataTemplate>
-                            </dxb:BarSubItem.ItemTemplate>
-                        </dxb:BarSubItem>
-                    </dxr:RibbonPageGroup>
-                    <dxr:RibbonPageGroup Caption="Settings">
-                        <dxb:BarButtonItem
+                                <dxb:BarSubItem.ItemTemplate>
+                                    <DataTemplate>
+                                        <ContentControl>
+                                            <dxb:BarButtonItem Content="{Binding Version}" Command="{DXCommand Execute='OpenFolder()'}"/>
+                                        </ContentControl>
+                                    </DataTemplate>
+                                </dxb:BarSubItem.ItemTemplate>
+                            </dxb:BarSubItem>
+                        </dxr:RibbonPageGroup>
+                        <dxr:RibbonPageGroup Caption="Settings">
+                            <dxb:BarButtonItem
                             RibbonStyle="Large" 
                             GlyphSize="Large" 
                             Content="Config"
                             Command="{DXCommand Execute='ShowSettings()'}"
                             LargeGlyph="{dx:DXImageOffice2013 Image=Properties_32x32.png}"/>
-                        <dxb:BarCheckItem
+                            <dxb:BarCheckItem
                             RibbonStyle="Large" 
                             GlyphSize="Large" 
                             Content="Smart Grouping"
                             IsChecked="{DXBinding '@e(view).AllowPartialGrouping'}"
                             LargeGlyph="{dx:DXImageOffice2013 Image=Group_32x32.png}"
                             Hint="Hide groups with single child"/>
-                    </dxr:RibbonPageGroup>
-                </dxr:RibbonPage>
-                <dxr:RibbonPage Caption="Service">
-                    <dxr:RibbonPageGroup Caption="Service">
-                        <dxb:BarButtonItem RibbonStyle="Large" 
+                        </dxr:RibbonPageGroup>
+                        <dxr:RibbonPageGroup Caption="Tests Navigation" IsEnabled="{DXBinding 'Status == $viewModels:ProgramStatus.Idle'}">
+                            <dxb:BarButtonItem RibbonStyle="Large" 
+                                           Content="Move Up" 
+                                           LargeGlyph="{dx:DXImage Office2013/Arrows/MoveUp_32x32.png}" 
+                                           ItemClick="{DXEvent Handler='@e(view).MovePrevDataRow()'}"
+                                           Hint="Use Up Arrow"/>
+                            <dxb:BarButtonItem RibbonStyle="Large" 
+                                           Content="Move Down" 
+                                           LargeGlyph="{dx:DXImage Office2013/Arrows/MoveDown_32x32.png}"
+                                           ItemClick="{DXEvent Handler='@e(view).MoveNextDataRow()'}"
+                                           Hint="Use Down Arrow"/>
+                            <dxb:BarItemSeparator/>
+                            <dxb:BarButtonItem RibbonStyle="Large" 
+                                           Content="Mark And Move Down" 
+                                           LargeGlyph="{dx:DXImage Office2013/Actions/Add_32x32.png}"
+                                           IsEnabled="{DXBinding Expr='CurrentTest.Valid != $common:TestState.Error'}"
+                                           ItemClick="{DXEvent Handler='CommitCurrentTest(); @e(view).MoveNextDataRow()'}"
+                                           ShowKeyGesture="True"
+                                           KeyGesture="Ctrl+D"/>
+                            <dxb:BarButtonItem RibbonStyle="Large" 
+                                           Content="Clean And Move Down" 
+                                           LargeGlyph="{dx:DXImage Office2013/Actions/Cancel_32x32.png}"
+                                           IsEnabled="{DXBinding Expr='CurrentTest.Valid != $common:TestState.Error'}"
+                                           ItemClick="{DXEvent Handler='UncommitCurrentTest(); @e(view).MoveNextDataRow()'}"
+                                           ShowKeyGesture="True"
+                                           KeyGesture="Ctrl+B"/>
+                        </dxr:RibbonPageGroup>
+                    </dxr:RibbonPage>
+                    <dxr:RibbonPage Caption="Service">
+                        <dxr:RibbonPageGroup Caption="Service">
+                            <dxb:BarButtonItem RibbonStyle="Large" 
                                            GlyphSize="Large" 
                                            Content="Check Unused Files"
                                            Command="{DXCommand Execute='ShowRepositoryOptimizer()'}"
                                            LargeGlyph="{dx:DXImageOffice2013 Image=RemoveItem_32x32.png}">
-                        </dxb:BarButtonItem>
-                        <dxb:BarButtonItem RibbonStyle="Large" 
+                            </dxb:BarButtonItem>
+                            <dxb:BarButtonItem RibbonStyle="Large" 
                                            GlyphSize="Large" 
                                            Content="Analyze Timings"
                                            Command="{DXCommand Execute='ShowRepositoryAnalyzer()'}"
                                            LargeGlyph="{dx:DXImageOffice2013 Image=Chart_32x32.png}">
-                        </dxb:BarButtonItem>
-                        <dxb:BarButtonItem RibbonStyle="Large" 
+                            </dxb:BarButtonItem>
+                            <dxb:BarButtonItem RibbonStyle="Large" 
                                            GlyphSize="Large" 
                                            Content="View Resources"
                                            Command="{DXCommand Execute='ShowViewResources()'}"
                                            LargeGlyph="{dx:DXImageOffice2013 Image=Image_32x32.png}">
-                        </dxb:BarButtonItem>
-                    </dxr:RibbonPageGroup>
-                </dxr:RibbonPage>
-            </dxr:RibbonDefaultPageCategory>
-        </dxr:RibbonControl>
-        <dxdo:DockLayoutManager Grid.Row="1">
-            <dxdo:LayoutGroup AllowDrag="False">
-                <dxdo:LayoutGroup AllowDrag="False" Orientation="Vertical" ItemWidth="300" AllowSplitters="False">
-                    <dxdo:LayoutPanel ShowCaption="False" ItemHeight="Auto" Caption="Filters" Visibility="{Binding Tests, Converter={dx:NullableToVisibilityConverter}}">
-                        <controls:FilterPanelControl dxfui:FilterElement.Context="{Binding FilteringContext, ElementName=PART_GridTests}"
+                            </dxb:BarButtonItem>
+                        </dxr:RibbonPageGroup>
+                    </dxr:RibbonPage>
+                </dxr:RibbonDefaultPageCategory>
+            </dxr:RibbonControl>
+            <dxdo:DockLayoutManager Grid.Row="1">
+                <dxdo:LayoutGroup AllowDrag="False">
+                    <dxdo:LayoutGroup AllowDrag="False" Orientation="Vertical" ItemWidth="300" AllowSplitters="False">
+                        <dxdo:LayoutPanel ShowCaption="False" ItemHeight="Auto" Caption="Filters" Visibility="{Binding Tests, Converter={dx:NullableToVisibilityConverter}}">
+                            <controls:FilterPanelControl dxfui:FilterElement.Context="{Binding FilteringContext, ElementName=PART_GridTests}"
                                                      HasFixedTests="{Binding Tests, Converter={converters:HasFixedTestsConverter}}"/>
-                    </dxdo:LayoutPanel>
-                    <dxdo:LayoutPanel ShowCaption="False" ItemHeight="*">
-                        <dxg:GridControl x:Name="PART_GridTests" ItemsSource="{Binding Tests}" CurrentItem="{Binding CurrentTest, Mode=TwoWay}" AutoExpandAllGroups="True" ShowBorder="False" 
+                        </dxdo:LayoutPanel>
+                        <dxdo:LayoutPanel ShowCaption="False" ItemHeight="*">
+                            <dxg:GridControl x:Name="PART_GridTests" ItemsSource="{Binding Tests}" CurrentItem="{Binding CurrentTest, Mode=TwoWay}" AutoExpandAllGroups="True" ShowBorder="False" 
                                          FixedFilter="{Binding CurrentFilter}" AllowLiveDataShaping="True"
                                          ShowAllTableValuesInFilterPopup="True" FilterString="[$ ]([Valid])">
-                            <dxmvvm:Interaction.Behaviors>
-                                <behaviors:GridControlClearFilterBehavior/>
-                            </dxmvvm:Interaction.Behaviors>
-                            <dxg:GridColumn FieldName="Version" GroupIndex="0" MergeWithPreviousGroup="False" Header="Version" Visible="False" AllowSearchPanel="True"/>
-                            <dxg:GridColumn FieldName="TeamName" GroupIndex="1" MergeWithPreviousGroup="True" Header="Team" Visible="False" AllowSearchPanel="True"/>
-                            <dxg:GridColumn FieldName="TestInfo.Name" GroupIndex="2" MergeWithPreviousGroup="False" Header="Name" Visible="False" AllowSearchPanel="True"/>
-                            <dxg:GridColumn FieldName="CommitChange" Header="Commit" Width="29">
-                                <dxg:GridColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <dxe:CheckEdit HorizontalAlignment="Center" IsChecked="{Binding Path=RowData.Row.CommitChange, UpdateSourceTrigger=PropertyChanged}" EditMode="InplaceActive">
-                                            <dxe:CheckEdit.IsEnabled>
-                                                <Binding Path="RowData.Row.Valid">
-                                                    <Binding.Converter>
-                                                        <dxmvvm:ObjectToObjectConverter DefaultTarget="True">
-                                                            <dxmvvm:MapItem Source="Error" Target="False"/>
-                                                        </dxmvvm:ObjectToObjectConverter>
-                                                    </Binding.Converter>
-                                                </Binding>
-                                            </dxe:CheckEdit.IsEnabled>
-                                        </dxe:CheckEdit>
-                                    </DataTemplate>
-                                </dxg:GridColumn.CellTemplate>
-                            </dxg:GridColumn>
-                            <dxg:GridColumn FieldName="Theme" Width="*" Header="Theme" AllowEditing="False">
-                                <dxg:GridColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <DataTemplate.Resources>
-                                            <Style TargetType="{x:Type Border}">
-                                                <Setter Property="Padding" Value="3"/>
-                                                <Setter Property="BorderThickness" Value="0"/>
-                                                <Setter Property="CornerRadius" Value="3"/>
-                                                <Setter Property="Margin" Value="2,0,0,0"/>
-                                                <Setter Property="VerticalAlignment" Value="Center"/>
-                                            </Style>
-                                        </DataTemplate.Resources>
-                                        <Grid HorizontalAlignment="Left" ToolTip="{Binding Path=RowData.Row.ProblemName, StringFormat={}{0}}">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="Auto"/>
-                                            </Grid.ColumnDefinitions>
-                                            <dxe:TextEdit x:Name="PART_Editor"/>
-                                            <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                                <Border Background="LightGray" Visibility="{Binding Path=RowData.Row.Optimized, Converter={dx:BooleanToVisibilityConverter}}">
-                                                    <TextBlock Text="Optimized" Foreground="Black" FontSize="8"/>
-                                                </Border>
-                                                <Border Background="Gray">
-                                                    <Border.Visibility>
-                                                        <Binding Path="RowData.Row.Dpi">
-                                                            <Binding.Converter>
-                                                                <dxmvvm:ObjectToObjectConverter DefaultTarget="Visible">
-                                                                    <dxmvvm:MapItem Source="96" Target="Collapsed"/>
-                                                                    <dxmvvm:MapItem Source="0" Target="Collapsed"/>
-                                                                </dxmvvm:ObjectToObjectConverter>
-                                                            </Binding.Converter>
-                                                        </Binding>
-                                                    </Border.Visibility>
-                                                    <TextBlock Text="{Binding RowData.Row.Dpi}" Foreground="White" FontSize="8"/>
-                                                </Border>
-                                                <Border Background="Green" Visibility="{Binding Path=RowData.Row.ImageEquals, Converter={dxmvvm:BooleanToVisibilityConverter}}">
-                                                    <TextBlock Text="IMG EQ" Foreground="White" FontSize="8"/>
-                                                </Border>
-                                            </StackPanel>
-                                        </Grid>
-                                    </DataTemplate>
-                                </dxg:GridColumn.CellTemplate>
-                            </dxg:GridColumn>
-                            <dxg:GridColumn FieldName="Valid" Visible="False">
-                                <dxg:GridColumn.PredefinedFilters>
-                                    <dxfui:PredefinedFilterCollection>
-                                        <dxfui:PredefinedFilter Name=" " Filter="?p != 'Fixed'"/>
-                                    </dxfui:PredefinedFilterCollection>
-                                </dxg:GridColumn.PredefinedFilters>
-                            </dxg:GridColumn>
-                            <dxg:GridColumn FieldName="ProblemName" Visible="False"/>
-                            <dxg:GridControl.TotalSummary>
-                                <dxg:GridSummaryItem SummaryType="Count" Alignment="Left"/>
-                            </dxg:GridControl.TotalSummary>
-                            <dxg:GridControl.View>
-                                <controls:TableViewAdvNavigation x:Name="view" AllowEditing="True" ShowVerticalLines="False" ShowIndicator="False" ShowHorizontalLines="False" ShowColumnHeaders="False" 
+                                <dxmvvm:Interaction.Behaviors>
+                                    <behaviors:GridControlClearFilterBehavior/>
+                                </dxmvvm:Interaction.Behaviors>
+                                <dxg:GridColumn FieldName="Version" GroupIndex="0" MergeWithPreviousGroup="False" Header="Version" Visible="False" AllowSearchPanel="True"/>
+                                <dxg:GridColumn FieldName="TeamName" GroupIndex="1" MergeWithPreviousGroup="True" Header="Team" Visible="False" AllowSearchPanel="True"/>
+                                <dxg:GridColumn FieldName="TestInfo.Name" GroupIndex="2" MergeWithPreviousGroup="False" Header="Name" Visible="False" AllowSearchPanel="True"/>
+                                <dxg:GridColumn FieldName="CommitChange" Header="Commit" Width="29">
+                                    <dxg:GridColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <dxe:CheckEdit HorizontalAlignment="Center" IsChecked="{Binding Path=RowData.Row.CommitChange, UpdateSourceTrigger=PropertyChanged}" EditMode="InplaceActive">
+                                                <dxe:CheckEdit.IsEnabled>
+                                                    <Binding Path="RowData.Row.Valid">
+                                                        <Binding.Converter>
+                                                            <dxmvvm:ObjectToObjectConverter DefaultTarget="True">
+                                                                <dxmvvm:MapItem Source="Error" Target="False"/>
+                                                            </dxmvvm:ObjectToObjectConverter>
+                                                        </Binding.Converter>
+                                                    </Binding>
+                                                </dxe:CheckEdit.IsEnabled>
+                                            </dxe:CheckEdit>
+                                        </DataTemplate>
+                                    </dxg:GridColumn.CellTemplate>
+                                </dxg:GridColumn>
+                                <dxg:GridColumn FieldName="Theme" Width="*" Header="Theme" AllowEditing="False">
+                                    <dxg:GridColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <DataTemplate.Resources>
+                                                <Style TargetType="{x:Type Border}">
+                                                    <Setter Property="Padding" Value="3"/>
+                                                    <Setter Property="BorderThickness" Value="0"/>
+                                                    <Setter Property="CornerRadius" Value="3"/>
+                                                    <Setter Property="Margin" Value="2,0,0,0"/>
+                                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                                </Style>
+                                            </DataTemplate.Resources>
+                                            <Grid HorizontalAlignment="Left" ToolTip="{Binding Path=RowData.Row.ProblemName, StringFormat={}{0}}">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <dxe:TextEdit x:Name="PART_Editor"/>
+                                                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                                    <Border Background="LightGray" Visibility="{Binding Path=RowData.Row.Optimized, Converter={dx:BooleanToVisibilityConverter}}">
+                                                        <TextBlock Text="Optimized" Foreground="Black" FontSize="8"/>
+                                                    </Border>
+                                                    <Border Background="Gray">
+                                                        <Border.Visibility>
+                                                            <Binding Path="RowData.Row.Dpi">
+                                                                <Binding.Converter>
+                                                                    <dxmvvm:ObjectToObjectConverter DefaultTarget="Visible">
+                                                                        <dxmvvm:MapItem Source="96" Target="Collapsed"/>
+                                                                        <dxmvvm:MapItem Source="0" Target="Collapsed"/>
+                                                                    </dxmvvm:ObjectToObjectConverter>
+                                                                </Binding.Converter>
+                                                            </Binding>
+                                                        </Border.Visibility>
+                                                        <TextBlock Text="{Binding RowData.Row.Dpi}" Foreground="White" FontSize="8"/>
+                                                    </Border>
+                                                    <Border Background="Green" Visibility="{Binding Path=RowData.Row.ImageEquals, Converter={dxmvvm:BooleanToVisibilityConverter}}">
+                                                        <TextBlock Text="IMG EQ" Foreground="White" FontSize="8"/>
+                                                    </Border>
+                                                </StackPanel>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </dxg:GridColumn.CellTemplate>
+                                </dxg:GridColumn>
+                                <dxg:GridColumn FieldName="Valid" Visible="False">
+                                    <dxg:GridColumn.PredefinedFilters>
+                                        <dxfui:PredefinedFilterCollection>
+                                            <dxfui:PredefinedFilter Name=" " Filter="?p != 'Fixed'"/>
+                                        </dxfui:PredefinedFilterCollection>
+                                    </dxg:GridColumn.PredefinedFilters>
+                                </dxg:GridColumn>
+                                <dxg:GridColumn FieldName="ProblemName" Visible="False"/>
+                                <dxg:GridControl.TotalSummary>
+                                    <dxg:GridSummaryItem SummaryType="Count" Alignment="Left"/>
+                                </dxg:GridControl.TotalSummary>
+                                <dxg:GridControl.View>
+                                    <controls:TableViewAdvNavigation x:Name="view" AllowEditing="True" ShowVerticalLines="False" ShowIndicator="False" ShowHorizontalLines="False" ShowColumnHeaders="False" 
                                                                  ShowGroupPanel="False" ShowFixedTotalSummary="True" RowDoubleClick="{DXEvent Handler='@s.ProcessDoubleClick(@args)'}"
                                                                  PreviewKeyDown="{DXEvent Handler='@s.ProcessKeyDown(@args)'}" GroupSummaryDisplayMode="Default"
                                                                  ShowNoRecordsBlock="{DXBinding 'Status == $viewModels:ProgramStatus.Idle'}" SearchPanelHighlightResults="False"
                                                                  SearchPanelHorizontalAlignment="Stretch" GroupRowCheckBoxFieldName="CommitChange" ShowFilterPanelMode="Never">
-                                    <dxb:BarManager.DXContextMenu>
-                                        <dxb:PopupMenu>
-                                            <dxb:BarButtonItem Content="Commit All In Viewport" Glyph="{dx:DXImage Image=SelectAll_16x16.png}" Command="{DXCommand Execute='@e(view).CommitAllInViewport()'}"/>
-                                            <dxb:BarButtonItem Content="Clear Commits In Viewport" Glyph="{dx:DXImageOffice2013 Image=Clear_16x16.png}" Command="{DXCommand Execute='@e(view).ClearCommitsInViewport()'}"/>
-                                            <dxb:BarButtonItem Content="Clear All Commits" Glyph="{dx:DXImageOffice2013 Image=Clear_16x16.png}" Command="{DXCommand Execute='ClearCommits()'}"/>
-                                        </dxb:PopupMenu>
-                                    </dxb:BarManager.DXContextMenu>
-                                    <dxmvvm:Interaction.Behaviors>
-                                        <dxmvvm:EventToCommand EventName="MoveNext" Command="{DXCommand Execute='@s.AssociatedObject.MoveNextDataRow()'}" SourceObject="{Binding}"/>
-                                        <dxmvvm:EventToCommand EventName="MovePrev" Command="{DXCommand Execute='@s.AssociatedObject.MovePrevDataRow()'}" SourceObject="{Binding}"/>
-                                    </dxmvvm:Interaction.Behaviors>
-                                    <controls:TableViewAdvNavigation.FormatConditions>
-                                        <dxg:FormatCondition FieldName="CommitChange" ValueRule="Equal" Value1="True" PredefinedFormatName="YellowFillWithDarkYellowText" ApplyToRow="True"/>
-                                        <dxg:FormatCondition FieldName="Valid" ValueRule="Equal" Value1="{x:Static common:TestState.Invalid}" PredefinedFormatName="LightRedFillWithDarkRedText" ApplyToRow="True"/>
-                                        <dxg:FormatCondition FieldName="Valid" ValueRule="Equal" Value1="{x:Static common:TestState.Fixed}" PredefinedFormatName="GreenFillWithDarkGreenText" ApplyToRow="True"/>
-                                    </controls:TableViewAdvNavigation.FormatConditions>
-                                </controls:TableViewAdvNavigation>
-                            </dxg:GridControl.View>
-                        </dxg:GridControl>
-                    </dxdo:LayoutPanel>
+                                        <dxb:BarManager.DXContextMenu>
+                                            <dxb:PopupMenu>
+                                                <dxb:BarButtonItem Content="Commit All In Viewport" Glyph="{dx:DXImage Image=SelectAll_16x16.png}" Command="{DXCommand Execute='@e(view).CommitAllInViewport()'}"/>
+                                                <dxb:BarButtonItem Content="Clear Commits In Viewport" Glyph="{dx:DXImageOffice2013 Image=Clear_16x16.png}" Command="{DXCommand Execute='@e(view).ClearCommitsInViewport()'}"/>
+                                                <dxb:BarButtonItem Content="Clear All Commits" Glyph="{dx:DXImageOffice2013 Image=Clear_16x16.png}" Command="{DXCommand Execute='ClearCommits()'}"/>
+                                            </dxb:PopupMenu>
+                                        </dxb:BarManager.DXContextMenu>
+                                        <dxmvvm:Interaction.Behaviors>
+                                            <dxmvvm:EventToCommand EventName="MoveNext" Command="{DXCommand Execute='@s.AssociatedObject.MoveNextDataRow()'}" SourceObject="{Binding}"/>
+                                            <dxmvvm:EventToCommand EventName="MovePrev" Command="{DXCommand Execute='@s.AssociatedObject.MovePrevDataRow()'}" SourceObject="{Binding}"/>
+                                        </dxmvvm:Interaction.Behaviors>
+                                        <controls:TableViewAdvNavigation.FormatConditions>
+                                            <dxg:FormatCondition FieldName="CommitChange" ValueRule="Equal" Value1="True" PredefinedFormatName="YellowFillWithDarkYellowText" ApplyToRow="True"/>
+                                            <dxg:FormatCondition FieldName="Valid" ValueRule="Equal" Value1="{x:Static common:TestState.Invalid}" PredefinedFormatName="LightRedFillWithDarkRedText" ApplyToRow="True"/>
+                                            <dxg:FormatCondition FieldName="Valid" ValueRule="Equal" Value1="{x:Static common:TestState.Fixed}" PredefinedFormatName="GreenFillWithDarkGreenText" ApplyToRow="True"/>
+                                        </controls:TableViewAdvNavigation.FormatConditions>
+                                    </controls:TableViewAdvNavigation>
+                                </dxg:GridControl.View>
+                            </dxg:GridControl>
+                        </dxdo:LayoutPanel>
+                    </dxdo:LayoutGroup>
+                    <dxdo:LayoutGroup AllowDrag="False" Orientation="Vertical" AllowSplitters="False">
+                        <dxdo:LayoutPanel ShowCaption="False" dxb:MergingProperties.ElementMergingBehavior="{Binding CurrentTest, Converter={StaticResource ribbonMergeConverter}}"
+                                          Visibility="{Binding CurrentTest, Converter={dx:NullableToVisibilityConverter}}">
+                            <controls:TestInfoControl/>
+                        </dxdo:LayoutPanel>
+                        <dxdo:LayoutPanel ShowCaption="False" Visibility="{Binding CurrentTest, Converter={dx:NullableToVisibilityConverter Invert=True}}">
+                            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="Select Test" Opacity="0.3" FontSize="24"/>
+                        </dxdo:LayoutPanel>
+                    </dxdo:LayoutGroup>
                 </dxdo:LayoutGroup>
-                <dxdo:LayoutGroup AllowDrag="False" Orientation="Vertical" AllowSplitters="False" Visibility="{Binding CurrentTest, Converter={dx:NullableToVisibilityConverter}}">
-                    <dxdo:LayoutPanel ShowCaption="False" dxb:MergingProperties.ElementMergingBehavior="{Binding CurrentTest, Converter={StaticResource ribbonMergeConverter}}">
-                        <controls:TestInfoControl Visibility="{Binding CurrentTest, Converter={dx:NullableToVisibilityConverter}}"/>
-                    </dxdo:LayoutPanel>
-                    <dxdo:LayoutPanel ShowBorder="False" ShowCaption="False" ItemWidth="Auto" ItemHeight="Auto">
-                        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                            <Button Content="Prev" Click="{DXEvent Handler='@e(view).MovePrevDataRow()'}" Width="100"/>
-                            <Button Content="Next" Click="{DXEvent Handler='@e(view).MoveNextDataRow()'}" Width="100"/>
-                            <Button Content="Valid And Next" Click="{DXEvent Handler='CommitCurrentTest(); @e(view).MoveNextDataRow()'}" IsEnabled="{DXBinding Expr='CurrentTest.Valid == $common:TestState.Valid'}"/>
-                            <Button Content="Commit New Test" Click="{DXEvent Handler='CommitCurrentTest(); @e(view).MoveNextDataRow()'}" IsEnabled="{DXBinding Expr='CurrentTest.Valid == $common:TestState.Invalid'}"
-                                Visibility="{DXBinding Expr='CurrentTest.Valid == $common:TestState.Invalid', Converter={dxmvvm:BooleanToVisibilityConverter}}"/>
-                            <Button Content="Wrong And Next" Click="{DXEvent Handler='UncommitCurrentTest(); @e(view).MoveNextDataRow()'}" IsEnabled="{DXBinding Expr='CurrentTest.Valid != $common:TestState.Fixed'}"/>
-                        </StackPanel>
-                    </dxdo:LayoutPanel>
-                </dxdo:LayoutGroup>
-            </dxdo:LayoutGroup>
-        </dxdo:DockLayoutManager>
-        <dxr:RibbonStatusBarControl Grid.Row="2" IsSizeGripVisible="True">
+            </dxdo:DockLayoutManager>
+        </Grid>
+        <Grid x:Name="loadingControl" IsHitTestVisible="True" Background="Transparent" Visibility="{Binding Status, Converter={StaticResource StatusToVisibilityConverter}}">
+            <dx:WaitIndicator DeferedVisibility="True"/>
+        </Grid>
+        <dxr:RibbonStatusBarControl Grid.Row="1" IsSizeGripVisible="True">
             <dxr:RibbonStatusBarControl.LeftItems>
                 <dxb:BarStaticItem Content="{Binding Status}" AutoSizeMode="Content"/>
                 <dxb:BarEditItem EditWidth="200" EditValue="{Binding Path=LoadingProgressController.Value, Mode=OneWay}" IsVisible="{Binding Path=LoadingProgressController.IsEnabled}">
@@ -454,8 +484,5 @@
                 </dxb:BarStaticItem>
             </dxr:RibbonStatusBarControl.LeftItems>
         </dxr:RibbonStatusBarControl>
-        <Grid x:Name="loadingControl" IsHitTestVisible="True" Grid.RowSpan="3" Background="Transparent" Visibility="{Binding Status, Converter={StaticResource StatusToVisibilityConverter}}">
-            <dx:WaitIndicator DeferedVisibility="True"/>
-        </Grid>
     </Grid>
 </UserControl>
