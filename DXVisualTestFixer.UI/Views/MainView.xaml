@@ -273,14 +273,14 @@
                                            Hint="Use Down Arrow"/>
                             <dxb:BarItemSeparator/>
                             <dxb:BarButtonItem RibbonStyle="Large" 
-                                           Content="Mark And Move Down" 
+                                           Content="Stage And Move Down" 
                                            LargeGlyph="{dx:DXImage Office2013/Actions/Add_32x32.png}"
                                            IsEnabled="{DXBinding Expr='CurrentTest.Valid != $common:TestState.Error'}"
                                            ItemClick="{DXEvent Handler='CommitCurrentTest(); @e(view).MoveNextDataRow()'}"
                                            ShowKeyGesture="True"
                                            KeyGesture="Ctrl+D"/>
                             <dxb:BarButtonItem RibbonStyle="Large" 
-                                           Content="Clean And Move Down" 
+                                           Content="Unstage And Move Down" 
                                            LargeGlyph="{dx:DXImage Office2013/Actions/Cancel_32x32.png}"
                                            IsEnabled="{DXBinding Expr='CurrentTest.Valid != $common:TestState.Error'}"
                                            ItemClick="{DXEvent Handler='UncommitCurrentTest(); @e(view).MoveNextDataRow()'}"

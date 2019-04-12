@@ -79,6 +79,8 @@ namespace DXVisualTestFixer.UI.ViewModels {
                     if(!usedVersions.Contains(team.Version))
                         continue;
                     foreach(string teamPath in team.TeamInfos.Select(i => testsService.GetResourcePath(repository, i.TestResourcesPath)).Distinct()) {
+                        if(!Directory.Exists(teamPath))
+                            continue;
                         foreach(string file in Directory.EnumerateFiles(teamPath, "*", SearchOption.AllDirectories)) {
                             if(!usedFiles.Contains(file.ToLower()))
                                 result.Add(new RepositoryFileModel(file, team.Version));

@@ -61,10 +61,12 @@ namespace DXVisualTestFixer.UI.ViewModels {
         List<RepositoryFileModel> GetActualFiles(List<string> usedVersions, HashSet<string> usedFiles, Dictionary<Repository, List<Team>> teams) {
             List<RepositoryFileModel> result = new List<RepositoryFileModel>();
             foreach(var repository in teams.Keys) {
-                foreach(Team team in teams[repository]) {
+                foreach(Team team in teams[repository] ?? Enumerable.Empty<Team>()) {
                     if(!usedVersions.Contains(team.Version))
                         continue;
                     foreach(string teamPath in team.TeamInfos.Select(i => testsService.GetResourcePath(repository, i.TestResourcesPath)).Distinct()) {
+                        if(!Directory.Exists(teamPath))
+                            continue;
                         foreach(string file in Directory.EnumerateFiles(teamPath, "*", SearchOption.AllDirectories)) {
                             if(usedFiles.Contains(file.ToLower()))
                                 result.Add(new RepositoryFileModel(file, team.Version));
