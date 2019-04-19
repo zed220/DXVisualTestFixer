@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -42,8 +43,7 @@ namespace DXVisualTestFixer.Core {
             if(realUrl == null || !realUrl.Contains("ViewBuildReport.aspx")) {
                 throw new NotSupportedException("Contact Petr Zinovyev, please.");
             }
-            XmlDocument myXmlDocument = new XmlDocument();
-            myXmlDocument.Load(realUrl.Replace("ViewBuildReport.aspx", "XmlBuildLog.xml"));
+            var myXmlDocument = LoadFromUrl(realUrl);
             List<Task<List<CorpDirTestInfo>>> failedTestsTasks = new List<Task<List<CorpDirTestInfo>>>();
             if(!IsSuccessBuild(myXmlDocument)) {
                 foreach(XmlElement testCaseXml in FindFailedTests(myXmlDocument)) {
@@ -68,8 +68,24 @@ namespace DXVisualTestFixer.Core {
             }
             return new CorpDirTestInfoContainer(failedTests, FindUsedFiles(myXmlDocument).ToList(), FindElapsedTimes(myXmlDocument), FindTeams(taskInfo.Repository.Version, myXmlDocument), FindTimings(myXmlDocument));
         }
+        static XmlDocument LoadFromUrl(string realUrl) {
+            XmlDocument myXmlDocument = new XmlDocument();
+            realUrl = realUrl.Replace("ViewBuildReport.aspx", "XmlBuildLog.xml");
+            int i = 0;
+            while(i++ < 10) {
+                try {
+                    myXmlDocument.Load(realUrl);
+                    return myXmlDocument;
+                }
+                catch {
+                    if(i == 10)
+                        throw;
+                }
+            }
+            throw new NotSupportedException();
+        }
 
-        private static bool IsSuccessBuild(XmlDocument myXmlDocument) {
+        static bool IsSuccessBuild(XmlDocument myXmlDocument) {
             XmlNode buildNode = FindBuildNode(myXmlDocument);
             if(buildNode == null)
                 return false;

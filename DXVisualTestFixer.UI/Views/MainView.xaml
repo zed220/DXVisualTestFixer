@@ -229,7 +229,15 @@
                                 <dxb:BarSubItem.ItemTemplate>
                                     <DataTemplate>
                                         <ContentControl>
-                                            <dxb:BarButtonItem Content="{Binding Version}" Command="{DXCommand Execute='OpenSolution()'}" Glyph="{Binding Image}" GlyphSize="Small"/>
+                                            <dxb:BarSubItem Content="{Binding Version}" ItemLinksSource="{Binding OpenSolutionModels}" IsEnabled="{Binding IsEnabled}">
+                                                <dxb:BarSubItem.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <ContentControl>
+                                                            <dxb:BarButtonItem Content="{Binding ProgramName}" Command="{DXCommand Execute='Open()'}" Glyph="{Binding ProgramImage}" GlyphSize="Small"/>
+                                                        </ContentControl>
+                                                    </DataTemplate>
+                                                </dxb:BarSubItem.ItemTemplate>
+                                            </dxb:BarSubItem>
                                         </ContentControl>
                                     </DataTemplate>
                                 </dxb:BarSubItem.ItemTemplate>
