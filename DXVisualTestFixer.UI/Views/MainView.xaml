@@ -185,15 +185,14 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <dxr:RibbonControl RibbonStyle="Office2010" ToolbarShowMode="ShowAbove" AllowCustomization="False" MinimizationButtonVisibility="Collapsed" RibbonHeaderVisibility="Visible" 
-                           ToolbarShowCustomizationButton="False" ShowApplicationButton="False"
-                           AsyncMergingEnabled="True">
+            <dxr:RibbonControl x:Name="PART_Ribbon" RibbonStyle="Office2019" ToolbarShowMode="ShowAbove" AllowCustomization="False" MinimizationButtonVisibility="Collapsed" RibbonHeaderVisibility="Visible" 
+                           ToolbarShowCustomizationButton="False" ShowApplicationButton="False" AsyncMergingEnabled="True" PageCategoryAlignment="Right">
                 <dxr:RibbonDefaultPageCategory>
-                    <dxr:RibbonPage Caption="Main">
+                    <dxr:RibbonPage Caption="Commit And Update">
                         <dxr:RibbonPageGroup Caption="Work">
                             <dxb:BarButtonItem RibbonStyle="Large" 
                                            GlyphSize="Large" 
-                                           Content="Refresh"
+                                           Content="Update Tests"
                                            KeyGesture="F5" dxb:BarManager.KeyGestureWorkingMode="AllKeyGesture"
                                            Command="{DXCommand Execute='RefreshTestList()'}"
                                            LargeGlyph="{dx:DXImageOffice2013 Image=Refresh_32x32.png}">
@@ -201,7 +200,7 @@
                             <dxb:BarButtonItem
                             RibbonStyle="Large" 
                             GlyphSize="Large" 
-                            Content="Apply Changes"
+                            Content="Commit Tests"
                             Command="{DXCommand Execute='ApplyChanges()'}"
                             LargeGlyph="{dx:DXImageOffice2013 Image=Apply_32x32.png}"
                             KeyGesture="Ctrl+S"
@@ -271,57 +270,62 @@
                             LargeGlyph="{dx:DXImageOffice2013 Image=Group_32x32.png}"
                             Hint="Hide groups with single child"/>
                         </dxr:RibbonPageGroup>
-                        <dxr:RibbonPageGroup Caption="Tests Navigation" IsEnabled="{DXBinding 'Status == $viewModels:ProgramStatus.Idle'}">
-                            <dxb:BarButtonItem RibbonStyle="Large" 
-                                           Content="Move Up" 
-                                           LargeGlyph="{dx:DXImage Office2013/Arrows/MoveUp_32x32.png}" 
-                                           ItemClick="{DXEvent Handler='@e(view).MovePrevDataRow()'}"
-                                           Hint="Use Up Arrow"/>
-                            <dxb:BarButtonItem RibbonStyle="Large" 
-                                           Content="Move Down" 
-                                           LargeGlyph="{dx:DXImage Office2013/Arrows/MoveDown_32x32.png}"
-                                           ItemClick="{DXEvent Handler='@e(view).MoveNextDataRow()'}"
-                                           Hint="Use Down Arrow"/>
-                            <dxb:BarItemSeparator/>
-                            <dxb:BarButtonItem RibbonStyle="Large" 
-                                           Content="Stage And Move Down" 
-                                           LargeGlyph="{dx:DXImage Office2013/Actions/Add_32x32.png}"
-                                           IsEnabled="{DXBinding Expr='CurrentTest.Valid != $common:TestState.Error'}"
-                                           ItemClick="{DXEvent Handler='CommitCurrentTest(); @e(view).MoveNextDataRow()'}"
-                                           ShowKeyGesture="True"
-                                           KeyGesture="Ctrl+D"/>
-                            <dxb:BarButtonItem RibbonStyle="Large" 
-                                           Content="Unstage And Move Down" 
-                                           LargeGlyph="{dx:DXImage Office2013/Actions/Cancel_32x32.png}"
-                                           IsEnabled="{DXBinding Expr='CurrentTest.Valid != $common:TestState.Error'}"
-                                           ItemClick="{DXEvent Handler='UncommitCurrentTest(); @e(view).MoveNextDataRow()'}"
-                                           ShowKeyGesture="True"
-                                           KeyGesture="Ctrl+B"/>
-                        </dxr:RibbonPageGroup>
                     </dxr:RibbonPage>
                     <dxr:RibbonPage Caption="Service">
                         <dxr:RibbonPageGroup Caption="Service">
                             <dxb:BarButtonItem RibbonStyle="Large" 
-                                           GlyphSize="Large" 
-                                           Content="Check Unused Files"
-                                           Command="{DXCommand Execute='ShowRepositoryOptimizer()'}"
-                                           LargeGlyph="{dx:DXImageOffice2013 Image=RemoveItem_32x32.png}">
+                                        GlyphSize="Large" 
+                                        Content="Check Unused Files"
+                                        Command="{DXCommand Execute='ShowRepositoryOptimizer()'}"
+                                        LargeGlyph="{dx:DXImageOffice2013 Image=RemoveItem_32x32.png}">
                             </dxb:BarButtonItem>
                             <dxb:BarButtonItem RibbonStyle="Large" 
-                                           GlyphSize="Large" 
-                                           Content="Analyze Timings"
-                                           Command="{DXCommand Execute='ShowRepositoryAnalyzer()'}"
-                                           LargeGlyph="{dx:DXImageOffice2013 Image=Chart_32x32.png}">
+                                        GlyphSize="Large" 
+                                        Content="Analyze Timings"
+                                        Command="{DXCommand Execute='ShowRepositoryAnalyzer()'}"
+                                        LargeGlyph="{dx:DXImageOffice2013 Image=Chart_32x32.png}">
                             </dxb:BarButtonItem>
                             <dxb:BarButtonItem RibbonStyle="Large" 
-                                           GlyphSize="Large" 
-                                           Content="View Resources"
-                                           Command="{DXCommand Execute='ShowViewResources()'}"
-                                           LargeGlyph="{dx:DXImageOffice2013 Image=Image_32x32.png}">
+                                        GlyphSize="Large" 
+                                        Content="View Resources"
+                                        Command="{DXCommand Execute='ShowViewResources()'}"
+                                        LargeGlyph="{dx:DXImageOffice2013 Image=Image_32x32.png}">
                             </dxb:BarButtonItem>
                         </dxr:RibbonPageGroup>
                     </dxr:RibbonPage>
                 </dxr:RibbonDefaultPageCategory>
+                <dxr:RibbonPageCategory Caption="Working With Test" IsEnabled="{DXBinding 'Status == $viewModels:ProgramStatus.Idle'}">
+                    <dxr:RibbonPage Caption="Navigation And View">
+                        <dxr:RibbonPageGroup Caption="Tests Navigation">
+                            <dxb:BarButtonItem RibbonStyle="Large" 
+                                               Content="Stage And Move Down"
+                                               dxb:ImageColorizer.Color="Green"
+                                               LargeGlyph="{dx:DXImage Office2013/Actions/Add_32x32.png}"
+                                               IsEnabled="{DXBinding Expr='CurrentTest.Valid != $common:TestState.Error'}"
+                                               ItemClick="{DXEvent Handler='CommitCurrentTest(); @e(view).MoveNextDataRow()'}"
+                                               ShowKeyGesture="True"
+                                               KeyGesture="Ctrl+D"/>
+                            <dxb:BarButtonItem RibbonStyle="Large" 
+                                               Content="Unstage And Move Down" 
+                                               LargeGlyph="{dx:DXImage Office2013/Actions/Cancel_32x32.png}"
+                                               IsEnabled="{DXBinding Expr='CurrentTest.Valid != $common:TestState.Error'}"
+                                               ItemClick="{DXEvent Handler='UncommitCurrentTest(); @e(view).MoveNextDataRow()'}"
+                                               ShowKeyGesture="True"
+                                               KeyGesture="Ctrl+B"/>
+                            <dxb:BarItemSeparator/>
+                            <dxb:BarButtonItem RibbonStyle="Large" 
+                                               Content="Move Up" 
+                                               LargeGlyph="{dx:DXImage Office2013/Arrows/MoveUp_32x32.png}" 
+                                               ItemClick="{DXEvent Handler='@e(view).MovePrevDataRow()'}"
+                                               Hint="Use Up Arrow"/>
+                            <dxb:BarButtonItem RibbonStyle="Large" 
+                                               Content="Move Down" 
+                                               LargeGlyph="{dx:DXImage Office2013/Arrows/MoveDown_32x32.png}"
+                                               ItemClick="{DXEvent Handler='@e(view).MoveNextDataRow()'}"
+                                               Hint="Use Down Arrow"/>
+                        </dxr:RibbonPageGroup>
+                    </dxr:RibbonPage>
+                </dxr:RibbonPageCategory>
             </dxr:RibbonControl>
             <dxdo:DockLayoutManager Grid.Row="1">
                 <dxdo:LayoutGroup AllowDrag="False">

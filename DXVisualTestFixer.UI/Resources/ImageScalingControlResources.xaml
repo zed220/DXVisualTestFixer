@@ -74,8 +74,8 @@
                 </DataTemplate.Resources>
                 <Grid DataContext="{Binding Path=(controls:ImageScalingControl.ImageScalingControl), RelativeSource={RelativeSource Self}}">
                     <dxr:RibbonControl>
-                        <dxr:RibbonDefaultPageCategory>
-                            <dxr:RibbonPage Caption="Main">
+                        <dxr:RibbonPageCategory Caption="Working With Test">
+                            <dxr:RibbonPage Caption="Navigation And View">
                                 <dxr:RibbonPageGroup Caption="Current View">
                                     <dxb:BarItemSelector SelectedItem="{Binding MergedViewType, Mode=TwoWay}">
                                         <dxb:BarItemSelector.ItemLinksSource>
@@ -95,7 +95,7 @@
                                     </dxb:BarItemSelector>
                                 </dxr:RibbonPageGroup>
                             </dxr:RibbonPage>
-                        </dxr:RibbonDefaultPageCategory>
+                        </dxr:RibbonPageCategory>
                     </dxr:RibbonControl>
                     <dxdo:LayoutPanel ShowCaption="True" ShowCloseButton="False" ShowPinButton="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False">
                         <dxdo:LayoutPanel.Caption>
@@ -212,8 +212,8 @@
                 <dxmvvm:KeyToCommand KeyGesture="Right" Command="{DXCommand Execute='ChangeView(false)'}" MarkRoutedEventsAsHandled="True" EventName="PreviewKeyDown"/>
             </dxmvvm:Interaction.Behaviors>
             <dxr:RibbonControl>
-                <dxr:RibbonDefaultPageCategory>
-                    <dxr:RibbonPage Caption="Main">
+                <dxr:RibbonPageCategory Caption="Working With Test">
+                    <dxr:RibbonPage Caption="Navigation And View">
                         <dxr:RibbonPageGroup Caption="View Type">
                             <dxb:BarItemSelector SelectedItem="{Binding ViewMode, Mode=TwoWay}">
                                 <dxb:BarItemSelector.ItemLinksSource>
@@ -248,6 +248,22 @@
                                 </dxb:BarItemSelector.ItemTemplate>
                             </dxb:BarItemSelector>
                         </dxr:RibbonPageGroup>
+                        <dxr:RibbonPageGroup Caption="Zoom">
+                            <dxb:BarButtonItem RibbonStyle="Large" Content="Zoom Out" LargeGlyph="{dx:DXImageOffice2013 Image=ZoomOut_32x32.png}" GlyphSize="Large"
+                                               Command="{DXCommand Execute='ZoomOut()'}"/>
+                            <dxb:BarButtonItem RibbonStyle="Large" Content="Zoom 100%" LargeGlyph="{dx:DXImageOffice2013 Image=Zoom100_32x32.png}" GlyphSize="Large"
+                                               Command="{DXCommand Execute='Zoom100()'}"/>
+                            <dxb:BarButtonItem RibbonStyle="Large" Content="Zoom In" LargeGlyph="{dx:DXImageOffice2013 Image=ZoomIn_32x32.png}" GlyphSize="Large"
+                                               Command="{DXCommand Execute='ZoomIn()'}"/>
+                            <dxb:BarItemSeparator/>
+                            <dxb:BarCheckItem RibbonStyle="Large" Content="Perfect Pixel Zoom" LargeGlyph="{dx:DXImageOffice2013 Image=Zoom2_32x32.png}" GlyphSize="Large" 
+                                              IsChecked="{Binding IsPerfectPixel, Mode=TwoWay}"/>
+                            <dxb:BarCheckItem RibbonStyle="Large" Content="Show Grid Lines" LargeGlyph="{dx:DXImageGrayscale Image=ViewGridlines_32x32.png}" GlyphSize="Large" 
+                                              IsChecked="{Binding ShowGridLines, Mode=TwoWay}"
+                                              IsVisible="{Binding Path=IsPerfectPixel}"/>
+                        </dxr:RibbonPageGroup>
+                    </dxr:RibbonPage>
+                    <dxr:RibbonPage Caption="Image Tools">
                         <dxr:RibbonPageGroup Caption="Clipboard Tools" DataContext="{Binding TestInfoModel.TestInfo}">
                             <dxb:BarButtonItem RibbonStyle="Large" Content="Copy Original" LargeGlyph="{dx:DXImageOffice2013 Image=Copy_32x32.png}" GlyphSize="Large"
                                            Command="{Binding ImageBeforeArrLazy.Value, Converter={StaticResource ImageToClipboardConverter}}"/>
@@ -286,22 +302,8 @@
                                 </dxb:BarButtonItem.Command>
                             </dxb:BarButtonItem>
                         </dxr:RibbonPageGroup>
-                        <dxr:RibbonPageGroup Caption="Zoom">
-                            <dxb:BarButtonItem RibbonStyle="Large" Content="Zoom Out" LargeGlyph="{dx:DXImageOffice2013 Image=ZoomOut_32x32.png}" GlyphSize="Large"
-                                               Command="{DXCommand Execute='ZoomOut()'}"/>
-                            <dxb:BarButtonItem RibbonStyle="Large" Content="Zoom 100%" LargeGlyph="{dx:DXImageOffice2013 Image=Zoom100_32x32.png}" GlyphSize="Large"
-                                               Command="{DXCommand Execute='Zoom100()'}"/>
-                            <dxb:BarButtonItem RibbonStyle="Large" Content="Zoom In" LargeGlyph="{dx:DXImageOffice2013 Image=ZoomIn_32x32.png}" GlyphSize="Large"
-                                               Command="{DXCommand Execute='ZoomIn()'}"/>
-                            <dxb:BarItemSeparator/>
-                            <dxb:BarCheckItem RibbonStyle="Large" Content="Perfect Pixel Zoom" LargeGlyph="{dx:DXImageOffice2013 Image=Zoom2_32x32.png}" GlyphSize="Large" 
-                                              IsChecked="{Binding IsPerfectPixel, Mode=TwoWay}"/>
-                            <dxb:BarCheckItem RibbonStyle="Large" Content="Show Grid Lines" LargeGlyph="{dx:DXImageGrayscale Image=ViewGridlines_32x32.png}" GlyphSize="Large" 
-                                              IsChecked="{Binding ShowGridLines, Mode=TwoWay}"
-                                              IsVisible="{Binding Path=IsPerfectPixel}"/>
-                        </dxr:RibbonPageGroup>
                     </dxr:RibbonPage>
-                </dxr:RibbonDefaultPageCategory>
+                </dxr:RibbonPageCategory>
             </dxr:RibbonControl>
             <ContentPresenter Content="{TemplateBinding ViewMode}" 
                               ContentTemplateSelector="{StaticResource imageScalingControlTemplateSelector}" 
