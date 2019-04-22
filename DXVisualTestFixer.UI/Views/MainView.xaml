@@ -40,6 +40,9 @@
             <dxmvvm:ObjectToObjectConverter x:Key="StatusToVisibilityConverter" DefaultTarget="Collapsed">
                 <dxmvvm:MapItem Source="Loading" Target="Visible"/>
             </dxmvvm:ObjectToObjectConverter>
+            <dxmvvm:ObjectToObjectConverter x:Key="InvalidToBooleanConverter" DefaultTarget="Collapsed">
+                <dxmvvm:MapItem Source="Invalid" Target="Visible"/>
+            </dxmvvm:ObjectToObjectConverter>
             <converters:StackPanelToTooltipConverter x:Key="StackPanelToTooltipConverter"/>
             <dxmvvm:ObjectToObjectConverter x:Key="ribbonMergeConverter" DefaultTarget="All">
                 <dxmvvm:MapItem Source="{x:Null}" Target="None"/>
@@ -392,6 +395,9 @@
                                                     <Border Background="Green" Visibility="{Binding Path=RowData.Row.ImageEquals, Converter={dxmvvm:BooleanToVisibilityConverter}}">
                                                         <TextBlock Text="IMG EQ" Foreground="White" FontSize="8"/>
                                                     </Border>
+                                                    <Border Background="DarkBlue" Visibility="{Binding Path=RowData.Row.Valid, Converter={StaticResource ResourceKey=InvalidToBooleanConverter}}">
+                                                        <TextBlock Text="NEW" Foreground="White" FontSize="8"/>
+                                                    </Border>
                                                 </StackPanel>
                                             </Grid>
                                         </DataTemplate>
@@ -427,7 +433,11 @@
                                         </dxmvvm:Interaction.Behaviors>
                                         <controls:TableViewAdvNavigation.FormatConditions>
                                             <dxg:FormatCondition FieldName="CommitChange" ValueRule="Equal" Value1="True" PredefinedFormatName="YellowFillWithDarkYellowText" ApplyToRow="True"/>
-                                            <dxg:FormatCondition FieldName="Valid" ValueRule="Equal" Value1="{x:Static common:TestState.Invalid}" PredefinedFormatName="LightRedFillWithDarkRedText" ApplyToRow="True"/>
+                                            <dxg:FormatCondition FieldName="Valid" ValueRule="Equal" Value1="{x:Static common:TestState.Invalid}" ApplyToRow="True">
+                                                <dxg:FormatCondition.Format>
+                                                    <dx:Format Background="LightBlue" Foreground="DarkBlue"/>
+                                                </dxg:FormatCondition.Format>
+                                            </dxg:FormatCondition>
                                             <dxg:FormatCondition FieldName="Valid" ValueRule="Equal" Value1="{x:Static common:TestState.Fixed}" PredefinedFormatName="GreenFillWithDarkGreenText" ApplyToRow="True"/>
                                         </controls:TableViewAdvNavigation.FormatConditions>
                                     </controls:TableViewAdvNavigation>

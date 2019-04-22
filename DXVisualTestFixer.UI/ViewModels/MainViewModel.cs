@@ -124,10 +124,8 @@ namespace DXVisualTestFixer.UI.ViewModels {
 
         async void FarmRefresh() {
             try {
-                await ActualizeRepositories().ConfigureAwait(false);
-                await Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(async () => {
-                    await UpdateAllTests().ConfigureAwait(false);
-                }));
+                await ActualizeRepositories();
+                await UpdateAllTests();
             }
             catch(Exception e) {
                 Dispatcher.Invoke(() => {
@@ -182,6 +180,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
                     ShowSettings();
                     if(Config.GetLocalRepositories().ToList().Count == 0) {
                         notificationService.DoNotification("Add repositories in settings", "Add repositories in settings");
+                        Status = ProgramStatus.Idle;
                         return;
                     }
                     RefreshTestList();
@@ -195,6 +194,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
                         ShowSettings();
                         RefreshTestList();
                     }));
+                    Status = ProgramStatus.Idle;
                     return;
                 }
             }
@@ -278,7 +278,6 @@ namespace DXVisualTestFixer.UI.ViewModels {
                 return;
             TestsToCommitCount = 0;
             UpdateContent();
-            Status = ProgramStatus.Idle;
         }
         async Task<bool> ActualizeRepositories() {
             foreach(var repo in Config.GetLocalRepositories()) {
