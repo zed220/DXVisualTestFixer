@@ -172,21 +172,20 @@ namespace DXVisualTestFixer.Core {
             return result;
         }
         async Task<TestInfoCached> LoadTestsCoreAsync(IFarmTaskInfo farmTaskInfo) {
-            string realUrl = await CapureRealUrl(farmTaskInfo.Url).ConfigureAwait(false);
             if(RealUrlCache.TryGetValue(farmTaskInfo, out TestInfoCached cache)) {
-                if(cache.RealUrl == realUrl) {
+                if(cache.RealUrl == farmTaskInfo.Url) {
                     ActualizeTests(cache.TestList);
                     return cache;
                 }
             }
             List<Task<TestInfo>> allTasks = new List<Task<TestInfo>>();
-            CorpDirTestInfoContainer corpDirTestInfoContainer = LoadFromFarmTaskInfo(farmTaskInfo, realUrl);
+            CorpDirTestInfoContainer corpDirTestInfoContainer = LoadFromFarmTaskInfo(farmTaskInfo, farmTaskInfo.Url);
             foreach(var corpDirTestInfo in corpDirTestInfoContainer.FailedTests) {
                 CorpDirTestInfo info = corpDirTestInfo;
                 allTasks.Add(Task.Factory.StartNew<TestInfo>(() => LoadTestInfo(info, corpDirTestInfoContainer.Teams)));
             }
             List<TestInfo> result = (await Task.WhenAll(allTasks.ToArray()).ConfigureAwait(false)).ToList();
-            TestInfoCached cachedValue = new TestInfoCached(farmTaskInfo.Repository, realUrl, result, corpDirTestInfoContainer);
+            TestInfoCached cachedValue = new TestInfoCached(farmTaskInfo.Repository, farmTaskInfo.Url, result, corpDirTestInfoContainer);
             RealUrlCache[farmTaskInfo] = cachedValue;
             return cachedValue;
         }
@@ -204,22 +203,6 @@ namespace DXVisualTestFixer.Core {
             CorpDirTestInfoContainer corpDirTestInfoContainer = TestLoader.LoadFromInfo(farmTaskInfo, realUrl);
             loadingProgressController.Enlarge(corpDirTestInfoContainer.FailedTests.Count);
             return corpDirTestInfoContainer;
-        }
-        static Task<string> CapureRealUrl(string url) {
-            return Task.Factory.StartNew<string>(() => {
-                Exception exc = null;
-                for(int i = 0; i < 10; i++) {
-                    try {
-                        HtmlWeb htmlWeb = new HtmlWeb();
-                        HtmlDocument htmlSnippet = htmlWeb.Load(url);
-                        return htmlWeb.ResponseUri.ToString();
-                    }
-                    catch(Exception e) {
-                        exc = e;
-                    }
-                }
-                throw exc ?? new InvalidOperationException("Somthing went wrong on downloading info from sever");
-            });
         }
 
         TestInfo LoadTestInfo(CorpDirTestInfo corpDirTestInfo, List<Team> teams) {
