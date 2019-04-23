@@ -28,7 +28,7 @@ namespace DXVisualTestFixer.Common {
         void Update();
     }
     public interface IAppearanceService {
-        void SetTheme(string themeName);
+        void SetTheme(string themeName, string palette);
     }
     public interface ILoadingProgressController : INotifyPropertyChanged {
         void Enlarge(int delta);

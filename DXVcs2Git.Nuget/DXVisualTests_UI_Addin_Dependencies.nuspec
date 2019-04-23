@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>DXVisualTests_UI_Addin_Dependencies</id>
-        <version>19.1.0.5</version>
+        <version>19.1.0.6</version>
         <title>DXVisualTests UI Addin Dependencies</title>
         <authors>DevExpress</authors>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -31,6 +31,6 @@
         <file src="files\DevExpress.Xpf.NavBar.v19.1.dll" target="lib\net40\DevExpress.Xpf.NavBar.v19.1.dll" />
         <file src="files\DevExpress.Dialogs.v19.1.Core.dll" target="lib\net40\DevExpress.Dialogs.v19.1.Core.dll" />
         <file src="files\DevExpress.Xpf.Dialogs.v19.1.dll" target="lib\net40\DevExpress.Xpf.Dialogs.v19.1.dll" />
-		<file src="files\DevExpress.Xpf.Themes.VS2017Light.v19.1.dll" target="lib\net40\DevExpress.Xpf.Themes.VS2017Light.v19.1.dll" />
+		<file src="files\DevExpress.Xpf.Themes.Office2019Colorful.v19.1.dll" target="lib\net40\DevExpress.Xpf.Themes.Office2019Colorful.v19.1.dll" />
     </files>
 </package>

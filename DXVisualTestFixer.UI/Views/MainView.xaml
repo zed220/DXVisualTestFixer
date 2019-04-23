@@ -43,6 +43,12 @@
             <dxmvvm:ObjectToObjectConverter x:Key="InvalidToBooleanConverter" DefaultTarget="Collapsed">
                 <dxmvvm:MapItem Source="Invalid" Target="Visible"/>
             </dxmvvm:ObjectToObjectConverter>
+            <dxmvvm:ObjectToObjectConverter x:Key="ZeroToVisibilityConverter" DefaultTarget="Collapsed">
+                <dxmvvm:MapItem Source="0" Target="Visible"/>
+            </dxmvvm:ObjectToObjectConverter>
+            <dxmvvm:ObjectToObjectConverter x:Key="ZeroToVisibilityInverseConverter" DefaultTarget="Visible">
+                <dxmvvm:MapItem Source="0" Target="Collapsed"/>
+            </dxmvvm:ObjectToObjectConverter>
             <converters:StackPanelToTooltipConverter x:Key="StackPanelToTooltipConverter"/>
             <dxmvvm:ObjectToObjectConverter x:Key="ribbonMergeConverter" DefaultTarget="All">
                 <dxmvvm:MapItem Source="{x:Null}" Target="None"/>
@@ -186,25 +192,31 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <dxr:RibbonControl x:Name="PART_Ribbon" RibbonStyle="Office2019" ToolbarShowMode="ShowAbove" AllowCustomization="False" MinimizationButtonVisibility="Collapsed" RibbonHeaderVisibility="Visible" 
-                           ToolbarShowCustomizationButton="False" ShowApplicationButton="False" AsyncMergingEnabled="True" PageCategoryAlignment="Right">
+                           ToolbarShowCustomizationButton="False" ShowApplicationButton="False" AsyncMergingEnabled="True">
                 <dxr:RibbonDefaultPageCategory>
                     <dxr:RibbonPage Caption="Commit And Update">
+                        <dxr:RibbonPage.CaptionTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding}" Margin="0, 0, 2, 0"/>
+                                    <TextBlock Text="(Nothing to commit)" Opacity="0.7"
+                                               Visibility="{Binding Path=DataContext.TestsToCommitCount, Converter={StaticResource ZeroToVisibilityConverter}, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type dxr:RibbonControl}}}"/>
+                                    <TextBlock Foreground="Green" 
+                                               DataContext="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type dxr:RibbonControl}}}"
+                                               Visibility="{Binding TestsToCommitCount, Converter={StaticResource ZeroToVisibilityInverseConverter}}"
+                                               Text="{Binding TestsToCommitCount, Mode=OneWay, Converter={dxmvvm:FormatStringConverter FormatString='({0} to commit)'}}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </dxr:RibbonPage.CaptionTemplate>
                         <dxr:RibbonPageGroup Caption="Work">
-                            <dxb:BarButtonItem RibbonStyle="Large" 
-                                           GlyphSize="Large" 
-                                           Content="Update Tests"
-                                           KeyGesture="F5" dxb:BarManager.KeyGestureWorkingMode="AllKeyGesture"
-                                           Command="{DXCommand Execute='RefreshTestList()'}"
-                                           LargeGlyph="{dx:DXImageOffice2013 Image=Refresh_32x32.png}">
-                            </dxb:BarButtonItem>
                             <dxb:BarButtonItem
-                            RibbonStyle="Large" 
-                            GlyphSize="Large" 
-                            Content="Commit Tests"
-                            Command="{DXCommand Execute='ApplyChanges()'}"
-                            LargeGlyph="{dx:DXImageOffice2013 Image=Apply_32x32.png}"
-                            KeyGesture="Ctrl+S"
-                            IsEnabled="{DXBinding Expr='TestsToCommitCount gt 0'}">
+                                        RibbonStyle="Large" 
+                                        GlyphSize="Large" 
+                                        Content="Commit Tests"
+                                        Command="{DXCommand Execute='ApplyChanges()'}"
+                                        LargeGlyph="{dx:DXImageOffice2013 Image=Apply_32x32.png}"
+                                        KeyGesture="Ctrl+S"
+                                        IsEnabled="{DXBinding Expr='TestsToCommitCount gt 0'}">
                                 <dxb:BarButtonItem.GlyphTemplate>
                                     <DataTemplate>
                                         <Grid>
@@ -225,6 +237,13 @@
                                         </Grid>
                                     </DataTemplate>
                                 </dxb:BarButtonItem.GlyphTemplate>
+                            </dxb:BarButtonItem>
+                            <dxb:BarButtonItem RibbonStyle="Large" 
+                                           GlyphSize="Large" 
+                                           Content="Update Tests"
+                                           KeyGesture="F5" dxb:BarManager.KeyGestureWorkingMode="AllKeyGesture"
+                                           Command="{DXCommand Execute='RefreshTestList()'}"
+                                           LargeGlyph="{dx:DXImageOffice2013 Image=Refresh_32x32.png}">
                             </dxb:BarButtonItem>
                             <dxb:BarSubItem Content="Open Solution" Glyph="pack://application:,,,/DXVisualTestFixer.UI;component/Images/CSS_Small.png" RibbonStyle="SmallWithText" 
                                         ItemLinksSource="{Binding Solutions}">
@@ -271,28 +290,6 @@
                             Hint="Hide groups with single child"/>
                         </dxr:RibbonPageGroup>
                     </dxr:RibbonPage>
-                    <dxr:RibbonPage Caption="Service">
-                        <dxr:RibbonPageGroup Caption="Service">
-                            <dxb:BarButtonItem RibbonStyle="Large" 
-                                        GlyphSize="Large" 
-                                        Content="Check Unused Files"
-                                        Command="{DXCommand Execute='ShowRepositoryOptimizer()'}"
-                                        LargeGlyph="{dx:DXImageOffice2013 Image=RemoveItem_32x32.png}">
-                            </dxb:BarButtonItem>
-                            <dxb:BarButtonItem RibbonStyle="Large" 
-                                        GlyphSize="Large" 
-                                        Content="Analyze Timings"
-                                        Command="{DXCommand Execute='ShowRepositoryAnalyzer()'}"
-                                        LargeGlyph="{dx:DXImageOffice2013 Image=Chart_32x32.png}">
-                            </dxb:BarButtonItem>
-                            <dxb:BarButtonItem RibbonStyle="Large" 
-                                        GlyphSize="Large" 
-                                        Content="View Resources"
-                                        Command="{DXCommand Execute='ShowViewResources()'}"
-                                        LargeGlyph="{dx:DXImageOffice2013 Image=Image_32x32.png}">
-                            </dxb:BarButtonItem>
-                        </dxr:RibbonPageGroup>
-                    </dxr:RibbonPage>
                 </dxr:RibbonDefaultPageCategory>
                 <dxr:RibbonPageCategory Caption="Working With Test" IsEnabled="{DXBinding 'Status == $viewModels:ProgramStatus.Idle'}">
                     <dxr:RibbonPage Caption="Navigation And View">
@@ -323,6 +320,30 @@
                                                LargeGlyph="{dx:DXImage Office2013/Arrows/MoveDown_32x32.png}"
                                                ItemClick="{DXEvent Handler='@e(view).MoveNextDataRow()'}"
                                                Hint="Use Down Arrow"/>
+                        </dxr:RibbonPageGroup>
+                    </dxr:RibbonPage>
+                </dxr:RibbonPageCategory>
+                <dxr:RibbonPageCategory Caption="Internal">
+                    <dxr:RibbonPage Caption="Service">
+                        <dxr:RibbonPageGroup Caption="Service">
+                            <dxb:BarButtonItem RibbonStyle="Large" 
+                                        GlyphSize="Large" 
+                                        Content="Check Unused Files"
+                                        Command="{DXCommand Execute='ShowRepositoryOptimizer()'}"
+                                        LargeGlyph="{dx:DXImageOffice2013 Image=RemoveItem_32x32.png}">
+                            </dxb:BarButtonItem>
+                            <dxb:BarButtonItem RibbonStyle="Large" 
+                                        GlyphSize="Large" 
+                                        Content="Analyze Timings"
+                                        Command="{DXCommand Execute='ShowRepositoryAnalyzer()'}"
+                                        LargeGlyph="{dx:DXImageOffice2013 Image=Chart_32x32.png}">
+                            </dxb:BarButtonItem>
+                            <dxb:BarButtonItem RibbonStyle="Large" 
+                                        GlyphSize="Large" 
+                                        Content="View Resources"
+                                        Command="{DXCommand Execute='ShowViewResources()'}"
+                                        LargeGlyph="{dx:DXImageOffice2013 Image=Image_32x32.png}">
+                            </dxb:BarButtonItem>
                         </dxr:RibbonPageGroup>
                     </dxr:RibbonPage>
                 </dxr:RibbonPageCategory>
@@ -422,7 +443,7 @@
                                     <controls:TableViewAdvNavigation x:Name="view" AllowEditing="True" ShowVerticalLines="False" ShowIndicator="False" ShowHorizontalLines="False" ShowColumnHeaders="False" 
                                                                  ShowGroupPanel="False" ShowFixedTotalSummary="True" RowDoubleClick="{DXEvent Handler='@s.ProcessDoubleClick(@args)'}"
                                                                  PreviewKeyDown="{DXEvent Handler='@s.ProcessKeyDown(@args)'}" GroupSummaryDisplayMode="Default"
-                                                                 ShowNoRecordsBlock="{DXBinding 'Status == $viewModels:ProgramStatus.Idle'}" SearchPanelHighlightResults="False"
+                                                                 ShowEmptyText="{DXBinding 'Status == $viewModels:ProgramStatus.Idle'}" SearchPanelHighlightResults="False"
                                                                  SearchPanelHorizontalAlignment="Stretch" GroupRowCheckBoxFieldName="CommitChange" ShowFilterPanelMode="Never">
                                         <dxb:BarManager.DXContextMenu>
                                             <dxb:PopupMenu>
