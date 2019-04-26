@@ -9,4 +9,7 @@
         <Setter Property="AllowFloat" Value="False"/>
         <Setter Property="AllowDrag" Value="False"/>
     </Style>
+    <Style TargetType="{x:Type dxdo:DockLayoutManager}">
+        <Setter Property="ViewStyle" Value="Light"/>
+    </Style>
 </ResourceDictionary>

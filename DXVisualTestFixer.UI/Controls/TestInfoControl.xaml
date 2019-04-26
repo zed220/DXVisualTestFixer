@@ -33,7 +33,7 @@
             </dxmvvm:ObjectToObjectConverter>
         </ResourceDictionary>
     </UserControl.Resources>
-    <Grid>
+    <dxdo:DockLayoutManager>
         <dxdo:LayoutGroup Orientation="Vertical" ShowCaption="False">
             <dxdo:LayoutPanel dxb:MergingProperties.ElementMergingBehavior="All" ShowCaption="False" ShowBorder="False">
                 <controls:ImageScalingControl TestInfoModel="{Binding CurrentTest}"/>
@@ -67,9 +67,9 @@
                     <TextBlock Margin="4" VerticalAlignment="Center" Text="Test already fixed."/>
                 </StackPanel>
             </dxdo:LayoutPanel>
-            <dxdo:LayoutPanel DataContext="{Binding CurrentTest}" ItemWidth="*" ShowBorder="False" ShowCaption="False" ItemHeight="Auto">
+            <dxdo:LayoutPanel DataContext="{Binding CurrentTest}" ItemWidth="*" ShowBorder="False" ShowCaption="False" ItemHeight="Auto" AllowSizing="False">
                 <dxe:TextEdit Margin="4" VerticalAlignment="Center" EditValue="{DXBinding Expr='ToLog()', Mode=OneWay}" IsReadOnly="True" ShowBorder="False"/>
             </dxdo:LayoutPanel>
         </dxdo:LayoutGroup>
-    </Grid>
+    </dxdo:DockLayoutManager>
 </UserControl>

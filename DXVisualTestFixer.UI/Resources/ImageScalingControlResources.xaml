@@ -97,111 +97,117 @@
                             </dxr:RibbonPage>
                         </dxr:RibbonPageCategory>
                     </dxr:RibbonControl>
-                    <dxdo:LayoutPanel ShowCaption="True" ShowCloseButton="False" ShowPinButton="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False">
-                        <dxdo:LayoutPanel.Caption>
-                            <StackPanel Orientation="Horizontal" DataContext="{Binding Path=(controls:ImageScalingControl.ImageScalingControl), RelativeSource={RelativeSource Self}}">
-                                <dxe:ComboBoxEdit EditValue="{Binding Path=MergedViewType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsTextEditable="False" MinWidth="100">
-                                    <dxe:ComboBoxEdit.ItemsSource>
-                                        <sys:ArrayList>
-                                            <controls:MergedTestViewType>Diff</controls:MergedTestViewType>
-                                            <controls:MergedTestViewType>Before</controls:MergedTestViewType>
-                                            <controls:MergedTestViewType>Current</controls:MergedTestViewType>
-                                        </sys:ArrayList>
-                                    </dxe:ComboBoxEdit.ItemsSource>
-                                </dxe:ComboBoxEdit>
-                                <TextBlock Margin="2,0" DataContext="{Binding Path=TestInfoModel.TestInfo}" VerticalAlignment="Center">
-                                    <TextBlock.Inlines>
-                                        <Run Text="Before Size:("/>
-                                        <Run Text="{Binding Path=ImageBeforeArrLazy.Value, Converter={converters:ArrayToImageSizeConverter}, Mode=OneWay}">
-                                            <Run.Foreground>
-                                                <MultiBinding Converter="{converters:EqualsPointsToForegroundConverter}">
-                                                    <Binding Path="ImageBeforeArrLazy.Value" Converter="{converters:ArrayToImageSizeConverter}"/>
-                                                    <Binding Path="ImageCurrentArrLazy.Value" Converter="{converters:ArrayToImageSizeConverter}"/>
-                                                </MultiBinding>
-                                            </Run.Foreground>
-                                        </Run>
-                                        <Run Text="), Current Size:("/>
-                                        <Run Text="{Binding Path=ImageCurrentArrLazy.Value, Converter={converters:ArrayToImageSizeConverter}, Mode=OneWay}">
-                                            <Run.Foreground>
-                                                <MultiBinding Converter="{converters:EqualsPointsToForegroundConverter}">
-                                                    <Binding Path="ImageBeforeArrLazy.Value" Converter="{converters:ArrayToImageSizeConverter}"/>
-                                                    <Binding Path="ImageCurrentArrLazy.Value" Converter="{converters:ArrayToImageSizeConverter}"/>
-                                                </MultiBinding>
-                                            </Run.Foreground>
-                                        </Run>
-                                        <Run Text=")"/>
-                                    </TextBlock.Inlines>
-                                </TextBlock>
-                                <TextBlock Text="You can use Left/Right arrows to change current view" Margin="2,0" VerticalAlignment="Center"/>
-                            </StackPanel>
-                        </dxdo:LayoutPanel.Caption>
-                        <Grid>
-                            <ContentControl controls:ImageScalingControl.ScrollViewerType="Before"
-                                            Content="{Binding Path=TestInfoModel.TestInfo.ImageBeforeArrLazy.Value}" ContentTemplate="{StaticResource ResourceKey=DraggableScrollViewerDataTemplate}"
-                                            Visibility="{DXBinding Expr='MergedViewType eq $controls:MergedTestViewType.Before', Converter={StaticResource VisibilityConverter}}"/>
-                            <ContentControl controls:ImageScalingControl.ScrollViewerType="Current"
-                                            Content="{Binding Path=TestInfoModel.TestInfo.ImageCurrentArrLazy.Value}" ContentTemplate="{StaticResource ResourceKey=DraggableScrollViewerDataTemplate}"
-                                            Visibility="{DXBinding Expr='MergedViewType eq $controls:MergedTestViewType.Current', Converter={StaticResource VisibilityConverter}}"/>
-                            <ContentControl controls:ImageScalingControl.ScrollViewerType="Diff"
-                                            Content="{Binding Path=TestInfoModel.TestInfo.ImageDiffArrLazy.Value}" ContentTemplate="{StaticResource ResourceKey=DraggableScrollViewerDataTemplate}"
-                                            Visibility="{DXBinding Expr='MergedViewType eq $controls:MergedTestViewType.Diff', Converter={StaticResource VisibilityConverter}}"/>
-                        </Grid>
-                    </dxdo:LayoutPanel>
+                    <dxdo:DockLayoutManager>
+                        <dxdo:LayoutGroup AllowSplitters="False">
+                            <dxdo:LayoutPanel ShowCaption="True" ShowCloseButton="False" ShowPinButton="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False">
+                                <dxdo:LayoutPanel.Caption>
+                                    <StackPanel Orientation="Horizontal" DataContext="{Binding Path=(controls:ImageScalingControl.ImageScalingControl), RelativeSource={RelativeSource Self}}">
+                                        <dxe:ComboBoxEdit EditValue="{Binding Path=MergedViewType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsTextEditable="False" MinWidth="100">
+                                            <dxe:ComboBoxEdit.ItemsSource>
+                                                <sys:ArrayList>
+                                                    <controls:MergedTestViewType>Diff</controls:MergedTestViewType>
+                                                    <controls:MergedTestViewType>Before</controls:MergedTestViewType>
+                                                    <controls:MergedTestViewType>Current</controls:MergedTestViewType>
+                                                </sys:ArrayList>
+                                            </dxe:ComboBoxEdit.ItemsSource>
+                                        </dxe:ComboBoxEdit>
+                                        <TextBlock Margin="2,0" DataContext="{Binding Path=TestInfoModel.TestInfo}" VerticalAlignment="Center">
+                                            <TextBlock.Inlines>
+                                                <Run Text="Before Size:("/>
+                                                <Run Text="{Binding Path=ImageBeforeArrLazy.Value, Converter={converters:ArrayToImageSizeConverter}, Mode=OneWay}">
+                                                    <Run.Foreground>
+                                                        <MultiBinding Converter="{converters:EqualsPointsToForegroundConverter}">
+                                                            <Binding Path="ImageBeforeArrLazy.Value" Converter="{converters:ArrayToImageSizeConverter}"/>
+                                                            <Binding Path="ImageCurrentArrLazy.Value" Converter="{converters:ArrayToImageSizeConverter}"/>
+                                                        </MultiBinding>
+                                                    </Run.Foreground>
+                                                </Run>
+                                                <Run Text="), Current Size:("/>
+                                                <Run Text="{Binding Path=ImageCurrentArrLazy.Value, Converter={converters:ArrayToImageSizeConverter}, Mode=OneWay}">
+                                                    <Run.Foreground>
+                                                        <MultiBinding Converter="{converters:EqualsPointsToForegroundConverter}">
+                                                            <Binding Path="ImageBeforeArrLazy.Value" Converter="{converters:ArrayToImageSizeConverter}"/>
+                                                            <Binding Path="ImageCurrentArrLazy.Value" Converter="{converters:ArrayToImageSizeConverter}"/>
+                                                        </MultiBinding>
+                                                    </Run.Foreground>
+                                                </Run>
+                                                <Run Text=")"/>
+                                            </TextBlock.Inlines>
+                                        </TextBlock>
+                                        <TextBlock Text="You can use Left/Right arrows to change current view" Margin="2,0" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </dxdo:LayoutPanel.Caption>
+                                <Grid>
+                                    <ContentControl controls:ImageScalingControl.ScrollViewerType="Before"
+                                                    Content="{Binding Path=TestInfoModel.TestInfo.ImageBeforeArrLazy.Value}" ContentTemplate="{StaticResource ResourceKey=DraggableScrollViewerDataTemplate}"
+                                                    Visibility="{DXBinding Expr='MergedViewType eq $controls:MergedTestViewType.Before', Converter={StaticResource VisibilityConverter}}"/>
+                                    <ContentControl controls:ImageScalingControl.ScrollViewerType="Current"
+                                                    Content="{Binding Path=TestInfoModel.TestInfo.ImageCurrentArrLazy.Value}" ContentTemplate="{StaticResource ResourceKey=DraggableScrollViewerDataTemplate}"
+                                                    Visibility="{DXBinding Expr='MergedViewType eq $controls:MergedTestViewType.Current', Converter={StaticResource VisibilityConverter}}"/>
+                                    <ContentControl controls:ImageScalingControl.ScrollViewerType="Diff"
+                                                    Content="{Binding Path=TestInfoModel.TestInfo.ImageDiffArrLazy.Value}" ContentTemplate="{StaticResource ResourceKey=DraggableScrollViewerDataTemplate}"
+                                                    Visibility="{DXBinding Expr='MergedViewType eq $controls:MergedTestViewType.Diff', Converter={StaticResource VisibilityConverter}}"/>
+                                </Grid>
+                            </dxdo:LayoutPanel>
+                        </dxdo:LayoutGroup>
+                    </dxdo:DockLayoutManager>
                 </Grid>
             </DataTemplate>
         </controls:ImageScalingControlTemplateSelector.MergedTemplate>
         <controls:ImageScalingControlTemplateSelector.SplitTemplate>
             <DataTemplate>
-                <dxdo:LayoutGroup DataContext="{Binding Path=(controls:ImageScalingControl.ImageScalingControl).TestInfoModel.TestInfo, RelativeSource={RelativeSource Self}}">
-                    <dxdo:LayoutGroup.Resources>
-                        <Style TargetType="{x:Type dxdo:LayoutPanel}">
-                            <Setter Property="ContentTemplate" Value="{StaticResource DraggableScrollViewerDataTemplate}"/>
-                        </Style>
-                    </dxdo:LayoutGroup.Resources>
-                    <dxdo:LayoutPanel controls:ImageScalingControl.ScrollViewerType="Before" ShowCaption="True" ShowCloseButton="False" ShowPinButton="False" Content="{Binding ImageBeforeArrLazy.Value}" AllowSizing="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False">
-                        <dxdo:LayoutPanel.Caption>
-                            <StackPanel DataContext="{Binding Path=(controls:ImageScalingControl.ImageScalingControl).TestInfoModel.TestInfo, RelativeSource={RelativeSource Self}}" Orientation="Horizontal">
-                                <TextBlock Text="Before" Margin="2,0"/>
-                                <TextBlock>
-                                    <TextBlock.Inlines>
-                                        <Run Text="[Size:("/>
-                                        <Run Text="{Binding Path=ImageBeforeArrLazy.Value, Converter={converters:ArrayToImageSizeConverter}, Mode=OneWay}">
-                                            <Run.Foreground>
-                                                <MultiBinding Converter="{converters:EqualsPointsToForegroundConverter}">
-                                                    <Binding Path="ImageBeforeArrLazy.Value" Converter="{converters:ArrayToImageSizeConverter}"/>
-                                                    <Binding Path="ImageCurrentArrLazy.Value" Converter="{converters:ArrayToImageSizeConverter}"/>
-                                                </MultiBinding>
-                                            </Run.Foreground>
-                                        </Run>
-                                        <Run Text=")]"/>
-                                    </TextBlock.Inlines>
-                                </TextBlock>
-                            </StackPanel>
-                        </dxdo:LayoutPanel.Caption>
-                    </dxdo:LayoutPanel>
-                    <dxdo:LayoutPanel controls:ImageScalingControl.ScrollViewerType="Current" ShowCaption="True" ShowCloseButton="False" ShowPinButton="False"  Content="{Binding ImageCurrentArrLazy.Value}" AllowSizing="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False">
-                        <dxdo:LayoutPanel.Caption>
-                            <StackPanel DataContext="{Binding Path=(controls:ImageScalingControl.ImageScalingControl).TestInfoModel.TestInfo, RelativeSource={RelativeSource Self}}" Orientation="Horizontal">
-                                <TextBlock Text="Current" Margin="2,0"/>
-                                <TextBlock>
-                                    <TextBlock.Inlines>
-                                        <Run Text="[Size:("/>
-                                        <Run Text="{Binding Path=ImageCurrentArrLazy.Value, Converter={converters:ArrayToImageSizeConverter}, Mode=OneWay}">
-                                            <Run.Foreground>
-                                                <MultiBinding Converter="{converters:EqualsPointsToForegroundConverter}">
-                                                    <Binding Path="ImageBeforeArrLazy.Value" Converter="{converters:ArrayToImageSizeConverter}"/>
-                                                    <Binding Path="ImageCurrentArrLazy.Value" Converter="{converters:ArrayToImageSizeConverter}"/>
-                                                </MultiBinding>
-                                            </Run.Foreground>
-                                        </Run>
-                                        <Run Text=")]"/>
-                                    </TextBlock.Inlines>
-                                </TextBlock>
-                            </StackPanel>
-                        </dxdo:LayoutPanel.Caption>
-                    </dxdo:LayoutPanel>
-                    <dxdo:LayoutPanel controls:ImageScalingControl.ScrollViewerType="Diff" ShowCaption="True" Caption="Diff" ShowCloseButton="False" ShowPinButton="False" Content="{Binding ImageDiffArrLazy.Value}" AllowSizing="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False"/>
-                </dxdo:LayoutGroup>
+                <dxdo:DockLayoutManager>
+                    <dxdo:LayoutGroup DataContext="{Binding Path=(controls:ImageScalingControl.ImageScalingControl).TestInfoModel.TestInfo, RelativeSource={RelativeSource Self}}" AllowSplitters="False">
+                        <dxdo:LayoutGroup.Resources>
+                            <Style TargetType="{x:Type dxdo:LayoutPanel}">
+                                <Setter Property="ContentTemplate" Value="{StaticResource DraggableScrollViewerDataTemplate}"/>
+                            </Style>
+                        </dxdo:LayoutGroup.Resources>
+                        <dxdo:LayoutPanel controls:ImageScalingControl.ScrollViewerType="Before" ShowCaption="True" ShowCloseButton="False" ShowPinButton="False" Content="{Binding ImageBeforeArrLazy.Value}" AllowSizing="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False">
+                            <dxdo:LayoutPanel.Caption>
+                                <StackPanel DataContext="{Binding Path=(controls:ImageScalingControl.ImageScalingControl).TestInfoModel.TestInfo, RelativeSource={RelativeSource Self}}" Orientation="Horizontal">
+                                    <TextBlock Text="Before" Margin="2,0"/>
+                                    <TextBlock>
+                                        <TextBlock.Inlines>
+                                            <Run Text="[Size:("/>
+                                            <Run Text="{Binding Path=ImageBeforeArrLazy.Value, Converter={converters:ArrayToImageSizeConverter}, Mode=OneWay}">
+                                                <Run.Foreground>
+                                                    <MultiBinding Converter="{converters:EqualsPointsToForegroundConverter}">
+                                                        <Binding Path="ImageBeforeArrLazy.Value" Converter="{converters:ArrayToImageSizeConverter}"/>
+                                                        <Binding Path="ImageCurrentArrLazy.Value" Converter="{converters:ArrayToImageSizeConverter}"/>
+                                                    </MultiBinding>
+                                                </Run.Foreground>
+                                            </Run>
+                                            <Run Text=")]"/>
+                                        </TextBlock.Inlines>
+                                    </TextBlock>
+                                </StackPanel>
+                            </dxdo:LayoutPanel.Caption>
+                        </dxdo:LayoutPanel>
+                        <dxdo:LayoutPanel controls:ImageScalingControl.ScrollViewerType="Current" ShowCaption="True" ShowCloseButton="False" ShowPinButton="False"  Content="{Binding ImageCurrentArrLazy.Value}" AllowSizing="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False">
+                            <dxdo:LayoutPanel.Caption>
+                                <StackPanel DataContext="{Binding Path=(controls:ImageScalingControl.ImageScalingControl).TestInfoModel.TestInfo, RelativeSource={RelativeSource Self}}" Orientation="Horizontal">
+                                    <TextBlock Text="Current" Margin="2,0"/>
+                                    <TextBlock>
+                                        <TextBlock.Inlines>
+                                            <Run Text="[Size:("/>
+                                            <Run Text="{Binding Path=ImageCurrentArrLazy.Value, Converter={converters:ArrayToImageSizeConverter}, Mode=OneWay}">
+                                                <Run.Foreground>
+                                                    <MultiBinding Converter="{converters:EqualsPointsToForegroundConverter}">
+                                                        <Binding Path="ImageBeforeArrLazy.Value" Converter="{converters:ArrayToImageSizeConverter}"/>
+                                                        <Binding Path="ImageCurrentArrLazy.Value" Converter="{converters:ArrayToImageSizeConverter}"/>
+                                                    </MultiBinding>
+                                                </Run.Foreground>
+                                            </Run>
+                                            <Run Text=")]"/>
+                                        </TextBlock.Inlines>
+                                    </TextBlock>
+                                </StackPanel>
+                            </dxdo:LayoutPanel.Caption>
+                        </dxdo:LayoutPanel>
+                        <dxdo:LayoutPanel controls:ImageScalingControl.ScrollViewerType="Diff" ShowCaption="True" Caption="Diff" ShowCloseButton="False" ShowPinButton="False" Content="{Binding ImageDiffArrLazy.Value}" AllowSizing="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False"/>
+                    </dxdo:LayoutGroup>
+                </dxdo:DockLayoutManager>
             </DataTemplate>
         </controls:ImageScalingControlTemplateSelector.SplitTemplate>
     </controls:ImageScalingControlTemplateSelector>
