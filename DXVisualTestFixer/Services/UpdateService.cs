@@ -45,7 +45,11 @@ namespace DXVisualTestFixer.Services {
 
         protected override bool GetIsNetworkDeployment() {
             var assembly = Assembly.GetEntryAssembly();
-            var updateDotExe = Path.Combine(Path.GetDirectoryName(assembly.Location), "..", "Update.exe");
+            var assemblyFolder = Path.GetDirectoryName(assembly.Location);
+            var assemblyFolderParent = Path.GetFullPath(Path.Combine(assemblyFolder, ".."));
+            var updateDotExe = Path.Combine(assemblyFolderParent, "Update.exe");
+            if(assemblyFolderParent.EndsWith("bin"))
+                return false;
             return File.Exists(updateDotExe);
         }
     }

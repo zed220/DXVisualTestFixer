@@ -20,6 +20,12 @@
     </Style>
     <converters:ImageToClipboardConverter x:Key="ImageToClipboardConverter"/>
     <converters:MultiImageToClipboardConverter x:Key="MultiImageToClipboardConverter"/>
+    <dxmvvm:ObjectToObjectConverter x:Key="TestViewTypeToBoolConverter" DefaultSource="Split" DefaultTarget="False">
+        <dxmvvm:MapItem Source="Merged" Target="True"/>
+    </dxmvvm:ObjectToObjectConverter>
+    <dxmvvm:ObjectToObjectConverter x:Key="ScrollModeToBoolConverter" DefaultSource="Legacy" DefaultTarget="False">
+        <dxmvvm:MapItem Source="Draggable" Target="True"/>
+    </dxmvvm:ObjectToObjectConverter>
     <Style TargetType="{x:Type controls:DraggableScrollViewer}">
         <Setter Property="Background">
             <Setter.Value>
@@ -220,64 +226,34 @@
             <dxr:RibbonControl>
                 <dxr:RibbonPageCategory Caption="Working With Test">
                     <dxr:RibbonPage Caption="Navigation And View">
-                        <dxr:RibbonPageGroup Caption="View Type">
-                            <dxb:BarItemSelector SelectedItem="{Binding ViewMode, Mode=TwoWay}">
-                                <dxb:BarItemSelector.ItemLinksSource>
-                                    <sys:ArrayList>
-                                        <controls:TestViewType>Split</controls:TestViewType>
-                                        <controls:TestViewType>Merged</controls:TestViewType>
-                                    </sys:ArrayList>
-                                </dxb:BarItemSelector.ItemLinksSource>
-                                <dxb:BarItemSelector.ItemTemplate>
-                                    <DataTemplate>
-                                        <ContentControl>
-                                            <dxb:BarCheckItem Content="{Binding}" RibbonStyle="SmallWithText"/>
-                                        </ContentControl>
-                                    </DataTemplate>
-                                </dxb:BarItemSelector.ItemTemplate>
-                            </dxb:BarItemSelector>
-                        </dxr:RibbonPageGroup>
-                        <dxr:RibbonPageGroup Caption="Scroll Mode">
-                            <dxb:BarItemSelector SelectedItem="{Binding Path=ScrollMode, Mode=TwoWay}">
-                                <dxb:BarItemSelector.ItemLinksSource>
-                                    <sys:ArrayList>
-                                        <controls:ScrollMode>Legacy</controls:ScrollMode>
-                                        <controls:ScrollMode>Draggable</controls:ScrollMode>
-                                    </sys:ArrayList>
-                                </dxb:BarItemSelector.ItemLinksSource>
-                                <dxb:BarItemSelector.ItemTemplate>
-                                    <DataTemplate>
-                                        <ContentControl>
-                                            <dxb:BarCheckItem Content="{Binding}" RibbonStyle="SmallWithText"/>
-                                        </ContentControl>
-                                    </DataTemplate>
-                                </dxb:BarItemSelector.ItemTemplate>
-                            </dxb:BarItemSelector>
+                        <dxr:RibbonPageGroup Caption="View Options">
+                            <dxb:BarCheckItem Content="Merged View" IsChecked="{Binding ViewMode, Converter={StaticResource TestViewTypeToBoolConverter}}"/>
+                            <dxb:BarCheckItem Content="Draggable Scroll" IsChecked="{Binding ScrollMode, Converter={StaticResource ScrollModeToBoolConverter}}"/>
                         </dxr:RibbonPageGroup>
                         <dxr:RibbonPageGroup Caption="Zoom">
-                            <dxb:BarButtonItem RibbonStyle="Large" Content="Zoom Out" LargeGlyph="{dx:DXImageOffice2013 Image=ZoomOut_32x32.png}" GlyphSize="Large"
+                            <dxb:BarButtonItem  Content="Zoom Out" Glyph="{dx:DXImage SvgImages/Zoom/ZoomOut.svg}" 
                                                Command="{DXCommand Execute='ZoomOut()'}"/>
-                            <dxb:BarButtonItem RibbonStyle="Large" Content="Zoom 100%" LargeGlyph="{dx:DXImageOffice2013 Image=Zoom100_32x32.png}" GlyphSize="Large"
+                            <dxb:BarButtonItem  Content="Zoom 100%" Glyph="{dx:DXImage SvgImages/Spreadsheet/100Percent.svg}" 
                                                Command="{DXCommand Execute='Zoom100()'}"/>
-                            <dxb:BarButtonItem RibbonStyle="Large" Content="Zoom In" LargeGlyph="{dx:DXImageOffice2013 Image=ZoomIn_32x32.png}" GlyphSize="Large"
+                            <dxb:BarButtonItem  Content="Zoom In" Glyph="{dx:DXImage SvgImages/Zoom/ZoomIn.svg}" 
                                                Command="{DXCommand Execute='ZoomIn()'}"/>
                             <dxb:BarItemSeparator/>
-                            <dxb:BarCheckItem RibbonStyle="Large" Content="Perfect Pixel Zoom" LargeGlyph="{dx:DXImageOffice2013 Image=Zoom2_32x32.png}" GlyphSize="Large" 
+                            <dxb:BarCheckItem  Content="Perfect Pixel Zoom" Glyph="{dx:DXImage SvgImages/Dashboards/Zoom.svg}"  
                                               IsChecked="{Binding IsPerfectPixel, Mode=TwoWay}"/>
-                            <dxb:BarCheckItem RibbonStyle="Large" Content="Show Grid Lines" LargeGlyph="{dx:DXImageGrayscale Image=ViewGridlines_32x32.png}" GlyphSize="Large" 
+                            <dxb:BarCheckItem  Content="Show Grid Lines" Glyph="{dx:DXImage SvgImages/RichEdit/ViewTableGridlines.svg}"  
                                               IsChecked="{Binding ShowGridLines, Mode=TwoWay}"
                                               IsVisible="{Binding Path=IsPerfectPixel}"/>
                         </dxr:RibbonPageGroup>
                     </dxr:RibbonPage>
                     <dxr:RibbonPage Caption="Image Tools">
                         <dxr:RibbonPageGroup Caption="Clipboard Tools" DataContext="{Binding TestInfoModel.TestInfo}">
-                            <dxb:BarButtonItem RibbonStyle="Large" Content="Copy Original" LargeGlyph="{dx:DXImageOffice2013 Image=Copy_32x32.png}" GlyphSize="Large"
+                            <dxb:BarButtonItem  Content="Copy Original" Glyph="{dx:DXImage SvgImages/Edit/Copy.svg}" 
                                            Command="{Binding ImageBeforeArrLazy.Value, Converter={StaticResource ImageToClipboardConverter}}"/>
-                            <dxb:BarButtonItem RibbonStyle="Large" Content="Copy Current" LargeGlyph="{dx:DXImageOffice2013 Image=Copy_32x32.png}" GlyphSize="Large"
+                            <dxb:BarButtonItem  Content="Copy Current" Glyph="{dx:DXImage SvgImages/Edit/Copy.svg}" 
                                            Command="{Binding ImageCurrentArrLazy.Value, Converter={StaticResource ImageToClipboardConverter}}"/>
-                            <dxb:BarButtonItem RibbonStyle="Large" Content="Copy Diff" LargeGlyph="{dx:DXImageOffice2013 Image=Copy_32x32.png}" GlyphSize="Large"
+                            <dxb:BarButtonItem  Content="Copy Diff" Glyph="{dx:DXImage SvgImages/Edit/Copy.svg}" 
                                            Command="{Binding ImageDiffArrLazy.Value, Converter={StaticResource ImageToClipboardConverter}}"/>
-                            <dxb:BarButtonItem RibbonStyle="Large" Content="Copy Split" LargeGlyph="{dx:DXImageOffice2013 Image=Copy_32x32.png}" GlyphSize="Large">
+                            <dxb:BarButtonItem  Content="Copy Split" Glyph="{dx:DXImage SvgImages/Edit/Copy.svg}" >
                                 <dxb:BarButtonItem.Command>
                                     <MultiBinding Converter="{StaticResource MultiImageToClipboardConverter}">
                                         <Binding Path="ImageBeforeArrLazy.Value"/>
@@ -290,13 +266,13 @@
                             </dxb:BarButtonItem>
                         </dxr:RibbonPageGroup>
                         <dxr:RibbonPageGroup Caption="Create Temp File And Get Path" DataContext="{Binding TestInfoModel.TestInfo}">
-                            <dxb:BarButtonItem RibbonStyle="Large" Content="For Original" LargeGlyph="{dx:DXImageOffice2013 Image=Copy_32x32.png}" GlyphSize="Large"
+                            <dxb:BarButtonItem  Content="For Original" Glyph="{dx:DXImage SvgImages/Edit/Copy.svg}" 
                                            Command="{Binding ImageBeforeArrLazy.Value, Converter={converters:ImageToTempFileConverter}}"/>
-                            <dxb:BarButtonItem RibbonStyle="Large" Content="For Current" LargeGlyph="{dx:DXImageOffice2013 Image=Copy_32x32.png}" GlyphSize="Large"
+                            <dxb:BarButtonItem  Content="For Current" Glyph="{dx:DXImage SvgImages/Edit/Copy.svg}" 
                                            Command="{Binding ImageCurrentArrLazy.Value, Converter={converters:ImageToTempFileConverter}}"/>
-                            <dxb:BarButtonItem RibbonStyle="Large" Content="For Diff" LargeGlyph="{dx:DXImageOffice2013 Image=Copy_32x32.png}" GlyphSize="Large"
+                            <dxb:BarButtonItem  Content="For Diff" Glyph="{dx:DXImage SvgImages/Edit/Copy.svg}" 
                                            Command="{Binding ImageDiffArrLazy.Value, Converter={converters:ImageToTempFileConverter}}"/>
-                            <dxb:BarButtonItem RibbonStyle="Large" Content="For Split" LargeGlyph="{dx:DXImageOffice2013 Image=Copy_32x32.png}" GlyphSize="Large">
+                            <dxb:BarButtonItem  Content="For Split" Glyph="{dx:DXImage SvgImages/Edit/Copy.svg}" >
                                 <dxb:BarButtonItem.Command>
                                     <MultiBinding Converter="{converters:MultiImageToTempFileConverter}">
                                         <Binding Path="ImageBeforeArrLazy.Value"/>

@@ -291,12 +291,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\CSS.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\CSS_Small.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
