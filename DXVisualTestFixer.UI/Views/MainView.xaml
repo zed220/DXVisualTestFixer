@@ -192,7 +192,17 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <dxr:RibbonControl x:Name="PART_Ribbon" RibbonStyle="Office2019" ToolbarShowMode="ShowAbove" AllowCustomization="False" MinimizationButtonVisibility="Collapsed" RibbonHeaderVisibility="Visible" 
-                           ToolbarShowCustomizationButton="False" ShowApplicationButton="False" AsyncMergingEnabled="True" IsSimplified="True">
+                           ToolbarShowCustomizationButton="False" ShowApplicationButton="False" AsyncMergingEnabled="True" IsSimplified="True" RibbonTitleBarVisibility="Visible">
+                <dxr:RibbonControl.ToolbarItems>
+                    <dxb:BarButtonItem Command="{DXCommand Execute='ApplyChanges()'}"
+                                       Content="{Binding TestsToCommitCount, Mode=OneWay, Converter={dxmvvm:FormatStringConverter FormatString='Commit And Push {0} Tests'}}"
+                                       Glyph="{dx:DXImage SvgImages/Outlook Inspired/MarkComplete.svg}"
+                                       IsVisible="{DXBinding Expr='TestsToCommitCount gt 0'}">
+                    </dxb:BarButtonItem>
+                    <dxb:BarButtonItem Content="Reload Tests List"
+                                       Command="{DXCommand Execute='RefreshTestList()'}"
+                                       Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Refresh.svg}"/>
+                </dxr:RibbonControl.ToolbarItems>
                 <dxr:RibbonDefaultPageCategory>
                     <dxr:RibbonPage Caption="Commit And Update">
                         <dxr:RibbonPage.CaptionTemplate>
@@ -210,40 +220,23 @@
                         </dxr:RibbonPage.CaptionTemplate>
                         <dxr:RibbonPageGroup Caption="Work">
                             <dxb:BarButtonItem
-                                        Content="Commit Tests"
                                         Command="{DXCommand Execute='ApplyChanges()'}"
-                                        Glyph="{dx:DXImage SvgImages/Business Objects/BO_Validation.svg}"
+                                        Glyph="{dx:DXImage SvgImages/Outlook Inspired/MarkComplete.svg}"
                                         KeyGesture="Ctrl+S"
-                                        IsEnabled="{DXBinding Expr='TestsToCommitCount gt 0'}">
-                                <dxb:BarButtonItem.GlyphTemplate>
+                                        IsVisible="{DXBinding Expr='TestsToCommitCount gt 0'}">
+                                <dxb:BarButtonItem.ContentTemplate>
                                     <DataTemplate>
-                                        <Grid>
-                                            <Grid>
-                                                <dx:DXImage Source="{dx:DXImage SvgImages/Outlook Inspired/MarkComplete.svg}"/>
-                                                <Border CornerRadius="1" BorderThickness="1" Background="Green" Margin="1, 0" BorderBrush="Green"
-                                                        VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                                                    <Border.Visibility>
-                                                        <Binding Path="TestsToCommitCount">
-                                                            <Binding.Converter>
-                                                                <dxmvvm:ObjectToObjectConverter DefaultTarget="Visible">
-                                                                    <dxmvvm:MapItem Source="0" Target="Collapsed"/>
-                                                                </dxmvvm:ObjectToObjectConverter>
-                                                            </Binding.Converter>
-                                                        </Binding>
-                                                    </Border.Visibility>
-                                                    <TextBlock TextAlignment="Center" HorizontalAlignment="Center" Text="{Binding TestsToCommitCount}" FontSize="9" Foreground="White"/>
-                                                </Border>
-                                            </Grid>
-                                        </Grid>
+                                        <TextBlock Foreground="Green"
+                                                   DataContext="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type dxr:RibbonControl}}}"
+                                                   Text="{Binding TestsToCommitCount, Mode=OneWay, Converter={dxmvvm:FormatStringConverter FormatString='Commit And Push {0} Tests'}}"/>
                                     </DataTemplate>
-                                </dxb:BarButtonItem.GlyphTemplate>
+                                </dxb:BarButtonItem.ContentTemplate>
                             </dxb:BarButtonItem>
                             <dxb:BarButtonItem
-                                           Content="Update Tests"
+                                           Content="Reload Tests List"
                                            KeyGesture="F5" dxb:BarManager.KeyGestureWorkingMode="AllKeyGesture"
                                            Command="{DXCommand Execute='RefreshTestList()'}"
-                                           Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Refresh.svg}">
-                            </dxb:BarButtonItem>
+                                           Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Refresh.svg}"/>
                             <dxb:BarSubItem Content="Open Solution" Glyph="{dx:DXImage SvgImages/RichEdit/ShowAllFieldCodes.svg}" RibbonStyle="SmallWithText" 
                                         ItemLinksSource="{Binding Solutions}">
                                 <dxb:BarSubItem.ItemTemplate>

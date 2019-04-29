@@ -88,7 +88,7 @@ namespace DXVisualTestFixer.UI.Models {
             var pathToJB = System.IO.Path.Combine(Environment.ExpandEnvironmentVariables("%ProgramW6432%"), "JetBrains");
             if(!Directory.Exists(pathToJB))
                 return null;
-            return Directory.GetFiles(pathToJB, "rider64.exe", SearchOption.AllDirectories).Last();
+            return Directory.GetFiles(pathToJB, "rider64.exe", SearchOption.AllDirectories).LastOrDefault();
         }
 
         public bool CanOpenByVS {
