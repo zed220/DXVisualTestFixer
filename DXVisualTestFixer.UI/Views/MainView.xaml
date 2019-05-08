@@ -194,17 +194,30 @@
             <dxr:RibbonControl x:Name="PART_Ribbon" RibbonStyle="Office2019" ToolbarShowMode="ShowAbove" AllowCustomization="False" MinimizationButtonVisibility="Collapsed" RibbonHeaderVisibility="Visible" 
                            ToolbarShowCustomizationButton="False" ShowApplicationButton="False" AsyncMergingEnabled="True" IsSimplified="True" RibbonTitleBarVisibility="Visible">
                 <dxr:RibbonControl.ToolbarItems>
-                    <dxb:BarButtonItem Command="{DXCommand Execute='ApplyChanges()'}"
+                    <dxb:BarButtonItem x:Name="btnCommitAndUpdate"
+                                       Command="{DXCommand Execute='ApplyChanges()'}"
+                                       KeyGesture="Ctrl+S"
+                                       dxb:BarManager.KeyGestureWorkingMode="AllKeyGesture"
                                        Content="{Binding TestsToCommitCount, Mode=OneWay, Converter={dxmvvm:FormatStringConverter FormatString='Commit And Push {0} Tests'}}"
                                        Glyph="{dx:DXImage SvgImages/Outlook Inspired/MarkComplete.svg}"
                                        IsVisible="{DXBinding Expr='TestsToCommitCount gt 0'}">
+                        <dxb:BarButtonItem.ContentTemplate>
+                            <DataTemplate>
+                                <TextBlock Foreground="Green"
+                                                   DataContext="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type dxr:RibbonControl}}}"
+                                                   Text="{Binding TestsToCommitCount, Mode=OneWay, Converter={dxmvvm:FormatStringConverter FormatString='Commit And Push {0} Tests'}}"/>
+                            </DataTemplate>
+                        </dxb:BarButtonItem.ContentTemplate>
                     </dxb:BarButtonItem>
-                    <dxb:BarButtonItem Content="Reload Tests List"
+                    <dxb:BarButtonItem x:Name="btnRefresh"
+                                       Content="Reload Tests List"
+                                       KeyGesture="F5"
+                                       dxb:BarManager.KeyGestureWorkingMode="AllKeyGesture"
                                        Command="{DXCommand Execute='RefreshTestList()'}"
                                        Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Refresh.svg}"/>
                 </dxr:RibbonControl.ToolbarItems>
                 <dxr:RibbonDefaultPageCategory>
-                    <dxr:RibbonPage Caption="Commit And Update">
+                    <dxr:RibbonPage Caption="Main">
                         <dxr:RibbonPage.CaptionTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
@@ -219,24 +232,8 @@
                             </DataTemplate>
                         </dxr:RibbonPage.CaptionTemplate>
                         <dxr:RibbonPageGroup Caption="Work">
-                            <dxb:BarButtonItem
-                                        Command="{DXCommand Execute='ApplyChanges()'}"
-                                        Glyph="{dx:DXImage SvgImages/Outlook Inspired/MarkComplete.svg}"
-                                        KeyGesture="Ctrl+S"
-                                        IsVisible="{DXBinding Expr='TestsToCommitCount gt 0'}">
-                                <dxb:BarButtonItem.ContentTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Foreground="Green"
-                                                   DataContext="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type dxr:RibbonControl}}}"
-                                                   Text="{Binding TestsToCommitCount, Mode=OneWay, Converter={dxmvvm:FormatStringConverter FormatString='Commit And Push {0} Tests'}}"/>
-                                    </DataTemplate>
-                                </dxb:BarButtonItem.ContentTemplate>
-                            </dxb:BarButtonItem>
-                            <dxb:BarButtonItem
-                                           Content="Reload Tests List"
-                                           KeyGesture="F5" dxb:BarManager.KeyGestureWorkingMode="AllKeyGesture"
-                                           Command="{DXCommand Execute='RefreshTestList()'}"
-                                           Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Refresh.svg}"/>
+                            <dxb:BarButtonItemLink BarItemName="btnCommitAndUpdate"/>
+                            <dxb:BarButtonItemLink BarItemName="btnRefresh"/>
                             <dxb:BarSubItem Content="Open Solution" Glyph="{dx:DXImage SvgImages/RichEdit/ShowAllFieldCodes.svg}" RibbonStyle="SmallWithText" 
                                         ItemLinksSource="{Binding Solutions}">
                                 <dxb:BarSubItem.ItemTemplate>

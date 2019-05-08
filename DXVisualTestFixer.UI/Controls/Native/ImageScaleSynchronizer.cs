@@ -1,10 +1,12 @@
 ﻿using DevExpress.Mvvm.Native;
 using DevExpress.Xpf.Bars.Native;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace DXVisualTestFixer.UI.Controls.Native {
     class ImageScaleSynchronizer : ControlsRegistrator<ScrollViewer> {
@@ -56,23 +58,35 @@ namespace DXVisualTestFixer.UI.Controls.Native {
         }
 
         public void SetScale(int scale) {
-            foreach(var trackingControl in GetActualControls().Select(x => TreeHelper.GetChild<ScaleImageControl>(x)).Where(x => x != null)) {
-                ScaleTransform scaleTransform = trackingControl.LayoutTransform as ScaleTransform;
+            var notInitializedControls = SetScaleCore(scale);
+            if(notInitializedControls != null)
+                Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() => SetScaleCore(scale)));
+        }
+        List<ScrollViewer> SetScaleCore(int scale) {
+            var notInitializedControls = new List<ScrollViewer>();
+            foreach(var trackingControl in GetActualControls()) {
+                var scaleImageControl = TreeHelper.GetChild<ScaleImageControl>(trackingControl);
+                if(scaleImageControl == null) {
+                    notInitializedControls.Add(trackingControl);
+                    continue;
+                }
+                ScaleTransform scaleTransform = scaleImageControl.LayoutTransform as ScaleTransform;
                 if(scaleTransform == null)
-                    trackingControl.LayoutTransform = scaleTransform = new ScaleTransform();
+                    scaleImageControl.LayoutTransform = scaleTransform = new ScaleTransform();
                 if(IsPerfectPixel) {
                     scaleTransform.ScaleX = 1;
                     scaleTransform.ScaleY = 1;
-                    trackingControl.Scale = scale / 100;
-                    trackingControl.ShowGridLines = ShowGridLines;
+                    scaleImageControl.Scale = scale / 100;
+                    scaleImageControl.ShowGridLines = ShowGridLines;
                 }
                 else {
-                    trackingControl.Scale = 1;
+                    scaleImageControl.Scale = 1;
                     scaleTransform.ScaleX = scale / 100d;
                     scaleTransform.ScaleY = scale / 100d;
                 }
             }
             this.scale = scale;
+            return notInitializedControls;
         }
     }
 }

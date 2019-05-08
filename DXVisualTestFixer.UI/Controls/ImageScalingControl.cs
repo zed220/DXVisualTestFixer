@@ -31,7 +31,7 @@ namespace DXVisualTestFixer.UI.Controls {
             ScrollModeProperty = DependencyProperty.Register("ScrollMode", typeof(ScrollMode), ownerType, new PropertyMetadata(ScrollMode.Draggable));
             ImageScalingControlProperty = DependencyProperty.RegisterAttached("ImageScalingControl", ownerType, ownerType, new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.Inherits));
 
-            ScrollViewerTypeProperty = DependencyProperty.RegisterAttached("ScrollViewerType", typeof(MergedTestViewType), ownerType, new FrameworkPropertyMetadata(MergedTestViewType.Before, FrameworkPropertyMetadataOptions.Inherits));
+            ScrollViewerTypeProperty = DependencyProperty.RegisterAttached("ScrollViewerType", typeof(MergedTestViewType?), ownerType, new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.Inherits));
 
             DefaultStyleKeyProperty.OverrideMetadata(ownerType, new FrameworkPropertyMetadata(ownerType));
         }
