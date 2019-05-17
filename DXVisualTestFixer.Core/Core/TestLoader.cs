@@ -238,6 +238,10 @@ namespace DXVisualTestFixer.Core {
                 return;
             }
             List<string> themedResultPaths = message.Split(new[] { " - failed:" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+            if(themedResultPaths.Count == 1) {
+                resultList.Add(CorpDirTestInfo.CreateError(farmTaskInfo, testNameAndNamespace, message, stackTrace));
+                return;
+            }
             foreach(var part in themedResultPaths) {
                 ParseMessagePart(farmTaskInfo, testNameAndNamespace, part, resultList);
             }
