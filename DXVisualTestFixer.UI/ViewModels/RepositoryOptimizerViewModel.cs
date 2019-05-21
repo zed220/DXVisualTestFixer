@@ -5,6 +5,7 @@ using DXVisualTestFixer.UI.Models;
 using Microsoft.Practices.Unity;
 using Prism.Interactivity.InteractionRequest;
 using Prism.Mvvm;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -18,6 +19,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
     public class RepositoryOptimizerViewModel : BindableBase, IConfirmation {
         readonly Dispatcher Dispatcher;
         readonly ITestsService testsService;
+        readonly IMinioWorker minioWorker;
 
         ObservableCollection<RepositoryFileModel> _UnusedFiles;
         ObservableCollection<RepositoryFileModel> _RemovedFiles;
@@ -43,15 +45,16 @@ namespace DXVisualTestFixer.UI.ViewModels {
         public string Title { get; set; }
         public object Content { get; set; }
 
-        public RepositoryOptimizerViewModel(ITestsService testsService) {
+        public RepositoryOptimizerViewModel(ITestsService testsService, IMinioWorker minioWorker) {
             Title = "Repository Optimizer";
             Dispatcher = Dispatcher.CurrentDispatcher;
+            this.minioWorker = minioWorker;
             this.testsService = testsService;
             RemovedFiles = new ObservableCollection<RepositoryFileModel>();
             Commands = UICommand.GenerateFromMessageButton(MessageButton.OKCancel, new DialogService(), MessageResult.OK, MessageResult.Cancel);
             Commands.Where(c => c.IsDefault).Single().Command = new DelegateCommand(() => Commit());
             Status = ProgramStatus.Loading;
-            Task.Factory.StartNew(() => UpdateUnusedFiles(testsService.ActualState.UsedFiles, testsService.ActualState.Teams)).ConfigureAwait(false);
+            Task.Factory.StartNew(() => UpdateUnusedFiles(testsService.ActualState.UsedFilesLinks, testsService.ActualState.Teams)).ConfigureAwait(false);
         }
 
         List<RepositoryFileModel> Commit() {
@@ -66,9 +69,9 @@ namespace DXVisualTestFixer.UI.ViewModels {
             return removedFiltes;
         }
 
-        void UpdateUnusedFiles(Dictionary<Repository, List<string>> usedFilesByRep, Dictionary<Repository, List<Team>> teams) {
-            HashSet<string> usedFiles = GetUsedFiles(usedFilesByRep, testsService);
-            UnusedFiles = GetActualFiles(usedFilesByRep.Keys.Select(rep => rep.Version).Distinct().ToList(), usedFiles, teams);
+        async Task UpdateUnusedFiles(Dictionary<Repository, List<string>> usedFilesByRepLinks, Dictionary<Repository, List<Team>> teams) {
+            HashSet<string> usedFiles = await GetUsedFiles(usedFilesByRepLinks, testsService, minioWorker);
+            UnusedFiles = GetActualFiles(usedFilesByRepLinks.Keys.Select(rep => rep.Version).Distinct().ToList(), usedFiles, teams);
             Status = ProgramStatus.Idle;
         }
 
@@ -90,13 +93,18 @@ namespace DXVisualTestFixer.UI.ViewModels {
             }
             return result;
         }
-        public static HashSet<string> GetUsedFiles(Dictionary<Repository, List<string>> usedFilesByRep, ITestsService testsService) {
+        public static async Task<HashSet<string>> GetUsedFiles(Dictionary<Repository, List<string>> usedFilesByRepLinks, ITestsService testsService, IMinioWorker minioWorker) {
             HashSet<string> usedFiles = new HashSet<string>();
-            foreach(var usedFileByRep in usedFilesByRep) {
-                foreach(string fileRelPath in usedFileByRep.Value) {
-                    string filePath = testsService.GetResourcePath(usedFileByRep.Key, fileRelPath);
-                    if(File.Exists(filePath))
-                        usedFiles.Add(filePath.ToLower());
+            foreach(var usedFileByRepLink in usedFilesByRepLinks) {
+                foreach(string fileRelLink in usedFileByRepLink.Value) {
+                    var filesStr = await minioWorker.Download(fileRelLink);
+                    if(string.IsNullOrEmpty(filesStr))
+                        continue;
+                    foreach(var fileRelPath in filesStr.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries)) {
+                        string filePath = testsService.GetResourcePath(usedFileByRepLink.Key, fileRelPath);
+                        if(File.Exists(filePath))
+                            usedFiles.Add(filePath.ToLower());
+                    }
                 }
             }
             return usedFiles;

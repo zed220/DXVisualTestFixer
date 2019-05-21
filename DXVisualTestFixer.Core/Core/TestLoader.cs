@@ -11,9 +11,9 @@ using System.Xml;
 
 namespace DXVisualTestFixer.Core {
     public class CorpDirTestInfoContainer {
-        public CorpDirTestInfoContainer(List<CorpDirTestInfo> failedTests, List<string> usedFiles, List<IElapsedTimeInfo> elapsedTimes, List<Team> teams, (DateTime sources, DateTime tests)? buildTime) {
+        public CorpDirTestInfoContainer(List<CorpDirTestInfo> failedTests, List<string> usedFilesLinks, List<IElapsedTimeInfo> elapsedTimes, List<Team> teams, (DateTime sources, DateTime tests)? buildTime) {
             FailedTests = failedTests;
-            UsedFiles = usedFiles;
+            UsedFilesLinks = usedFilesLinks;
             ElapsedTimes = elapsedTimes;
             Teams = teams;
             SourcesBuildTime = buildTime?.sources;
@@ -21,7 +21,7 @@ namespace DXVisualTestFixer.Core {
         }
 
         public List<CorpDirTestInfo> FailedTests { get; }
-        public List<string> UsedFiles { get; }
+        public List<string> UsedFilesLinks { get; }
         public List<IElapsedTimeInfo> ElapsedTimes { get; }
         public List<Team> Teams { get; }
         public DateTime? SourcesBuildTime { get; }
@@ -66,7 +66,7 @@ namespace DXVisualTestFixer.Core {
                         failedTests.Add(CorpDirTestInfo.CreateError(taskInfo, "BuildError", "BuildError", "BuildError"));
                 }
             }
-            return new CorpDirTestInfoContainer(failedTests, FindUsedFiles(myXmlDocument).ToList(), FindElapsedTimes(myXmlDocument), FindTeams(taskInfo.Repository.Version, myXmlDocument), FindTimings(myXmlDocument));
+            return new CorpDirTestInfoContainer(failedTests, FindUsedFilesLinks(myXmlDocument).ToList(), FindElapsedTimes(myXmlDocument), FindTeams(taskInfo.Repository.Version, myXmlDocument), FindTimings(myXmlDocument));
         }
         static XmlDocument LoadFromUrl(string realUrl) {
             XmlDocument myXmlDocument = new XmlDocument();
@@ -121,20 +121,12 @@ namespace DXVisualTestFixer.Core {
                     yield return subNode;
             }
         }
-        static IEnumerable<string> FindUsedFiles(XmlDocument myXmlDocument) {
+        static IEnumerable<string> FindUsedFilesLinks(XmlDocument myXmlDocument) {
             XmlNode buildNode = FindBuildNode(myXmlDocument);
             if(buildNode == null)
                 yield break;
-            foreach(var usedFilesNode in buildNode.FindAllByName("FileUsingLog")) {
-                foreach(string usedFile in usedFilesNode.InnerText.Split('\n')) {
-                    if(String.IsNullOrEmpty(usedFile))
-                        continue;
-                    string result = usedFile.Replace("\r", "");
-                    if(result.Contains(@"\VisualTests\"))
-                        yield return result.Split(new[] { @"\VisualTests\" }, StringSplitOptions.RemoveEmptyEntries).Last().ToLower();
-                    else
-                        yield return result;
-                }
+            foreach(var usedFilesNode in buildNode.FindAllByName("FileUsingLogLink")) {
+                yield return usedFilesNode.InnerText.Replace("\n", string.Empty);
             }
         }
         static List<IElapsedTimeInfo> FindElapsedTimes(XmlDocument myXmlDocument) {

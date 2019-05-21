@@ -21,7 +21,7 @@ namespace DXVisualTestFixer.Core {
             Repository = repository;
             RealUrl = realUrl;
             TestList = testList;
-            UsedFiles = container.UsedFiles;
+            UsedFilesLinks = container.UsedFilesLinks;
             ElapsedTimes = container.ElapsedTimes;
             Teams = container.Teams;
             SourcesBuildTime = container.SourcesBuildTime;
@@ -31,7 +31,7 @@ namespace DXVisualTestFixer.Core {
         public Repository Repository { get; }
         public string RealUrl { get; }
         public List<TestInfo> TestList { get; }
-        public List<string> UsedFiles { get; }
+        public List<string> UsedFilesLinks { get; }
         public List<IElapsedTimeInfo> ElapsedTimes { get; }
         public List<Team> Teams { get; }
         public DateTime? SourcesBuildTime { get; }
@@ -40,7 +40,7 @@ namespace DXVisualTestFixer.Core {
     class TestInfoContainer : ITestInfoContainer {
         public TestInfoContainer() {
             TestList = new List<TestInfo>();
-            UsedFiles = new Dictionary<Repository, List<string>>();
+            UsedFilesLinks = new Dictionary<Repository, List<string>>();
             ElapsedTimes = new Dictionary<Repository, List<IElapsedTimeInfo>>();
             Teams = new Dictionary<Repository, List<Team>>();
             ChangedTests = new List<TestInfo>();
@@ -48,7 +48,7 @@ namespace DXVisualTestFixer.Core {
         }
 
         public List<TestInfo> TestList { get; }
-        public Dictionary<Repository, List<string>> UsedFiles { get; }
+        public Dictionary<Repository, List<string>> UsedFilesLinks { get; }
         public Dictionary<Repository, List<IElapsedTimeInfo>> ElapsedTimes { get; }
         public Dictionary<Repository, List<Team>> Teams { get; }
         public List<TimingInfo> Timings { get; }
@@ -164,7 +164,7 @@ namespace DXVisualTestFixer.Core {
             result.Timings.Clear();
             foreach(TestInfoCached cached in await Task.WhenAll(allTasks.ToArray()).ConfigureAwait(false)) {
                 result.TestList.AddRange(cached.TestList);
-                result.UsedFiles[cached.Repository] = cached.UsedFiles;
+                result.UsedFilesLinks[cached.Repository] = cached.UsedFilesLinks;
                 result.ElapsedTimes[cached.Repository] = cached.ElapsedTimes.Cast<IElapsedTimeInfo>().ToList();
                 result.Teams[cached.Repository] = cached.Teams;
                 result.Timings.Add(new TimingInfo(cached.Repository, cached.SourcesBuildTime, cached.TestsBuildTime));

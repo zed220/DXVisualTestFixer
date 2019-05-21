@@ -18,6 +18,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
     public class ViewResourcesViewModel : BindableBase, Prism.Interactivity.InteractionRequest.INotification {
         readonly Dispatcher Dispatcher;
         readonly ITestsService testsService;
+        readonly IMinioWorker minioWorker;
 
         ProgramStatus _Status;
         List<RepositoryFileModel> _UsedFiles = new List<RepositoryFileModel>();
@@ -42,16 +43,17 @@ namespace DXVisualTestFixer.UI.ViewModels {
             set { SetProperty(ref _CurrentFile, value); }
         }
 
-        public ViewResourcesViewModel(ITestsService testsService) {
+        public ViewResourcesViewModel(ITestsService testsService, IMinioWorker minioWorker) {
             Commands = UICommand.GenerateFromMessageButton(MessageButton.OK, new DialogService(), MessageResult.OK);
             Dispatcher = Dispatcher.CurrentDispatcher;
             this.testsService = testsService;
+            this.minioWorker = minioWorker;
             Status = ProgramStatus.Loading;
-            Task.Factory.StartNew(() => UpdateUsedFiles(testsService.ActualState.UsedFiles, testsService.ActualState.Teams)).ConfigureAwait(false);
+            Task.Factory.StartNew(() => UpdateUsedFiles(testsService.ActualState.UsedFilesLinks, testsService.ActualState.Teams)).ConfigureAwait(false);
         }
 
-        void UpdateUsedFiles(Dictionary<Repository, List<string>> usedFilesByRep, Dictionary<Repository, List<Team>> teams) {
-            HashSet<string> usedFiles = RepositoryOptimizerViewModel.GetUsedFiles(usedFilesByRep, testsService);
+        async Task UpdateUsedFiles(Dictionary<Repository, List<string>> usedFilesByRep, Dictionary<Repository, List<Team>> teams) {
+            HashSet<string> usedFiles = await RepositoryOptimizerViewModel.GetUsedFiles(usedFilesByRep, testsService, minioWorker);
             UsedFiles = GetActualFiles(usedFilesByRep.Keys.Select(rep => rep.Version).Distinct().ToList(), usedFiles, teams);
             if(UsedFiles.Count > 0)
                 CurrentFile = UsedFiles[0];

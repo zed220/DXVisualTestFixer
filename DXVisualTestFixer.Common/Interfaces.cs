@@ -108,7 +108,7 @@ namespace DXVisualTestFixer.Common {
     }
     public interface ITestInfoContainer {
         List<TestInfo> TestList { get; }
-        Dictionary<Repository, List<string>> UsedFiles { get; }
+        Dictionary<Repository, List<string>> UsedFilesLinks { get; }
         Dictionary<Repository, List<IElapsedTimeInfo>> ElapsedTimes { get; }
         Dictionary<Repository, List<Team>> Teams { get; }
         List<TestInfo> ChangedTests { get; }
@@ -129,5 +129,8 @@ namespace DXVisualTestFixer.Common {
         Task<GitUpdateResult> Update(Repository repository);
         Task<GitCommitResult> Commit(Repository repository);
         Task<bool> Clone(Repository repository);
+    }
+    public interface IMinioWorker {
+        Task<string> Download(string path);
     }
 }
