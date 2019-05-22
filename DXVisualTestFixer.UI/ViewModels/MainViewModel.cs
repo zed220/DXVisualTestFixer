@@ -241,7 +241,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
             UpdateConfig();
         }
         public void CommitCurrentTest() {
-            if(CurrentTest == null || CurrentTest.Valid != TestState.Valid)
+            if(CurrentTest == null || CurrentTest.Valid == TestState.Error)
                 return;
             CurrentTest.CommitChange = true;
         }
