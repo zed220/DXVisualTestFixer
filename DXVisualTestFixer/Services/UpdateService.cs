@@ -29,7 +29,7 @@ namespace DXVisualTestFixer.Services {
         protected override async Task<bool> CheckUpdateCore() {
             try {
                 if(!Directory.Exists(serverfolder))
-                    Directory.CreateDirectory(serverfolder);
+                    return false;
             }
             catch(IOException e) {
                 return false;

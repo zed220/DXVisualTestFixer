@@ -57,6 +57,15 @@ namespace DXVisualTestFixer.Core {
                         return localRes;
                     }));
                 }
+                var errors = FindErrors(myXmlDocument).ToList();
+                if(errors.Count > 0) {
+                    failedTestsTasks.Add(Task.Factory.StartNew<List<CorpDirTestInfo>>(() => {
+                        List<CorpDirTestInfo> result = new List<CorpDirTestInfo>();
+                        foreach(var error in errors)
+                            result.Add(CorpDirTestInfo.CreateError(taskInfo, "Error", error.InnerText, null));
+                        return result;
+                    }));
+                }
                 if(failedTestsTasks.Count > 0) {
                     Task.WaitAll(failedTestsTasks.ToArray());
                     failedTestsTasks.ForEach(t => failedTests.AddRange(t.Result));
@@ -120,6 +129,14 @@ namespace DXVisualTestFixer.Core {
                 foreach(XmlElement subNode in FindAllFailedTests(testResults))
                     yield return subNode;
             }
+        }
+        static IEnumerable<XmlElement> FindErrors(XmlDocument myXmlDocument) {
+            XmlNode buildNode = FindBuildNode(myXmlDocument);
+            if(buildNode == null)
+                yield break;
+            foreach(var root in buildNode.FindAllByName("root"))
+                foreach(XmlElement error in root.FindAllByName("error"))
+                    yield return error;
         }
         static IEnumerable<string> FindUsedFilesLinks(XmlDocument myXmlDocument) {
             XmlNode buildNode = FindBuildNode(myXmlDocument);
