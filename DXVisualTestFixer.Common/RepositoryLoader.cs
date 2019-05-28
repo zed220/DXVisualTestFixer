@@ -5,8 +5,6 @@ using System.Linq;
 
 namespace DXVisualTestFixer.Common {
     public class Repository {
-        public static readonly string[] Versions = new RepositoryLoader().Result.Where(r => Convert.ToInt32(r.Replace(".", string.Empty)) > 172).ToArray();
-
         public string Version { get; set; }
         public string Path { get; set; }
 
@@ -19,12 +17,15 @@ namespace DXVisualTestFixer.Common {
         }
     }
 
-    class RepositoryLoader : FileStringLoaderBase {
-        public RepositoryLoader() : base(@"\\corp\internal\common\visualTests_squirrel\versions.xml") {
+
+    public class RepositoryLoader : FileStringLoaderBase {
+        RepositoryLoader() : base(@"\\corp\internal\common\visualTests_squirrel\versions.xml") {
         }
 
+        public static string[] GetVersions() => new RepositoryLoader().Result.ToArray();
+
         protected override List<string> LoadIfFileNotFound() {
-            return new List<string>() { "18.1", "18.2", "19.1" };
+            return new List<string>() { "18.2", "19.1", "19.2" };
         }
     }
 }

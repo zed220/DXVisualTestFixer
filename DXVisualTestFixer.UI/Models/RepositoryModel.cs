@@ -46,7 +46,7 @@ namespace DXVisualTestFixer.UI.Models {
 
         public static void ActualizeRepositories(ICollection<RepositoryModel> Repositories, string filePath) {
             List<string> savedVersions = Repositories.Select(r => r.Version).ToList();
-            foreach(var ver in Repository.Versions.Where(v => !savedVersions.Contains(v))) {
+            foreach(var ver in RepositoryLoader.GetVersions().Where(v => !savedVersions.Contains(v))) {
                 string verDir = String.Format("20{0}", ver);
                 foreach(var directoryPath in Directory.GetDirectories(filePath)) {
                     string dirName = System.IO.Path.GetFileName(directoryPath);
