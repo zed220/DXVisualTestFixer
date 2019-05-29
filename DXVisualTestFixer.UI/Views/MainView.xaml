@@ -220,15 +220,28 @@
                     <dxr:RibbonPage Caption="Main">
                         <dxr:RibbonPage.CaptionTemplate>
                             <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{Binding}" Margin="0, 0, 2, 0"/>
-                                    <TextBlock Text="(Nothing to commit)" Opacity="0.7"
-                                               Visibility="{Binding Path=DataContext.TestsToCommitCount, Converter={StaticResource ZeroToVisibilityConverter}, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type dxr:RibbonControl}}}"/>
-                                    <TextBlock Foreground="Green" 
-                                               DataContext="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type dxr:RibbonControl}}}"
-                                               Visibility="{Binding TestsToCommitCount, Converter={StaticResource ZeroToVisibilityInverseConverter}}"
-                                               Text="{Binding TestsToCommitCount, Mode=OneWay, Converter={dxmvvm:FormatStringConverter FormatString='({0} to commit)'}}"/>
-                                </StackPanel>
+                                <DataTemplate.Resources>
+                                    <ControlTemplate x:Key="captionTemplate" TargetType="{x:Type Control}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding}" Margin="0, 0, 2, 0"/>
+                                            <TextBlock Text="(Nothing to commit)" Opacity="0.7"
+                                                   Visibility="{Binding Path=DataContext.TestsToCommitCount, Converter={StaticResource ZeroToVisibilityConverter}, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type dxr:RibbonControl}}}"/>
+                                            <TextBlock Foreground="Green" 
+                                                   DataContext="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type dxr:RibbonControl}}}"
+                                                   Visibility="{Binding TestsToCommitCount, Converter={StaticResource ZeroToVisibilityInverseConverter}}"
+                                                   Text="{Binding TestsToCommitCount, Mode=OneWay, Converter={dxmvvm:FormatStringConverter FormatString='({0} to commit)'}}"/>
+                                        </StackPanel>
+                                    </ControlTemplate>
+                                </DataTemplate.Resources>
+                                <Grid>
+                                    <Control x:Name="normal" Template="{StaticResource captionTemplate}" HorizontalAlignment="Center"/>
+                                    <Control x:Name="bold" Template="{StaticResource captionTemplate}" Visibility="Hidden" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                                </Grid>
+                                <DataTemplate.Triggers>
+                                    <Trigger Property="FontWeight" SourceName="normal" Value="SemiBold">
+                                        <Setter Property="FontWeight" TargetName="bold" Value="Normal"/>
+                                    </Trigger>
+                                </DataTemplate.Triggers>
                             </DataTemplate>
                         </dxr:RibbonPage.CaptionTemplate>
                         <dxr:RibbonPageGroup Caption="Work">
