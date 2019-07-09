@@ -25,6 +25,7 @@ namespace DXVisualTestFixer.UI.Controls.Native {
             control.MouseEnter += Control_MouseEnter;
             control.MouseLeave += Control_MouseLeave;
         }
+
         protected override void UnregisterCore(ScrollViewer control) {
             control.PreviewMouseMove -= Control_PreviewMouseMove;
             control.MouseEnter -= Control_MouseEnter;
@@ -47,7 +48,7 @@ namespace DXVisualTestFixer.UI.Controls.Native {
             var pos = e.GetPosition((FrameworkElement)e.OriginalSource);
             EnumerateTrackingControls(el => {
                 el.ShowHighlightedPoint = IsEnabled;
-                el.HighlightedPoint = IsEnabled ? pos : default(Point);
+                el.HighlightedPoint = pos;
             });
         }
 

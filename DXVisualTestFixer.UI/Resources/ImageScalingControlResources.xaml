@@ -238,11 +238,8 @@
                             <dxb:BarButtonItem  Content="Zoom In" Glyph="{dx:DXImage SvgImages/Zoom/ZoomIn.svg}" 
                                                Command="{DXCommand Execute='ZoomIn()'}"/>
                             <dxb:BarItemSeparator/>
-                            <dxb:BarCheckItem  Content="Perfect Pixel Zoom" Glyph="{dx:DXImage SvgImages/Dashboards/Zoom.svg}"  
-                                              IsChecked="{Binding IsPerfectPixel, Mode=TwoWay}"/>
                             <dxb:BarCheckItem  Content="Show Grid Lines" Glyph="{dx:DXImage SvgImages/RichEdit/ViewTableGridlines.svg}"  
-                                              IsChecked="{Binding ShowGridLines, Mode=TwoWay}"
-                                              IsVisible="{Binding Path=IsPerfectPixel}"/>
+                                              IsChecked="{Binding ShowGridLines, Mode=TwoWay}"/>
                         </dxr:RibbonPageGroup>
                     </dxr:RibbonPage>
                     <dxr:RibbonPage Caption="Image Tools">

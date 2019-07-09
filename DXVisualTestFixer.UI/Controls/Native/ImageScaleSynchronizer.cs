@@ -11,15 +11,8 @@ using System.Windows.Threading;
 namespace DXVisualTestFixer.UI.Controls.Native {
     class ImageScaleSynchronizer : ControlsRegistrator<ScrollViewer> {
         int scale = 100;
-        bool _IsPerfectPixel, _ShowGridLines;
+        bool _ShowGridLines;
 
-        public bool IsPerfectPixel {
-            get { return _IsPerfectPixel; }
-            set {
-                _IsPerfectPixel = value;
-                Zoom100();
-            }
-        }
         public bool ShowGridLines {
             get { return _ShowGridLines; }
             set {
@@ -27,35 +20,22 @@ namespace DXVisualTestFixer.UI.Controls.Native {
                 SetScale(scale);
             }
         }
+        public int Scale => scale;
 
         public void ZoomOut() {
-            int d = IsPerfectPixel ? 100 : 10;
-            int min = IsPerfectPixel ? 100 : 30;
-            SetScale(Math.Max(min, scale - d));
+            var dScale = scale <= 100 ? 10 : 100;
+            SetScale(Math.Max(30, scale - dScale));
         }
         public void ZoomIn() {
-            int d = IsPerfectPixel ? 100 : 10;
-            SetScale(Math.Min(1000, scale + d));
+            var dScale = scale >= 100 ? 100 : 10;
+            SetScale(Math.Min(1000, scale + dScale));
         }
         public void Zoom100() {
             SetScale(100);
         }
 
-        protected override void RegisterCore(ScrollViewer control) {
-            control.PreviewMouseWheel += previewMouseWheel;
-            SetScale(scale);
-        }
-        protected override void UnregisterCore(ScrollViewer control) {
-            control.PreviewMouseWheel -= previewMouseWheel;
-        }
-
-        void previewMouseWheel(object sender, MouseWheelEventArgs e) {
-            e.Handled = true;
-            if(e.Delta < 0)
-                ZoomOut();
-            else
-                ZoomIn();
-        }
+        protected override void RegisterCore(ScrollViewer control) => SetScale(scale);
+        protected override void UnregisterCore(ScrollViewer control) { }
 
         public void SetScale(int scale) {
             var notInitializedControls = SetScaleCore(scale);
@@ -73,7 +53,7 @@ namespace DXVisualTestFixer.UI.Controls.Native {
                 ScaleTransform scaleTransform = scaleImageControl.LayoutTransform as ScaleTransform;
                 if(scaleTransform == null)
                     scaleImageControl.LayoutTransform = scaleTransform = new ScaleTransform();
-                if(IsPerfectPixel) {
+                if(scale > 100) {
                     scaleTransform.ScaleX = 1;
                     scaleTransform.ScaleY = 1;
                     scaleImageControl.Scale = scale / 100;

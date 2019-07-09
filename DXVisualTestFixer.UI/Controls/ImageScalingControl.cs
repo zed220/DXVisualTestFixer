@@ -8,12 +8,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace DXVisualTestFixer.UI.Controls {
     public class ImageScalingControl : Control {
         public static readonly DependencyProperty ViewModeProperty;
         public static readonly DependencyProperty MergedViewTypeProperty;
-        public static readonly DependencyProperty IsPerfectPixelProperty;
         public static readonly DependencyProperty ShowGridLinesProperty;
         public static readonly DependencyProperty ScrollModeProperty;
         public static readonly DependencyProperty TestInfoModelProperty;
@@ -26,7 +26,6 @@ namespace DXVisualTestFixer.UI.Controls {
             TestInfoModelProperty = DependencyProperty.Register("TestInfoModel", typeof(TestInfoModel), ownerType, new PropertyMetadata(null));
             ViewModeProperty = DependencyProperty.Register("ViewMode", typeof(TestViewType), ownerType, new PropertyMetadata(TestViewType.Split));
             MergedViewTypeProperty = DependencyProperty.Register("MergedViewType", typeof(MergedTestViewType), ownerType, new PropertyMetadata(MergedTestViewType.Before));
-            IsPerfectPixelProperty = DependencyProperty.Register("IsPerfectPixel", typeof(bool), ownerType, new PropertyMetadata(false, OnIsPerfectPixelChanged));
             ShowGridLinesProperty = DependencyProperty.Register("ShowGridLines", typeof(bool), ownerType, new PropertyMetadata(false, OnShowGridLinesChanged));
             ScrollModeProperty = DependencyProperty.Register("ScrollMode", typeof(ScrollMode), ownerType, new PropertyMetadata(ScrollMode.Draggable));
             ImageScalingControlProperty = DependencyProperty.RegisterAttached("ImageScalingControl", ownerType, ownerType, new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.Inherits));
@@ -36,9 +35,6 @@ namespace DXVisualTestFixer.UI.Controls {
             DefaultStyleKeyProperty.OverrideMetadata(ownerType, new FrameworkPropertyMetadata(ownerType));
         }
 
-        static void OnIsPerfectPixelChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
-            ((ImageScalingControl)d).OnIsPerfectPixelChanged();
-        }
         static void OnShowGridLinesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
             ((ImageScalingControl)d).OnShowGridLinesChanged();
         }
@@ -68,10 +64,6 @@ namespace DXVisualTestFixer.UI.Controls {
             get { return (MergedTestViewType)GetValue(MergedViewTypeProperty); }
             set { SetValue(MergedViewTypeProperty, value); }
         }
-        public bool IsPerfectPixel {
-            get { return (bool)GetValue(IsPerfectPixelProperty); }
-            set { SetValue(IsPerfectPixelProperty, value); }
-        }
         public bool ShowGridLines {
             get { return (bool)GetValue(ShowGridLinesProperty); }
             set { SetValue(ShowGridLinesProperty, value); }
@@ -89,6 +81,15 @@ namespace DXVisualTestFixer.UI.Controls {
             scrollViewerScrollSynchronizer.Register(scrollViewerType, scrollViewer);
             imageScaleSynchronizer.Register(scrollViewerType, scrollViewer);
             focusedPixelSynchronizer.Register(scrollViewerType, scrollViewer);
+            scrollViewer.PreviewMouseWheel += previewMouseWheel;
+        }
+
+        void previewMouseWheel(object sender, MouseWheelEventArgs e) {
+            e.Handled = true;
+            if(e.Delta < 0)
+                ZoomOut();
+            else
+                ZoomIn();
         }
 
         public void ChangeView(bool reverse) {
@@ -96,17 +97,17 @@ namespace DXVisualTestFixer.UI.Controls {
         }
         public void ZoomIn() {
             imageScaleSynchronizer.ZoomIn();
+            UpdateFocusedPixel();
         }
         public void ZoomOut() {
             imageScaleSynchronizer.ZoomOut();
+            UpdateFocusedPixel();
         }
         public void Zoom100() {
             imageScaleSynchronizer.Zoom100();
+            UpdateFocusedPixel();
         }
-
-        void OnIsPerfectPixelChanged() {
-            imageScaleSynchronizer.IsPerfectPixel = focusedPixelSynchronizer.IsEnabled = IsPerfectPixel;
-        }
+        void UpdateFocusedPixel() => focusedPixelSynchronizer.IsEnabled = imageScaleSynchronizer.Scale > 100;
         void OnShowGridLinesChanged() {
             imageScaleSynchronizer.ShowGridLines = ShowGridLines;
         }
