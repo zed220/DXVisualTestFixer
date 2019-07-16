@@ -27,6 +27,7 @@
         <dxmvvm:MapItem Source="Draggable" Target="True"/>
     </dxmvvm:ObjectToObjectConverter>
     <Style TargetType="{x:Type controls:DraggableScrollViewer}">
+        <Setter Property="dx:ScrollBarExtensions.AllowShiftKeyMode" Value="True"/>
         <Setter Property="Background">
             <Setter.Value>
                 <LinearGradientBrush EndPoint="0,0" StartPoint="8,8" MappingMode="Absolute" SpreadMethod="Repeat">

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DevExpress.Xpf.Core;
+using DevExpress.Xpf.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -43,6 +45,14 @@ namespace DXVisualTestFixer.UI.Controls {
                 ScrollToHorizontalOffset(offset.X + (scrollMousePoint.X - e.GetPosition(this).X));
                 ScrollToVerticalOffset(offset.Y + (scrollMousePoint.Y - e.GetPosition(this).Y));
             }
+        }
+        protected override void OnPreviewMouseWheel(MouseWheelEventArgs e) {
+            if(KeyboardHelper.IsShiftPressed) {
+                e.Handled = true;
+                ScrollToHorizontalOffset(HorizontalOffset + (e.Delta > 0 ? -30 : 30));
+                return;
+            }
+            base.OnPreviewMouseWheel(e);
         }
     }
 }
