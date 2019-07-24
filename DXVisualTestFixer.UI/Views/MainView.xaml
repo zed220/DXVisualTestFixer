@@ -348,7 +348,8 @@
                     <dxdo:LayoutGroup AllowDrag="False" Orientation="Vertical" ItemWidth="300" AllowSplitters="False">
                         <dxdo:LayoutPanel ShowCaption="False" ItemHeight="Auto" Caption="Filters" Visibility="{Binding Tests, Converter={dx:NullableToVisibilityConverter}}">
                             <controls:FilterPanelControl dxfui:FilterElement.Context="{Binding FilteringContext, ElementName=PART_GridTests}"
-                                                     HasFixedTests="{Binding Tests, Converter={converters:HasFixedTestsConverter}}"/>
+                                                         dxg:DataControlBase.ActiveView="{Binding ElementName=PART_View}"
+                                                         HasFixedTests="{Binding Tests, Converter={converters:HasFixedTestsConverter}}"/>
                         </dxdo:LayoutPanel>
                         <dxdo:LayoutPanel ShowCaption="False" ItemHeight="*">
                             <dxg:GridControl x:Name="PART_GridTests" ItemsSource="{Binding Tests}" CurrentItem="{Binding CurrentTest, Mode=TwoWay}" AutoExpandAllGroups="True" ShowBorder="False" 
@@ -431,11 +432,13 @@
                                     </dxg:GridColumn.PredefinedFilters>
                                 </dxg:GridColumn>
                                 <dxg:GridColumn FieldName="ProblemName" Visible="False"/>
+                                <dxg:GridColumn FieldName="Dpi" Visible="False"/>
+                                <dxg:GridColumn FieldName="Optimized" Visible="False"/>
                                 <dxg:GridControl.TotalSummary>
                                     <dxg:GridSummaryItem SummaryType="Count" Alignment="Left"/>
                                 </dxg:GridControl.TotalSummary>
                                 <dxg:GridControl.View>
-                                    <controls:TableViewAdvNavigation x:Name="view" AllowEditing="True" ShowVerticalLines="False" ShowIndicator="False" ShowHorizontalLines="False" ShowColumnHeaders="False" 
+                                    <controls:TableViewAdvNavigation x:Name="PART_View" AllowEditing="True" ShowVerticalLines="False" ShowIndicator="False" ShowHorizontalLines="False" ShowColumnHeaders="False" 
                                                                  ShowGroupPanel="False" ShowFixedTotalSummary="True" RowDoubleClick="{DXEvent Handler='@s.ProcessDoubleClick(@args)'}"
                                                                  PreviewKeyDown="{DXEvent Handler='@s.ProcessKeyDown(@args)'}" GroupSummaryDisplayMode="Default"
                                                                  ShowEmptyText="{DXBinding 'Status == $viewModels:ProgramStatus.Idle'}" SearchPanelHighlightResults="False"

@@ -161,6 +161,7 @@
     <Compile Include="Behaviors\BarItemIndicatorBehavior.cs" />
     <Compile Include="Behaviors\BrowseDirBehavior.cs" />
     <Compile Include="Behaviors\GridControlClearFilterBehavior.cs" />
+    <Compile Include="Behaviors\IsFilteredBehavior.cs" />
     <Compile Include="Behaviors\ScrollViewerRegistrationBehavior.cs" />
     <Compile Include="Behaviors\UnusedFilesDragDropBehavior.cs" />
     <Compile Include="Common\FilePreviewTemplateSelector.cs" />
