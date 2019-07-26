@@ -52,6 +52,12 @@ namespace DXVisualTestFixer.UI.Controls {
                 ScrollToHorizontalOffset(HorizontalOffset + (e.Delta > 0 ? -30 : 30));
                 return;
             }
+            if(ScrollMode == ScrollMode.Legacy) {
+                if(!KeyboardHelper.IsControlPressed) {
+                    e.Handled = true;
+                    ScrollToVerticalOffset(VerticalOffset + -e.Delta);
+                }
+            }
             base.OnPreviewMouseWheel(e);
         }
     }

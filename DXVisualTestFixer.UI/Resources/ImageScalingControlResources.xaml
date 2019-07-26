@@ -229,7 +229,7 @@
                     <dxr:RibbonPage Caption="Navigation And View">
                         <dxr:RibbonPageGroup Caption="View Options">
                             <dxb:BarCheckItem Content="Merged View" IsChecked="{Binding ViewMode, Converter={StaticResource TestViewTypeToBoolConverter}}"/>
-                            <dxb:BarCheckItem Content="Draggable Scroll" IsChecked="{Binding ScrollMode, Converter={StaticResource ScrollModeToBoolConverter}}"/>
+                            <dxb:BarCheckItem Content="Smart Scroll" IsChecked="{Binding ScrollMode, Converter={StaticResource ScrollModeToBoolConverter}}"/>
                         </dxr:RibbonPageGroup>
                         <dxr:RibbonPageGroup Caption="Zoom">
                             <dxb:BarButtonItem  Content="Zoom Out" Glyph="{dx:DXImage SvgImages/Zoom/ZoomOut.svg}" 
