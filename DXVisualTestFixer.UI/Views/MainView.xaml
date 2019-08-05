@@ -283,7 +283,7 @@
                                 Glyph="{dx:DXImage SvgImages/Scheduling/Properties.svg}"/>
                                 <dxb:BarCheckItem
                                 Content="Smart Grouping"
-                                IsChecked="{DXBinding '@e(view).AllowPartialGrouping'}"
+                                IsChecked="{DXBinding '@e(PART_View).AllowPartialGrouping'}"
                                 Glyph="{dx:DXImage SvgImages/Snap/ArrangeGroups.svg}"
                                 Hint="Hide groups with single child"/>
                         </dxr:RibbonPageGroup>
@@ -297,26 +297,26 @@
                                                dxb:ImageColorizer.Color="Green"
                                                Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_AddCircled.svg}"
                                                IsEnabled="{DXBinding Expr='CurrentTest.Valid != $common:TestState.Error'}"
-                                               ItemClick="{DXEvent Handler='CommitCurrentTest(); @e(view).MoveNextDataRow()'}"
+                                               ItemClick="{DXEvent Handler='CommitCurrentTest(); @e(PART_View).MoveNextDataRow()'}"
                                                ShowKeyGesture="True"
                                                KeyGesture="Ctrl+D"/>
                             <dxb:BarButtonItem  
                                                Content="Unstage And Move Down" 
                                                Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_RemoveCircled.svg}"
                                                IsEnabled="{DXBinding Expr='CurrentTest.Valid != $common:TestState.Error'}"
-                                               ItemClick="{DXEvent Handler='UncommitCurrentTest(); @e(view).MoveNextDataRow()'}"
+                                               ItemClick="{DXEvent Handler='UncommitCurrentTest(); @e(PART_View).MoveNextDataRow()'}"
                                                ShowKeyGesture="True"
                                                KeyGesture="Ctrl+B"/>
                             <dxb:BarItemSeparator/>
                             <dxb:BarButtonItem  
                                                Content="Move Up" 
                                                Glyph="{dx:DXImage SvgImages/Arrows/MoveUp.svg}" 
-                                               ItemClick="{DXEvent Handler='@e(view).MovePrevDataRow()'}"
+                                               ItemClick="{DXEvent Handler='@e(PART_View).MovePrevDataRow()'}"
                                                Hint="Use Up Arrow"/>
                             <dxb:BarButtonItem  
                                                Content="Move Down" 
                                                Glyph="{dx:DXImage SvgImages/Arrows/MoveDown.svg}"
-                                               ItemClick="{DXEvent Handler='@e(view).MoveNextDataRow()'}"
+                                               ItemClick="{DXEvent Handler='@e(PART_View).MoveNextDataRow()'}"
                                                Hint="Use Down Arrow"/>
                         </dxr:RibbonPageGroup>
                     </dxr:RibbonPage>
@@ -445,8 +445,8 @@
                                                                  SearchPanelHorizontalAlignment="Stretch" GroupRowCheckBoxFieldName="CommitChange" ShowFilterPanelMode="Never">
                                         <dxb:BarManager.DXContextMenu>
                                             <dxb:PopupMenu>
-                                                <dxb:BarButtonItem Content="Commit All In Viewport" Glyph="{dx:DXImage SvgImages/PDF Viewer/SelectAll.svg}" Command="{DXCommand Execute='@e(view).CommitAllInViewport()'}"/>
-                                                <dxb:BarButtonItem Content="Clear Commits In Viewport" Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Clear.svg}" Command="{DXCommand Execute='@e(view).ClearCommitsInViewport()'}"/>
+                                                <dxb:BarButtonItem Content="Commit All In Viewport" Glyph="{dx:DXImage SvgImages/PDF Viewer/SelectAll.svg}" Command="{DXCommand Execute='@e(PART_View).CommitAllInViewport()'}"/>
+                                                <dxb:BarButtonItem Content="Clear Commits In Viewport" Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Clear.svg}" Command="{DXCommand Execute='@e(PART_View).ClearCommitsInViewport()'}"/>
                                                 <dxb:BarButtonItem Content="Clear All Commits" Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Clear.svg}" Command="{DXCommand Execute='ClearCommits()'}"/>
                                             </dxb:PopupMenu>
                                         </dxb:BarManager.DXContextMenu>
