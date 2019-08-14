@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DXVisualTestFixer.Core {
     public class MinioWorker : IMinioWorker {
-        static MinioClient minio = new MinioClient("gitlabci1-minio:9000", "xpfminio", "xpfminiostorage");
+        static MinioClient minio = new MinioClient("gitlabci7-minio:9000", "xpfminio", "xpfminiostorage");
 
         public async Task<string> Download(string path) {
             try {
