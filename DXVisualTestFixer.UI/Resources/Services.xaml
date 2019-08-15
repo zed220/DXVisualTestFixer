@@ -8,32 +8,12 @@
         <Setter Property="Height" Value="800"/>
         <Setter Property="DialogButtonsSource" Value="{Binding Path=Commands}"/>
     </Style>
-    <Style x:Key="NotificationWindowStyle" TargetType="{x:Type dx:ThemedWindow}" BasedOn="{StaticResource DialogWindowStyle}">
+    <Style x:Key="NotificationWindowStyle" TargetType="{x:Type dx:ThemedMessageBoxWindow}" BasedOn="{StaticResource DialogWindowStyle}">
         <Setter Property="Width" Value="500"/>
         <Setter Property="Height" Value="400"/>
         <Setter Property="SizeToContent" Value="WidthAndHeight"/>
         <Setter Property="ResizeMode" Value="NoResize"/>
+        <Setter Property="Text" Value="{Binding Path=Content}"/>
+        <Setter Property="Image" Value="{Binding Path=ImageSource}"/>
     </Style>
-    <DataTemplate x:Key="NotificationWindowTemplate">
-        <Grid Margin="24,16,24,22">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <dx:DXImage x:Name="PART_MessageBoxImage" Width="48" Height="48"
-                    VerticalAlignment="Top"
-                    SnapsToDevicePixels="True"
-                    Stretch="UniformToFill"
-                    Margin="-6,-1,4,-4"
-                    Source="{Binding Path=ImageSource}"/>
-            <TextBlock MaxWidth="{x:Static SystemParameters.MaximizedPrimaryScreenWidth}" 
-                    Focusable="False" 
-                    Background="Transparent" 
-                    TextWrapping="Wrap" 
-                    VerticalAlignment="Center" 
-                    Grid.Column="1" 
-                    Text="{Binding Path=Content}" 
-                    Foreground="{DynamicResource ResourceKey= {dxt:ThemeColorsThemeKey ResourceKey=DXMessageBoxForegroundColor}}"/>
-        </Grid>
-    </DataTemplate>
 </ResourceDictionary>

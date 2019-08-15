@@ -15,4 +15,9 @@ namespace DXVisualTestFixer.UI.PrismCommon {
             return new ThemedWindow();
         }
     }
+    public class PopupDXMessageBoxAction : PopupWindowAction {
+        protected override Window CreateWindow() {
+            return new ThemedMessageBoxWindow();
+        }
+    }
 }
