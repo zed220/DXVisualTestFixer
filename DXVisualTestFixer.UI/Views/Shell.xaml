@@ -56,11 +56,11 @@
     </dx:ThemedWindow.Resources>
     <i:Interaction.Triggers>
         <prism:InteractionRequestTrigger SourceObject="{Binding NotificationRequest}">
-            <prismcommon:PopupDXDialogWindowAction IsModal="True" CenterOverAssociatedObject="True" WindowStyle="{StaticResource NotificationWindowStyle}">
-                <prismcommon:PopupDXDialogWindowAction.WindowContent>
-                    <ContentControl Content="{Binding Converter={converters:NotificationContentConverter}}" ContentTemplate="{StaticResource NotificationWindowTemplate}"/>
-                </prismcommon:PopupDXDialogWindowAction.WindowContent>
-            </prismcommon:PopupDXDialogWindowAction>
+            <prismcommon:PopupDXMessageBoxAction IsModal="True" CenterOverAssociatedObject="True" WindowStyle="{StaticResource NotificationWindowStyle}">
+                <prismcommon:PopupDXMessageBoxAction.WindowContent>
+                    <ContentControl Content="{Binding Converter={converters:NotificationContentConverter}}"/>
+                </prismcommon:PopupDXMessageBoxAction.WindowContent>
+            </prismcommon:PopupDXMessageBoxAction>
         </prism:InteractionRequestTrigger>
     </i:Interaction.Triggers>
     <ContentControl prism:RegionManager.RegionName="{x:Static common:Regions.Main}" Focusable="False"/>
