@@ -55,20 +55,28 @@ namespace DXVisualTestFixer.UI.Controls {
                 model.CommitChange = !model.CommitChange;
         }
         void SetCommitChange(int rowHandle, bool value) {
+            if(Grid.IsGroupRowHandle(rowHandle)) {
+                SetCommitChangeGroup(rowHandle, value);
+                return;
+            }
             var model = GetValidTestInfoModel(rowHandle);
             if(model != null)
                 model.CommitChange = value;
         }
+        void SetCommitChangeGroup(int groupRowHandle, bool value) {
+            foreach(var rowHandle in GetChildHandles(groupRowHandle))
+                SetCommitChange(rowHandle, value);
+        }
 
         public void CommitAllInViewport() {
             int i = 0;
-            while(i++ < Grid.VisibleRowCount - 1)
-                SetCommitChange(Grid.GetRowHandleByVisibleIndex(i), true);
+            while(i < Grid.VisibleRowCount - 1)
+                SetCommitChange(Grid.GetRowHandleByVisibleIndex(i++), true);
         }
         public void ClearCommitsInViewport() {
             int i = 0;
-            while(i++ < Grid.VisibleRowCount - 1)
-                SetCommitChange(Grid.GetRowHandleByVisibleIndex(i), false);
+            while(i < Grid.VisibleRowCount - 1)
+                SetCommitChange(Grid.GetRowHandleByVisibleIndex(i++), false);
         }
 
 
