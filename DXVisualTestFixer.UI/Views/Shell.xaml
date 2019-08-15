@@ -63,5 +63,5 @@
             </prismcommon:PopupDXDialogWindowAction>
         </prism:InteractionRequestTrigger>
     </i:Interaction.Triggers>
-    <ContentControl prism:RegionManager.RegionName="{x:Static common:Regions.Main}"/>
+    <ContentControl prism:RegionManager.RegionName="{x:Static common:Regions.Main}" Focusable="False"/>
 </dx:ThemedWindow>

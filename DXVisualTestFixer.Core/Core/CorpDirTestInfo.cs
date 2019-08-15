@@ -37,6 +37,7 @@ namespace DXVisualTestFixer.Core {
         public string StackTrace { get; private set; }
         public string ErrorText { get; private set; }
         public int Dpi { get; private set; } = 96;
+        public string AdditionalParameter { get; private set; } = String.Empty;
 
         static string GetTestName(string testNameAndNamespace) {
             if(!testNameAndNamespace.Contains('.'))
@@ -134,6 +135,12 @@ namespace DXVisualTestFixer.Core {
                 }
                 else
                     temp.TeamName = temp.ServerFolderName;
+
+                if(temp.TeamName?.ToLower().Contains("scheduler") ?? false) {
+                    if(temp.CurrentImagePath.Contains("Colorized"))
+                        temp.AdditionalParameter = "Colorized";
+                }
+
                 string folderNameAndTheme = Path.GetDirectoryName(temp.CurrentTextEditPath).Split('\\').Last();
                 if(!TryUpdateThemeAndFolderName(folderNameAndTheme, temp))
                     return false;
