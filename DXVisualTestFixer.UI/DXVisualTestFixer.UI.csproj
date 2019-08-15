@@ -185,6 +185,7 @@
     <Compile Include="Converters\ImageToClipboardConverter.cs" />
     <Compile Include="Converters\MultiImageToClipboardConverter.cs" />
     <Compile Include="Converters\NotificationContentConverter.cs" />
+    <Compile Include="Converters\NullableStringToVisibilityConverter.cs" />
     <Compile Include="Converters\OptimizedDisplayTextConverter.cs" />
     <Compile Include="Converters\PointToRectConverter.cs" />
     <Compile Include="Converters\StackPanelToTooltipConverter.cs" />

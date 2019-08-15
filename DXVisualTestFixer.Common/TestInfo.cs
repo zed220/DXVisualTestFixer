@@ -51,6 +51,7 @@ namespace DXVisualTestFixer.Common {
         public int Problem { get; set; } = int.MinValue;
         public string ProblemName { get; set; }
         public string InvalidLog { get { return InvalidLogBuilder.ToString(); } }
+        public string AdditionalParameters { get; set; }
 
         public void LogCustomError(string text) {
             InvalidLogBuilder.AppendLine(text);
