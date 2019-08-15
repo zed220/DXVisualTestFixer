@@ -22,6 +22,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
         public string TeamName { get { return TestInfo.Team.Name; } }
         public string Theme { get { return TestInfo.Theme; } }
         public int Dpi { get { return TestInfo.Dpi; } }
+        public string AdditionalParameters => TestInfo.AdditionalParameters;
         public int Problem { get { return TestInfo.Problem; } }
         public string ProblemName { get { return TestInfo.ProblemName; } }
         public bool ImageEquals { get { return TestInfo.ImageEquals; } }

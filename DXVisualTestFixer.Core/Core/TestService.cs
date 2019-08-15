@@ -232,6 +232,7 @@ namespace DXVisualTestFixer.Core {
             TestInfo testInfo = new TestInfo(corpDirTestInfo.FarmTaskInfo.Repository);
             testInfo.Version = corpDirTestInfo.FarmTaskInfo.Repository.Version;
             testInfo.Name = corpDirTestInfo.TestName;
+            testInfo.AdditionalParameters = corpDirTestInfo.AdditionalParameter;
             testInfo.NameWithNamespace = corpDirTestInfo.TestNameWithNamespace;
             testInfo.ResourceFolderName = corpDirTestInfo.ResourceFolderName;
             if(corpDirTestInfo.TeamName == CorpDirTestInfo.ErrorTeamName) {

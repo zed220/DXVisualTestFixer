@@ -400,6 +400,9 @@
                                                     <Border Background="LightGray" Visibility="{Binding Path=RowData.Row.Optimized, Converter={dx:BooleanToVisibilityConverter}}">
                                                         <TextBlock Text="Optimized" Foreground="Black" FontSize="8"/>
                                                     </Border>
+                                                    <Border Background="LightGray" Visibility="{Binding Path=RowData.Row.AdditionalParameters, Converter={converters:NullableStringToVisibilityConverter}}">
+                                                        <TextBlock Text="{Binding RowData.Row.AdditionalParameters}" Foreground="Black" FontSize="8"/>
+                                                    </Border>
                                                     <Border Background="Gray">
                                                         <Border.Visibility>
                                                             <Binding Path="RowData.Row.Dpi">
