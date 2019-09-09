@@ -141,7 +141,7 @@
                         <DataTemplate>
                             <dxe:ComboBoxEdit MaxHeight="200">
                                 <dxe:ComboBoxEdit.StyleSettings>
-                                    <dxe:CheckedTokenComboBoxStyleSettings AllowEditTokens="False" EnableTokenWrapping="True" VerticalAlignment="Center" FilterOutSelectedTokens="False"/>    
+                                    <dxe:CheckedTokenComboBoxStyleSettings AllowEditTokens="False" EnableTokenWrapping="True" VerticalAlignment="Center" FilterOutSelectedTokens="False" ShowSelectAllItem="True"/>
                                 </dxe:ComboBoxEdit.StyleSettings>
                             </dxe:ComboBoxEdit>
                         </DataTemplate>
