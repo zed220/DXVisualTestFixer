@@ -63,12 +63,12 @@ namespace DXVisualTestFixer.Core {
             }
         }
 
-        public async Task<GitCommitResult> Commit(CommonRepository repository) {
+        public async Task<GitCommitResult> Commit(CommonRepository repository, string commitCaption) {
             if(!repository.IsDownloaded())
                 return await Task.FromResult(GitCommitResult.Error);
             StageCore(repository);
             try {
-                CommitCore(repository);
+                CommitCore(repository, commitCaption);
             }
             catch {
                 return await Task.FromResult(GitCommitResult.Error);
@@ -84,7 +84,7 @@ namespace DXVisualTestFixer.Core {
                 Commands.Stage(repo, "*.sha");
             }
         }
-        void CommitCore(CommonRepository repository) {
+        void CommitCore(CommonRepository repository, string commitCaption) {
             using(var repo = new Repository(repository.Path)) {
                 Signature author = TryGetAuthor(repo);
                 Signature committer = CreateDefaultSignature();
@@ -93,7 +93,7 @@ namespace DXVisualTestFixer.Core {
                     author = CreateDefaultSignature();
                     userNamePath = string.Format(" ({0})", System.Security.Principal.WindowsIdentity.GetCurrent().Name.Split('\\').Last());
                 }
-                Commit commit = repo.Commit($"Update tests{userNamePath}", author, committer);
+                Commit commit = repo.Commit($"{commitCaption} {userNamePath}", author, committer);
             }
         }
         static Signature TryGetAuthor(Repository repo) {

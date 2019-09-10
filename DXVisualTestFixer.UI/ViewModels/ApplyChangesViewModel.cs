@@ -14,9 +14,11 @@ using BindableBase = Prism.Mvvm.BindableBase;
 namespace DXVisualTestFixer.UI.ViewModels {
     public class ApplyChangesViewModel : BindableBase, IConfirmation {
         readonly ITestsService testsService;
+        const string DefaultCommitCaption = "Update tests";
 
         List<TestInfo> _ChangedTests;
         bool _IsAutoCommit = true;
+        string _CommitCaption = DefaultCommitCaption;
 
         public IEnumerable<UICommand> DialogCommands { get; private set; }
 
@@ -33,6 +35,10 @@ namespace DXVisualTestFixer.UI.ViewModels {
             get { return _IsAutoCommit; }
             set { SetProperty(ref _IsAutoCommit, value); }
         }
+        public string CommitCaption {
+            get { return _CommitCaption; }
+            set { SetProperty(ref _CommitCaption, value); }
+        }
 
         public IEnumerable<UICommand> Commands { get; }
 
@@ -40,7 +46,13 @@ namespace DXVisualTestFixer.UI.ViewModels {
             this.testsService = testsService;
             Title = "Settings";
             Commands = UICommand.GenerateFromMessageButton(MessageButton.OKCancel, new DialogService(), MessageResult.OK, MessageResult.Cancel);
-            Commands.Where(c => c.IsDefault).Single().Command = new DelegateCommand(() => Confirmed = true);
+            Commands.Where(c => c.IsDefault).Single().Command = new DelegateCommand(() => {
+                if(string.IsNullOrWhiteSpace(CommitCaption))
+                    _CommitCaption = DefaultCommitCaption;
+                if(CommitCaption.Length > 255)
+                    _CommitCaption = CommitCaption.Substring(0, 255);
+                Confirmed = true;
+            });
             ChangedTests = testsService.ActualState.ChangedTests;
         }
     }
