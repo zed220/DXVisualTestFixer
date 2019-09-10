@@ -148,6 +148,13 @@ namespace DXVisualTestFixer.UI.ViewModels {
                 Status = ProgramStatus.Idle;
                 LoadingProgressController.Stop();
             }));
+            //Fix DX Bug
+            await Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
+                Status = ProgramStatus.Loading;
+            }));
+            await Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
+                Status = ProgramStatus.Idle;
+            }));
         }
 
         void FillSolutions() {
@@ -268,13 +275,13 @@ namespace DXVisualTestFixer.UI.ViewModels {
             if(!confirmation.Confirmed)
                 return;
             Status = ProgramStatus.Loading;
-            Task.Factory.StartNew(() => ApplyChangesCore(confirmation.IsAutoCommit));
+            Task.Factory.StartNew(() => ApplyChangesCore(confirmation.IsAutoCommit, confirmation.CommitCaption));
         }
-        async Task ApplyChangesCore(bool commitIntoGitRepo) {
+        async Task ApplyChangesCore(bool commitIntoGitRepo, string commitCaption) {
             if(commitIntoGitRepo && !(await ActualizeRepositories()))
                 return;
             await Task.Factory.StartNew(() => TestService.ActualState.ChangedTests.ForEach(ApplyTest));
-            if(commitIntoGitRepo && !(await PushTestsInRepository()))
+            if(commitIntoGitRepo && !(await PushTestsInRepository(commitCaption)))
                 return;
             TestsToCommitCount = 0;
             UpdateContent();
@@ -292,9 +299,9 @@ namespace DXVisualTestFixer.UI.ViewModels {
             }
             return await Task.FromResult(true);
         }
-        async Task<bool> PushTestsInRepository() {
+        async Task<bool> PushTestsInRepository(string commitCaption) {
             foreach(var group in TestService.ActualState.ChangedTests.GroupBy(t => t.Repository)) {
-                var commitResult = await _GitWorker.Commit(group.Key);
+                var commitResult = await _GitWorker.Commit(group.Key, commitCaption);
                 if(commitResult == GitCommitResult.Error) {
                     Dispatcher.Invoke(() => notificationService.DoNotification("Pushing failed", $"Can't push repository {group.Key.Version} that located at {group.Key.Path}", MessageBoxImage.Error));
                     return await Task.FromResult(false);
