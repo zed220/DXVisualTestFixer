@@ -139,7 +139,7 @@
                 <dxfui:CheckedListFilterElement FieldName="TeamName" SelectAllWhenFilterIsNull="True">
                     <dxfui:CheckedListFilterElement.FilterModelTemplate>
                         <DataTemplate>
-                            <dxe:ComboBoxEdit MaxHeight="200">
+                            <dxe:ComboBoxEdit MaxHeight="200" ShowCustomItems="True">
                                 <dxe:ComboBoxEdit.StyleSettings>
                                     <dxe:CheckedTokenComboBoxStyleSettings AllowEditTokens="False" EnableTokenWrapping="True" VerticalAlignment="Center" FilterOutSelectedTokens="False"/>    
                                 </dxe:ComboBoxEdit.StyleSettings>
