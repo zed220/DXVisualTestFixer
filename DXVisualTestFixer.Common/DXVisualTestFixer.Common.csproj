@@ -74,10 +74,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Enums.cs" />
-    <Compile Include="FileStringLoader.cs" />
+    <Compile Include="FileStringLoaderBase.cs" />
     <Compile Include="Interfaces.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Regions.cs" />
+    <Compile Include="Repository.cs" />
     <Compile Include="RepositoryLoader.cs" />
     <Compile Include="Team.cs" />
     <Compile Include="TestInfo.cs" />
