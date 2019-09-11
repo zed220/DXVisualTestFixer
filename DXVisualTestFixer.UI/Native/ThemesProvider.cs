@@ -12,12 +12,8 @@ namespace DXVisualTestFixer.UI.Native {
     public class ThemesProvider : FileStringLoaderBase, IThemesProvider {
         public ThemesProvider() : base(@"\\corp\internal\common\visualTests_squirrel\themes.xml") { }
 
-        public List<string> AllThemes {
-            get { return Result; }
-        }
+        public List<string> AllThemes => Result;
 
-        protected override List<string> LoadIfFileNotFound() {
-            return Theme.Themes.Select(t => t.Name).ToList();
-        }
+        protected override List<string> LoadIfFileNotFound() => Theme.Themes.Select(t => t.Name).ToList();
     }
 }
