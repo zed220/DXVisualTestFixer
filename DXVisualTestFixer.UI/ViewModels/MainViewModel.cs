@@ -148,13 +148,6 @@ namespace DXVisualTestFixer.UI.ViewModels {
                 Status = ProgramStatus.Idle;
                 LoadingProgressController.Stop();
             }));
-            //Fix DX Bug
-            await Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
-                Status = ProgramStatus.Loading;
-            }));
-            await Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
-                Status = ProgramStatus.Idle;
-            }));
         }
 
         void FillSolutions() {
