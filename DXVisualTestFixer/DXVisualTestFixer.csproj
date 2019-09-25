@@ -97,7 +97,7 @@
       echo POSTBUILDSTEP for $(ProjectName) COMPLETED OK
       :End
 	</PostBuildEvent>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <PropertyGroup />
   <ItemGroup>
