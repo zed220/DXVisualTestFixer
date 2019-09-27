@@ -6,13 +6,16 @@ using Microsoft.Practices.Unity;
 using Prism.Interactivity.InteractionRequest;
 using Prism.Mvvm;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using System.Windows.Threading;
+using Prism.Common;
 using BindableBase = Prism.Mvvm.BindableBase;
 
 namespace DXVisualTestFixer.UI.ViewModels {
@@ -70,44 +73,44 @@ namespace DXVisualTestFixer.UI.ViewModels {
         }
 
         async Task UpdateUnusedFiles(Dictionary<Repository, List<string>> usedFilesByRepLinks, Dictionary<Repository, List<Team>> teams) {
-            HashSet<string> usedFiles = await GetUsedFiles(usedFilesByRepLinks, testsService, minioWorker);
-            UnusedFiles = GetActualFiles(usedFilesByRepLinks.Keys.Select(rep => rep.Version).Distinct().ToList(), usedFiles, teams);
-            Status = ProgramStatus.Idle;
+            var result = await Task.WhenAll(usedFilesByRepLinks.ToList().Select(x => GetUnusedFilesByRepository(x.Key, x.Value, teams[x.Key], testsService, minioWorker))).ConfigureAwait(false);
+            Dispatcher.BeginInvoke(new Action(() => {
+                UnusedFiles = new ObservableCollection<RepositoryFileModel>(result.SelectMany(x => x));
+                Status = ProgramStatus.Idle;    
+            }));
         }
-
-        ObservableCollection<RepositoryFileModel> GetActualFiles(List<string> usedVersions, HashSet<string> usedFiles, Dictionary<Repository, List<Team>> teams) {
-            ObservableCollection<RepositoryFileModel> result = new ObservableCollection<RepositoryFileModel>();
-            foreach(var repository in teams.Keys) {
-                foreach(Team team in teams[repository]) {
-                    if(!usedVersions.Contains(team.Version))
+        public static async Task<HashSet<string>> GetUsedFiles(Dictionary<Repository, List<string>> usedFilesByRepLinks, ITestsService testsService, IMinioWorker minioWorker) {
+            var result = await Task.WhenAll(usedFilesByRepLinks.ToList().Select(x => GetUsedFilesByRepository((x.Key, x.Value), testsService, minioWorker)));
+            return new HashSet<string>(result.SelectMany(x => x));
+        }
+        static async Task<HashSet<string>> GetUsedFilesByRepository((Repository repository, List<string> filesLinks) usedFilesByRepLinks, ITestsService testsService, IMinioWorker minioWorker) {
+            HashSet<string> usedFiles = new HashSet<string>();
+            foreach(string fileRelLink in usedFilesByRepLinks.filesLinks) {
+                var filesStr = await minioWorker.Download(fileRelLink);
+                if(string.IsNullOrEmpty(filesStr))
+                    continue;
+                foreach(var fileRelPath in filesStr.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries)) {
+                    string filePath = testsService.GetResourcePath(usedFilesByRepLinks.repository, fileRelPath.ToLower().Replace(@"c:\builds\", ""));
+                    if(File.Exists(filePath))
+                        usedFiles.Add(filePath.ToLower());
+                }
+            }
+            return usedFiles;
+        }
+        static async Task<List<RepositoryFileModel>> GetUnusedFilesByRepository(Repository repository, List<string> usedFilesByRepLinks, List<Team> teams, ITestsService testsService, IMinioWorker minioWorker) {
+            HashSet<string> usedFiles = await GetUsedFilesByRepository((repository, usedFilesByRepLinks), testsService, minioWorker).ConfigureAwait(false);
+            var result = new List<RepositoryFileModel>();
+            foreach(Team team in teams) {
+                foreach(string teamPath in team.TeamInfos.Select(i => testsService.GetResourcePath(repository, i.TestResourcesPath)).Distinct()) {
+                    if(!Directory.Exists(teamPath))
                         continue;
-                    foreach(string teamPath in team.TeamInfos.Select(i => testsService.GetResourcePath(repository, i.TestResourcesPath)).Distinct()) {
-                        if(!Directory.Exists(teamPath))
-                            continue;
-                        foreach(string file in Directory.EnumerateFiles(teamPath, "*", SearchOption.AllDirectories)) {
-                            if(!usedFiles.Contains(file.ToLower()))
-                                result.Add(new RepositoryFileModel(file, team.Version));
-                        }
+                    foreach(string file in Directory.EnumerateFiles(teamPath, "*", SearchOption.AllDirectories)) {
+                        if(!usedFiles.Contains(file.ToLower()))
+                            result.Add(new RepositoryFileModel(file, team.Version));
                     }
                 }
             }
             return result;
-        }
-        public static async Task<HashSet<string>> GetUsedFiles(Dictionary<Repository, List<string>> usedFilesByRepLinks, ITestsService testsService, IMinioWorker minioWorker) {
-            HashSet<string> usedFiles = new HashSet<string>();
-            foreach(var usedFileByRepLink in usedFilesByRepLinks) {
-                foreach(string fileRelLink in usedFileByRepLink.Value) {
-                    var filesStr = await minioWorker.Download(fileRelLink);
-                    if(string.IsNullOrEmpty(filesStr))
-                        continue;
-                    foreach(var fileRelPath in filesStr.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries)) {
-                        string filePath = testsService.GetResourcePath(usedFileByRepLink.Key, fileRelPath);
-                        if(File.Exists(filePath))
-                            usedFiles.Add(filePath.ToLower());
-                    }
-                }
-            }
-            return usedFiles;
         }
     }
 }
