@@ -73,6 +73,7 @@ namespace DXVisualTestFixer.Services {
         public bool IsNetworkDeployment { get; set; }
 
         public UpdateServiceBase(INotificationService notificationService) {
+            this.notificationService = notificationService;
             dispatcher = Dispatcher.CurrentDispatcher;
             IsNetworkDeployment = GetIsNetworkDeployment();
             if(!IsNetworkDeployment) {

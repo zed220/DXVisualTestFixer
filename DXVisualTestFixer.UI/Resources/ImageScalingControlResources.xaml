@@ -243,15 +243,19 @@
                                               IsChecked="{Binding ShowGridLines, Mode=TwoWay}"/>
                         </dxr:RibbonPageGroup>
                     </dxr:RibbonPage>
-                    <dxr:RibbonPage Caption="Image Tools">
+                    <dxr:RibbonPage Caption="Image To Clipboard">
                         <dxr:RibbonPageGroup Caption="Clipboard Tools" DataContext="{Binding TestInfoModel.TestInfo}">
-                            <dxb:BarButtonItem  Content="Copy Original" Glyph="{dx:DXImage SvgImages/Edit/Copy.svg}" 
-                                           Command="{Binding ImageBeforeArrLazy.Value, Converter={StaticResource ImageToClipboardConverter}}"/>
-                            <dxb:BarButtonItem  Content="Copy Current" Glyph="{dx:DXImage SvgImages/Edit/Copy.svg}" 
-                                           Command="{Binding ImageCurrentArrLazy.Value, Converter={StaticResource ImageToClipboardConverter}}"/>
-                            <dxb:BarButtonItem  Content="Copy Diff" Glyph="{dx:DXImage SvgImages/Edit/Copy.svg}" 
-                                           Command="{Binding ImageDiffArrLazy.Value, Converter={StaticResource ImageToClipboardConverter}}"/>
-                            <dxb:BarButtonItem  Content="Copy Split" Glyph="{dx:DXImage SvgImages/Edit/Copy.svg}" >
+                            <dxb:BarButtonItem Content="Copy Original" Glyph="{dx:DXImage SvgImages/Edit/Copy.svg}" 
+                                           Command="{Binding ImageBeforeArrLazy.Value, Converter={StaticResource ImageToClipboardConverter}}"
+                                           Hint="Copy Original image to clipboard"/>
+                            <dxb:BarButtonItem Content="Copy Current" Glyph="{dx:DXImage SvgImages/Edit/Copy.svg}" 
+                                           Command="{Binding ImageCurrentArrLazy.Value, Converter={StaticResource ImageToClipboardConverter}}"
+                                           Hint="Copy Current image to clipboard"/>
+                            <dxb:BarButtonItem Content="Copy Diff" Glyph="{dx:DXImage SvgImages/Edit/Copy.svg}" 
+                                           Command="{Binding ImageDiffArrLazy.Value, Converter={StaticResource ImageToClipboardConverter}}"
+                                           Hint="Copy Diff image to clipboard"/>
+                            <dxb:BarButtonItem Content="Copy Split" Glyph="{dx:DXImage SvgImages/Edit/Copy.svg}" 
+                                           Hint="Concat all images in singe one and copy to clipboard">
                                 <dxb:BarButtonItem.Command>
                                     <MultiBinding Converter="{StaticResource MultiImageToClipboardConverter}">
                                         <Binding Path="ImageBeforeArrLazy.Value"/>
@@ -263,14 +267,20 @@
                                 </dxb:BarButtonItem.Command>
                             </dxb:BarButtonItem>
                         </dxr:RibbonPageGroup>
+                    </dxr:RibbonPage>
+                    <dxr:RibbonPage Caption="Image To File">
                         <dxr:RibbonPageGroup Caption="Create Temp File And Get Path" DataContext="{Binding TestInfoModel.TestInfo}">
-                            <dxb:BarButtonItem  Content="For Original" Glyph="{dx:DXImage SvgImages/Edit/Copy.svg}" 
-                                           Command="{Binding ImageBeforeArrLazy.Value, Converter={converters:ImageToTempFileConverter}}"/>
-                            <dxb:BarButtonItem  Content="For Current" Glyph="{dx:DXImage SvgImages/Edit/Copy.svg}" 
-                                           Command="{Binding ImageCurrentArrLazy.Value, Converter={converters:ImageToTempFileConverter}}"/>
-                            <dxb:BarButtonItem  Content="For Diff" Glyph="{dx:DXImage SvgImages/Edit/Copy.svg}" 
-                                           Command="{Binding ImageDiffArrLazy.Value, Converter={converters:ImageToTempFileConverter}}"/>
-                            <dxb:BarButtonItem  Content="For Split" Glyph="{dx:DXImage SvgImages/Edit/Copy.svg}" >
+                            <dxb:BarButtonItem Content="For Original" Glyph="{dx:DXImage SvgImages/Edit/Copy.svg}" 
+                                           Command="{Binding ImageBeforeArrLazy.Value, Converter={converters:ImageToTempFileConverter}}"
+                                           Hint="Save Original image to file and copy file path to clipboard"/>
+                            <dxb:BarButtonItem Content="For Current" Glyph="{dx:DXImage SvgImages/Edit/Copy.svg}" 
+                                           Command="{Binding ImageCurrentArrLazy.Value, Converter={converters:ImageToTempFileConverter}}"
+                                           Hint="Save Current image to file and copy file path to clipboard"/>
+                            <dxb:BarButtonItem Content="For Diff" Glyph="{dx:DXImage SvgImages/Edit/Copy.svg}" 
+                                           Command="{Binding ImageDiffArrLazy.Value, Converter={converters:ImageToTempFileConverter}}"
+                                           Hint="Save Diff image to file and copy file path to clipboard"/>
+                            <dxb:BarButtonItem Content="For Split" Glyph="{dx:DXImage SvgImages/Edit/Copy.svg}" 
+                                           Hint="Concat all images in singe one and save to file, copy file path to clipboard">
                                 <dxb:BarButtonItem.Command>
                                     <MultiBinding Converter="{converters:MultiImageToTempFileConverter}">
                                         <Binding Path="ImageBeforeArrLazy.Value"/>
