@@ -27,10 +27,10 @@
                         <dxg:GridSummaryItem SummaryType="Sum" FieldName="Time" DisplayFormat="{}Total Time: {0}" Alignment="Right"/>
                     </dxg:GridControl.TotalSummary>
                     <dxg:GridControl.GroupSummary>
-                        <dxg:GridSummaryItem SummaryType="Sum" FieldName="Time"/>
-                        <dxg:GridSummaryItem SummaryType="Average" FieldName="Time"/>
-                        <dxg:GridSummaryItem SummaryType="Max" FieldName="Time"/>
-                        <dxg:GridSummaryItem SummaryType="Min" FieldName="Time"/>
+                        <dxg:GridSummaryItem SummaryType="Max" FieldName="Time" DisplayFormat="Max:{0:hh\:mm}"/>
+                        <dxg:GridSummaryItem SummaryType="Min" FieldName="Time" DisplayFormat="Min:{0:hh\:mm}"/>
+                        <dxg:GridSummaryItem SummaryType="Average" FieldName="Time" DisplayFormat="Average:{0:hh\:mm}"/>
+                        <dxg:GridSummaryItem SummaryType="Sum" FieldName="Time" DisplayFormat="Total:{0:hh\:mm}"/>
                     </dxg:GridControl.GroupSummary>
                     <dxg:GridControl.View>
                         <dxg:TableView AllowPartialGrouping="True" ShowFixedTotalSummary="True"/>
