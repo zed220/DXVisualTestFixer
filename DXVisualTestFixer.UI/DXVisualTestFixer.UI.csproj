@@ -191,6 +191,7 @@
     <Compile Include="Converters\StackPanelToTooltipConverter.cs" />
     <Compile Include="Converters\MultiValueConverters.cs" />
     <Compile Include="Native\DiffLineBackgroundRenderer.cs" />
+    <Compile Include="Native\RepositoryObsolescenceTracker.cs" />
     <Compile Include="Native\ThemesProvider.cs" />
     <Compile Include="PrismCommon\LayoutPanelRegionAdapter.cs" />
     <Compile Include="PrismCommon\PopupDXWindowAction.cs" />

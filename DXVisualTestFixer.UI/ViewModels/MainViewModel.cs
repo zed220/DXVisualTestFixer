@@ -29,6 +29,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
         readonly Dispatcher Dispatcher;
         readonly IFarmIntegrator farmIntegrator;
         readonly IConfigSerializer configSerializer;
+        readonly RepositoryObsolescenceTracker obsolescenceTracker;
 
         #region private properties
         IConfig Config;
@@ -105,12 +106,18 @@ namespace DXVisualTestFixer.UI.ViewModels {
             this.loggingService = loggingService;
             this.farmIntegrator = farmIntegrator;
             this.configSerializer = configSerializer;
+            this.obsolescenceTracker = new RepositoryObsolescenceTracker(NoticeRepositoryObsolescence);
             LoadingProgressController = loadingProgressController;
             TestService = testsService;
             _GitWorker = gitWorker;
             TestService.PropertyChanged += TestService_PropertyChanged;
             loggingService.MessageReserved += OnLoggingMessageReserved;
             UpdateConfig();
+        }
+
+        void NoticeRepositoryObsolescence() {
+            if(CheckConfirmation(ConfirmationRequest, "Repositories may be outdated", "Repositories may be outdated. Refresh tests list?", MessageBoxImage.Warning))
+                UpdateContent();
         }
 
         void TestService_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
@@ -323,10 +330,12 @@ namespace DXVisualTestFixer.UI.ViewModels {
         public void RefreshTestList(bool checkConfirmation = true) {
             if(checkConfirmation && CheckHasUncommittedChanges())
                 return;
+            obsolescenceTracker.Stop();
             loggingService.SendMessage("Waiting response from farm integrator");
             Tests = null;
             Status = ProgramStatus.Loading;
             Task.Factory.StartNew(FarmRefresh).ConfigureAwait(false);
+            obsolescenceTracker.Start();
         }
 
         public void ClearCommits() {
