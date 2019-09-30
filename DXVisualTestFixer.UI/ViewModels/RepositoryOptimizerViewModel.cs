@@ -80,25 +80,31 @@ namespace DXVisualTestFixer.UI.ViewModels {
             }));
         }
         public static async Task<HashSet<string>> GetUsedFiles(Dictionary<Repository, List<string>> usedFilesByRepLinks, ITestsService testsService, IMinioWorker minioWorker) {
-            var result = await Task.WhenAll(usedFilesByRepLinks.ToList().Select(x => GetUsedFilesByRepository((x.Key, x.Value), testsService, minioWorker)));
+            var result = await Task.WhenAll(usedFilesByRepLinks.ToList().Select(x => GetUsedFilesByRepository(x.Key, x.Value, testsService, minioWorker)));
             return new HashSet<string>(result.SelectMany(x => x));
         }
-        static async Task<HashSet<string>> GetUsedFilesByRepository((Repository repository, List<string> filesLinks) usedFilesByRepLinks, ITestsService testsService, IMinioWorker minioWorker) {
-            HashSet<string> usedFiles = new HashSet<string>();
-            foreach(string fileRelLink in usedFilesByRepLinks.filesLinks) {
+        static async Task<HashSet<string>> GetUsedFilesByRepository(Repository repository, List<string> filesLinks, ITestsService testsService, IMinioWorker minioWorker) {
+            var usedFiles = new List<string>();
+            var lockObject = new object(); 
+            
+            await Task.WhenAll(filesLinks.Select(async fileRelLink => {
+                var localUsedFiles = new List<string>();
                 var filesStr = await minioWorker.Download(fileRelLink);
                 if(string.IsNullOrEmpty(filesStr))
-                    continue;
+                    return;
                 foreach(var fileRelPath in filesStr.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries)) {
-                    string filePath = testsService.GetResourcePath(usedFilesByRepLinks.repository, fileRelPath.ToLower().Replace(@"c:\builds\", ""));
-                    if(File.Exists(filePath))
-                        usedFiles.Add(filePath.ToLower());
+                    string localFilePath = testsService.GetResourcePath(repository, fileRelPath.ToLower().Replace(@"c:\builds\", ""));
+                    if(File.Exists(localFilePath))
+                        localUsedFiles.Add(localFilePath.ToLower());
                 }
-            }
-            return usedFiles;
+                lock(lockObject) {
+                    usedFiles.AddRange(localUsedFiles);
+                }
+            })).ConfigureAwait(false);
+            return new HashSet<string>(usedFiles);
         }
         static async Task<List<RepositoryFileModel>> GetUnusedFilesByRepository(Repository repository, List<string> usedFilesByRepLinks, List<Team> teams, ITestsService testsService, IMinioWorker minioWorker) {
-            HashSet<string> usedFiles = await GetUsedFilesByRepository((repository, usedFilesByRepLinks), testsService, minioWorker).ConfigureAwait(false);
+            HashSet<string> usedFiles = await GetUsedFilesByRepository(repository, usedFilesByRepLinks, testsService, minioWorker).ConfigureAwait(false);
             var result = new List<RepositoryFileModel>();
             foreach(Team team in teams) {
                 foreach(string teamPath in team.TeamInfos.Select(i => testsService.GetResourcePath(repository, i.TestResourcesPath)).Distinct()) {
