@@ -19,6 +19,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 
         bool _HasUpdate;
         bool _IsInUpdate;
+        bool _IsActive = true;
 
         public InteractionRequest<INotification> NotificationRequest { get; } = new InteractionRequest<INotification>();
 
@@ -54,19 +55,17 @@ namespace DXVisualTestFixer.UI.ViewModels {
             }
         }
 
-        void Update() {
-            updateService.Update();
-        }
+        void Update() => updateService.Update();
 
         public IEnumerable<ICommand> Commands { get; }
 
         public bool HasUpdate {
-            get { return _HasUpdate; }
-            set { SetProperty(ref _HasUpdate, value); }
+            get => _HasUpdate;
+            set => SetProperty(ref _HasUpdate, value);
         }
         public bool IsInUpdate {
-            get { return _IsInUpdate; }
-            set { SetProperty(ref _IsInUpdate, value); }
+            get => _IsInUpdate;
+            set => SetProperty(ref _IsInUpdate, value);
         }
     }
 }
