@@ -45,6 +45,7 @@ namespace DXVisualTestFixer {
             RegisterTypeIfMissing(typeof(IUpdateService), typeof(SquirrelUpdateService), true);
             RegisterTypeIfMissing(typeof(IDXNotification), typeof(DXNotification), false);
             RegisterTypeIfMissing(typeof(IDXConfirmation), typeof(DXConfirmation), false);
+            RegisterTypeIfMissing(typeof(IActiveService), typeof(IsActiveService), true);
         }
 
         protected override RegionAdapterMappings ConfigureRegionAdapterMappings() {

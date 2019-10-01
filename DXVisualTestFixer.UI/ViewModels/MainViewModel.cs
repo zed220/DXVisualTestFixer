@@ -7,6 +7,7 @@ using Prism.Interactivity.InteractionRequest;
 using Prism.Regions;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -30,6 +31,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
         readonly IFarmIntegrator farmIntegrator;
         readonly IConfigSerializer configSerializer;
         readonly RepositoryObsolescenceTracker obsolescenceTracker;
+        readonly IActiveService isActiveService;
 
         #region private properties
         IConfig Config;
@@ -99,14 +101,16 @@ namespace DXVisualTestFixer.UI.ViewModels {
                              IConfigSerializer configSerializer, 
                              ILoadingProgressController loadingProgressController, 
                              ITestsService testsService,
-                             IGitWorker gitWorker) {
+                             IGitWorker gitWorker,
+                             IActiveService isActiveService) {
             Dispatcher = Dispatcher.CurrentDispatcher;
             this.notificationService = notificationService;
             this.regionManager = regionManager;
             this.loggingService = loggingService;
             this.farmIntegrator = farmIntegrator;
             this.configSerializer = configSerializer;
-            this.obsolescenceTracker = new RepositoryObsolescenceTracker(NoticeRepositoryObsolescence);
+            this.isActiveService = isActiveService;
+            obsolescenceTracker = new RepositoryObsolescenceTracker(NoticeRepositoryObsolescence);
             LoadingProgressController = loadingProgressController;
             TestService = testsService;
             _GitWorker = gitWorker;
@@ -116,8 +120,26 @@ namespace DXVisualTestFixer.UI.ViewModels {
         }
 
         void NoticeRepositoryObsolescence() {
+            if(!isActiveService.IsActive) {
+                obsolescenceTracker.Stop();
+                isActiveService.PropertyChanged += DevExpress.Mvvm.Native.LinqExtensions.WithReturnValue<PropertyChangedEventHandler>(x => {
+                    return (sender, args) => {
+                        if(args.PropertyName != nameof(IActiveService.IsActive))
+                            return;
+                        isActiveService.PropertyChanged -= x.Value;
+                        NoticeRepositoryObsolescenceCore();
+                    };
+                });
+                return;
+            }
+            NoticeRepositoryObsolescenceCore();
+        }
+
+        void NoticeRepositoryObsolescenceCore() {
+            obsolescenceTracker.Start();
             if(CheckConfirmation(ConfirmationRequest, "Repositories may be outdated", "Repositories may be outdated. Refresh tests list?", MessageBoxImage.Warning))
                 UpdateContent();
+            
         }
 
         void TestService_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
