@@ -30,6 +30,9 @@ namespace DXVisualTestFixer.Common {
     public interface IAppearanceService {
         void SetTheme(string themeName, string palette);
     }
+    public interface IActiveService : INotifyPropertyChanged {
+        bool IsActive { get; set; }
+    }
     public interface ILoadingProgressController : INotifyPropertyChanged {
         void Enlarge(int delta);
         void Flush();
