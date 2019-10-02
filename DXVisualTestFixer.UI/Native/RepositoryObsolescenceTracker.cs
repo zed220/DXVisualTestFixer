@@ -12,7 +12,6 @@ namespace DXVisualTestFixer.UI.Native {
 			timer.Tick += (s, a) => {
 				timer.Stop();
 				onObsolescence();
-				timer.Start();
 			};
 		}
 
