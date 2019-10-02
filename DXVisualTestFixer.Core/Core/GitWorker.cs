@@ -14,7 +14,7 @@ namespace DXVisualTestFixer.Core {
     public class GitWorker : IGitWorker {
         public bool SetHttpRepository(CommonRepository repository) {
             if(!repository.IsDownloaded())
-                return false;
+                return false;    
             using(var repo = new Repository(repository.Path)) {
                 foreach(Remote remote in repo.Network.Remotes.ToList()) {
                     if(!remote.PushUrl.StartsWith("http"))
