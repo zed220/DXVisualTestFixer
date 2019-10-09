@@ -353,7 +353,7 @@
                         </dxdo:LayoutPanel>
                         <dxdo:LayoutPanel ShowCaption="False" ItemHeight="*">
                             <dxg:GridControl x:Name="PART_GridTests" ItemsSource="{Binding Tests}" CurrentItem="{Binding CurrentTest, Mode=TwoWay}" AutoExpandAllGroups="True" ShowBorder="False" 
-                                         FixedFilter="{Binding CurrentFilter}" AllowLiveDataShaping="True"
+                                         FixedFilter="{Binding CurrentFilter}" AllowLiveDataShaping="True" ClipboardCopyMode="None"
                                          ShowAllTableValuesInFilterPopup="True" FilterString="[$ ]([Valid])">
                                 <dxmvvm:Interaction.Behaviors>
                                     <behaviors:GridControlClearFilterBehavior/>
