@@ -11,13 +11,9 @@ using System.Windows;
 
 namespace DXVisualTestFixer.UI.PrismCommon {
     public class PopupDXDialogWindowAction : PopupWindowAction {
-        protected override Window CreateWindow() {
-            return new ThemedWindow();
-        }
+        protected override Window CreateWindow() => new ThemedWindow();
     }
     public class PopupDXMessageBoxAction : PopupWindowAction {
-        protected override Window CreateWindow() {
-            return new ThemedMessageBoxWindow();
-        }
+        protected override Window CreateWindow() => new ThemedMessageBoxWindow();
     }
 }
