@@ -17,9 +17,8 @@ namespace DXVisualTestFixer.UI.ViewModels {
         readonly IDXNotification notification;
         readonly INotificationService notificationService;
 
-        bool _HasUpdate;
-        bool _IsInUpdate;
         bool _IsActive = true;
+        UpdateState _UpdateState = UpdateState.None;
 
         public InteractionRequest<INotification> NotificationRequest { get; } = new InteractionRequest<INotification>();
 
@@ -30,7 +29,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
             notificationService.Notification += NotificationService_Notification;
             Commands = new List<ICommand>() { new DelegateCommand(Update).ObservesCanExecute(() => HasUpdate) };
             if(updateService.HasUpdate) {
-                HasUpdate = true;
+                UpdateState = UpdateState.Ready;
                 if(updateService.IsNetworkDeployment)
                     Update();
                 return;
@@ -45,27 +44,35 @@ namespace DXVisualTestFixer.UI.ViewModels {
         }
 
         void UpdateService_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
-            switch(e.PropertyName) {
-                case nameof(IUpdateService.HasUpdate):
-                    HasUpdate = updateService.HasUpdate;
-                    break;
-                case nameof(IUpdateService.IsInUpdate):
-                    IsInUpdate = updateService.IsInUpdate;
-                    break;
+            if(updateService.HasUpdate) {
+                UpdateState = UpdateState.Ready;
+                return;
             }
+            if(updateService.IsInUpdate) {
+                UpdateState = UpdateState.Downloading;
+                return;
+            }
+            UpdateState = UpdateState.None;
         }
 
         void Update() => updateService.Update();
 
         public IEnumerable<ICommand> Commands { get; }
 
-        public bool HasUpdate {
-            get => _HasUpdate;
-            set => SetProperty(ref _HasUpdate, value);
+        public UpdateState UpdateState {
+            get => _UpdateState;
+            set {
+                SetProperty(ref _UpdateState, value);
+                OnPropertyChanged(nameof(HasUpdate));
+            }
         }
-        public bool IsInUpdate {
-            get => _IsInUpdate;
-            set => SetProperty(ref _IsInUpdate, value);
-        }
+
+        public bool HasUpdate => UpdateState == UpdateState.Ready;
+    }
+
+    public enum UpdateState {
+        None,
+        Downloading,
+        Ready
     }
 }

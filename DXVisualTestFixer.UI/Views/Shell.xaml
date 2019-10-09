@@ -22,6 +22,7 @@
         prism:ViewModelLocator.AutoWireViewModel="True"
         Icon="../89.ico"
         Title="{DXBinding Expr='`Visual Tests Tool v` + $native:VersionHelper.Version'}" MinHeight="768" MinWidth="1024"
+        prismcommon:PrismExtensions.ViewModel="{Binding}"
         HeaderItemsSource="{Binding Commands}">
     <dx:ThemedWindow.Resources>
         <ResourceDictionary>
@@ -29,25 +30,67 @@
                 <ResourceDictionary Source="/DXVisualTestFixer.UI;component/Resources/LayoutPanel.xaml"/>
                 <ResourceDictionary Source="/DXVisualTestFixer.UI;component/Resources/Services.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+            <dxmvvm:ObjectToObjectConverter x:Key="NoneConverter" DefaultTarget="Visible">
+                <dxmvvm:MapItem Source="None" Target="Collapsed"/>
+            </dxmvvm:ObjectToObjectConverter>
+            <dxmvvm:ObjectToObjectConverter x:Key="ReadyConverter" DefaultTarget="Collapsed">
+                <dxmvvm:MapItem Source="Ready" Target="Visible"/>
+            </dxmvvm:ObjectToObjectConverter>
+            <dxmvvm:ObjectToObjectConverter x:Key="DownloadingConverter" DefaultTarget="Collapsed">
+                <dxmvvm:MapItem Source="Downloading" Target="Visible"/>
+            </dxmvvm:ObjectToObjectConverter>
             <Style TargetType="{x:Type dx:HeaderItemControl}">
                 <Setter Property="Command" Value="{Binding}"/>
-                <Setter Property="Visibility" Value="{Binding IsEnabled, RelativeSource={RelativeSource Self}, Converter={dxmvvm:BooleanToVisibilityConverter}}"/>
                 <Setter Property="ToolTip" Value="Update application"/>
+                <Setter Property="Visibility" Value="{Binding Path=(prismcommon:PrismExtensions.ViewModel).UpdateState, RelativeSource={RelativeSource Self}, Converter={StaticResource NoneConverter}}"/>
                 <Setter Property="ContentTemplate">
                     <Setter.Value>
                         <DataTemplate>
-                            <dx:DXImage x:Name="image" Source="{dx:DXImage SvgImages/Arrows/MoveUp.svg}"  VerticalAlignment="Center" HorizontalAlignment="Center" Height="16" Width="16"
-                                        dxb:ImageColorizer.Color="{Binding TextElement.Foreground}" dxb:ImageColorizer.IsEnabled="True"/>
-                            <DataTemplate.Triggers>
-                                <EventTrigger RoutedEvent="Loaded">
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetProperty="Opacity" Storyboard.TargetName="image" From="1" To="0" AutoReverse="True" 
-                                                             BeginTime="0:0:1" RepeatBehavior="Forever"/>
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </EventTrigger>
-                            </DataTemplate.Triggers>
+                            <Grid ClipToBounds="True">
+                                <dx:DXImage x:Name="img_loaded" Source="{dx:DXImage SvgImages/Arrows/MoveUp.svg}"  VerticalAlignment="Center" HorizontalAlignment="Center" Height="16" Width="16"
+                                            dxb:ImageColorizer.Color="{Binding Path=(TextElement.Foreground), RelativeSource={RelativeSource Self}}" dxb:ImageColorizer.IsEnabled="True">
+                                    <dx:DXImage.Style>
+                                        <Style TargetType="{x:Type dx:DXImage}">
+                                            <Setter Property="Visibility" Value="{Binding Path=(prismcommon:PrismExtensions.ViewModel).UpdateState, RelativeSource={RelativeSource Self}, Converter={StaticResource ReadyConverter}}"/>
+                                            <Style.Triggers>
+                                                <Trigger Property="IsEnabled" Value="True">
+                                                    <Trigger.EnterActions>
+                                                        <BeginStoryboard>
+                                                            <Storyboard>
+                                                                <DoubleAnimation Storyboard.TargetProperty="Opacity" From="1" To="0" AutoReverse="True" BeginTime="0:0:1" RepeatBehavior="Forever"/>
+                                                            </Storyboard>
+                                                        </BeginStoryboard>
+                                                    </Trigger.EnterActions>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </dx:DXImage.Style>
+                                </dx:DXImage>
+                                <Border x:Name="img_updating" VerticalAlignment="Center" HorizontalAlignment="Center" ClipToBounds="True" BorderThickness="0,0,0,1" BorderBrush="{Binding Path=(TextElement.Foreground), RelativeSource={RelativeSource Self}}"
+                                        Visibility="{Binding Path=(prismcommon:PrismExtensions.ViewModel).UpdateState, RelativeSource={RelativeSource Self}, Converter={StaticResource DownloadingConverter}}">
+                                    <dx:DXImage Height="16" Width="16" Source="{dx:DXImage SvgImages/Arrows/MoveDown.svg}"
+                                                dxb:ImageColorizer.Color="{Binding Path=(TextElement.Foreground), RelativeSource={RelativeSource Self}}" dxb:ImageColorizer.IsEnabled="True">
+                                        <dx:DXImage.Style>
+                                            <Style TargetType="dx:DXImage"> 
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsVisible" Value="True">
+                                                        <Trigger.EnterActions>
+                                                            <BeginStoryboard>
+                                                                <Storyboard>
+                                                                    <ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="Margin" RepeatBehavior="Forever">
+                                                                        <SplineThicknessKeyFrame KeyTime="00:00:00" Value="0,-16,0,16" />
+                                                                        <SplineThicknessKeyFrame KeyTime="00:00:02" Value="0,16,0,-16" />
+                                                                    </ThicknessAnimationUsingKeyFrames>
+                                                                </Storyboard>
+                                                            </BeginStoryboard>
+                                                        </Trigger.EnterActions>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </dx:DXImage.Style>
+                                    </dx:DXImage>
+                                </Border>
+                            </Grid>
                         </DataTemplate>
                     </Setter.Value>
                 </Setter>
