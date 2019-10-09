@@ -38,7 +38,9 @@ namespace DXVisualTestFixer.Services {
                 UpdateInfo updateInfo = await mgr.CheckForUpdate();
                 if(!updateInfo.ReleasesToApply.Any())
                     return false;
+                IsInUpdate = true;
                 var ver = await mgr.UpdateApp();
+                IsInUpdate = false;
                 return true;
             }
         }
@@ -68,7 +70,7 @@ namespace DXVisualTestFixer.Services {
         }
         public bool IsInUpdate {
             get { return _IsInUpdate; }
-            private set { SetProperty(ref _IsInUpdate, value); }
+            protected set { SetProperty(ref _IsInUpdate, value); }
         }
         public bool IsNetworkDeployment { get; set; }
 
@@ -88,12 +90,16 @@ namespace DXVisualTestFixer.Services {
         async void Timer_Tick(object sender, EventArgs e) {
             await CheckUpdate();
         }
+
+        bool isInUpdateCore = false;
         async Task CheckUpdate() {
             if(HasUpdate)
                 return;
             if(IsInUpdate)
                 return;
-            IsInUpdate = true;
+            if(isInUpdateCore)
+                return;
+            isInUpdateCore = true;
             try {
                 HasUpdate = await CheckUpdateCore();
             }
@@ -102,10 +108,10 @@ namespace DXVisualTestFixer.Services {
                     notificationService?.DoNotification("Update error", e.Message, System.Windows.MessageBoxImage.Error);
                     Timer.Stop();
                 });
-                
             }
-            IsInUpdate = false;
-
+            finally {
+                isInUpdateCore = false;
+            }
         }
 
         protected abstract bool GetIsNetworkDeployment();
