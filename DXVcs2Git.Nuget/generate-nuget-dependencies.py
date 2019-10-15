@@ -81,4 +81,4 @@ subprocess.check_call([nuget_path, 'pack', spec_path])
 package_file = sorted([x for x in os.listdir('.') if x.endswith('nupkg')])[-1]
 print('package created:', package_file)
 if args.push:
-    subprocess.check_call([nuget_path, 'push', package_file, '-Source', 'https://nuget.devexpress.devx/nuget', 'ac6fc8ff1a5a4ff4941e16f26ca24883'])
+    subprocess.check_call([nuget_path, 'push', package_file, 'ac6fc8ff1a5a4ff4941e16f26ca24883', '-Source', 'https://nuget.devexpress.devx/nuget' ])
