@@ -7,6 +7,9 @@
         <authors>DevExpress</authors>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>DXVisualTests Addin UI dependencies</description>
+		<dependencies>
+			<group targetFramework=".NETFramework4.7.2" />
+		</dependencies>
     </metadata>
     <files>
         <file src="files\DevExpress.Data.v19.1.dll" target="lib\net40\DevExpress.Data.v19.1.dll" />
