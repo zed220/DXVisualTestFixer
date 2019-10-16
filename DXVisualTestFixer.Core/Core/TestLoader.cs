@@ -42,9 +42,7 @@ namespace DXVisualTestFixer.Core {
 			if(realUrl == null || !realUrl.Contains("ViewBuildReport.aspx")) throw new NotSupportedException("Contact Petr Zinovyev, please.");
 			var failedTestsTasks = new List<Task<IEnumerable<CorpDirTestInfo>>>();
 			var buildNode = FindBuildNode(LoadFromUrl(realUrl));
-			if(buildNode == null)
-				failedTests.Add(CorpDirTestInfo.CreateError(taskInfo, "BuildError", "BuildError", "BuildError"));
-			else if(!IsSuccessBuild(buildNode)) {
+			if(buildNode != null && !IsSuccessBuild(buildNode)) {
 				foreach(var testCaseXml in FindFailedTests(buildNode)) {
 					var testNameAndNamespace = testCaseXml.GetAttribute("name");
 					var failureNode = testCaseXml.FindByName("failure");
@@ -63,6 +61,8 @@ namespace DXVisualTestFixer.Core {
 					failedTestsTasks.ForEach(t => failedTests.AddRange(t.Result));
 				}	
 			}
+			if(buildNode == null || (!IsSuccessBuild(buildNode) && failedTests.Count == 0))
+				failedTests.Add(CorpDirTestInfo.CreateError(taskInfo, "BuildError", "BuildError", "BuildError"));
 
 			return new CorpDirTestInfoContainer(failedTests, FindUsedFilesLinks(buildNode).ToList(), FindElapsedTimes(buildNode), FindTeams(taskInfo.Repository.Version, buildNode), FindTimings(buildNode));
 		}
