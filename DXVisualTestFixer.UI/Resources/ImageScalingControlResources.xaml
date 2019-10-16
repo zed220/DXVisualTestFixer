@@ -13,21 +13,21 @@
                     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
                     xmlns:dxi="http://schemas.devexpress.com/winfx/2008/xaml/core/internal">
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="/DXVisualTestFixer.UI;component/Resources/LayoutPanel.xaml"/>
+        <ResourceDictionary Source="/DXVisualTestFixer.UI;component/Resources/LayoutPanel.xaml" />
     </ResourceDictionary.MergedDictionaries>
     <Style TargetType="{x:Type dxi:TabBorder}">
-        <Setter Property="BorderThickness" Value="0,1,0,0"/>
+        <Setter Property="BorderThickness" Value="0,1,0,0" />
     </Style>
-    <converters:ImageToClipboardConverter x:Key="ImageToClipboardConverter"/>
-    <converters:MultiImageToClipboardConverter x:Key="MultiImageToClipboardConverter"/>
+    <converters:ImageToClipboardConverter x:Key="ImageToClipboardConverter" />
+    <converters:MultiImageToClipboardConverter x:Key="MultiImageToClipboardConverter" />
     <dxmvvm:ObjectToObjectConverter x:Key="TestViewTypeToBoolConverter" DefaultSource="Split" DefaultTarget="False">
-        <dxmvvm:MapItem Source="Merged" Target="True"/>
+        <dxmvvm:MapItem Source="Merged" Target="True" />
     </dxmvvm:ObjectToObjectConverter>
     <dxmvvm:ObjectToObjectConverter x:Key="ScrollModeToBoolConverter" DefaultSource="Legacy" DefaultTarget="False">
-        <dxmvvm:MapItem Source="Draggable" Target="True"/>
+        <dxmvvm:MapItem Source="Draggable" Target="True" />
     </dxmvvm:ObjectToObjectConverter>
     <Style TargetType="{x:Type controls:DraggableScrollViewer}">
-        <Setter Property="dx:ScrollBarExtensions.AllowShiftKeyMode" Value="True"/>
+        <Setter Property="dx:ScrollBarExtensions.AllowShiftKeyMode" Value="True" />
         <Setter Property="Background">
             <Setter.Value>
                 <LinearGradientBrush EndPoint="0,0" StartPoint="8,8" MappingMode="Absolute" SpreadMethod="Repeat">
@@ -42,31 +42,37 @@
     <DataTemplate x:Key="DraggableScrollViewerDataTemplate">
         <DataTemplate.Resources>
             <dxmvvm:ObjectToObjectConverter x:Key="scrollModeConverter" DefaultTarget="{x:Null}">
-                <dxmvvm:MapItem Source="Draggable" Target="Hand"/>
+                <dxmvvm:MapItem Source="Draggable" Target="Hand" />
             </dxmvvm:ObjectToObjectConverter>
         </DataTemplate.Resources>
         <Grid>
-            <controls:DraggableScrollViewer HorizontalScrollBarVisibility="Auto" dx:ScrollBarExtensions.HandlesDefaultMouseScrolling="False" dx:ScrollBarExtensions.AllowMouseScrolling="False"
+            <controls:DraggableScrollViewer HorizontalScrollBarVisibility="Auto"
+                                            dx:ScrollBarExtensions.HandlesDefaultMouseScrolling="False"
+                                            dx:ScrollBarExtensions.AllowMouseScrolling="False"
                                             CanContentScroll="True"
                                             ScrollMode="{Binding Path=(controls:ImageScalingControl.ImageScalingControl).ScrollMode, RelativeSource={RelativeSource Self}}"
                                             Cursor="{Binding Path=(controls:ImageScalingControl.ImageScalingControl).ScrollMode, RelativeSource={RelativeSource Self}, Converter={StaticResource scrollModeConverter}}">
                 <dxmvvm:Interaction.Behaviors>
-                    <behaviors:ScrollViewerRegistrationBehavior ImageScalingControl="{Binding Path=AssociatedObject.(controls:ImageScalingControl.ImageScalingControl), RelativeSource={RelativeSource Self}}"
-                                                                ScrollViewerType="{Binding Path=AssociatedObject.(controls:ImageScalingControl.ScrollViewerType), RelativeSource={RelativeSource Self}}"/>
+                    <behaviors:ScrollViewerRegistrationBehavior
+                        ImageScalingControl="{Binding Path=AssociatedObject.(controls:ImageScalingControl.ImageScalingControl), RelativeSource={RelativeSource Self}}"
+                        ScrollViewerType="{Binding Path=AssociatedObject.(controls:ImageScalingControl.ScrollViewerType), RelativeSource={RelativeSource Self}}" />
                 </dxmvvm:Interaction.Behaviors>
-                <controls:ScaleImageControl x:Name="popupTarget" ImageSource="{Binding Path=Content, Converter={converters:ArrayToImageConverter}, RelativeSource={RelativeSource TemplatedParent}}"/>
+                <controls:ScaleImageControl x:Name="popupTarget"
+                                            ImageSource="{Binding Path=Content, Converter={converters:ArrayToImageConverter}, RelativeSource={RelativeSource TemplatedParent}}" />
             </controls:DraggableScrollViewer>
-            <Popup DataContext="{Binding ElementName=popupTarget}" PlacementTarget="{Binding}" Placement="RelativePoint"
+            <Popup DataContext="{Binding ElementName=popupTarget}" PlacementTarget="{Binding}"
+                   Placement="RelativePoint"
                    IsHitTestVisible="False" Focusable="False" AllowsTransparency="True"
                    PlacementRectangle="{Binding HighlightedPoint, Converter={converters:PointToRectConverter}}">
                 <Popup.IsOpen>
                     <MultiBinding Converter="{converters:HighlightedColorPopupIsOpenConverter}" Mode="OneWay">
-                        <Binding Path="ImageSource"/>
-                        <Binding Path="ShowHighlightedPoint"/>
+                        <Binding Path="ImageSource" />
+                        <Binding Path="ShowHighlightedPoint" />
                     </MultiBinding>
                 </Popup.IsOpen>
                 <Border CornerRadius="2" Background="White" Padding="2">
-                    <dxe:PopupColorEdit ShowBorder="False" Focusable="False" Color="{Binding HighlightedColor}" IsHitTestVisible="False" AllowDefaultButton="False"/>
+                    <dxe:PopupColorEdit ShowBorder="False" Focusable="False" Color="{Binding HighlightedColor}"
+                                        IsHitTestVisible="False" AllowDefaultButton="False" />
                 </Border>
             </Popup>
         </Grid>
@@ -75,11 +81,13 @@
         <controls:ImageScalingControlTemplateSelector.MergedTemplate>
             <DataTemplate>
                 <DataTemplate.Resources>
-                    <dxmvvm:ObjectToObjectConverter x:Key="VisibilityConverter" DefaultSource="False" DefaultTarget="Hidden">
-                        <dxmvvm:MapItem Source="True" Target="Visible"/>
+                    <dxmvvm:ObjectToObjectConverter x:Key="VisibilityConverter" DefaultSource="False"
+                                                    DefaultTarget="Hidden">
+                        <dxmvvm:MapItem Source="True" Target="Visible" />
                     </dxmvvm:ObjectToObjectConverter>
                 </DataTemplate.Resources>
-                <Grid DataContext="{Binding Path=(controls:ImageScalingControl.ImageScalingControl), RelativeSource={RelativeSource Self}}">
+                <Grid
+                    DataContext="{Binding Path=(controls:ImageScalingControl.ImageScalingControl), RelativeSource={RelativeSource Self}}">
                     <dxr:RibbonControl>
                         <dxr:RibbonPageCategory Caption="Working With Test">
                             <dxr:RibbonPage Caption="Navigation And View">
@@ -95,7 +103,7 @@
                                         <dxb:BarItemSelector.ItemTemplate>
                                             <DataTemplate>
                                                 <ContentControl>
-                                                    <dxb:BarCheckItem Content="{Binding}" RibbonStyle="SmallWithText"/>
+                                                    <dxb:BarCheckItem Content="{Binding}" RibbonStyle="SmallWithText" />
                                                 </ContentControl>
                                             </DataTemplate>
                                         </dxb:BarItemSelector.ItemTemplate>
@@ -106,10 +114,15 @@
                     </dxr:RibbonControl>
                     <dxdo:DockLayoutManager>
                         <dxdo:LayoutGroup AllowSplitters="False">
-                            <dxdo:LayoutPanel ShowCaption="True" ShowCloseButton="False" ShowPinButton="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False">
+                            <dxdo:LayoutPanel ShowCaption="True" ShowCloseButton="False" ShowPinButton="False"
+                                              AllowDrag="False" AllowDock="False" AllowClose="False"
+                                              AllowContextMenu="False">
                                 <dxdo:LayoutPanel.Caption>
-                                    <StackPanel Orientation="Horizontal" DataContext="{Binding Path=(controls:ImageScalingControl.ImageScalingControl), RelativeSource={RelativeSource Self}}">
-                                        <dxe:ComboBoxEdit EditValue="{Binding Path=MergedViewType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsTextEditable="False" MinWidth="100">
+                                    <StackPanel Orientation="Horizontal"
+                                                DataContext="{Binding Path=(controls:ImageScalingControl.ImageScalingControl), RelativeSource={RelativeSource Self}}">
+                                        <dxe:ComboBoxEdit
+                                            EditValue="{Binding Path=MergedViewType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            IsTextEditable="False" MinWidth="100">
                                             <dxe:ComboBoxEdit.ItemsSource>
                                                 <sys:ArrayList>
                                                     <controls:MergedTestViewType>Diff</controls:MergedTestViewType>
@@ -118,42 +131,55 @@
                                                 </sys:ArrayList>
                                             </dxe:ComboBoxEdit.ItemsSource>
                                         </dxe:ComboBoxEdit>
-                                        <TextBlock Margin="2,0" DataContext="{Binding Path=TestInfoModel.TestInfo}" VerticalAlignment="Center">
+                                        <TextBlock Margin="2,0" DataContext="{Binding Path=TestInfoModel.TestInfo}"
+                                                   VerticalAlignment="Center">
                                             <TextBlock.Inlines>
-                                                <Run Text="Before Size:("/>
-                                                <Run Text="{Binding Path=ImageBeforeArrLazy.Value, Converter={converters:ArrayToImageSizeConverter}, Mode=OneWay}">
+                                                <Run Text="Before Size:(" />
+                                                <Run
+                                                    Text="{Binding Path=ImageBeforeArrLazy.Value, Converter={converters:ArrayToImageSizeConverter}, Mode=OneWay}">
                                                     <Run.Foreground>
-                                                        <MultiBinding Converter="{converters:EqualsPointsToForegroundConverter}">
-                                                            <Binding Path="ImageBeforeArrLazy.Value" Converter="{converters:ArrayToImageSizeConverter}"/>
-                                                            <Binding Path="ImageCurrentArrLazy.Value" Converter="{converters:ArrayToImageSizeConverter}"/>
+                                                        <MultiBinding
+                                                            Converter="{converters:EqualsPointsToForegroundConverter}">
+                                                            <Binding Path="ImageBeforeArrLazy.Value"
+                                                                     Converter="{converters:ArrayToImageSizeConverter}" />
+                                                            <Binding Path="ImageCurrentArrLazy.Value"
+                                                                     Converter="{converters:ArrayToImageSizeConverter}" />
                                                         </MultiBinding>
                                                     </Run.Foreground>
                                                 </Run>
-                                                <Run Text="), Current Size:("/>
-                                                <Run Text="{Binding Path=ImageCurrentArrLazy.Value, Converter={converters:ArrayToImageSizeConverter}, Mode=OneWay}">
+                                                <Run Text="), Current Size:(" />
+                                                <Run
+                                                    Text="{Binding Path=ImageCurrentArrLazy.Value, Converter={converters:ArrayToImageSizeConverter}, Mode=OneWay}">
                                                     <Run.Foreground>
-                                                        <MultiBinding Converter="{converters:EqualsPointsToForegroundConverter}">
-                                                            <Binding Path="ImageBeforeArrLazy.Value" Converter="{converters:ArrayToImageSizeConverter}"/>
-                                                            <Binding Path="ImageCurrentArrLazy.Value" Converter="{converters:ArrayToImageSizeConverter}"/>
+                                                        <MultiBinding
+                                                            Converter="{converters:EqualsPointsToForegroundConverter}">
+                                                            <Binding Path="ImageBeforeArrLazy.Value"
+                                                                     Converter="{converters:ArrayToImageSizeConverter}" />
+                                                            <Binding Path="ImageCurrentArrLazy.Value"
+                                                                     Converter="{converters:ArrayToImageSizeConverter}" />
                                                         </MultiBinding>
                                                     </Run.Foreground>
                                                 </Run>
-                                                <Run Text=")"/>
+                                                <Run Text=")" />
                                             </TextBlock.Inlines>
                                         </TextBlock>
-                                        <TextBlock Text="You can use Left/Right arrows to change current view" Margin="2,0" VerticalAlignment="Center"/>
+                                        <TextBlock Text="You can use Left/Right arrows to change current view"
+                                                   Margin="2,0" VerticalAlignment="Center" />
                                     </StackPanel>
                                 </dxdo:LayoutPanel.Caption>
                                 <Grid>
                                     <ContentControl controls:ImageScalingControl.ScrollViewerType="Before"
-                                                    Content="{Binding Path=TestInfoModel.TestInfo.ImageBeforeArrLazy.Value}" ContentTemplate="{StaticResource ResourceKey=DraggableScrollViewerDataTemplate}"
-                                                    Visibility="{DXBinding Expr='MergedViewType eq $controls:MergedTestViewType.Before', Converter={StaticResource VisibilityConverter}}"/>
+                                                    Content="{Binding Path=TestInfoModel.TestInfo.ImageBeforeArrLazy.Value}"
+                                                    ContentTemplate="{StaticResource ResourceKey=DraggableScrollViewerDataTemplate}"
+                                                    Visibility="{DXBinding Expr='MergedViewType eq $controls:MergedTestViewType.Before', Converter={StaticResource VisibilityConverter}}" />
                                     <ContentControl controls:ImageScalingControl.ScrollViewerType="Current"
-                                                    Content="{Binding Path=TestInfoModel.TestInfo.ImageCurrentArrLazy.Value}" ContentTemplate="{StaticResource ResourceKey=DraggableScrollViewerDataTemplate}"
-                                                    Visibility="{DXBinding Expr='MergedViewType eq $controls:MergedTestViewType.Current', Converter={StaticResource VisibilityConverter}}"/>
+                                                    Content="{Binding Path=TestInfoModel.TestInfo.ImageCurrentArrLazy.Value}"
+                                                    ContentTemplate="{StaticResource ResourceKey=DraggableScrollViewerDataTemplate}"
+                                                    Visibility="{DXBinding Expr='MergedViewType eq $controls:MergedTestViewType.Current', Converter={StaticResource VisibilityConverter}}" />
                                     <ContentControl controls:ImageScalingControl.ScrollViewerType="Diff"
-                                                    Content="{Binding Path=TestInfoModel.TestInfo.ImageDiffArrLazy.Value}" ContentTemplate="{StaticResource ResourceKey=DraggableScrollViewerDataTemplate}"
-                                                    Visibility="{DXBinding Expr='MergedViewType eq $controls:MergedTestViewType.Diff', Converter={StaticResource VisibilityConverter}}"/>
+                                                    Content="{Binding Path=TestInfoModel.TestInfo.ImageDiffArrLazy.Value}"
+                                                    ContentTemplate="{StaticResource ResourceKey=DraggableScrollViewerDataTemplate}"
+                                                    Visibility="{DXBinding Expr='MergedViewType eq $controls:MergedTestViewType.Diff', Converter={StaticResource VisibilityConverter}}" />
                                 </Grid>
                             </dxdo:LayoutPanel>
                         </dxdo:LayoutGroup>
@@ -164,55 +190,82 @@
         <controls:ImageScalingControlTemplateSelector.SplitTemplate>
             <DataTemplate>
                 <dxdo:DockLayoutManager>
-                    <dxdo:LayoutGroup DataContext="{Binding Path=(controls:ImageScalingControl.ImageScalingControl).TestInfoModel.TestInfo, RelativeSource={RelativeSource Self}}" AllowSplitters="False">
+                    <dxdo:LayoutGroup
+                        DataContext="{Binding Path=(controls:ImageScalingControl.ImageScalingControl).TestInfoModel.TestInfo, RelativeSource={RelativeSource Self}}"
+                        AllowSplitters="False">
                         <dxdo:LayoutGroup.Resources>
                             <Style TargetType="{x:Type dxdo:LayoutPanel}">
-                                <Setter Property="ContentTemplate" Value="{StaticResource DraggableScrollViewerDataTemplate}"/>
+                                <Setter Property="ContentTemplate"
+                                        Value="{StaticResource DraggableScrollViewerDataTemplate}" />
                             </Style>
                         </dxdo:LayoutGroup.Resources>
-                        <dxdo:LayoutPanel controls:ImageScalingControl.ScrollViewerType="Before" ShowCaption="True" ShowCloseButton="False" ShowPinButton="False" Content="{Binding ImageBeforeArrLazy.Value}" AllowSizing="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False">
+                        <dxdo:LayoutPanel controls:ImageScalingControl.ScrollViewerType="Before" ShowCaption="True"
+                                          ShowCloseButton="False" ShowPinButton="False"
+                                          Content="{Binding ImageBeforeArrLazy.Value}" AllowSizing="False"
+                                          AllowDrag="False" AllowDock="False" AllowClose="False"
+                                          AllowContextMenu="False">
                             <dxdo:LayoutPanel.Caption>
-                                <StackPanel DataContext="{Binding Path=(controls:ImageScalingControl.ImageScalingControl).TestInfoModel.TestInfo, RelativeSource={RelativeSource Self}}" Orientation="Horizontal">
-                                    <TextBlock Text="Before" Margin="2,0"/>
+                                <StackPanel
+                                    DataContext="{Binding Path=(controls:ImageScalingControl.ImageScalingControl).TestInfoModel.TestInfo, RelativeSource={RelativeSource Self}}"
+                                    Orientation="Horizontal">
+                                    <TextBlock Text="Before" Margin="2,0" />
                                     <TextBlock>
                                         <TextBlock.Inlines>
-                                            <Run Text="[Size:("/>
-                                            <Run Text="{Binding Path=ImageBeforeArrLazy.Value, Converter={converters:ArrayToImageSizeConverter}, Mode=OneWay}">
+                                            <Run Text="[Size:(" />
+                                            <Run
+                                                Text="{Binding Path=ImageBeforeArrLazy.Value, Converter={converters:ArrayToImageSizeConverter}, Mode=OneWay}">
                                                 <Run.Foreground>
-                                                    <MultiBinding Converter="{converters:EqualsPointsToForegroundConverter}">
-                                                        <Binding Path="ImageBeforeArrLazy.Value" Converter="{converters:ArrayToImageSizeConverter}"/>
-                                                        <Binding Path="ImageCurrentArrLazy.Value" Converter="{converters:ArrayToImageSizeConverter}"/>
+                                                    <MultiBinding
+                                                        Converter="{converters:EqualsPointsToForegroundConverter}">
+                                                        <Binding Path="ImageBeforeArrLazy.Value"
+                                                                 Converter="{converters:ArrayToImageSizeConverter}" />
+                                                        <Binding Path="ImageCurrentArrLazy.Value"
+                                                                 Converter="{converters:ArrayToImageSizeConverter}" />
                                                     </MultiBinding>
                                                 </Run.Foreground>
                                             </Run>
-                                            <Run Text=")]"/>
+                                            <Run Text=")]" />
                                         </TextBlock.Inlines>
                                     </TextBlock>
                                 </StackPanel>
                             </dxdo:LayoutPanel.Caption>
                         </dxdo:LayoutPanel>
-                        <dxdo:LayoutPanel controls:ImageScalingControl.ScrollViewerType="Current" ShowCaption="True" ShowCloseButton="False" ShowPinButton="False"  Content="{Binding ImageCurrentArrLazy.Value}" AllowSizing="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False">
+                        <dxdo:LayoutPanel controls:ImageScalingControl.ScrollViewerType="Current" ShowCaption="True"
+                                          ShowCloseButton="False" ShowPinButton="False"
+                                          Content="{Binding ImageCurrentArrLazy.Value}" AllowSizing="False"
+                                          AllowDrag="False" AllowDock="False" AllowClose="False"
+                                          AllowContextMenu="False">
                             <dxdo:LayoutPanel.Caption>
-                                <StackPanel DataContext="{Binding Path=(controls:ImageScalingControl.ImageScalingControl).TestInfoModel.TestInfo, RelativeSource={RelativeSource Self}}" Orientation="Horizontal">
-                                    <TextBlock Text="Current" Margin="2,0"/>
+                                <StackPanel
+                                    DataContext="{Binding Path=(controls:ImageScalingControl.ImageScalingControl).TestInfoModel.TestInfo, RelativeSource={RelativeSource Self}}"
+                                    Orientation="Horizontal">
+                                    <TextBlock Text="Current" Margin="2,0" />
                                     <TextBlock>
                                         <TextBlock.Inlines>
-                                            <Run Text="[Size:("/>
-                                            <Run Text="{Binding Path=ImageCurrentArrLazy.Value, Converter={converters:ArrayToImageSizeConverter}, Mode=OneWay}">
+                                            <Run Text="[Size:(" />
+                                            <Run
+                                                Text="{Binding Path=ImageCurrentArrLazy.Value, Converter={converters:ArrayToImageSizeConverter}, Mode=OneWay}">
                                                 <Run.Foreground>
-                                                    <MultiBinding Converter="{converters:EqualsPointsToForegroundConverter}">
-                                                        <Binding Path="ImageBeforeArrLazy.Value" Converter="{converters:ArrayToImageSizeConverter}"/>
-                                                        <Binding Path="ImageCurrentArrLazy.Value" Converter="{converters:ArrayToImageSizeConverter}"/>
+                                                    <MultiBinding
+                                                        Converter="{converters:EqualsPointsToForegroundConverter}">
+                                                        <Binding Path="ImageBeforeArrLazy.Value"
+                                                                 Converter="{converters:ArrayToImageSizeConverter}" />
+                                                        <Binding Path="ImageCurrentArrLazy.Value"
+                                                                 Converter="{converters:ArrayToImageSizeConverter}" />
                                                     </MultiBinding>
                                                 </Run.Foreground>
                                             </Run>
-                                            <Run Text=")]"/>
+                                            <Run Text=")]" />
                                         </TextBlock.Inlines>
                                     </TextBlock>
                                 </StackPanel>
                             </dxdo:LayoutPanel.Caption>
                         </dxdo:LayoutPanel>
-                        <dxdo:LayoutPanel controls:ImageScalingControl.ScrollViewerType="Diff" ShowCaption="True" Caption="Diff" ShowCloseButton="False" ShowPinButton="False" Content="{Binding ImageDiffArrLazy.Value}" AllowSizing="False" AllowDrag="False" AllowDock="False" AllowClose="False" AllowContextMenu="False"/>
+                        <dxdo:LayoutPanel controls:ImageScalingControl.ScrollViewerType="Diff" ShowCaption="True"
+                                          Caption="Diff" ShowCloseButton="False" ShowPinButton="False"
+                                          Content="{Binding ImageDiffArrLazy.Value}" AllowSizing="False"
+                                          AllowDrag="False" AllowDock="False" AllowClose="False"
+                                          AllowContextMenu="False" />
                     </dxdo:LayoutGroup>
                 </dxdo:DockLayoutManager>
             </DataTemplate>
@@ -221,73 +274,80 @@
     <ControlTemplate x:Key="imageScalingControlTemplate" TargetType="{x:Type controls:ImageScalingControl}">
         <Grid DataContext="{Binding RelativeSource={RelativeSource TemplatedParent}}" FocusManager.IsFocusScope="True">
             <dxmvvm:Interaction.Behaviors>
-                <dxmvvm:KeyToCommand KeyGesture="Left" Command="{DXCommand Execute='ChangeView(true)'}" MarkRoutedEventsAsHandled="True" EventName="PreviewKeyDown"/>
-                <dxmvvm:KeyToCommand KeyGesture="Right" Command="{DXCommand Execute='ChangeView(false)'}" MarkRoutedEventsAsHandled="True" EventName="PreviewKeyDown"/>
+                <dxmvvm:KeyToCommand KeyGesture="Left" Command="{DXCommand Execute='ChangeView(true)'}"
+                                     MarkRoutedEventsAsHandled="True" EventName="PreviewKeyDown" />
+                <dxmvvm:KeyToCommand KeyGesture="Right" Command="{DXCommand Execute='ChangeView(false)'}"
+                                     MarkRoutedEventsAsHandled="True" EventName="PreviewKeyDown" />
             </dxmvvm:Interaction.Behaviors>
             <dxr:RibbonControl>
                 <dxr:RibbonPageCategory Caption="Working With Test">
                     <dxr:RibbonPage Caption="Navigation And View">
                         <dxr:RibbonPageGroup Caption="View Options">
-                            <dxb:BarCheckItem Content="Merged View" IsChecked="{Binding ViewMode, Converter={StaticResource TestViewTypeToBoolConverter}}"/>
-                            <dxb:BarCheckItem Content="Smart Scroll" IsChecked="{Binding ScrollMode, Converter={StaticResource ScrollModeToBoolConverter}}"/>
+                            <dxb:BarCheckItem Content="Merged View"
+                                              IsChecked="{Binding ViewMode, Converter={StaticResource TestViewTypeToBoolConverter}}" />
+                            <dxb:BarCheckItem Content="Smart Scroll"
+                                              IsChecked="{Binding ScrollMode, Converter={StaticResource ScrollModeToBoolConverter}}" />
                         </dxr:RibbonPageGroup>
                         <dxr:RibbonPageGroup Caption="Zoom">
-                            <dxb:BarButtonItem  Content="Zoom Out" Glyph="{dx:DXImage SvgImages/Zoom/ZoomOut.svg}" 
-                                               Command="{DXCommand Execute='ZoomOut()'}"/>
-                            <dxb:BarButtonItem  Content="Zoom 100%" Glyph="{dx:DXImage SvgImages/Spreadsheet/100Percent.svg}" 
-                                               Command="{DXCommand Execute='Zoom100()'}"/>
-                            <dxb:BarButtonItem  Content="Zoom In" Glyph="{dx:DXImage SvgImages/Zoom/ZoomIn.svg}" 
-                                               Command="{DXCommand Execute='ZoomIn()'}"/>
-                            <dxb:BarItemSeparator/>
-                            <dxb:BarCheckItem  Content="Show Grid Lines" Glyph="{dx:DXImage SvgImages/RichEdit/ViewTableGridlines.svg}"  
-                                              IsChecked="{Binding ShowGridLines, Mode=TwoWay}"/>
+                            <dxb:BarButtonItem Content="Zoom Out" Glyph="{dx:DXImage SvgImages/Zoom/ZoomOut.svg}"
+                                               Command="{DXCommand Execute='ZoomOut()'}" />
+                            <dxb:BarButtonItem Content="Zoom 100%"
+                                               Glyph="{dx:DXImage SvgImages/Spreadsheet/100Percent.svg}"
+                                               Command="{DXCommand Execute='Zoom100()'}" />
+                            <dxb:BarButtonItem Content="Zoom In" Glyph="{dx:DXImage SvgImages/Zoom/ZoomIn.svg}"
+                                               Command="{DXCommand Execute='ZoomIn()'}" />
+                            <dxb:BarItemSeparator />
+                            <dxb:BarCheckItem Content="Show Grid Lines"
+                                              Glyph="{dx:DXImage SvgImages/RichEdit/ViewTableGridlines.svg}"
+                                              IsChecked="{Binding ShowGridLines, Mode=TwoWay}" />
                         </dxr:RibbonPageGroup>
                     </dxr:RibbonPage>
                     <dxr:RibbonPage Caption="Image To Clipboard">
                         <dxr:RibbonPageGroup Caption="Clipboard Tools" DataContext="{Binding TestInfoModel.TestInfo}">
-                            <dxb:BarButtonItem Content="Copy Original" Glyph="{dx:DXImage SvgImages/Edit/Copy.svg}" 
-                                           Command="{Binding ImageBeforeArrLazy.Value, Converter={StaticResource ImageToClipboardConverter}}"
-                                           Hint="Copy Original image to clipboard"/>
-                            <dxb:BarButtonItem Content="Copy Current" Glyph="{dx:DXImage SvgImages/Edit/Copy.svg}" 
-                                           Command="{Binding ImageCurrentArrLazy.Value, Converter={StaticResource ImageToClipboardConverter}}"
-                                           Hint="Copy Current image to clipboard"/>
-                            <dxb:BarButtonItem Content="Copy Diff" Glyph="{dx:DXImage SvgImages/Edit/Copy.svg}" 
-                                           Command="{Binding ImageDiffArrLazy.Value, Converter={StaticResource ImageToClipboardConverter}}"
-                                           Hint="Copy Diff image to clipboard"/>
-                            <dxb:BarButtonItem Content="Copy Split" Glyph="{dx:DXImage SvgImages/Edit/Copy.svg}" 
-                                           Hint="Concat all images in singe one and copy to clipboard">
+                            <dxb:BarButtonItem Content="Copy Original" Glyph="{dx:DXImage SvgImages/Edit/Copy.svg}"
+                                               Command="{Binding ImageBeforeArrLazy.Value, Converter={StaticResource ImageToClipboardConverter}}"
+                                               Hint="Copy Original image to clipboard" />
+                            <dxb:BarButtonItem Content="Copy Current" Glyph="{dx:DXImage SvgImages/Edit/Copy.svg}"
+                                               Command="{Binding ImageCurrentArrLazy.Value, Converter={StaticResource ImageToClipboardConverter}}"
+                                               Hint="Copy Current image to clipboard" />
+                            <dxb:BarButtonItem Content="Copy Diff" Glyph="{dx:DXImage SvgImages/Edit/Copy.svg}"
+                                               Command="{Binding ImageDiffArrLazy.Value, Converter={StaticResource ImageToClipboardConverter}}"
+                                               Hint="Copy Diff image to clipboard" />
+                            <dxb:BarButtonItem Content="Copy Split" Glyph="{dx:DXImage SvgImages/Edit/Copy.svg}"
+                                               Hint="Concat all images in singe one and copy to clipboard">
                                 <dxb:BarButtonItem.Command>
                                     <MultiBinding Converter="{StaticResource MultiImageToClipboardConverter}">
-                                        <Binding Path="ImageBeforeArrLazy.Value"/>
-                                        <Binding Path="ImageCurrentArrLazy.Value"/>
-                                        <Binding Path="ImageDiffArrLazy.Value"/>
-                                        <Binding Path="Theme"/>
-                                        <Binding Path="Team"/>
+                                        <Binding Path="ImageBeforeArrLazy.Value" />
+                                        <Binding Path="ImageCurrentArrLazy.Value" />
+                                        <Binding Path="ImageDiffArrLazy.Value" />
+                                        <Binding Path="Theme" />
+                                        <Binding Path="Team" />
                                     </MultiBinding>
                                 </dxb:BarButtonItem.Command>
                             </dxb:BarButtonItem>
                         </dxr:RibbonPageGroup>
                     </dxr:RibbonPage>
                     <dxr:RibbonPage Caption="Image To File">
-                        <dxr:RibbonPageGroup Caption="Create Temp File And Get Path" DataContext="{Binding TestInfoModel.TestInfo}">
-                            <dxb:BarButtonItem Content="For Original" Glyph="{dx:DXImage SvgImages/Edit/Copy.svg}" 
-                                           Command="{Binding ImageBeforeArrLazy.Value, Converter={converters:ImageToTempFileConverter}}"
-                                           Hint="Save Original image to file and copy file path to clipboard"/>
-                            <dxb:BarButtonItem Content="For Current" Glyph="{dx:DXImage SvgImages/Edit/Copy.svg}" 
-                                           Command="{Binding ImageCurrentArrLazy.Value, Converter={converters:ImageToTempFileConverter}}"
-                                           Hint="Save Current image to file and copy file path to clipboard"/>
-                            <dxb:BarButtonItem Content="For Diff" Glyph="{dx:DXImage SvgImages/Edit/Copy.svg}" 
-                                           Command="{Binding ImageDiffArrLazy.Value, Converter={converters:ImageToTempFileConverter}}"
-                                           Hint="Save Diff image to file and copy file path to clipboard"/>
-                            <dxb:BarButtonItem Content="For Split" Glyph="{dx:DXImage SvgImages/Edit/Copy.svg}" 
-                                           Hint="Concat all images in singe one and save to file, copy file path to clipboard">
+                        <dxr:RibbonPageGroup Caption="Create Temp File And Get Path"
+                                             DataContext="{Binding TestInfoModel.TestInfo}">
+                            <dxb:BarButtonItem Content="For Original" Glyph="{dx:DXImage SvgImages/Edit/Copy.svg}"
+                                               Command="{Binding ImageBeforeArrLazy.Value, Converter={converters:ImageToTempFileConverter}}"
+                                               Hint="Save Original image to file and copy file path to clipboard" />
+                            <dxb:BarButtonItem Content="For Current" Glyph="{dx:DXImage SvgImages/Edit/Copy.svg}"
+                                               Command="{Binding ImageCurrentArrLazy.Value, Converter={converters:ImageToTempFileConverter}}"
+                                               Hint="Save Current image to file and copy file path to clipboard" />
+                            <dxb:BarButtonItem Content="For Diff" Glyph="{dx:DXImage SvgImages/Edit/Copy.svg}"
+                                               Command="{Binding ImageDiffArrLazy.Value, Converter={converters:ImageToTempFileConverter}}"
+                                               Hint="Save Diff image to file and copy file path to clipboard" />
+                            <dxb:BarButtonItem Content="For Split" Glyph="{dx:DXImage SvgImages/Edit/Copy.svg}"
+                                               Hint="Concat all images in singe one and save to file, copy file path to clipboard">
                                 <dxb:BarButtonItem.Command>
                                     <MultiBinding Converter="{converters:MultiImageToTempFileConverter}">
-                                        <Binding Path="ImageBeforeArrLazy.Value"/>
-                                        <Binding Path="ImageCurrentArrLazy.Value"/>
-                                        <Binding Path="ImageDiffArrLazy.Value"/>
-                                        <Binding Path="Theme"/>
-                                        <Binding Path="Team"/>
+                                        <Binding Path="ImageBeforeArrLazy.Value" />
+                                        <Binding Path="ImageCurrentArrLazy.Value" />
+                                        <Binding Path="ImageDiffArrLazy.Value" />
+                                        <Binding Path="Theme" />
+                                        <Binding Path="Team" />
                                     </MultiBinding>
                                 </dxb:BarButtonItem.Command>
                             </dxb:BarButtonItem>
@@ -295,12 +355,12 @@
                     </dxr:RibbonPage>
                 </dxr:RibbonPageCategory>
             </dxr:RibbonControl>
-            <ContentPresenter Content="{TemplateBinding ViewMode}" 
-                              ContentTemplateSelector="{StaticResource imageScalingControlTemplateSelector}" 
-                              controls:ImageScalingControl.ImageScalingControl="{Binding RelativeSource={RelativeSource TemplatedParent}}"/>
+            <ContentPresenter Content="{TemplateBinding ViewMode}"
+                              ContentTemplateSelector="{StaticResource imageScalingControlTemplateSelector}"
+                              controls:ImageScalingControl.ImageScalingControl="{Binding RelativeSource={RelativeSource TemplatedParent}}" />
         </Grid>
     </ControlTemplate>
     <Style TargetType="{x:Type controls:ImageScalingControl}">
-        <Setter Property="Template" Value="{StaticResource imageScalingControlTemplate}"/>
+        <Setter Property="Template" Value="{StaticResource imageScalingControlTemplate}" />
     </Style>
 </ResourceDictionary>

@@ -5,20 +5,22 @@
     <ControlTemplate x:Key="loadingButtonTemplate" TargetType="{x:Type controls:LoadingButton}">
         <Grid x:Name="PART_Root" Height="50" Width="50">
             <Grid x:Name="PART_Enabled" Background="Transparent" Visibility="Collapsed">
-                <Ellipse Margin="5" Stroke="Green" StrokeThickness="1"/>
-                <Path Stroke="Green" StrokeThickness="1" Width="30" Height="30" Stretch="Fill" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <Ellipse Margin="5" Stroke="Green" StrokeThickness="1" />
+                <Path Stroke="Green" StrokeThickness="1" Width="30" Height="30" Stretch="Fill"
+                      VerticalAlignment="Center" HorizontalAlignment="Center">
                     <Path.Data>
                         <GeometryGroup>
-                            <LineGeometry StartPoint="0,1" EndPoint="1,2"/>
-                            <LineGeometry StartPoint="1,2" EndPoint="2,1"/>
-                            <LineGeometry StartPoint="1,0" EndPoint="1,2"/>
+                            <LineGeometry StartPoint="0,1" EndPoint="1,2" />
+                            <LineGeometry StartPoint="1,2" EndPoint="2,1" />
+                            <LineGeometry StartPoint="1,0" EndPoint="1,2" />
                         </GeometryGroup>
                     </Path.Data>
                 </Path>
             </Grid>
-            <Path x:Name="PART_Loading" Stroke="Yellow" StrokeThickness="1" Stretch="Fill" Width="20" Height="20" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="5" Visibility="Collapsed">
+            <Path x:Name="PART_Loading" Stroke="Yellow" StrokeThickness="1" Stretch="Fill" Width="20" Height="20"
+                  VerticalAlignment="Top" HorizontalAlignment="Right" Margin="5" Visibility="Collapsed">
                 <Path.RenderTransform>
-                    <RotateTransform x:Name="noFreeze" CenterX="0" CenterY="20"/>
+                    <RotateTransform x:Name="noFreeze" CenterX="0" CenterY="20" />
                 </Path.RenderTransform>
                 <Path.Data>
                     <GeometryGroup>
@@ -31,12 +33,13 @@
                 </Path.Data>
             </Path>
             <Grid x:Name="PART_Loaded" Background="Transparent" Visibility="Collapsed">
-                <Ellipse Margin="5" Stroke="Black" StrokeThickness="1"/>
-                <Path Stroke="Black" StrokeThickness="1" Width="20" Height="20" Stretch="Fill" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <Ellipse Margin="5" Stroke="Black" StrokeThickness="1" />
+                <Path Stroke="Black" StrokeThickness="1" Width="20" Height="20" Stretch="Fill"
+                      VerticalAlignment="Center" HorizontalAlignment="Center">
                     <Path.Data>
                         <GeometryGroup>
-                            <LineGeometry StartPoint="0,1" EndPoint="1,2"/>
-                            <LineGeometry StartPoint="1,2" EndPoint="2,0"/>
+                            <LineGeometry StartPoint="0,1" EndPoint="1,2" />
+                            <LineGeometry StartPoint="1,2" EndPoint="2,0" />
                         </GeometryGroup>
                     </Path.Data>
                 </Path>
@@ -45,32 +48,37 @@
                 <VisualStateGroup Name="CommonStates">
                     <VisualState Name="Enabled">
                         <Storyboard>
-                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PART_Enabled" Storyboard.TargetProperty="Visibility">
-                                <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PART_Enabled"
+                                                           Storyboard.TargetProperty="Visibility">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
                             </ObjectAnimationUsingKeyFrames>
                         </Storyboard>
                     </VisualState>
                     <VisualState Name="Loading">
                         <Storyboard>
-                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PART_Loading" Storyboard.TargetProperty="Visibility">
-                                <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PART_Loading"
+                                                           Storyboard.TargetProperty="Visibility">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
                             </ObjectAnimationUsingKeyFrames>
-                            <DoubleAnimation Storyboard.TargetName="PART_Loading" Storyboard.TargetProperty="(Path.RenderTransform).(RotateTransform.Angle)" To="-360" Duration="0:0:1" RepeatBehavior="Forever" />
+                            <DoubleAnimation Storyboard.TargetName="PART_Loading"
+                                             Storyboard.TargetProperty="(Path.RenderTransform).(RotateTransform.Angle)"
+                                             To="-360" Duration="0:0:1" RepeatBehavior="Forever" />
                         </Storyboard>
                     </VisualState>
                     <VisualState Name="Loaded">
                         <Storyboard>
-                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PART_Loaded" Storyboard.TargetProperty="Visibility">
-                                <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PART_Loaded"
+                                                           Storyboard.TargetProperty="Visibility">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
                             </ObjectAnimationUsingKeyFrames>
                         </Storyboard>
                     </VisualState>
-                    <VisualState Name="Disabled"/>
+                    <VisualState Name="Disabled" />
                 </VisualStateGroup>
             </VisualStateManager.VisualStateGroups>
         </Grid>
     </ControlTemplate>
     <Style TargetType="{x:Type controls:LoadingButton}">
-        <Setter Property="Template" Value="{StaticResource loadingButtonTemplate}"/>
+        <Setter Property="Template" Value="{StaticResource loadingButtonTemplate}" />
     </Style>
 </ResourceDictionary>

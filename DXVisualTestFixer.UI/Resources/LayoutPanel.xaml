@@ -2,14 +2,14 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:dxdo="http://schemas.devexpress.com/winfx/2008/xaml/docking">
     <Style TargetType="{x:Type dxdo:LayoutPanel}">
-        <Setter Property="AllowFloat" Value="False"/>
-        <Setter Property="AllowDrag" Value="False"/>
+        <Setter Property="AllowFloat" Value="False" />
+        <Setter Property="AllowDrag" Value="False" />
     </Style>
     <Style TargetType="{x:Type dxdo:DocumentPanel}">
-        <Setter Property="AllowFloat" Value="False"/>
-        <Setter Property="AllowDrag" Value="False"/>
+        <Setter Property="AllowFloat" Value="False" />
+        <Setter Property="AllowDrag" Value="False" />
     </Style>
     <Style TargetType="{x:Type dxdo:DockLayoutManager}">
-        <Setter Property="ViewStyle" Value="Light"/>
+        <Setter Property="ViewStyle" Value="Light" />
     </Style>
 </ResourceDictionary>

@@ -1,43 +1,47 @@
 ﻿<UserControl x:Class="DXVisualTestFixer.UI.Views.ApplyChangesView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:DXVisualTestFixer.UI.Views"
              xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
              xmlns:prism="http://prismlibrary.com/"
              xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
              xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
              prism:ViewModelLocator.AutoWireViewModel="False"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <dxg:GridControl ItemsSource="{Binding ChangedTests}" AutoExpandAllGroups="True" ShowBorder="False">
-            <dxg:GridColumn FieldName="Version" GroupIndex="0" MergeWithPreviousGroup="True"/>
-            <dxg:GridColumn FieldName="Team.Name" GroupIndex="1" MergeWithPreviousGroup="True"/>
-            <dxg:GridColumn FieldName="Name" GroupIndex="2" MergeWithPreviousGroup="True"/>
-            <dxg:GridColumn FieldName="Theme" Width="*"/>
+            <dxg:GridColumn FieldName="Version" GroupIndex="0" MergeWithPreviousGroup="True" />
+            <dxg:GridColumn FieldName="Team.Name" GroupIndex="1" MergeWithPreviousGroup="True" />
+            <dxg:GridColumn FieldName="Name" GroupIndex="2" MergeWithPreviousGroup="True" />
+            <dxg:GridColumn FieldName="Theme" Width="*" />
             <dxg:GridControl.TotalSummary>
-                <dxg:GridSummaryItem SummaryType="Count" Alignment="Left"/>
+                <dxg:GridSummaryItem SummaryType="Count" Alignment="Left" />
             </dxg:GridControl.TotalSummary>
             <dxg:GridControl.View>
-                <dxg:TableView AllowEditing="False" ShowVerticalLines="False" ShowIndicator="False" ShowHorizontalLines="False" ShowColumnHeaders="False" ShowGroupPanel="False" ShowFixedTotalSummary="True"/>
+                <dxg:TableView AllowEditing="False" ShowVerticalLines="False" ShowIndicator="False"
+                               ShowHorizontalLines="False" ShowColumnHeaders="False" ShowGroupPanel="False"
+                               ShowFixedTotalSummary="True" />
             </dxg:GridControl.View>
         </dxg:GridControl>
-        <dxe:CheckEdit Grid.Row="1" Content="Commit and push into git server" IsChecked="{Binding IsAutoCommit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        <dxe:CheckEdit Grid.Row="1" Content="Commit and push into git server"
+                       IsChecked="{Binding IsAutoCommit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         <Grid Grid.Row="2" Visibility="{Binding IsAutoCommit, Converter={dx:BooleanToVisibilityConverter}}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <TextBlock Text="Commit Caption:" VerticalAlignment="Center"/>
-            <dxe:TextEdit Grid.Column="1" NullText="Update tests" ShowNullTextIfFocused="True" EditValue="{Binding CommitCaption, UpdateSourceTrigger=PropertyChanged}" Margin="2,0,0,0"/>
+            <TextBlock Text="Commit Caption:" VerticalAlignment="Center" />
+            <dxe:TextEdit Grid.Column="1" NullText="Update tests" ShowNullTextIfFocused="True"
+                          EditValue="{Binding CommitCaption, UpdateSourceTrigger=PropertyChanged}" Margin="2,0,0,0" />
         </Grid>
-        
+
     </Grid>
 </UserControl>

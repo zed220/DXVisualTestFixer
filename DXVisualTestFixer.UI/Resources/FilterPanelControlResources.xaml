@@ -17,42 +17,45 @@
                     xmlns:dxet="http://schemas.devexpress.com/winfx/2008/xaml/editors/themekeys"
                     xmlns:dxeh="http://schemas.devexpress.com/winfx/2008/xaml/editors/internal">
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="/DXVisualTestFixer.UI;component/Resources/LayoutPanel.xaml"/>
+        <ResourceDictionary Source="/DXVisualTestFixer.UI;component/Resources/LayoutPanel.xaml" />
     </ResourceDictionary.MergedDictionaries>
     <dxmvvm:ObjectToObjectConverter x:Key="filteredBackgroundConverter">
-        <dxmvvm:MapItem Source="True" Target="#5580397B"/>
+        <dxmvvm:MapItem Source="True" Target="#5580397B" />
     </dxmvvm:ObjectToObjectConverter>
-    <converters:DpiErrorConverter x:Key="DpiErrorConverter"/>
+    <converters:DpiErrorConverter x:Key="DpiErrorConverter" />
     <ControlTemplate x:Key="filterPanelControlTemplate" TargetType="{x:Type controls:FilterPanelControl}">
         <ControlTemplate.Resources>
             <Style TargetType="{x:Type dxe:ComboBoxEdit}">
-                <Setter Property="MaxHeight" Value="100"/>
-                <Setter Property="IsTextEditable" Value="False"/>
-                <Setter Property="IncrementalFiltering" Value="True"/>
-                <Setter Property="AllowDefaultButton" Value="True"/>
-                <Setter Property="ValidateOnTextInput" Value="True"/>
-                <Setter Property="AllowLiveDataShaping" Value="True"/>
-                <Setter Property="Background" Value="{Binding Path=(behaviors:IsFilteredBehavior.IsFiltered), RelativeSource={RelativeSource Self}, Converter={StaticResource filteredBackgroundConverter}}"/>
+                <Setter Property="MaxHeight" Value="100" />
+                <Setter Property="IsTextEditable" Value="False" />
+                <Setter Property="IncrementalFiltering" Value="True" />
+                <Setter Property="AllowDefaultButton" Value="True" />
+                <Setter Property="ValidateOnTextInput" Value="True" />
+                <Setter Property="AllowLiveDataShaping" Value="True" />
+                <Setter Property="Background"
+                        Value="{Binding Path=(behaviors:IsFilteredBehavior.IsFiltered), RelativeSource={RelativeSource Self}, Converter={StaticResource filteredBackgroundConverter}}" />
                 <Setter Property="DisplayTextConverter">
                     <Setter.Value>
-                        <converters:FilterTokenDisplayTextConverter/>
+                        <converters:FilterTokenDisplayTextConverter />
                     </Setter.Value>
                 </Setter>
-                <Setter Property="ItemsSource" Value="{Binding FilterValues}"/>
-                <Setter Property="EditValue" Value="{Binding SelectedFilterValues, UpdateSourceTrigger=PropertyChanged}"/>
-                <Setter Property="ShowNullText" Value="True"/>
-                <Setter Property="NullText" Value="{Binding FieldDisplayName, StringFormat=Select {0} Here}"/>
-                <Setter Property="DisplayMember" Value="Value"/>
+                <Setter Property="ItemsSource" Value="{Binding FilterValues}" />
+                <Setter Property="EditValue"
+                        Value="{Binding SelectedFilterValues, UpdateSourceTrigger=PropertyChanged}" />
+                <Setter Property="ShowNullText" Value="True" />
+                <Setter Property="NullText" Value="{Binding FieldDisplayName, StringFormat=Select {0} Here}" />
+                <Setter Property="DisplayMember" Value="Value" />
                 <Setter Property="StyleSettings">
                     <Setter.Value>
-                        <dxe:TokenComboBoxStyleSettings AllowEditTokens="False" EnableTokenWrapping="True" VerticalAlignment="Center"/>
+                        <dxe:TokenComboBoxStyleSettings AllowEditTokens="False" EnableTokenWrapping="True"
+                                                        VerticalAlignment="Center" />
                     </Setter.Value>
                 </Setter>
                 <Setter Property="ItemTemplate">
                     <Setter.Value>
                         <DataTemplate>
                             <dxfui:ValueCountContentControl Count="{Binding Count}">
-                                <TextBlock Text="{Binding Value}"/>
+                                <TextBlock Text="{Binding Value}" />
                             </dxfui:ValueCountContentControl>
                         </DataTemplate>
                     </Setter.Value>
@@ -61,9 +64,9 @@
                     <Setter.Value>
                         <DataTemplate>
                             <ItemsControl>
-                                <behaviors:IsFilteredBehavior 
+                                <behaviors:IsFilteredBehavior
                                     FieldName="{Binding Path=AssociatedObject.DataContext.FieldDisplayName, RelativeSource={RelativeSource Self}}"
-                                    View="{Binding Path=AssociatedObject.(dxg:GridControl.ActiveView), RelativeSource={RelativeSource Self}}"/>
+                                    View="{Binding Path=AssociatedObject.(dxg:GridControl.ActiveView), RelativeSource={RelativeSource Self}}" />
                             </ItemsControl>
                         </DataTemplate>
                     </Setter.Value>
@@ -80,20 +83,22 @@
                         <ControlTemplate TargetType="{x:Type dxe:ListBoxEditItem}">
                             <Border Background="Transparent" SnapsToDevicePixels="True">
                                 <dxe:CheckEdit x:Name="checkEdit"
-                                HorizontalAlignment="Stretch"
-                                Padding="3,0,0,0"
-								dx:FocusHelper2.Focusable="False"
-                                dxeh:ControlHelper.IsFocused="{Binding Path=IsKeyboardFocused, RelativeSource={RelativeSource TemplatedParent}}"
-                                ShowBorder="{Binding Path=(dxe:BaseEdit.OwnerEdit).ShowBorder, RelativeSource={RelativeSource TemplatedParent}}"
-								IsHitTestVisible="True" 
-								IsChecked="{Binding Path=IsSelected, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, Converter={dx:NegationConverter}}"
-                                HorizontalContentAlignment="{Binding Path=(dxe:BaseEdit.OwnerEdit).HorizontalContentAlignment, RelativeSource={RelativeSource TemplatedParent}}"
-                                VerticalContentAlignment="{Binding Path=(dxe:BaseEdit.OwnerEdit).VerticalContentAlignment, RelativeSource={RelativeSource TemplatedParent}}">
+                                               HorizontalAlignment="Stretch"
+                                               Padding="3,0,0,0"
+                                               dx:FocusHelper2.Focusable="False"
+                                               dxeh:ControlHelper.IsFocused="{Binding Path=IsKeyboardFocused, RelativeSource={RelativeSource TemplatedParent}}"
+                                               ShowBorder="{Binding Path=(dxe:BaseEdit.OwnerEdit).ShowBorder, RelativeSource={RelativeSource TemplatedParent}}"
+                                               IsHitTestVisible="True"
+                                               IsChecked="{Binding Path=IsSelected, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, Converter={dx:NegationConverter}}"
+                                               HorizontalContentAlignment="{Binding Path=(dxe:BaseEdit.OwnerEdit).HorizontalContentAlignment, RelativeSource={RelativeSource TemplatedParent}}"
+                                               VerticalContentAlignment="{Binding Path=(dxe:BaseEdit.OwnerEdit).VerticalContentAlignment, RelativeSource={RelativeSource TemplatedParent}}">
                                     <ContentPresenter />
                                 </dxe:CheckEdit>
                             </Border>
                             <ControlTemplate.Triggers>
-                                <DataTrigger Binding="{Binding Path=(dxe:BaseEdit.OwnerEdit).ShowBorder, RelativeSource={RelativeSource Self}}" Value="False">
+                                <DataTrigger
+                                    Binding="{Binding Path=(dxe:BaseEdit.OwnerEdit).ShowBorder, RelativeSource={RelativeSource Self}}"
+                                    Value="False">
                                     <Setter Property="Margin" TargetName="checkEdit" Value="0,0,0,0" />
                                 </DataTrigger>
                             </ControlTemplate.Triggers>
@@ -103,8 +108,12 @@
                 <Style.Triggers>
                     <MultiDataTrigger>
                         <MultiDataTrigger.Conditions>
-                            <Condition Binding="{Binding Path=(dxe:BaseEdit.OwnerEdit).IncrementalSearch, RelativeSource={RelativeSource Self}}" Value="True"/>
-                            <Condition Binding="{Binding Path=(dxe:BaseEdit.OwnerEdit).(dxe:ActualPropertyProvider.Properties).HasItemTemplate, RelativeSource={RelativeSource Self}}" Value="False"/>
+                            <Condition
+                                Binding="{Binding Path=(dxe:BaseEdit.OwnerEdit).IncrementalSearch, RelativeSource={RelativeSource Self}}"
+                                Value="True" />
+                            <Condition
+                                Binding="{Binding Path=(dxe:BaseEdit.OwnerEdit).(dxe:ActualPropertyProvider.Properties).HasItemTemplate, RelativeSource={RelativeSource Self}}"
+                                Value="False" />
                         </MultiDataTrigger.Conditions>
                         <Setter Property="dxeh:TextBlockService.EnableTextHighlighting" Value="True" />
                     </MultiDataTrigger>
@@ -119,14 +128,14 @@
                             <dxe:ComboBoxEdit>
                                 <dxe:ComboBoxEdit.DisplayTextConverter>
                                     <converters:FilterTokenDisplayTextConverter>
-                                        <converters:PredefinedFilterToken StrValue="96" DisplayText="Default"/>
-                                        <converters:PredefinedFilterToken StrValue="0" DisplayText="Error"/>
+                                        <converters:PredefinedFilterToken StrValue="96" DisplayText="Default" />
+                                        <converters:PredefinedFilterToken StrValue="0" DisplayText="Error" />
                                     </converters:FilterTokenDisplayTextConverter>
                                 </dxe:ComboBoxEdit.DisplayTextConverter>
                                 <dxe:ComboBoxEdit.ItemTemplate>
                                     <DataTemplate>
                                         <dxfui:ValueCountContentControl Count="{Binding Count}">
-                                            <TextBlock Text="{Binding Converter={StaticResource DpiErrorConverter}}"/>
+                                            <TextBlock Text="{Binding Converter={StaticResource DpiErrorConverter}}" />
                                         </dxfui:ValueCountContentControl>
                                     </DataTemplate>
                                 </dxe:ComboBoxEdit.ItemTemplate>
@@ -141,7 +150,11 @@
                         <DataTemplate>
                             <dxe:ComboBoxEdit MaxHeight="200" ShowCustomItems="True">
                                 <dxe:ComboBoxEdit.StyleSettings>
-                                    <dxe:CheckedTokenComboBoxStyleSettings AllowEditTokens="False" EnableTokenWrapping="True" VerticalAlignment="Center" FilterOutSelectedTokens="False" ShowSelectAllItem="True"/>
+                                    <dxe:CheckedTokenComboBoxStyleSettings AllowEditTokens="False"
+                                                                           EnableTokenWrapping="True"
+                                                                           VerticalAlignment="Center"
+                                                                           FilterOutSelectedTokens="False"
+                                                                           ShowSelectAllItem="True" />
                                 </dxe:ComboBoxEdit.StyleSettings>
                             </dxe:ComboBoxEdit>
                         </DataTemplate>
@@ -152,7 +165,7 @@
                 <dxfui:CheckedListFilterElement FieldName="Version" SelectAllWhenFilterIsNull="True">
                     <dxfui:CheckedListFilterElement.FilterModelTemplate>
                         <DataTemplate>
-                            <dxe:ComboBoxEdit/>
+                            <dxe:ComboBoxEdit />
                         </DataTemplate>
                     </dxfui:CheckedListFilterElement.FilterModelTemplate>
                 </dxfui:CheckedListFilterElement>
@@ -161,7 +174,7 @@
                 <dxfui:CheckedListFilterElement FieldName="Theme">
                     <dxfui:CheckedListFilterElement.FilterModelTemplate>
                         <DataTemplate>
-                            <dxe:ComboBoxEdit/>
+                            <dxe:ComboBoxEdit />
                         </DataTemplate>
                     </dxfui:CheckedListFilterElement.FilterModelTemplate>
                 </dxfui:CheckedListFilterElement>
@@ -172,7 +185,11 @@
                         <DataTemplate>
                             <dxe:ComboBoxEdit>
                                 <dxe:ComboBoxEdit.StyleSettings>
-                                    <dxe:CheckedTokenComboBoxStyleSettings AllowEditTokens="False" EnableTokenWrapping="True" VerticalAlignment="Center" ShowSelectAllItem="True" FilterOutSelectedTokens="True"/>
+                                    <dxe:CheckedTokenComboBoxStyleSettings AllowEditTokens="False"
+                                                                           EnableTokenWrapping="True"
+                                                                           VerticalAlignment="Center"
+                                                                           ShowSelectAllItem="True"
+                                                                           FilterOutSelectedTokens="True" />
                                 </dxe:ComboBoxEdit.StyleSettings>
                             </dxe:ComboBoxEdit>
                         </DataTemplate>
@@ -186,14 +203,15 @@
                             <dxe:ComboBoxEdit>
                                 <dxe:ComboBoxEdit.DisplayTextConverter>
                                     <converters:FilterTokenDisplayTextConverter>
-                                        <converters:PredefinedFilterToken StrValue="False" DisplayText="Default"/>
-                                        <converters:PredefinedFilterToken StrValue="True" DisplayText="Optimized"/>
+                                        <converters:PredefinedFilterToken StrValue="False" DisplayText="Default" />
+                                        <converters:PredefinedFilterToken StrValue="True" DisplayText="Optimized" />
                                     </converters:FilterTokenDisplayTextConverter>
                                 </dxe:ComboBoxEdit.DisplayTextConverter>
                                 <dxe:ComboBoxEdit.ItemTemplate>
                                     <DataTemplate>
                                         <dxfui:ValueCountContentControl Count="{Binding Count}">
-                                            <TextBlock Text="{Binding Converter={converters:OptimizedDisplayTextConverter}}"/>
+                                            <TextBlock
+                                                Text="{Binding Converter={converters:OptimizedDisplayTextConverter}}" />
                                         </dxfui:ValueCountContentControl>
                                     </DataTemplate>
                                 </dxe:ComboBoxEdit.ItemTemplate>
@@ -202,7 +220,8 @@
                     </dxfui:CheckedListFilterElement.FilterModelTemplate>
                 </dxfui:CheckedListFilterElement>
             </dxdo:LayoutControlItem>
-            <dxdo:LayoutControlItem Caption="Show Fixed" Visibility="{Binding HasFixedTests, Converter={dx:BooleanToVisibilityConverter}, RelativeSource={RelativeSource TemplatedParent}}">
+            <dxdo:LayoutControlItem Caption="Show Fixed"
+                                    Visibility="{Binding HasFixedTests, Converter={dx:BooleanToVisibilityConverter}, RelativeSource={RelativeSource TemplatedParent}}">
                 <dxfui:PredefinedFiltersElement FieldName="Valid" ShowCounts="False">
                     <dxfui:PredefinedFiltersElement.FilterModelTemplate>
                         <DataTemplate>
@@ -212,7 +231,8 @@
                                              DisplayMember="Value.Name"
                                              ShowBorder="False" Background="Transparent">
                                 <dxe:ListBoxEdit.StyleSettings>
-                                    <dxe:CheckedListBoxEditStyleSettings ShowSelectAllItem="False" ItemContainerStyle="{StaticResource itemContainerStyle}"/>
+                                    <dxe:CheckedListBoxEditStyleSettings ShowSelectAllItem="False"
+                                                                         ItemContainerStyle="{StaticResource itemContainerStyle}" />
                                 </dxe:ListBoxEdit.StyleSettings>
                             </dxe:ListBoxEdit>
                         </DataTemplate>
@@ -222,6 +242,6 @@
         </dxdo:LayoutGroup>
     </ControlTemplate>
     <Style TargetType="{x:Type controls:FilterPanelControl}">
-        <Setter Property="Template" Value="{StaticResource filterPanelControlTemplate}"/>
+        <Setter Property="Template" Value="{StaticResource filterPanelControlTemplate}" />
     </Style>
 </ResourceDictionary>
