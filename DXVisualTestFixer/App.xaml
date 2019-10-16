@@ -4,7 +4,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <Style TargetType="{x:Type Window}">
-                <Setter Property="UseLayoutRounding" Value="True"/>
+                <Setter Property="UseLayoutRounding" Value="True" />
             </Style>
         </ResourceDictionary>
     </Application.Resources>

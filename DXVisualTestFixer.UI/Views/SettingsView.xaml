@@ -1,8 +1,8 @@
 ﻿<UserControl x:Class="DXVisualTestFixer.UI.Views.SettingsView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:DXVisualTestFixer.UI.Views"
              xmlns:core="http://schemas.dxvisualtests.com/winfx/2008/xaml/core"
              xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
@@ -20,21 +20,22 @@
              xmlns:common="clr-namespace:DXVisualTestFixer.Common;assembly=DXVisualTestFixer.Common"
              xmlns:controls="clr-namespace:DXVisualTestFixer.UI.Controls"
              prism:ViewModelLocator.AutoWireViewModel="False"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/DXVisualTestFixer.UI;component/Resources/Services.xaml"/>
-                <ResourceDictionary Source="/DXVisualTestFixer.UI;component/Resources/LoadingButtonResources.xaml"/>
+                <ResourceDictionary Source="/DXVisualTestFixer.UI;component/Resources/Services.xaml" />
+                <ResourceDictionary Source="/DXVisualTestFixer.UI;component/Resources/LoadingButtonResources.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
     <i:Interaction.Triggers>
         <prism:InteractionRequestTrigger SourceObject="{Binding ConfirmationRequest}">
-            <prismcommon:PopupDXMessageBoxAction IsModal="True" CenterOverAssociatedObject="True" WindowStyle="{StaticResource NotificationWindowStyle}">
+            <prismcommon:PopupDXMessageBoxAction IsModal="True" CenterOverAssociatedObject="True"
+                                                 WindowStyle="{StaticResource NotificationWindowStyle}">
                 <prismcommon:PopupDXMessageBoxAction.WindowContent>
-                    <ContentControl Content="{Binding Converter={converters:NotificationContentConverter}}"/>
+                    <ContentControl Content="{Binding Converter={converters:NotificationContentConverter}}" />
                 </prismcommon:PopupDXMessageBoxAction.WindowContent>
             </prismcommon:PopupDXMessageBoxAction>
         </prism:InteractionRequestTrigger>
@@ -43,34 +44,37 @@
         <dx:DXTabItem Header="Repositories">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <GroupBox Header="Auto loader" Margin="5">
                     <dx:BackgroundPanel>
                         <Grid>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
                             <TextBlock Margin="10">
                                 <Run>Select work directory. Sources will be downloaded in it. For example:</Run>
                                 <Run FontWeight="DemiBold">"c:\work"</Run>
                             </TextBlock>
-                            <TextBlock Grid.Row="1" Padding="5" Text="{Binding WorkingDirectory, StringFormat='Current Working Directory: {0}'}"/>
-                            <Button Grid.Row="2" Padding="5" Margin="5" Content="Change Work Directory" Click="{DXEvent Handler='SelectWorkDirectory()'}"/>
+                            <TextBlock Grid.Row="1" Padding="5"
+                                       Text="{Binding WorkingDirectory, StringFormat='Current Working Directory: {0}'}" />
+                            <Button Grid.Row="2" Padding="5" Margin="5" Content="Change Work Directory"
+                                    Click="{DXEvent Handler='SelectWorkDirectory()'}" />
                         </Grid>
                     </dx:BackgroundPanel>
                 </GroupBox>
                 <dxe:ListBoxEdit Grid.Row="1" ItemsSource="{Binding Repositories}">
                     <dxe:ListBoxEdit.ItemContainerStyle>
                         <Style TargetType="{x:Type dxe:ListBoxEditItem}">
-                            <Setter Property="Margin" Value="5"/>
+                            <Setter Property="Margin" Value="5" />
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="{x:Type dxe:ListBoxEditItem}">
-                                        <ContentPresenter Content="{Binding}" ContentTemplate="{TemplateBinding ContentTemplate}"/>
+                                        <ContentPresenter Content="{Binding}"
+                                                          ContentTemplate="{TemplateBinding ContentTemplate}" />
                                     </ControlTemplate>
                                 </Setter.Value>
                             </Setter>
@@ -81,18 +85,18 @@
                             <Border CornerRadius="5" Background="LightBlue">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition/>
-                                        <ColumnDefinition/>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Text="{Binding Version}" FontSize="30" VerticalAlignment="Center"/>
+                                    <TextBlock Text="{Binding Version}" FontSize="30" VerticalAlignment="Center" />
                                     <controls:LoadingButton Grid.Column="1" Click="{DXEvent Handler='Download()'}">
                                         <controls:LoadingButton.LoadingState>
                                             <Binding Path="DownloadState">
                                                 <Binding.Converter>
                                                     <dxmvvm:ObjectToObjectConverter DefaultTarget="Disabled">
-                                                        <dxmvvm:MapItem Source="ReadyToDownload" Target="Enabled"/>
-                                                        <dxmvvm:MapItem Source="Downloading" Target="Loading"/>
-                                                        <dxmvvm:MapItem Source="Downloaded" Target="Loaded"/>
+                                                        <dxmvvm:MapItem Source="ReadyToDownload" Target="Enabled" />
+                                                        <dxmvvm:MapItem Source="Downloading" Target="Loading" />
+                                                        <dxmvvm:MapItem Source="Downloaded" Target="Loaded" />
                                                     </dxmvvm:ObjectToObjectConverter>
                                                 </Binding.Converter>
                                             </Binding>
@@ -104,7 +108,7 @@
                     </dxe:ListBoxEdit.ItemTemplate>
                     <dxe:ListBoxEdit.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <WrapPanel Orientation="Horizontal"/>
+                            <WrapPanel Orientation="Horizontal" />
                         </ItemsPanelTemplate>
                     </dxe:ListBoxEdit.ItemsPanel>
                 </dxe:ListBoxEdit>

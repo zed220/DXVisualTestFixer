@@ -1,53 +1,48 @@
 ﻿using DevExpress.Mvvm;
 using DXVisualTestFixer.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DXVisualTestFixer.UI.ViewModels {
-    public class TestInfoModel : BindableBase, ITestInfoModel {
-        MainViewModel ViewModel;
+	public class TestInfoModel : BindableBase, ITestInfoModel {
+		readonly MainViewModel ViewModel;
 
-        public TestInfoModel(MainViewModel viewModel, TestInfo testInfo) {
-            ViewModel = viewModel;
-            TestInfo = testInfo;
-        }
+		public TestInfoModel(MainViewModel viewModel, TestInfo testInfo) {
+			ViewModel = viewModel;
+			TestInfo = testInfo;
+		}
 
-        public TestInfo TestInfo { get; private set; }
-        public TestState Valid { get { return TestInfo.Valid; } }
-        public string Version { get { return TestInfo.Version; } }
-        public bool Optimized { get { return TestInfo.Optimized; } }
-        public string TeamName { get { return TestInfo.Team.Name; } }
-        public string Theme { get { return TestInfo.Theme; } }
-        public int Dpi { get { return TestInfo.Dpi; } }
-        public string AdditionalParameters => TestInfo.AdditionalParameters;
-        public int Problem { get { return TestInfo.Problem; } }
-        public string ProblemName { get { return TestInfo.ProblemName; } }
-        public bool ImageEquals { get { return TestInfo.ImageEquals; } }
+		public bool ImageEquals => TestInfo.ImageEquals;
 
-        public bool CommitChange {
-            get { return GetProperty(() => CommitChange); }
-            set { SetCommitChange(value); }
-        }
+		public TestInfo TestInfo { get; }
+		public TestState Valid => TestInfo.Valid;
+		public string Version => TestInfo.Version;
+		public bool Optimized => TestInfo.Optimized;
+		public string TeamName => TestInfo.Team.Name;
+		public string Theme => TestInfo.Theme;
+		public int Dpi => TestInfo.Dpi;
+		public string AdditionalParameters => TestInfo.AdditionalParameters;
+		public int Problem => TestInfo.Problem;
+		public string ProblemName => TestInfo.ProblemName;
 
-        void SetCommitChange(bool value) {
-            if(Valid == TestState.Error)
-                return;
-            SetProperty(() => CommitChange, value, OnChanged);
-        }
+		public bool CommitChange {
+			get { return GetProperty(() => CommitChange); }
+			set => SetCommitChange(value);
+		}
 
-        void OnChanged() {
-            if(CommitChange)
-                ViewModel.CommitTest(this);
-            else
-                ViewModel.UndoCommitTest(this);
+		public string ToLog() {
+			return string.Format("Team: {0}, Version: {1}, Test: {2}, Theme: {3}", TestInfo?.Team.Name, TestInfo?.Version, TestInfo?.NameWithNamespace, TestInfo?.Theme);
+		}
 
-        }
+		void SetCommitChange(bool value) {
+			if(Valid == TestState.Error)
+				return;
+			SetProperty(() => CommitChange, value, OnChanged);
+		}
 
-        public string ToLog() {
-            return String.Format("Team: {0}, Version: {1}, Test: {2}, Theme: {3}", TestInfo?.Team.Name, TestInfo?.Version, TestInfo?.NameWithNamespace, TestInfo?.Theme);
-        }
-    }
+		void OnChanged() {
+			if(CommitChange)
+				ViewModel.CommitTest(this);
+			else
+				ViewModel.UndoCommitTest(this);
+		}
+	}
 }

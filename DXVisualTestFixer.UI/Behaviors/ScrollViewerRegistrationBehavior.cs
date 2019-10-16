@@ -1,55 +1,50 @@
-﻿using DevExpress.Mvvm.UI.Interactivity;
+﻿using System.Windows;
+using DevExpress.Mvvm.UI.Interactivity;
 using DXVisualTestFixer.UI.Controls;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
 
 namespace DXVisualTestFixer.UI.Behaviors {
-    public class ScrollViewerRegistrationBehavior : Behavior<DraggableScrollViewer> {
-        public static readonly DependencyProperty ImageScalingControlProperty;
-        public static readonly DependencyProperty ScrollViewerTypeProperty;
+	public class ScrollViewerRegistrationBehavior : Behavior<DraggableScrollViewer> {
+		public static readonly DependencyProperty ImageScalingControlProperty;
+		public static readonly DependencyProperty ScrollViewerTypeProperty;
 
-        static ScrollViewerRegistrationBehavior() {
-            Type ownerType = typeof(ScrollViewerRegistrationBehavior);
-            ImageScalingControlProperty = DependencyProperty.Register("ImageScalingControl", typeof(ImageScalingControl), ownerType, new PropertyMetadata(null, Register));
-            ScrollViewerTypeProperty = DependencyProperty.Register("ScrollViewerType", typeof(MergedTestViewType?), ownerType, new PropertyMetadata(null, Register));
-        }
+		bool isRegistered;
 
-        static void Register(DependencyObject d, DependencyPropertyChangedEventArgs e) {
-            ((ScrollViewerRegistrationBehavior)d).Register();
-        }
+		static ScrollViewerRegistrationBehavior() {
+			var ownerType = typeof(ScrollViewerRegistrationBehavior);
+			ImageScalingControlProperty = DependencyProperty.Register("ImageScalingControl", typeof(ImageScalingControl), ownerType, new PropertyMetadata(null, Register));
+			ScrollViewerTypeProperty = DependencyProperty.Register("ScrollViewerType", typeof(MergedTestViewType?), ownerType, new PropertyMetadata(null, Register));
+		}
 
-        public ImageScalingControl ImageScalingControl {
-            get { return (ImageScalingControl)GetValue(ImageScalingControlProperty); }
-            set { SetValue(ImageScalingControlProperty, value); }
-        }
-        public MergedTestViewType? ScrollViewerType {
-            get { return (MergedTestViewType?)GetValue(ScrollViewerTypeProperty); }
-            set { SetValue(ScrollViewerTypeProperty, value); }
-        }
+		public ImageScalingControl ImageScalingControl {
+			get => (ImageScalingControl) GetValue(ImageScalingControlProperty);
+			set => SetValue(ImageScalingControlProperty, value);
+		}
 
-        protected override void OnAttached() {
-            base.OnAttached();
-            Register();
-        }
+		public MergedTestViewType? ScrollViewerType {
+			get => (MergedTestViewType?) GetValue(ScrollViewerTypeProperty);
+			set => SetValue(ScrollViewerTypeProperty, value);
+		}
 
-        protected override void OnDetaching() {
-            base.OnDetaching();
-        }
+		static void Register(DependencyObject d, DependencyPropertyChangedEventArgs e) {
+			((ScrollViewerRegistrationBehavior) d).Register();
+		}
 
-        bool isRegistered;
+		protected override void OnAttached() {
+			base.OnAttached();
+			Register();
+		}
 
-        void Register() {
-            if(isRegistered)
-                return;
-            if(ImageScalingControl == null || !ScrollViewerType.HasValue)
-                return;
-            ImageScalingControl.StartTrackingScrollViewer(AssociatedObject, ScrollViewerType.Value);
-            isRegistered = true;
-        }
-    }
+		protected override void OnDetaching() {
+			base.OnDetaching();
+		}
+
+		void Register() {
+			if(isRegistered)
+				return;
+			if(ImageScalingControl == null || !ScrollViewerType.HasValue)
+				return;
+			ImageScalingControl.StartTrackingScrollViewer(AssociatedObject, ScrollViewerType.Value);
+			isRegistered = true;
+		}
+	}
 }

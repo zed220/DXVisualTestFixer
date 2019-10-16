@@ -4,16 +4,17 @@
                     xmlns:dxt="http://schemas.devexpress.com/winfx/2008/xaml/core/themekeys"
                     xmlns:converters="clr-namespace:DXVisualTestFixer.UI.Converters">
     <Style x:Key="DialogWindowStyle" TargetType="{x:Type dx:ThemedWindow}">
-        <Setter Property="Width" Value="1000"/>
-        <Setter Property="Height" Value="800"/>
-        <Setter Property="DialogButtonsSource" Value="{Binding Path=Commands}"/>
+        <Setter Property="Width" Value="1000" />
+        <Setter Property="Height" Value="800" />
+        <Setter Property="DialogButtonsSource" Value="{Binding Path=Commands}" />
     </Style>
-    <Style x:Key="NotificationWindowStyle" TargetType="{x:Type dx:ThemedMessageBoxWindow}" BasedOn="{StaticResource DialogWindowStyle}">
-        <Setter Property="Width" Value="500"/>
-        <Setter Property="Height" Value="400"/>
-        <Setter Property="SizeToContent" Value="WidthAndHeight"/>
-        <Setter Property="ResizeMode" Value="NoResize"/>
-        <Setter Property="Text" Value="{Binding Path=Content}"/>
-        <Setter Property="Image" Value="{Binding Path=ImageSource}"/>
+    <Style x:Key="NotificationWindowStyle" TargetType="{x:Type dx:ThemedMessageBoxWindow}"
+           BasedOn="{StaticResource DialogWindowStyle}">
+        <Setter Property="Width" Value="500" />
+        <Setter Property="Height" Value="400" />
+        <Setter Property="SizeToContent" Value="WidthAndHeight" />
+        <Setter Property="ResizeMode" Value="NoResize" />
+        <Setter Property="Text" Value="{Binding Path=Content}" />
+        <Setter Property="Image" Value="{Binding Path=ImageSource}" />
     </Style>
 </ResourceDictionary>
