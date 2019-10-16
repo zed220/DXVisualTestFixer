@@ -164,10 +164,15 @@ namespace DXVisualTestFixer.Core {
 			if(!SafeDeleteFile(imageSHAPath, checkoutFunc))
 				return false;
 			File.WriteAllText(xmlPath, test.TextCurrentLazy.Value);
-			if(test.TextCurrentSHA == null)
-				test.TextCurrentSHA = GetSHA256(new MemoryStream(File.ReadAllBytes(xmlPath)));
-			if(test.ImageCurrentSHA == null)
-				test.ImageCurrentSHA = GetSHA256(new MemoryStream(test.ImageCurrentArrLazy.Value));
+			if(test.TextCurrentSHA == null) {
+				using var ms = new MemoryStream(File.ReadAllBytes(xmlPath));
+				test.TextCurrentSHA = GetSHA256(ms);
+			}
+			if(test.ImageCurrentSHA == null) {
+				using var ms = new MemoryStream(test.ImageCurrentArrLazy.Value);
+				test.ImageCurrentSHA = GetSHA256(ms);
+			}
+
 			File.WriteAllBytes(xmlSHAPath, test.TextCurrentSHA);
 			File.WriteAllBytes(imagePath, test.ImageCurrentArrLazy.Value);
 			File.WriteAllBytes(imageSHAPath, test.ImageCurrentSHA);
@@ -369,19 +374,12 @@ namespace DXVisualTestFixer.Core {
 			return true;
 		}
 
-		static byte[] GetSHA256(Stream stream, bool dispose = false) {
+		static byte[] GetSHA256(Stream stream) {
 			if(stream == null)
 				return null;
 			stream.Seek(0, SeekOrigin.Begin);
-			byte[] result = null;
-			using(var sha256Hash = SHA256.Create()) {
-				result = sha256Hash.ComputeHash(stream);
-			}
-
-			stream.Seek(0, SeekOrigin.Begin);
-			if(dispose)
-				stream.Dispose();
-			return result;
+			using var sha256Hash = SHA256.Create();
+			return sha256Hash.ComputeHash(stream);
 		}
 
 		static bool IsTextEquals(string left, string right, out string diff, out string fullDiff) {
