@@ -1,56 +1,55 @@
-﻿using DevExpress.Mvvm;
+﻿using System.Collections.Generic;
+using System.Linq;
+using DevExpress.Mvvm;
 using DevExpress.Xpf.Core;
 using DXVisualTestFixer.Common;
 using DXVisualTestFixer.UI.Models;
-using Prism.Interactivity.InteractionRequest;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using BindableBase = Prism.Mvvm.BindableBase;
+using INotification = Prism.Interactivity.InteractionRequest.INotification;
 
 namespace DXVisualTestFixer.UI.ViewModels {
+	public class RepositoryAnalyzerViewModel : BindableBase, INotification {
+		List<TimingModel> _CurrentTimings;
+		string _CurrentVersion;
 
-    public class RepositoryAnalyzerViewModel : BindableBase, Prism.Interactivity.InteractionRequest.INotification {
-        string _CurrentVersion;
-        List<TimingModel> _CurrentTimings;
+		public RepositoryAnalyzerViewModel(ITestsService testsService) {
+			Commands = UICommand.GenerateFromMessageButton(MessageButton.OK, new DialogService(), MessageResult.OK);
+			ElapsedTimes = new Dictionary<string, List<TimingModel>>();
+			Versions = new List<string>();
+			if(testsService.ActualState.ElapsedTimes == null || testsService.ActualState.ElapsedTimes.Count == 0)
+				return;
+			foreach(var et in testsService.ActualState.ElapsedTimes) {
+				ElapsedTimes.Add(et.Key.Version, et.Value.Select(eti => new TimingModel(eti.Name, eti.Time)).ToList());
+				Versions.Add(et.Key.Version);
+			}
 
-        public Dictionary<string, List<TimingModel>> ElapsedTimes { get; }
-        public List<string> Versions { get; }
-        public string Title { get; set; } = "Repository Analyzer";
-        public object Content { get; set; }
+			CurrentVersion = Versions.Last();
+		}
 
-        public string CurrentVersion {
-            get { return _CurrentVersion; }
-            set { SetProperty(ref _CurrentVersion, value, OnCurrentVersionChanged); }
-        }
-        public List<TimingModel> CurrentTimings {
-            get { return _CurrentTimings; }
-            set { SetProperty(ref _CurrentTimings, value); }
-        }
+		public Dictionary<string, List<TimingModel>> ElapsedTimes { get; }
+		public List<string> Versions { get; }
 
-        public IEnumerable<UICommand> Commands { get; }
+		public string CurrentVersion {
+			get => _CurrentVersion;
+			set => SetProperty(ref _CurrentVersion, value, OnCurrentVersionChanged);
+		}
 
-        public RepositoryAnalyzerViewModel(ITestsService testsService) {
-            Commands = UICommand.GenerateFromMessageButton(MessageButton.OK, new DialogService(), MessageResult.OK);
-            ElapsedTimes = new Dictionary<string, List<TimingModel>>();
-            Versions = new List<string>();
-            if(testsService.ActualState.ElapsedTimes == null || testsService.ActualState.ElapsedTimes.Count == 0)
-                return;
-            foreach(var et in testsService.ActualState.ElapsedTimes) {
-                ElapsedTimes.Add(et.Key.Version, et.Value.Select(eti => new TimingModel(eti.Name, eti.Time)).ToList());
-                Versions.Add(et.Key.Version);
-            }
-            CurrentVersion = Versions.Last();
-        }
+		public List<TimingModel> CurrentTimings {
+			get => _CurrentTimings;
+			set => SetProperty(ref _CurrentTimings, value);
+		}
 
-        void OnCurrentVersionChanged() {
-            if(String.IsNullOrEmpty(CurrentVersion)) {
-                CurrentTimings = null;
-                return;
-            }
-            CurrentTimings = ElapsedTimes[CurrentVersion];
-        }
-    }
+		public IEnumerable<UICommand> Commands { get; }
+		public string Title { get; set; } = "Repository Analyzer";
+		public object Content { get; set; }
+
+		void OnCurrentVersionChanged() {
+			if(string.IsNullOrEmpty(CurrentVersion)) {
+				CurrentTimings = null;
+				return;
+			}
+
+			CurrentTimings = ElapsedTimes[CurrentVersion];
+		}
+	}
 }

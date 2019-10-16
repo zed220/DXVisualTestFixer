@@ -1,13 +1,16 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 
 namespace DXVisualTestFixer.Common {
-    public class Repository {
-        public string Version { get; set; }
-        public string Path { get; set; }
+	public class Repository {
+		public string Version { get; set; }
+		public string Path { get; set; }
 
-        public bool IsDownloaded() => File.Exists(System.IO.Path.Combine(Path, "VisualTestsConfig.xml"));
+		public bool IsDownloaded() {
+			return File.Exists(System.IO.Path.Combine(Path, "VisualTestsConfig.xml"));
+		}
 
-        public string GetTaskName() => String.Format("Test.v{0} WPF VisualTests", Version);
-    }
+		public string GetTaskName() {
+			return string.Format("Test.v{0} WPF VisualTests", Version);
+		}
+	}
 }
