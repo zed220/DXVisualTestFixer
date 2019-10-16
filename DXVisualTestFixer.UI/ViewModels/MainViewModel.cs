@@ -341,7 +341,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 		}
 
 		bool ShowCheckOutMessageBox(string text) {
-			return CheckConfirmation(ConfirmationRequest, "Readonly file detected", "Please checkout file in DXVCS \n" + text);
+			return CheckConfirmation(ConfirmationRequest, "Readonly file detected", "Please remove readonly for \n" + text);
 		}
 
 		void ApplyTest(TestInfo testInfo) {

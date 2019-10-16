@@ -40,40 +40,31 @@ namespace DXVisualTestFixer.Core {
 		public static CorpDirTestInfoContainer LoadFromInfo(IFarmTaskInfo taskInfo, string realUrl) {
 			var failedTests = new List<CorpDirTestInfo>();
 			if(realUrl == null || !realUrl.Contains("ViewBuildReport.aspx")) throw new NotSupportedException("Contact Petr Zinovyev, please.");
-			var myXmlDocument = LoadFromUrl(realUrl);
-			var failedTestsTasks = new List<Task<List<CorpDirTestInfo>>>();
-			if(!IsSuccessBuild(myXmlDocument)) {
-				foreach(var testCaseXml in FindFailedTests(myXmlDocument)) {
+			var failedTestsTasks = new List<Task<IEnumerable<CorpDirTestInfo>>>();
+			var buildNode = FindBuildNode(LoadFromUrl(realUrl));
+			if(buildNode == null)
+				failedTests.Add(CorpDirTestInfo.CreateError(taskInfo, "BuildError", "BuildError", "BuildError"));
+			else if(!IsSuccessBuild(buildNode)) {
+				foreach(var testCaseXml in FindFailedTests(buildNode)) {
 					var testNameAndNamespace = testCaseXml.GetAttribute("name");
 					var failureNode = testCaseXml.FindByName("failure");
 					failedTestsTasks.Add(Task.Factory.StartNew(() => {
 						var resultNode = failureNode.FindByName("message");
 						var stackTraceNode = failureNode.FindByName("stack-trace");
-						var localRes = new List<CorpDirTestInfo>();
-						ParseMessage(taskInfo, testNameAndNamespace, resultNode.InnerText, stackTraceNode.InnerText, localRes);
-						return localRes;
+						return ParseMessage(taskInfo, testNameAndNamespace, resultNode.InnerText, stackTraceNode.InnerText);
 					}));
 				}
 
-				var errors = FindErrors(myXmlDocument).ToList();
-				if(errors.Count > 0)
-					failedTestsTasks.Add(Task.Factory.StartNew(() => {
-						var result = new List<CorpDirTestInfo>();
-						foreach(var error in errors)
-							result.Add(CorpDirTestInfo.CreateError(taskInfo, "Error", error.InnerText, null));
-						return result;
-					}));
+				var errors = FindErrors(buildNode);
+				if(errors.Any())
+					failedTestsTasks.Add(Task.Factory.StartNew(() => errors.Select(error => CorpDirTestInfo.CreateError(taskInfo, "Error", error.InnerText, null))));
 				if(failedTestsTasks.Count > 0) {
 					Task.WaitAll(failedTestsTasks.ToArray());
 					failedTestsTasks.ForEach(t => failedTests.AddRange(t.Result));
-				}
-				else {
-					if(!taskInfo.Success)
-						failedTests.Add(CorpDirTestInfo.CreateError(taskInfo, "BuildError", "BuildError", "BuildError"));
-				}
+				}	
 			}
 
-			return new CorpDirTestInfoContainer(failedTests, FindUsedFilesLinks(myXmlDocument).ToList(), FindElapsedTimes(myXmlDocument), FindTeams(taskInfo.Repository.Version, myXmlDocument), FindTimings(myXmlDocument));
+			return new CorpDirTestInfoContainer(failedTests, FindUsedFilesLinks(buildNode).ToList(), FindElapsedTimes(buildNode), FindTeams(taskInfo.Repository.Version, buildNode), FindTimings(buildNode));
 		}
 
 		static XmlDocument LoadFromUrl(string realUrl) {
@@ -93,18 +84,10 @@ namespace DXVisualTestFixer.Core {
 			throw new NotSupportedException();
 		}
 
-		static bool IsSuccessBuild(XmlDocument myXmlDocument) {
-			var buildNode = FindBuildNode(myXmlDocument);
-			if(buildNode == null)
-				return false;
-			return !buildNode.TryGetAttibute("error", out string _);
-		}
+		static bool IsSuccessBuild(XmlNode buildNode) => !buildNode.TryGetAttibute("error", out string _);
 
-		static (DateTime sources, DateTime tests)? FindTimings(XmlDocument myXmlDocument) {
-			var buildNode = FindBuildNode(myXmlDocument);
-			if(buildNode == null)
-				return null;
-			var timingsNode = buildNode.FindByName("Timings");
+		static (DateTime sources, DateTime tests)? FindTimings(XmlNode buildNode) {
+			var timingsNode = buildNode?.FindByName("Timings");
 			if(timingsNode == null)
 				return null;
 			try {
@@ -122,42 +105,24 @@ namespace DXVisualTestFixer.Core {
 			return new DateTime(Convert.ToInt32(dateSplit[0]), Convert.ToInt32(dateSplit[1]), Convert.ToInt32(dateSplit[2]), Convert.ToInt32(timeSplit[0]), Convert.ToInt32(timeSplit[1]), 0);
 		}
 
-		static IEnumerable<XmlElement> FindFailedTests(XmlDocument myXmlDocument) {
-			var buildNode = FindBuildNode(myXmlDocument);
-			if(buildNode == null)
-				yield break;
-			foreach(var testResults in buildNode.FindAllByName("test-results"))
-			foreach(var subNode in FindAllFailedTests(testResults))
-				yield return subNode;
-		}
+		static IEnumerable<XmlElement> FindFailedTests(XmlNode buildNode) => buildNode.FindAllByName("test-results").SelectMany(FindAllFailedTests);
 
-		static IEnumerable<XmlElement> FindErrors(XmlDocument myXmlDocument) {
-			var buildNode = FindBuildNode(myXmlDocument);
-			if(buildNode == null)
-				yield break;
-			foreach(var root in buildNode.FindAllByName("root"))
-			foreach(XmlElement error in root.FindAllByName("error"))
-				yield return error;
-		}
+		static IEnumerable<XmlElement> FindErrors(XmlNode buildNode) => buildNode.FindAllByName("root").SelectMany(root => root.FindAllByName("error").Cast<XmlElement>());
 
-		static IEnumerable<string> FindUsedFilesLinks(XmlDocument myXmlDocument) {
-			var buildNode = FindBuildNode(myXmlDocument);
+		static IEnumerable<string> FindUsedFilesLinks(XmlNode buildNode) {
 			if(buildNode == null)
 				yield break;
 			foreach(var usedFilesNode in buildNode.FindAllByName("FileUsingLogLink")) yield return usedFilesNode.InnerText.Replace("\n", string.Empty);
 		}
 
-		static List<IElapsedTimeInfo> FindElapsedTimes(XmlDocument myXmlDocument) {
+		static List<IElapsedTimeInfo> FindElapsedTimes(XmlNode buildNode) {
 			var result = new List<IElapsedTimeInfo>();
-			var buildNode = FindBuildNode(myXmlDocument);
 			if(buildNode == null)
 				return result;
 			foreach(var elapsedTimeNode in buildNode.FindAllByName("ElapsedTime")) {
-				string name;
-				if(!elapsedTimeNode.TryGetAttibute("Name", out name))
+				if(!elapsedTimeNode.TryGetAttibute("Name", out string name))
 					continue;
-				string time;
-				if(!elapsedTimeNode.TryGetAttibute("Time", out time))
+				if(!elapsedTimeNode.TryGetAttibute("Time", out string time))
 					continue;
 				if(int.TryParse(time.Split('.').FirstOrDefault() ?? time, out var sec))
 					result.Add(new ElapsedTimeInfo(name, TimeSpan.FromSeconds(sec)));
@@ -166,40 +131,31 @@ namespace DXVisualTestFixer.Core {
 			return result;
 		}
 
-		static List<Team> FindTeams(string version, XmlDocument myXmlDocument) {
+		static List<Team> FindTeams(string version, XmlNode buildNode) {
 			var result = new Dictionary<string, Team>();
-			var buildNode = FindBuildNode(myXmlDocument);
 			if(buildNode == null)
 				return null;
 			foreach(var teamNode in buildNode.FindAllByName("Project")) {
-				int dpi;
-				if(!teamNode.TryGetAttibute("Dpi", out dpi))
+				if(!teamNode.TryGetAttibute("Dpi", out int dpi))
 					continue;
-				string teamName;
-				if(!teamNode.TryGetAttibute("IncludedCategories", out teamName))
+				if(!teamNode.TryGetAttibute("IncludedCategories", out string teamName))
 					continue;
-				string resourcesFolder;
-				if(!teamNode.TryGetAttibute("ResourcesFolder", out resourcesFolder))
+				if(!teamNode.TryGetAttibute("ResourcesFolder", out string resourcesFolder))
 					continue;
-				string testResourcesPath;
-				if(!teamNode.TryGetAttibute("TestResourcesPath", out testResourcesPath))
+				if(!teamNode.TryGetAttibute("TestResourcesPath", out string testResourcesPath))
 					continue;
 				testResourcesPath = Path.Combine(resourcesFolder, testResourcesPath);
-				string testResourcesPath_optimized = null;
-				teamNode.TryGetAttibute("TestResourcesPath_Optimized", out testResourcesPath_optimized);
+				teamNode.TryGetAttibute("TestResourcesPath_Optimized", out string testResourcesPath_optimized);
 				if(testResourcesPath_optimized != null)
 					testResourcesPath_optimized = Path.Combine(resourcesFolder, testResourcesPath_optimized);
 				var projectInfosNode = teamNode.FindByName("ProjectInfos");
 				if(projectInfosNode == null)
 					continue;
 				foreach(var projectInfoNode in projectInfosNode.FindAllByName("ProjectInfo")) {
-					string serverFolderName;
-					if(!projectInfoNode.TryGetAttibute("ServerFolderName", out serverFolderName))
+					if(!projectInfoNode.TryGetAttibute("ServerFolderName", out string serverFolderName))
 						continue;
-					bool optimized;
-					projectInfoNode.TryGetAttibute("Optimized", out optimized);
-					Team team;
-					if(!result.TryGetValue(teamName, out team))
+					projectInfoNode.TryGetAttibute("Optimized", out bool optimized);
+					if(!result.TryGetValue(teamName, out var team))
 						result[teamName] = team = new Team {Name = teamName, Version = version};
 					team.TeamInfos.Add(new TeamInfo {Dpi = dpi, Optimized = optimized, ServerFolderName = serverFolderName, TestResourcesPath = testResourcesPath, TestResourcesPath_Optimized = testResourcesPath_optimized});
 				}
@@ -247,32 +203,33 @@ namespace DXVisualTestFixer.Core {
 					yield return node;
 		}
 
-		public static void ParseMessage(IFarmTaskInfo farmTaskInfo, string testNameAndNamespace, string message, string stackTrace, List<CorpDirTestInfo> resultList) {
+		static IEnumerable<CorpDirTestInfo> ParseMessage(IFarmTaskInfo farmTaskInfo, string testNameAndNamespace, string message, string stackTrace) {
 			if(!message.StartsWith("Exception - NUnit.Framework.AssertionException")) {
-				resultList.Add(CorpDirTestInfo.CreateError(farmTaskInfo, testNameAndNamespace, message, stackTrace));
-				return;
+				yield return CorpDirTestInfo.CreateError(farmTaskInfo, testNameAndNamespace, message, stackTrace);
+				yield break;
 			}
 
 			var themedResultPaths = message.Split(new[] {" - failed:"}, StringSplitOptions.RemoveEmptyEntries).ToList();
 			if(themedResultPaths.Count == 1) {
-				resultList.Add(CorpDirTestInfo.CreateError(farmTaskInfo, testNameAndNamespace, message, stackTrace));
-				return;
+				yield return CorpDirTestInfo.CreateError(farmTaskInfo, testNameAndNamespace, message, stackTrace);
+				yield break;
 			}
 
-			foreach(var part in themedResultPaths) ParseMessagePart(farmTaskInfo, testNameAndNamespace, part, resultList);
+			foreach(var part in themedResultPaths) {
+				if(TryParseMessagePart(farmTaskInfo, testNameAndNamespace, part, out var info))
+					yield return info;
+			}
 		}
 
-		static void ParseMessagePart(IFarmTaskInfo farmTaskInfo, string testNameAndNamespace, string message, List<CorpDirTestInfo> resultList) {
+		static bool TryParseMessagePart(IFarmTaskInfo farmTaskInfo, string testNameAndNamespace, string message, out CorpDirTestInfo info) {
 			var parts = message.Split(new[] {"\n"}, StringSplitOptions.RemoveEmptyEntries).ToList();
 			var paths = parts.Where(x => x.Contains(@"\\corp")).Select(x => x.Replace(@"\\corp", string.Empty)).ToList();
 
 			var resultPaths = PatchPaths(paths);
 			var shaList = PatchSHA(parts.Where(x => x.Contains("sha-")).Select(x => x.Replace("sha-", string.Empty)).ToList());
 			var diffCount = TryGetDiffCount(parts.Where(x => x.Contains("diffCount=")).Select(x => x.Replace("diffCount=", string.Empty)).LastOrDefault());
-			CorpDirTestInfo info = null;
-			if(!CorpDirTestInfo.TryCreate(farmTaskInfo, testNameAndNamespace, resultPaths, shaList, diffCount, out info))
-				return;
-			resultList.Add(info);
+			info = null;
+			return CorpDirTestInfo.TryCreate(farmTaskInfo, testNameAndNamespace, resultPaths, shaList, diffCount, out info);
 		}
 
 		static int? TryGetDiffCount(string str) {
