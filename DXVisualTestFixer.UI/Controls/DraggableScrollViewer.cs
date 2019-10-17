@@ -38,10 +38,9 @@ namespace DXVisualTestFixer.UI.Controls {
 
 		protected override void OnPreviewMouseMove(MouseEventArgs e) {
 			base.OnPreviewMouseMove(e);
-			if(IsMouseCaptured) {
-				ScrollToHorizontalOffset(offset.X + (scrollMousePoint.X - e.GetPosition(this).X));
-				ScrollToVerticalOffset(offset.Y + (scrollMousePoint.Y - e.GetPosition(this).Y));
-			}
+			if(!IsMouseCaptured) return;
+			ScrollToHorizontalOffset(offset.X + (scrollMousePoint.X - e.GetPosition(this).X));
+			ScrollToVerticalOffset(offset.Y + (scrollMousePoint.Y - e.GetPosition(this).Y));
 		}
 
 		protected override void OnPreviewMouseWheel(MouseWheelEventArgs e) {

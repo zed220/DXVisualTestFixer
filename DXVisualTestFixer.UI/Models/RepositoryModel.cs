@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Threading;
 using DevExpress.Mvvm;
 using DXVisualTestFixer.Common;
+using JetBrains.Annotations;
 using Microsoft.Practices.ServiceLocation;
 
 namespace DXVisualTestFixer.UI.Models {
@@ -60,22 +61,17 @@ namespace DXVisualTestFixer.UI.Models {
 			}
 		}
 
-		public void UpdateDownloadState() {
-			DownloadState = GetDownloadState();
-		}
+		public void UpdateDownloadState() => DownloadState = GetDownloadState();
 
 		DownloadState GetDownloadState() {
 			if(!Directory.Exists(Path) || !Directory.EnumerateFileSystemEntries(Path).Any())
 				return DownloadState.ReadyToDownload;
-			if(File.Exists(System.IO.Path.Combine(Path, "VisualTestsConfig.xml")))
-				return DownloadState.Downloaded;
-			return DownloadState.CanNotDownload;
+			return File.Exists(System.IO.Path.Combine(Path, "VisualTestsConfig.xml")) ? DownloadState.Downloaded : DownloadState.CanNotDownload;
 		}
 
+		[UsedImplicitly]
 		public void Download() {
-			if(DownloadState != DownloadState.ReadyToDownload)
-				return;
-			Task.Factory.StartNew(DownloadAsync);
+			if(DownloadState == DownloadState.ReadyToDownload) Task.Factory.StartNew(DownloadAsync);
 		}
 
 		async Task DownloadAsync() {

@@ -9,6 +9,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using DevExpress.Utils;
+using JetBrains.Annotations;
 using Microsoft.Win32;
 
 namespace DXVisualTestFixer.UI.Models {
@@ -91,9 +92,7 @@ namespace DXVisualTestFixer.UI.Models {
 
 		static string GetRiderPath() {
 			var pathToJB = System.IO.Path.Combine(Environment.ExpandEnvironmentVariables("%ProgramW6432%"), "JetBrains");
-			if(!Directory.Exists(pathToJB))
-				return null;
-			return Directory.GetFiles(pathToJB, "rider64.exe", SearchOption.AllDirectories).LastOrDefault();
+			return !Directory.Exists(pathToJB) ? null : Directory.GetFiles(pathToJB, "rider64.exe", SearchOption.AllDirectories).LastOrDefault();
 		}
 
 		static string GetAssociatedProgram() {
@@ -108,8 +107,7 @@ namespace DXVisualTestFixer.UI.Models {
 			}
 		}
 
-		public void OpenFolder() {
-			Process.Start(Path);
-		}
+		[UsedImplicitly]
+		public void OpenFolder() => Process.Start(Path);
 	}
 }

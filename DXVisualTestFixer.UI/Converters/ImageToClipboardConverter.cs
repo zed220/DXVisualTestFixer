@@ -7,11 +7,7 @@ using DevExpress.Mvvm;
 
 namespace DXVisualTestFixer.UI.Converters {
 	public abstract class ImageToClipboardConverterBase : BaseValueConverter {
-		public sealed override object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
-			if(value == null)
-				return null;
-			return new DelegateCommand(() => { UpdateClipboard((byte[]) value); });
-		}
+		public sealed override object Convert(object value, Type targetType, object parameter, CultureInfo culture) => value == null ? null : new DelegateCommand(() => { UpdateClipboard((byte[]) value); });
 
 		protected abstract void UpdateClipboard(byte[] value);
 	}

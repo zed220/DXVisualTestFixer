@@ -131,38 +131,35 @@ namespace DXVisualTestFixer.Core {
 				}
 			}
 
-			if(temp.CurrentTextEditPath != null && temp.CurrentImagePath != null) { // && temp.ImageDiffPath != null
-				//&& temp.InstantTextEditPath != null && temp.InstantImagePath != null
-				temp.ServerFolderName = temp.CurrentTextEditPath.Split(new[] {@"\\corp\builds\testbuilds\"}, StringSplitOptions.RemoveEmptyEntries).First().Split('\\').First();
-				if(temp.ServerFolderName.Contains("_dpi_")) {
-					var nameAndDpi = temp.ServerFolderName.Split(new[] {"_dpi_"}, StringSplitOptions.RemoveEmptyEntries);
-					temp.TeamName = nameAndDpi[0];
-					temp.Dpi = int.Parse(nameAndDpi[1]);
-				}
-				else {
-					temp.TeamName = temp.ServerFolderName;
-				}
-
-				if(temp.TeamName?.ToLower().Contains("scheduler") ?? false)
-					if(temp.CurrentImagePath.Contains("Colorized"))
-						temp.AdditionalParameter = "Colorized";
-
-				var folderNameAndTheme = Path.GetDirectoryName(temp.CurrentTextEditPath).Split('\\').Last();
-				if(!TryUpdateThemeAndFolderName(folderNameAndTheme, temp))
-					return false;
-				//string[] testNameAndTheme = Path.GetDirectoryName(temp.CurrentTextEditPath).Split('\\').Last().Split('.');
-				//temp.TestName = testNameAndTheme[0];
-				//temp.ThemeName = testNameAndTheme[1];
-				//if(temp.InstantTextEditPath == null || temp.InstantImagePath == null) {
-				//    temp.PossibleNewTest = true;
-				//}
-				//if(testNameAndTheme.Length > 2)
-				//    temp.ThemeName += '.' + testNameAndTheme[2];
-				result = temp;
-				return true;
+			if(temp.CurrentTextEditPath == null || temp.CurrentImagePath == null) return false; // && temp.ImageDiffPath != null
+			//&& temp.InstantTextEditPath != null && temp.InstantImagePath != null
+			temp.ServerFolderName = temp.CurrentTextEditPath.Split(new[] {@"\\corp\builds\testbuilds\"}, StringSplitOptions.RemoveEmptyEntries).First().Split('\\').First();
+			if(temp.ServerFolderName.Contains("_dpi_")) {
+				var nameAndDpi = temp.ServerFolderName.Split(new[] {"_dpi_"}, StringSplitOptions.RemoveEmptyEntries);
+				temp.TeamName = nameAndDpi[0];
+				temp.Dpi = int.Parse(nameAndDpi[1]);
+			}
+			else {
+				temp.TeamName = temp.ServerFolderName;
 			}
 
-			return false;
+			if(temp.TeamName?.ToLower().Contains("scheduler") ?? false)
+				if(temp.CurrentImagePath.Contains("Colorized"))
+					temp.AdditionalParameter = "Colorized";
+
+			var folderNameAndTheme = Path.GetDirectoryName(temp.CurrentTextEditPath).Split('\\').Last();
+			if(!TryUpdateThemeAndFolderName(folderNameAndTheme, temp))
+				return false;
+			//string[] testNameAndTheme = Path.GetDirectoryName(temp.CurrentTextEditPath).Split('\\').Last().Split('.');
+			//temp.TestName = testNameAndTheme[0];
+			//temp.ThemeName = testNameAndTheme[1];
+			//if(temp.InstantTextEditPath == null || temp.InstantImagePath == null) {
+			//    temp.PossibleNewTest = true;
+			//}
+			//if(testNameAndTheme.Length > 2)
+			//    temp.ThemeName += '.' + testNameAndTheme[2];
+			result = temp;
+			return true;
 		}
 
 		static byte[] ExtractSHA(string str) {
@@ -193,9 +190,7 @@ namespace DXVisualTestFixer.Core {
 		public int Compare(string x, string y) {
 			if(x.Length > y.Length)
 				return -1;
-			if(x.Length < y.Length)
-				return 1;
-			return Comparer<string>.Default.Compare(x, y);
+			return x.Length < y.Length ? 1 : Comparer<string>.Default.Compare(x, y);
 		}
 	}
 }
