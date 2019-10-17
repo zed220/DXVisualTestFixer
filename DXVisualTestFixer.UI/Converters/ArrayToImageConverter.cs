@@ -42,9 +42,7 @@ namespace DXVisualTestFixer.UI.Converters {
 				return new SolidColorBrush(Colors.Black);
 			var first = values[0] as Point?;
 			var second = values[1] as Point?;
-			if(first == second)
-				return new SolidColorBrush(Colors.Green);
-			return new SolidColorBrush(Colors.Red);
+			return first == second ? new SolidColorBrush(Colors.Green) : new SolidColorBrush(Colors.Red);
 		}
 	}
 }

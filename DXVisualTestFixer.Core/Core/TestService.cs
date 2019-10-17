@@ -456,7 +456,7 @@ namespace DXVisualTestFixer.Core {
 					return testInfo.TextCurrentLazy.Value;
 				if(string.IsNullOrEmpty(testInfo.TextCurrentLazy.Value))
 					return testInfo.TextBeforeLazy.Value;
-				if(!IsTextEquals(testInfo.TextBeforeLazy.Value, testInfo.TextCurrentLazy.Value, out var differences, out var fullDifferences))
+				if(!IsTextEquals(testInfo.TextBeforeLazy.Value, testInfo.TextCurrentLazy.Value, out var differences, out _))
 					return differences;
 				return string.Empty;
 			});
@@ -467,9 +467,7 @@ namespace DXVisualTestFixer.Core {
 					return testInfo.TextCurrentLazy.Value;
 				if(string.IsNullOrEmpty(testInfo.TextCurrentLazy.Value))
 					return testInfo.TextBeforeLazy.Value;
-				if(!IsTextEquals(testInfo.TextBeforeLazy.Value, testInfo.TextCurrentLazy.Value, out var differences, out var fullDifferences))
-					return fullDifferences;
-				return string.Empty;
+				return !IsTextEquals(testInfo.TextBeforeLazy.Value, testInfo.TextCurrentLazy.Value, out _, out var fullDifferences) ? fullDifferences : string.Empty;
 			});
 		}
 

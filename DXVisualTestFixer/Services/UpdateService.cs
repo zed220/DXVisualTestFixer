@@ -43,9 +43,7 @@ namespace DXVisualTestFixer.Services {
 			var assemblyFolder = Path.GetDirectoryName(assembly.Location);
 			var assemblyFolderParent = Path.GetFullPath(Path.Combine(assemblyFolder, ".."));
 			var updateDotExe = Path.Combine(assemblyFolderParent, "Update.exe");
-			if(assemblyFolderParent.EndsWith("bin"))
-				return false;
-			return File.Exists(updateDotExe);
+			return !assemblyFolderParent.EndsWith("bin") && File.Exists(updateDotExe);
 		}
 	}
 

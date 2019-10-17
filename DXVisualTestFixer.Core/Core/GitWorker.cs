@@ -110,9 +110,7 @@ namespace DXVisualTestFixer.Core {
 			if(string.IsNullOrEmpty(userName))
 				return null;
 			var email = config.GetValueOrDefault("user.email", ConfigurationLevel.Global, (string) null);
-			if(string.IsNullOrEmpty(email))
-				return null;
-			return new Signature(userName, email, DateTime.Now);
+			return string.IsNullOrEmpty(email) ? null : new Signature(userName, email, DateTime.Now);
 		}
 
 		static Signature CreateDefaultSignature() {
