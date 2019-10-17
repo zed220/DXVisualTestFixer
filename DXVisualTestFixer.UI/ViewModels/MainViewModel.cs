@@ -10,6 +10,7 @@ using DevExpress.Mvvm.Native;
 using DXVisualTestFixer.Common;
 using DXVisualTestFixer.UI.Models;
 using DXVisualTestFixer.UI.Native;
+using JetBrains.Annotations;
 using Microsoft.Practices.ServiceLocation;
 using Prism.Interactivity.InteractionRequest;
 using Prism.Regions;
@@ -20,6 +21,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 		Loading
 	}
 
+	[UsedImplicitly]
 	public class MainViewModel : ViewModelBase {
 		public static string NavigationParameter_Test = "Test";
 		readonly IConfigSerializer configSerializer;

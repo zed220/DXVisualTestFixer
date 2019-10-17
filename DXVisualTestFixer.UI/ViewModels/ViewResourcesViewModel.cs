@@ -7,10 +7,12 @@ using DevExpress.Mvvm;
 using DevExpress.Xpf.Core;
 using DXVisualTestFixer.Common;
 using DXVisualTestFixer.UI.Models;
+using JetBrains.Annotations;
 using BindableBase = Prism.Mvvm.BindableBase;
 using INotification = Prism.Interactivity.InteractionRequest.INotification;
 
 namespace DXVisualTestFixer.UI.ViewModels {
+	[UsedImplicitly]
 	public class ViewResourcesViewModel : BindableBase, INotification {
 		readonly Dispatcher Dispatcher;
 		readonly IMinioWorker minioWorker;

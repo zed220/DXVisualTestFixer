@@ -84,7 +84,7 @@ namespace DXVisualTestFixer.Core {
 			throw new NotSupportedException();
 		}
 
-		static bool IsSuccessBuild(XmlNode buildNode) => !buildNode.TryGetAttibute("error", out string _);
+		static bool IsSuccessBuild(XmlNode buildNode) => !buildNode.TryGetAttribute("error", out string _);
 
 		static (DateTime sources, DateTime tests)? FindTimings(XmlNode buildNode) {
 			var timingsNode = buildNode?.FindByName("Timings");
@@ -120,9 +120,9 @@ namespace DXVisualTestFixer.Core {
 			if(buildNode == null)
 				return result;
 			foreach(var elapsedTimeNode in buildNode.FindAllByName("ElapsedTime")) {
-				if(!elapsedTimeNode.TryGetAttibute("Name", out string name))
+				if(!elapsedTimeNode.TryGetAttribute("Name", out string name))
 					continue;
-				if(!elapsedTimeNode.TryGetAttibute("Time", out string time))
+				if(!elapsedTimeNode.TryGetAttribute("Time", out string time))
 					continue;
 				if(int.TryParse(time.Split('.').FirstOrDefault() ?? time, out var sec))
 					result.Add(new ElapsedTimeInfo(name, TimeSpan.FromSeconds(sec)));
@@ -136,35 +136,35 @@ namespace DXVisualTestFixer.Core {
 			if(buildNode == null)
 				return null;
 			foreach(var teamNode in buildNode.FindAllByName("Project")) {
-				if(!teamNode.TryGetAttibute("Dpi", out int dpi))
+				if(!teamNode.TryGetAttribute("Dpi", out int dpi))
 					continue;
-				if(!teamNode.TryGetAttibute("IncludedCategories", out string teamName))
+				if(!teamNode.TryGetAttribute("IncludedCategories", out string teamName))
 					continue;
-				if(!teamNode.TryGetAttibute("ResourcesFolder", out string resourcesFolder))
+				if(!teamNode.TryGetAttribute("ResourcesFolder", out string resourcesFolder))
 					continue;
-				if(!teamNode.TryGetAttibute("TestResourcesPath", out string testResourcesPath))
+				if(!teamNode.TryGetAttribute("TestResourcesPath", out string testResourcesPath))
 					continue;
 				testResourcesPath = Path.Combine(resourcesFolder, testResourcesPath);
-				teamNode.TryGetAttibute("TestResourcesPath_Optimized", out string testResourcesPath_optimized);
+				teamNode.TryGetAttribute("TestResourcesPath_Optimized", out string testResourcesPath_optimized);
 				if(testResourcesPath_optimized != null)
 					testResourcesPath_optimized = Path.Combine(resourcesFolder, testResourcesPath_optimized);
 				var projectInfosNode = teamNode.FindByName("ProjectInfos");
 				if(projectInfosNode == null)
 					continue;
 				foreach(var projectInfoNode in projectInfosNode.FindAllByName("ProjectInfo")) {
-					if(!projectInfoNode.TryGetAttibute("ServerFolderName", out string serverFolderName))
+					if(!projectInfoNode.TryGetAttribute("ServerFolderName", out string serverFolderName))
 						continue;
-					projectInfoNode.TryGetAttibute("Optimized", out bool optimized);
+					projectInfoNode.TryGetAttribute("Optimized", out bool optimized);
 					if(!result.TryGetValue(teamName, out var team))
-						result[teamName] = team = new Team {Name = teamName, Version = version};
-					team.TeamInfos.Add(new TeamInfo {Dpi = dpi, Optimized = optimized, ServerFolderName = serverFolderName, TestResourcesPath = testResourcesPath, TestResourcesPath_Optimized = testResourcesPath_optimized});
+						result[teamName] = team = new Team(teamName, version);
+					team.TeamInfos.Add(new TeamInfo {Dpi = dpi, Optimized = optimized, ServerFolderName = serverFolderName, TestResourcesPath = testResourcesPath, TestResourcesPathOptimized = testResourcesPath_optimized});
 				}
 			}
 
 			return result.Values.Count == 0 ? null : result.Values.ToList();
 		}
 
-		static bool TryGetAttibute<T>(this XmlNode node, string name, out T value) {
+		static bool TryGetAttribute<T>(this XmlNode node, string name, out T value) {
 			value = default;
 			var res = node.Attributes[name];
 			if(res == null)
@@ -181,8 +181,7 @@ namespace DXVisualTestFixer.Core {
 
 		static IEnumerable<XmlElement> FindAllFailedTests(XmlNode testResults) {
 			foreach(XmlNode node in testResults.ChildNodes) {
-				var xmlElement = node as XmlElement;
-				if(xmlElement != null && xmlElement.Name == "test-case" && xmlElement.GetAttribute("success") == "False")
+				if(node is XmlElement xmlElement && xmlElement.Name == "test-case" && xmlElement.GetAttribute("success") == "False")
 					yield return xmlElement;
 				else
 					foreach(var subNode in FindAllFailedTests(node))

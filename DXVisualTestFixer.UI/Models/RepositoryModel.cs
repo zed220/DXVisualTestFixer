@@ -49,10 +49,9 @@ namespace DXVisualTestFixer.UI.Models {
 		public static void ActualizeRepositories(ICollection<RepositoryModel> Repositories, string filePath) {
 			var savedVersions = Repositories.Select(r => r.Version).ToList();
 			foreach(var ver in RepositoryLoader.GetVersions().Where(v => !savedVersions.Contains(v))) {
-				var verDir = string.Format("20{0}", ver);
 				foreach(var directoryPath in Directory.GetDirectories(filePath)) {
 					var dirName = System.IO.Path.GetFileName(directoryPath);
-					if(dirName.Contains(string.Format("20{0}", ver)) || dirName.Contains(ver)) {
+					if(dirName.Contains($"20{ver}") || dirName.Contains(ver)) {
 						if(!File.Exists(directoryPath + "\\VisualTestsConfig.xml"))
 							continue;
 						Repositories.Add(new RepositoryModel(new Repository {Version = ver, Path = directoryPath + "\\"}));

@@ -1,9 +1,11 @@
 ﻿using System.Collections.Specialized;
 using System.Linq;
 using DevExpress.Xpf.Docking;
+using JetBrains.Annotations;
 using Prism.Regions;
 
 namespace DXVisualTestFixer.UI.PrismCommon {
+	[UsedImplicitly]
 	public class LayoutPanelRegionAdapter : RegionAdapterBase<LayoutPanel> {
 		public LayoutPanelRegionAdapter(IRegionBehaviorFactory regionBehaviorFactory) : base(regionBehaviorFactory) { }
 
