@@ -10,9 +10,7 @@ namespace DXVisualTestFixer.UI.Controls {
 			LoadingStateProperty = DependencyProperty.Register("LoadingState", typeof(LoadingButtonState), ownerType, new PropertyMetadata(LoadingButtonState.Enabled, (d, e) => ((LoadingButton) d).OnLoadingStateChanged()));
 		}
 
-		public LoadingButton() {
-			DefaultStyleKey = typeof(LoadingButton);
-		}
+		public LoadingButton() => DefaultStyleKey = typeof(LoadingButton);
 
 		public LoadingButtonState LoadingState {
 			get => (LoadingButtonState) GetValue(LoadingStateProperty);
@@ -21,16 +19,12 @@ namespace DXVisualTestFixer.UI.Controls {
 
 		public override void OnApplyTemplate() {
 			base.OnApplyTemplate();
-			UpdateAnimatons();
+			UpdateAnimations();
 		}
 
-		void OnLoadingStateChanged() {
-			UpdateAnimatons();
-		}
+		void OnLoadingStateChanged() => UpdateAnimations();
 
-		void UpdateAnimatons() {
-			VisualStateManager.GoToState(this, LoadingState.ToString(), false);
-		}
+		void UpdateAnimations() => VisualStateManager.GoToState(this, LoadingState.ToString(), false);
 	}
 
 	public enum LoadingButtonState {

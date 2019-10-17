@@ -24,13 +24,11 @@ namespace DXVisualTestFixer.UI.ViewModels {
 		public string ProblemName => TestInfo.ProblemName;
 
 		public bool CommitChange {
-			get { return GetProperty(() => CommitChange); }
+			get => GetProperty(() => CommitChange);
 			set => SetCommitChange(value);
 		}
 
-		public string ToLog() {
-			return string.Format("Team: {0}, Version: {1}, Test: {2}, Theme: {3}", TestInfo?.Team.Name, TestInfo?.Version, TestInfo?.NameWithNamespace, TestInfo?.Theme);
-		}
+		public string ToLog() => $"Team: {TestInfo?.Team.Name}, Version: {TestInfo?.Version}, Test: {TestInfo?.NameWithNamespace}, Theme: {TestInfo?.Theme}";
 
 		void SetCommitChange(bool value) {
 			if(Valid == TestState.Error)

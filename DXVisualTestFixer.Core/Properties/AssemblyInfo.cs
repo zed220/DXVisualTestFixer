@@ -33,6 +33,6 @@ using DXVisualTestFixer.Core.Configuration;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion(VersionInfo.VersionString)]
-[assembly: AssemblyFileVersion(VersionInfo.VersionString)]
+[assembly: AssemblyVersion("1.0.0")]
+[assembly: AssemblyFileVersion("1.0.0")]
 [assembly: XmlnsDefinition("http://schemas.dxvisualtests.com/winfx/2008/xaml/core", "DXVisualTestFixer.Core")]

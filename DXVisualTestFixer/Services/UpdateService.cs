@@ -11,7 +11,7 @@ using Squirrel;
 
 namespace DXVisualTestFixer.Services {
 	public class SquirrelUpdateService : UpdateServiceBase {
-		const string serverfolder = @"\\corp\internal\common\visualtests_squirrel";
+		const string serverFolder = @"\\corp\internal\common\visualtests_squirrel";
 
 		public SquirrelUpdateService(INotificationService notificationService) : base(notificationService) { }
 
@@ -21,14 +21,14 @@ namespace DXVisualTestFixer.Services {
 
 		protected override async Task<bool> CheckUpdateCore() {
 			try {
-				if(!Directory.Exists(serverfolder))
+				if(!Directory.Exists(serverFolder))
 					return false;
 			}
 			catch(IOException) {
 				return false;
 			}
 
-			using var mgr = new UpdateManager(serverfolder);
+			using var mgr = new UpdateManager(serverFolder);
 			var updateInfo = await mgr.CheckForUpdate();
 			if(!updateInfo.ReleasesToApply.Any())
 				return false;

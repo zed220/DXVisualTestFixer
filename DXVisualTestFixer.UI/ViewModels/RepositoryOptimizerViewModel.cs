@@ -9,10 +9,12 @@ using DevExpress.Mvvm;
 using DevExpress.Xpf.Core;
 using DXVisualTestFixer.Common;
 using DXVisualTestFixer.UI.Models;
+using JetBrains.Annotations;
 using Prism.Interactivity.InteractionRequest;
 using BindableBase = Prism.Mvvm.BindableBase;
 
 namespace DXVisualTestFixer.UI.ViewModels {
+	[UsedImplicitly]
 	public class RepositoryOptimizerViewModel : BindableBase, IConfirmation {
 		readonly Dispatcher Dispatcher;
 		readonly IMinioWorker minioWorker;

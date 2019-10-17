@@ -12,8 +12,6 @@ namespace DXVisualTestFixer.Core.Configuration {
 		static readonly string SettingsFile = "ui_settings.config";
 		static string SettingsFilePath => SettingsPath + SettingsFile;
 
-		public static int Version { get; set; } = 0;
-
 		public IConfig GetConfig(bool useCache = true) {
 			if(useCache && cached != null)
 				return cached;

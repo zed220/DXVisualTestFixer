@@ -95,17 +95,8 @@ namespace DXVisualTestFixer.Common {
 		IConfig Config { get; }
 	}
 
-	public interface IFarmRefreshedEventArgs {
-		FarmRefreshType RefreshType { get; }
-		void Parse();
-	}
-
-	public interface IFarmStatus {
-		FarmIntegrationStatus BuildStatus { get; }
-	}
-
 	public interface IFarmIntegrator {
-		Task<List<IFarmTaskInfo>> GetAllTasks(Repository[] repositories);
+		List<IFarmTaskInfo> GetAllTasks(IEnumerable<Repository> repositories);
 	}
 
 	public interface ITestsService : INotifyPropertyChanged {

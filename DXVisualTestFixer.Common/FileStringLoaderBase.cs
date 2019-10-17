@@ -5,28 +5,28 @@ using System.Linq;
 
 namespace DXVisualTestFixer.Common {
 	public abstract class FileStringLoaderBase {
-		readonly string _ServerPath;
+		readonly string serverPath;
 
-		List<string> _Result;
+		List<string> result;
 		DateTime downloadedTime;
 
-		public FileStringLoaderBase(string serverPath) {
-			_ServerPath = serverPath;
+		protected FileStringLoaderBase(string serverPath) {
+			this.serverPath = serverPath;
 		}
 
-		public List<string> Result {
+		protected List<string> Result {
 			get {
-				if(_Result == null || DateTime.Now - downloadedTime > TimeSpan.FromMinutes(5))
-					_Result = Load();
-				return _Result;
+				if(result == null || DateTime.Now - downloadedTime > TimeSpan.FromMinutes(5))
+					result = Load();
+				return result;
 			}
 		}
 
 		List<string> Load() {
-			if(!File.Exists(_ServerPath))
+			if(!File.Exists(serverPath))
 				return LoadIfFileNotFound();
 			downloadedTime = DateTime.Now;
-			return File.ReadAllLines(_ServerPath).ToList();
+			return File.ReadAllLines(serverPath).ToList();
 		}
 
 		protected abstract List<string> LoadIfFileNotFound();

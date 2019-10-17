@@ -19,8 +19,8 @@ namespace DXVisualTestFixer.UI.Converters {
 	public class ImageToClipboardConverter : ImageToClipboardConverterBase {
 		protected override void UpdateClipboard(byte[] value) {
 			using var ms = new MemoryStream(value);
-			var pngd = new PngBitmapDecoder(ms, BitmapCreateOptions.None, BitmapCacheOption.None);
-			Clipboard.SetImage(pngd.Frames[0]);
+			var decoder = new PngBitmapDecoder(ms, BitmapCreateOptions.None, BitmapCacheOption.None);
+			Clipboard.SetImage(decoder.Frames[0]);
 		}
 	}
 

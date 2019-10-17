@@ -96,9 +96,9 @@ namespace DXVisualTestFixer.Core {
 		int CalculateImageDiffsCount(TestInfo test) {
 			if(test.ImageDiffArrLazy.Value == null)
 				return int.MaxValue;
-			if(TestsService.CompareSHA256(test.ImageBeforeSHA, test.ImageCurrentSHA))
+			if(TestsService.CompareSHA256(test.ImageBeforeSha, test.ImageCurrentSha))
 				return int.MaxValue;
-			if(test.ImageBeforeSHA == null || test.ImageCurrentSHA == null)
+			if(test.ImageBeforeSha == null || test.ImageCurrentSha == null)
 				return int.MaxValue;
 			using var imgDiff = ImageHelper.CreateImageFromArray(test.ImageDiffArrLazy.Value);
 			return ImageHelper.RedCount(imgDiff);
@@ -136,7 +136,7 @@ namespace DXVisualTestFixer.Core {
 
 		public async Task UpdateTests(INotificationService notificationService) {
 			CurrentFilter = null;
-			var allTasks = await farmIntegrator.GetAllTasks(configSerializer.GetConfig().GetLocalRepositories().ToArray());
+			var allTasks = farmIntegrator.GetAllTasks(configSerializer.GetConfig().GetLocalRepositories());
 			var actualState = await LoadTestsAsync(allTasks, notificationService);
 			loggingService.SendMessage("Start updating problems");
 			await ((TestInfoContainer) actualState).UpdateProblems();
@@ -164,18 +164,18 @@ namespace DXVisualTestFixer.Core {
 			if(!SafeDeleteFile(imageSHAPath, checkoutFunc))
 				return false;
 			File.WriteAllText(xmlPath, test.TextCurrentLazy.Value);
-			if(test.TextCurrentSHA == null) {
+			if(test.TextCurrentSha == null) {
 				using var ms = new MemoryStream(File.ReadAllBytes(xmlPath));
-				test.TextCurrentSHA = GetSHA256(ms);
+				test.TextCurrentSha = GetSHA256(ms);
 			}
-			if(test.ImageCurrentSHA == null) {
+			if(test.ImageCurrentSha == null) {
 				using var ms = new MemoryStream(test.ImageCurrentArrLazy.Value);
-				test.ImageCurrentSHA = GetSHA256(ms);
+				test.ImageCurrentSha = GetSHA256(ms);
 			}
 
-			File.WriteAllBytes(xmlSHAPath, test.TextCurrentSHA);
+			File.WriteAllBytes(xmlSHAPath, test.TextCurrentSha);
 			File.WriteAllBytes(imagePath, test.ImageCurrentArrLazy.Value);
-			File.WriteAllBytes(imageSHAPath, test.ImageCurrentSHA);
+			File.WriteAllBytes(imageSHAPath, test.ImageCurrentSha);
 			return true;
 		}
 
@@ -183,59 +183,51 @@ namespace DXVisualTestFixer.Core {
 			loadingProgressController.Flush();
 			loadingProgressController.Enlarge(farmTasks.Count);
 			loggingService.SendMessage("Collecting tests information from farm");
-			var allTasks = new List<Task<TestInfoCached>>();
+			var allTasks = new List<Task>();
+			var result = new TestInfoContainer();
+			result.Timings.Clear();
+			var locker = new object();
 			foreach(var farmTaskInfo in farmTasks) {
 				if(string.IsNullOrEmpty(farmTaskInfo.Url)) {
 					notificationService?.DoNotification($"Farm Task Not Found For {farmTaskInfo.Repository.Version}", $"Farm Task {farmTaskInfo.Repository.Version} from path {farmTaskInfo.Repository.Path} does not found. Maybe new branch created, but corresponding farm task missing. It well be added later. Otherwise, contact app owner for details.");
 					continue;
 				}
 
-				var info = farmTaskInfo;
-				var task = LoadTestsCoreAsync(info);
-				allTasks.Add(task);
+				allTasks.Add(LoadTestsCoreAsync(farmTaskInfo).ContinueWith(cachedResult => {
+					var cached = cachedResult.Result;
+					lock(locker) {
+						result.TestList.AddRange(cached.TestList);
+						result.UsedFilesLinks[cached.Repository] = cached.UsedFilesLinks;
+						result.ElapsedTimes[cached.Repository] = cached.ElapsedTimes.ToList();
+						result.Teams[cached.Repository] = cached.Teams;
+						result.Timings.Add(new TimingInfo(cached.Repository, cached.SourcesBuildTime, cached.TestsBuildTime));
+					}
+				}));
 			}
 
-			var result = new TestInfoContainer();
-			result.Timings.Clear();
-			foreach(var cached in await Task.WhenAll(allTasks.ToArray()).ConfigureAwait(false)) {
-				result.TestList.AddRange(cached.TestList);
-				result.UsedFilesLinks[cached.Repository] = cached.UsedFilesLinks;
-				result.ElapsedTimes[cached.Repository] = cached.ElapsedTimes.ToList();
-				result.Teams[cached.Repository] = cached.Teams;
-				result.Timings.Add(new TimingInfo(cached.Repository, cached.SourcesBuildTime, cached.TestsBuildTime));
-			}
-
+			await Task.WhenAll(allTasks);
 			return result;
 		}
 
 		async Task<TestInfoCached> LoadTestsCoreAsync(IFarmTaskInfo farmTaskInfo) {
-			if(RealUrlCache.TryGetValue(farmTaskInfo, out var cache))
-				if(cache.RealUrl == farmTaskInfo.Url) {
-					ActualizeTests(cache.TestList);
-					return cache;
-				}
-
+			if(RealUrlCache.TryGetValue(farmTaskInfo, out var cache) && cache.RealUrl == farmTaskInfo.Url) {
+				await ActualizeTestsAsync(cache.TestList);
+				return cache;
+			}
 			var allTasks = new List<Task<TestInfo>>();
 			var corpDirTestInfoContainer = LoadFromFarmTaskInfo(farmTaskInfo, farmTaskInfo.Url);
 			foreach(var corpDirTestInfo in corpDirTestInfoContainer.FailedTests) {
 				var info = corpDirTestInfo;
-				allTasks.Add(Task.Factory.StartNew(() => LoadTestInfo(info, corpDirTestInfoContainer.Teams)));
+				allTasks.Add(LoadTestInfoAsync(info, corpDirTestInfoContainer.Teams));
 			}
 
-			var result = (await Task.WhenAll(allTasks.ToArray()).ConfigureAwait(false)).ToList();
-			var cachedValue = new TestInfoCached(farmTaskInfo.Repository, farmTaskInfo.Url, result, corpDirTestInfoContainer);
-			RealUrlCache[farmTaskInfo] = cachedValue;
-			return cachedValue;
+			var result = (await Task.WhenAll(allTasks)).ToList();
+			return RealUrlCache[farmTaskInfo] = new TestInfoCached(farmTaskInfo.Repository, farmTaskInfo.Url, result, corpDirTestInfoContainer);
 		}
 
-		void ActualizeTests(List<TestInfo> testList) {
-			var allTasks = new List<Task>();
-			foreach(var test in testList) {
-				var t = test;
-				allTasks.Add(Task.Factory.StartNew(() => UpdateTestStatus(test)));
-			}
-
-			Task.WaitAll(allTasks.ToArray());
+		async Task ActualizeTestsAsync(List<TestInfo> testList) {
+			var allTasks = testList.Select(UpdateTestStatusAsync).ToList();
+			await Task.WhenAll(allTasks);
 		}
 
 		CorpDirTestInfoContainer LoadFromFarmTaskInfo(IFarmTaskInfo farmTaskInfo, string realUrl) {
@@ -244,18 +236,16 @@ namespace DXVisualTestFixer.Core {
 			return corpDirTestInfoContainer;
 		}
 
-		TestInfo LoadTestInfo(CorpDirTestInfo corpDirTestInfo, List<Team> teams) {
+		async Task<TestInfo> LoadTestInfoAsync(CorpDirTestInfo corpDirTestInfo, List<Team> teams) => await LoadTestInfo(corpDirTestInfo, teams);
+
+		async Task<TestInfo> LoadTestInfo(CorpDirTestInfo corpDirTestInfo, List<Team> teams) {
 			loggingService.SendMessage($"Start load test v{corpDirTestInfo.FarmTaskInfo.Repository.Version} {corpDirTestInfo.TestName}.{corpDirTestInfo.ThemeName}");
 			var testInfo = TryCreateTestInfo(corpDirTestInfo, teams);
 			loggingService.SendMessage($"End load test v{corpDirTestInfo.FarmTaskInfo.Repository.Version} {corpDirTestInfo.TestName}.{corpDirTestInfo.ThemeName}");
-			if(testInfo != null) {
-				UpdateTestStatus(testInfo);
-				loadingProgressController.IncreaseProgress(1);
-				return testInfo;
-			}
-
+			if(testInfo != null)
+				await UpdateTestStatusAsync(testInfo);
 			loadingProgressController.IncreaseProgress(1);
-			return null;
+			return testInfo;
 		}
 
 		static Team GetTeam(List<Team> teams, string version, string serverFolderName, out TeamInfo info) {
@@ -276,13 +266,13 @@ namespace DXVisualTestFixer.Core {
 			testInfo.AdditionalParameters = corpDirTestInfo.AdditionalParameter;
 			testInfo.NameWithNamespace = corpDirTestInfo.TestNameWithNamespace;
 			testInfo.ResourceFolderName = corpDirTestInfo.ResourceFolderName;
-			if(corpDirTestInfo.TeamName == CorpDirTestInfo.ErrorTeamName) {
+			if(corpDirTestInfo.TeamName == Team.ErrorName) {
 				testInfo.Valid = TestState.Error;
 				testInfo.TextDiffLazy = new Lazy<string>(() => "+" + testInfo.Name + Environment.NewLine + Environment.NewLine + corpDirTestInfo.ErrorText);
 				testInfo.TextDiffFullLazy = new Lazy<string>(() => string.Empty);
 				testInfo.Theme = "Error";
 				testInfo.Dpi = 0;
-				testInfo.Team = new Team {Name = CorpDirTestInfo.ErrorTeamName, Version = corpDirTestInfo.FarmTaskInfo.Repository.Version};
+				testInfo.Team = Team.CreateErrorTeam(corpDirTestInfo.FarmTaskInfo.Repository.Version);
 				return testInfo;
 			}
 
@@ -294,7 +284,7 @@ namespace DXVisualTestFixer.Core {
 				testInfo.TextDiffFullLazy = new Lazy<string>(() => string.Empty);
 				testInfo.Theme = "Error";
 				testInfo.Dpi = 0;
-				testInfo.Team = new Team {Name = CorpDirTestInfo.ErrorTeamName, Version = corpDirTestInfo.FarmTaskInfo.Repository.Version};
+				testInfo.Team = Team.CreateErrorTeam(corpDirTestInfo.FarmTaskInfo.Repository.Version);
 				return testInfo;
 			}
 
@@ -313,15 +303,15 @@ namespace DXVisualTestFixer.Core {
 			}
 
 			testInfo.TextBeforeLazy = new Lazy<string>(() => LoadTextFile(corpDirTestInfo.InstantTextEditPath));
-			testInfo.TextBeforeSHA = corpDirTestInfo.InstantTextEditSHA ?? LoadBytes(corpDirTestInfo.InstantTextEditSHAPath);
+			testInfo.TextBeforeSha = corpDirTestInfo.InstantTextEditSHA ?? LoadBytes(corpDirTestInfo.InstantTextEditSHAPath);
 			testInfo.TextCurrentLazy = new Lazy<string>(() => LoadTextFile(corpDirTestInfo.CurrentTextEditPath));
-			testInfo.TextCurrentSHA = corpDirTestInfo.CurrentTextEditSHA ?? LoadBytes(corpDirTestInfo.CurrentTextEditSHAPath);
+			testInfo.TextCurrentSha = corpDirTestInfo.CurrentTextEditSHA ?? LoadBytes(corpDirTestInfo.CurrentTextEditSHAPath);
 			InitializeTextDiff(testInfo);
 
 			testInfo.ImageBeforeArrLazy = new Lazy<byte[]>(() => LoadBytes(corpDirTestInfo.InstantImagePath));
-			testInfo.ImageBeforeSHA = corpDirTestInfo.InstantImageSHA ?? LoadBytes(corpDirTestInfo.InstantImageSHAPath);
+			testInfo.ImageBeforeSha = corpDirTestInfo.InstantImageSHA ?? LoadBytes(corpDirTestInfo.InstantImageSHAPath);
 			testInfo.ImageCurrentArrLazy = new Lazy<byte[]>(() => LoadBytes(corpDirTestInfo.CurrentImagePath));
-			testInfo.ImageCurrentSHA = corpDirTestInfo.CurrentImageSHA ?? LoadBytes(corpDirTestInfo.CurrentImageSHAPath);
+			testInfo.ImageCurrentSha = corpDirTestInfo.CurrentImageSHA ?? LoadBytes(corpDirTestInfo.CurrentImageSHAPath);
 
 			testInfo.ImageDiffArrLazy = new Lazy<byte[]>(() => LoadBytes(corpDirTestInfo.ImageDiffPath));
 			//if(TestValid(testInfo))
@@ -389,28 +379,28 @@ namespace DXVisualTestFixer.Core {
 				return true;
 			}
 
-			var info = BuildDefferences(left, right);
+			var info = BuildDifferences(left, right);
 			diff = info.DiffCompact;
 			fullDiff = info.DiffFull;
 			return false;
 		}
 
-		static TextDifferenceInfo BuildDefferences(string left, string right) {
+		static TextDifferenceInfo BuildDifferences(string left, string right) {
 			var sbFull = new StringBuilder();
 			var leftArr = left.Split(new[] {Environment.NewLine}, StringSplitOptions.None);
 			var rightArr = right.Split(new[] {Environment.NewLine}, StringSplitOptions.None);
 			var diffLines = new List<int>();
 			for(var line = 0; line < Math.Min(leftArr.Length, rightArr.Length); line++) {
-				var leftstr = leftArr[line];
-				var rightstr = rightArr[line];
-				if(leftstr == rightstr) {
-					sbFull.AppendLine(leftstr);
+				var leftStr = leftArr[line];
+				var rightStr = rightArr[line];
+				if(leftStr == rightStr) {
+					sbFull.AppendLine(leftStr);
 					continue;
 				}
 
 				diffLines.Add(line);
-				sbFull.AppendLine("-" + leftstr);
-				sbFull.AppendLine("+" + rightstr);
+				sbFull.AppendLine("-" + leftStr);
+				sbFull.AppendLine("+" + rightStr);
 			}
 
 			return new TextDifferenceInfo(BuildCompactDifferences(leftArr, rightArr, diffLines), sbFull.ToString());
@@ -456,7 +446,7 @@ namespace DXVisualTestFixer.Core {
 		static void InitializeTextDiff(TestInfo testInfo) {
 			testInfo.TextDiffLazy = new Lazy<string>(() => string.Empty);
 			testInfo.TextDiffFullLazy = new Lazy<string>(() => string.Empty);
-			if(CompareSHA256(testInfo.TextBeforeSHA, testInfo.TextCurrentSHA))
+			if(CompareSHA256(testInfo.TextBeforeSha, testInfo.TextCurrentSha))
 				return;
 
 			testInfo.TextDiffLazy = new Lazy<string>(() => {
@@ -482,6 +472,8 @@ namespace DXVisualTestFixer.Core {
 				return string.Empty;
 			});
 		}
+
+		async Task UpdateTestStatusAsync(TestInfo test) => await Task.Factory.StartNew(() => UpdateTestStatus(test));
 
 		void UpdateTestStatus(TestInfo test) {
 			if(test.Valid == TestState.Error)
@@ -515,15 +507,15 @@ namespace DXVisualTestFixer.Core {
 				return;
 			}
 
-			if(CompareSHA256(test.ImageBeforeSHA, test.ImageCurrentSHA))
+			if(CompareSHA256(test.ImageBeforeSha, test.ImageCurrentSha))
 				test.ImageEquals = true;
 			var imageFixed = test.ImageEquals;
 			if(!imageFixed)
-				imageFixed = CompareSHA256(LoadBytes(imagePath + ".sha"), test.ImageCurrentSHA);
-			var textEquals = CompareSHA256(test.TextBeforeSHA, test.TextCurrentSHA);
+				imageFixed = CompareSHA256(LoadBytes(imagePath + ".sha"), test.ImageCurrentSha);
+			var textEquals = CompareSHA256(test.TextBeforeSha, test.TextCurrentSha);
 			var textFixed = textEquals;
 			if(!textFixed)
-				textFixed = CompareSHA256(LoadBytes(xmlPath + ".sha"), test.TextCurrentSHA);
+				textFixed = CompareSHA256(LoadBytes(xmlPath + ".sha"), test.TextCurrentSha);
 			if(imageFixed && textFixed) {
 				test.Valid = TestState.Fixed;
 				return;
@@ -543,7 +535,7 @@ namespace DXVisualTestFixer.Core {
 				return null;
 			}
 
-			var testResourcesPath = test.Optimized && test.TeamInfo.TestResourcesPath_Optimized != null ? test.TeamInfo.TestResourcesPath_Optimized : test.TeamInfo.TestResourcesPath;
+			var testResourcesPath = test.Optimized && test.TeamInfo.TestResourcesPathOptimized != null ? test.TeamInfo.TestResourcesPathOptimized : test.TeamInfo.TestResourcesPath;
 			var actualTestResourcesPath = Path.Combine(repository.Path, testResourcesPath, test.ResourceFolderName);
 			if(!Directory.Exists(actualTestResourcesPath)) {
 				if(checkDirectoryExists) {
