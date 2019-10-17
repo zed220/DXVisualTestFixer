@@ -191,12 +191,14 @@ namespace DXVisualTestFixer.UI.Controls {
 		void DrawHighlightedPoint(DrawingContext drawingContext) {
 			if(!ShowHighlightedPoint)
 				return;
-			Func<double, int> getPixel = p => {
+
+			int GetPixel(double p) {
 				var res = (int) p / Scale;
 				return res * Scale + 1;
-			};
+			}
+
 			var brush = new SolidColorBrush(Colors.Black);
-			var leftUpCorner = new Point(getPixel(HighlightedPoint.X), getPixel(HighlightedPoint.Y));
+			var leftUpCorner = new Point(GetPixel(HighlightedPoint.X), GetPixel(HighlightedPoint.Y));
 			drawingContext.DrawRectangle(new SolidColorBrush(Colors.Transparent), new System.Windows.Media.Pen(brush, 1), new Rect(leftUpCorner.X, leftUpCorner.Y, Scale, Scale));
 		}
 
@@ -286,13 +288,14 @@ namespace DXVisualTestFixer.UI.Controls {
 			}
 
 			public bool TryGetColor(Point point, out Color color) {
-				Func<double, int> getPixel = p => {
+				int GetPixel(double p) {
 					var res = (int) p / RenderParameters.Scale;
 					return res * RenderParameters.Scale;
-				};
+				}
+
 				var bytes = imageBytesLazy.Value;
-				var index = getPixel(point.Y) * bytes.stride + 4 * getPixel(point.X);
-				var pixel = new Point(getPixel(point.X), getPixel(point.Y));
+				var index = GetPixel(point.Y) * bytes.stride + 4 * GetPixel(point.X);
+				var pixel = new Point(GetPixel(point.X), GetPixel(point.Y));
 
 				color = default;
 				if(!IsInBound(bytes.pixels, index + 2) || !IsInBound(bytes.pixels, index + 1) || !IsInBound(bytes.pixels, index))

@@ -3,10 +3,12 @@ using System.Linq;
 using DevExpress.Mvvm;
 using DevExpress.Xpf.Core;
 using DXVisualTestFixer.Common;
+using JetBrains.Annotations;
 using Prism.Interactivity.InteractionRequest;
 using BindableBase = Prism.Mvvm.BindableBase;
 
 namespace DXVisualTestFixer.UI.ViewModels {
+	[UsedImplicitly]
 	public class ApplyChangesViewModel : BindableBase, IConfirmation {
 		const string DefaultCommitCaption = "Update tests";
 		readonly ITestsService testsService;
@@ -19,7 +21,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 			this.testsService = testsService;
 			Title = "Settings";
 			Commands = UICommand.GenerateFromMessageButton(MessageButton.OKCancel, new DialogService(), MessageResult.OK, MessageResult.Cancel);
-			Commands.Where(c => c.IsDefault).Single().Command = new DelegateCommand(() => {
+			Commands.Single(c => c.IsDefault).Command = new DelegateCommand(() => {
 				if(string.IsNullOrWhiteSpace(CommitCaption))
 					_CommitCaption = DefaultCommitCaption;
 				if(CommitCaption.Length > 255)

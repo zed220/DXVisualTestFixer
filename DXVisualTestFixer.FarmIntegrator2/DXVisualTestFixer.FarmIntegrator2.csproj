@@ -60,7 +60,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FarmIntegrator.cs" />
-    <Compile Include="FarmRefreshedEventArgs.cs" />
     <Compile Include="FarmTaskInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -7,23 +7,19 @@ using Microsoft.Practices.ServiceLocation;
 
 namespace DXVisualTestFixer.Core.Configuration {
 	internal class Config : IConfig {
-		public const string ConfigFileName = "ui.config";
 		public string LastVersion { get; set; }
 		public string InstallPath { get; set; }
 		public Repository[] Repositories { get; set; } = new Repository[0];
 		public string ThemeName { get; set; } = "Office2016White";
 		public string WorkingDirectory { get; set; } = @"C:\Work";
 
-		public IEnumerable<Repository> GetLocalRepositories() {
-			return Repositories?.Where(r => r.IsDownloaded()) ?? Enumerable.Empty<Repository>();
-		}
+		public IEnumerable<Repository> GetLocalRepositories() => Repositories?.Where(r => r.IsDownloaded()) ?? Enumerable.Empty<Repository>();
 
 		public static Config GenerateDefault(IConfigSerializer configSerializer) {
 			var result = Validate(new Config());
 			configSerializer.SaveConfig(result);
 			return result;
 		}
-
 
 		public static Config Validate(Config config) {
 			if(string.IsNullOrEmpty(config.LastVersion))

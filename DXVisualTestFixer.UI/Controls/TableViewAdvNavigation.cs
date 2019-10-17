@@ -35,7 +35,7 @@ namespace DXVisualTestFixer.UI.Controls {
 			if(e.HitInfo.Column.FieldName != "Theme")
 				return;
 			e.Handled = true;
-			InverceCommitChange(e.HitInfo.RowHandle);
+			InverseCommitChange(e.HitInfo.RowHandle);
 		}
 
 		TestInfoModel GetValidTestInfoModel(int rowHandle) {
@@ -47,7 +47,7 @@ namespace DXVisualTestFixer.UI.Controls {
 			return testInfoModel;
 		}
 
-		void InverceCommitChange(int rowHandle) {
+		void InverseCommitChange(int rowHandle) {
 			var model = GetValidTestInfoModel(rowHandle);
 			if(model != null)
 				model.CommitChange = !model.CommitChange;
@@ -88,7 +88,7 @@ namespace DXVisualTestFixer.UI.Controls {
 			if(SearchControl != null && SearchControl.IsKeyboardFocusWithin)
 				return;
 			e.Handled = true;
-			InverceCommitChange(FocusedRowHandle);
+			InverseCommitChange(FocusedRowHandle);
 		}
 	}
 }

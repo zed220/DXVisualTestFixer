@@ -17,19 +17,19 @@ namespace DXVisualTestFixer.UI.Models {
 		public TimeSpan Time { get; }
 
 		void PopulateAttributes() {
-			var splitted = FullName.Split(new[] {"_", "-"}, StringSplitOptions.RemoveEmptyEntries);
-			if(splitted.Length < 1)
+			var split = FullName.Split(new[] {"_", "-"}, StringSplitOptions.RemoveEmptyEntries);
+			if(split.Length < 1)
 				return;
-			Prefix = splitted[0];
-			if(splitted.Length < 2)
+			Prefix = split[0];
+			if(split.Length < 2)
 				return;
-			Team = splitted[1];
-			if(splitted.Length < 3)
+			Team = split[1];
+			if(split.Length < 3)
 				return;
-			Dpi = splitted[2];
-			if(splitted.Length < 4)
+			Dpi = split[2];
+			if(split.Length < 4)
 				return;
-			Part = splitted[3];
+			Part = split[3];
 		}
 	}
 }

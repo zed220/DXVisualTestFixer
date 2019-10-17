@@ -96,7 +96,7 @@ namespace DXVisualTestFixer.Core {
 			var userNamePath = string.Empty;
 			if(author == null) {
 				author = CreateDefaultSignature();
-				userNamePath = string.Format(" ({0})", WindowsIdentity.GetCurrent().Name.Split('\\').Last());
+				userNamePath = $" ({WindowsIdentity.GetCurrent().Name.Split('\\').Last()})";
 			}
 
 			var commit = repo.Commit($"{commitCaption} {userNamePath}", author, committer);

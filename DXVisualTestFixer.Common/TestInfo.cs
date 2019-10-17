@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Text;
+using JetBrains.Annotations;
 
 namespace DXVisualTestFixer.Common {
 	public class TestInfo {
-		StringBuilder _InvalidLogBuilder;
+		StringBuilder invalidLogBuilder;
 
 		public TestInfo(Repository repository) {
 			Repository = repository;
@@ -17,13 +18,7 @@ namespace DXVisualTestFixer.Common {
 			TextDiffFullLazy = new Lazy<string>(() => null);
 		}
 
-		StringBuilder InvalidLogBuilder {
-			get {
-				if(_InvalidLogBuilder == null)
-					_InvalidLogBuilder = new StringBuilder();
-				return _InvalidLogBuilder;
-			}
-		}
+		StringBuilder InvalidLogBuilder => invalidLogBuilder ??= new StringBuilder();
 
 		public string Name { get; set; }
 		public string NameWithNamespace { get; set; }
@@ -32,18 +27,17 @@ namespace DXVisualTestFixer.Common {
 		public Team Team { get; set; }
 		public TeamInfo TeamInfo { get; set; }
 		public string Theme { get; set; }
-		public string Fixture { get; set; }
 		public string Version { get; set; }
 		public int Dpi { get; set; }
 		public Lazy<byte[]> ImageBeforeArrLazy { get; set; }
-		public byte[] ImageBeforeSHA { get; set; }
+		public byte[] ImageBeforeSha { get; set; }
 		public Lazy<byte[]> ImageCurrentArrLazy { get; set; }
-		public byte[] ImageCurrentSHA { get; set; }
+		public byte[] ImageCurrentSha { get; set; }
 		public Lazy<byte[]> ImageDiffArrLazy { get; set; }
 		public Lazy<string> TextBeforeLazy { get; set; }
-		public byte[] TextBeforeSHA { get; set; }
+		public byte[] TextBeforeSha { get; set; }
 		public Lazy<string> TextCurrentLazy { get; set; }
-		public byte[] TextCurrentSHA { get; set; }
+		public byte[] TextCurrentSha { get; set; }
 		public bool Optimized { get; set; }
 		public Lazy<string> TextDiffLazy { get; set; }
 		public Lazy<string> TextDiffFullLazy { get; set; }
@@ -53,6 +47,7 @@ namespace DXVisualTestFixer.Common {
 		public int? PredefinedImageDiffsCount { get; set; }
 		public int Problem { get; set; } = int.MinValue;
 		public string ProblemName { get; set; }
+		[UsedImplicitly]
 		public string InvalidLog => InvalidLogBuilder.ToString();
 		public string AdditionalParameters { get; set; }
 

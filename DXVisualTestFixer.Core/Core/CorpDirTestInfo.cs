@@ -7,8 +7,6 @@ using Microsoft.Practices.ServiceLocation;
 
 namespace DXVisualTestFixer.Core {
 	public class CorpDirTestInfo {
-		public const string ErrorTeamName = "Error";
-
 		public IFarmTaskInfo FarmTaskInfo { get; set; }
 
 		public string CurrentTextEditPath { get; set; }
@@ -50,7 +48,7 @@ namespace DXVisualTestFixer.Core {
 			var result = new CorpDirTestInfo();
 			result.FarmTaskInfo = farmTaskInfo;
 			result.ErrorText = errorText;
-			result.TeamName = "Error";
+			result.TeamName = Team.ErrorName;
 			result.StackTrace = stackTrace;
 			result.TestName = GetTestName(testNameAndNamespace);
 			result.TestNameWithNamespace = testNameAndNamespace;
