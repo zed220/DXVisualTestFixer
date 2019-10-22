@@ -50,12 +50,12 @@ namespace DXVisualTestFixer.Services {
 	public abstract class UpdateServiceBase : BindableBase, IUpdateService {
 		readonly Dispatcher dispatcher;
 		readonly INotificationService notificationService;
+
+		readonly DispatcherTimer Timer;
 		bool _HasUpdate;
 		bool _IsInUpdate;
 
 		bool isInUpdateCore;
-
-		readonly DispatcherTimer Timer;
 
 		public UpdateServiceBase(INotificationService notificationService) {
 			this.notificationService = notificationService;

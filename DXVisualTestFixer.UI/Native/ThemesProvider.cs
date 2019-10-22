@@ -9,8 +9,6 @@ namespace DXVisualTestFixer.UI.Native {
 
 		public List<string> AllThemes => Result;
 
-		protected override List<string> LoadIfFileNotFound() {
-			return Theme.Themes.Select(t => t.Name).ToList();
-		}
+		protected override List<string> LoadIfFileNotFound() => Theme.Themes.Select(t => t.Name).ToList();
 	}
 }

@@ -1,7 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
-                    xmlns:dxt="http://schemas.devexpress.com/winfx/2008/xaml/core/themekeys"
                     xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
                     xmlns:behaviors="clr-namespace:DXVisualTestFixer.UI.Behaviors"
                     xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
@@ -41,7 +40,7 @@
     </Style>
     <DataTemplate x:Key="DraggableScrollViewerDataTemplate">
         <DataTemplate.Resources>
-            <dxmvvm:ObjectToObjectConverter x:Key="scrollModeConverter" DefaultTarget="{x:Null}">
+            <dxmvvm:ObjectToObjectConverter x:Key="ScrollModeConverter" DefaultTarget="{x:Null}">
                 <dxmvvm:MapItem Source="Draggable" Target="Hand" />
             </dxmvvm:ObjectToObjectConverter>
         </DataTemplate.Resources>
@@ -51,7 +50,7 @@
                                             dx:ScrollBarExtensions.AllowMouseScrolling="False"
                                             CanContentScroll="True"
                                             ScrollMode="{Binding Path=(controls:ImageScalingControl.ImageScalingControl).ScrollMode, RelativeSource={RelativeSource Self}}"
-                                            Cursor="{Binding Path=(controls:ImageScalingControl.ImageScalingControl).ScrollMode, RelativeSource={RelativeSource Self}, Converter={StaticResource scrollModeConverter}}">
+                                            Cursor="{Binding Path=(controls:ImageScalingControl.ImageScalingControl).ScrollMode, RelativeSource={RelativeSource Self}, Converter={StaticResource ScrollModeConverter}}">
                 <dxmvvm:Interaction.Behaviors>
                     <behaviors:ScrollViewerRegistrationBehavior
                         ImageScalingControl="{Binding Path=AssociatedObject.(controls:ImageScalingControl.ImageScalingControl), RelativeSource={RelativeSource Self}}"
@@ -77,7 +76,7 @@
             </Popup>
         </Grid>
     </DataTemplate>
-    <controls:ImageScalingControlTemplateSelector x:Key="imageScalingControlTemplateSelector">
+    <controls:ImageScalingControlTemplateSelector x:Key="ImageScalingControlTemplateSelector">
         <controls:ImageScalingControlTemplateSelector.MergedTemplate>
             <DataTemplate>
                 <DataTemplate.Resources>
@@ -271,7 +270,7 @@
             </DataTemplate>
         </controls:ImageScalingControlTemplateSelector.SplitTemplate>
     </controls:ImageScalingControlTemplateSelector>
-    <ControlTemplate x:Key="imageScalingControlTemplate" TargetType="{x:Type controls:ImageScalingControl}">
+    <ControlTemplate x:Key="ImageScalingControlTemplate" TargetType="{x:Type controls:ImageScalingControl}">
         <Grid DataContext="{Binding RelativeSource={RelativeSource TemplatedParent}}" FocusManager.IsFocusScope="True">
             <dxmvvm:Interaction.Behaviors>
                 <dxmvvm:KeyToCommand KeyGesture="Left" Command="{DXCommand Execute='ChangeView(true)'}"
@@ -356,11 +355,11 @@
                 </dxr:RibbonPageCategory>
             </dxr:RibbonControl>
             <ContentPresenter Content="{TemplateBinding ViewMode}"
-                              ContentTemplateSelector="{StaticResource imageScalingControlTemplateSelector}"
+                              ContentTemplateSelector="{StaticResource ImageScalingControlTemplateSelector}"
                               controls:ImageScalingControl.ImageScalingControl="{Binding RelativeSource={RelativeSource TemplatedParent}}" />
         </Grid>
     </ControlTemplate>
     <Style TargetType="{x:Type controls:ImageScalingControl}">
-        <Setter Property="Template" Value="{StaticResource imageScalingControlTemplate}" />
+        <Setter Property="Template" Value="{StaticResource ImageScalingControlTemplate}" />
     </Style>
 </ResourceDictionary>

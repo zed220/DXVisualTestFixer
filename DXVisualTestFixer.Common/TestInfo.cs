@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 
 namespace DXVisualTestFixer.Common {
 	public class TestInfo {
-		StringBuilder invalidLogBuilder;
+		StringBuilder _invalidLogBuilder;
 
 		public TestInfo(Repository repository) {
 			Repository = repository;
@@ -18,7 +18,7 @@ namespace DXVisualTestFixer.Common {
 			TextDiffFullLazy = new Lazy<string>(() => null);
 		}
 
-		StringBuilder InvalidLogBuilder => invalidLogBuilder ??= new StringBuilder();
+		StringBuilder InvalidLogBuilder => _invalidLogBuilder ??= new StringBuilder();
 
 		public string Name { get; set; }
 		public string NameWithNamespace { get; set; }
@@ -47,8 +47,9 @@ namespace DXVisualTestFixer.Common {
 		public int? PredefinedImageDiffsCount { get; set; }
 		public int Problem { get; set; } = int.MinValue;
 		public string ProblemName { get; set; }
-		[UsedImplicitly]
-		public string InvalidLog => InvalidLogBuilder.ToString();
+
+		[UsedImplicitly] public string InvalidLog => InvalidLogBuilder.ToString();
+
 		public string AdditionalParameters { get; set; }
 
 		public void LogCustomError(string text) {

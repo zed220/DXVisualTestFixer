@@ -2,7 +2,6 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Threading;
 using DevExpress.Mvvm;
 using DevExpress.Xpf.Core;
 using DXVisualTestFixer.Common;
@@ -14,45 +13,46 @@ using INotification = Prism.Interactivity.InteractionRequest.INotification;
 namespace DXVisualTestFixer.UI.ViewModels {
 	[UsedImplicitly]
 	public class ViewResourcesViewModel : BindableBase, INotification {
-		readonly Dispatcher Dispatcher;
-		readonly IMinioWorker minioWorker;
-		readonly ITestsService testsService;
-		RepositoryFileModel _CurrentFile;
+		readonly IMinioWorker _minioWorker;
+		readonly ITestsService _testsService;
 
-		ProgramStatus _Status;
-		List<RepositoryFileModel> _UsedFiles = new List<RepositoryFileModel>();
+		RepositoryFileModel _currentFile;
+		ProgramStatus _status;
+		List<RepositoryFileModel> _usedFiles = new List<RepositoryFileModel>();
 
 		public ViewResourcesViewModel(ITestsService testsService, IMinioWorker minioWorker) {
 			Commands = UICommand.GenerateFromMessageButton(MessageButton.OK, new DialogService(), MessageResult.OK);
-			Dispatcher = Dispatcher.CurrentDispatcher;
-			this.testsService = testsService;
-			this.minioWorker = minioWorker;
+			_testsService = testsService;
+			_minioWorker = minioWorker;
 			Status = ProgramStatus.Loading;
 			Task.Factory.StartNew(() => UpdateUsedFiles(testsService.ActualState.UsedFilesLinks, testsService.ActualState.Teams)).ConfigureAwait(false);
 		}
 
-		public IEnumerable<UICommand> Commands { get; }
+		[UsedImplicitly] public IEnumerable<UICommand> Commands { get; }
 
+		[UsedImplicitly]
 		public ProgramStatus Status {
-			get => _Status;
-			set => SetProperty(ref _Status, value);
+			[UsedImplicitly] get => _status;
+			set => SetProperty(ref _status, value);
 		}
 
+		[UsedImplicitly]
 		public List<RepositoryFileModel> UsedFiles {
-			get => _UsedFiles;
-			set => SetProperty(ref _UsedFiles, value);
+			get => _usedFiles;
+			set => SetProperty(ref _usedFiles, value);
 		}
 
+		[UsedImplicitly]
 		public RepositoryFileModel CurrentFile {
-			get => _CurrentFile;
-			set => SetProperty(ref _CurrentFile, value);
+			[UsedImplicitly] get => _currentFile;
+			set => SetProperty(ref _currentFile, value);
 		}
 
 		public string Title { get; set; } = "Resources Viewer";
 		public object Content { get; set; }
 
 		async Task UpdateUsedFiles(Dictionary<Repository, List<string>> usedFilesByRep, Dictionary<Repository, List<Team>> teams) {
-			var usedFiles = await RepositoryOptimizerViewModel.GetUsedFiles(usedFilesByRep, testsService, minioWorker);
+			var usedFiles = await RepositoryOptimizerViewModel.GetUsedFiles(usedFilesByRep, _testsService, _minioWorker);
 			UsedFiles = GetActualFiles(usedFilesByRep.Keys.Select(rep => rep.Version).Distinct().ToList(), usedFiles, teams);
 			if(UsedFiles.Count > 0)
 				CurrentFile = UsedFiles[0];
@@ -65,7 +65,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 			foreach(var team in teams[repository] ?? Enumerable.Empty<Team>()) {
 				if(!usedVersions.Contains(team.Version))
 					continue;
-				foreach(var teamPath in team.TeamInfos.Select(i => testsService.GetResourcePath(repository, i.TestResourcesPath)).Distinct()) {
+				foreach(var teamPath in team.TeamInfos.Select(i => _testsService.GetResourcePath(repository, i.TestResourcesPath)).Distinct()) {
 					if(!Directory.Exists(teamPath))
 						continue;
 					foreach(var file in Directory.EnumerateFiles(teamPath, "*", SearchOption.AllDirectories))

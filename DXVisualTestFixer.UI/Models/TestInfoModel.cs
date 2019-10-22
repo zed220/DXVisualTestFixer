@@ -1,16 +1,17 @@
 ﻿using DevExpress.Mvvm;
 using DXVisualTestFixer.Common;
+using JetBrains.Annotations;
 
 namespace DXVisualTestFixer.UI.ViewModels {
 	public class TestInfoModel : BindableBase, ITestInfoModel {
-		readonly MainViewModel ViewModel;
+		readonly MainViewModel _viewModel;
 
 		public TestInfoModel(MainViewModel viewModel, TestInfo testInfo) {
-			ViewModel = viewModel;
+			_viewModel = viewModel;
 			TestInfo = testInfo;
 		}
 
-		public bool ImageEquals => TestInfo.ImageEquals;
+		[UsedImplicitly] public bool ImageEquals => TestInfo.ImageEquals;
 
 		public TestInfo TestInfo { get; }
 		public TestState Valid => TestInfo.Valid;
@@ -28,7 +29,9 @@ namespace DXVisualTestFixer.UI.ViewModels {
 			set => SetCommitChange(value);
 		}
 
-		public string ToLog() => $"Team: {TestInfo?.Team.Name}, Version: {TestInfo?.Version}, Test: {TestInfo?.NameWithNamespace}, Theme: {TestInfo?.Theme}";
+		public string ToLog() {
+			return $"Team: {TestInfo?.Team.Name}, Version: {TestInfo?.Version}, Test: {TestInfo?.NameWithNamespace}, Theme: {TestInfo?.Theme}";
+		}
 
 		void SetCommitChange(bool value) {
 			if(Valid == TestState.Error)
@@ -38,9 +41,9 @@ namespace DXVisualTestFixer.UI.ViewModels {
 
 		void OnChanged() {
 			if(CommitChange)
-				ViewModel.CommitTest(this);
+				_viewModel.CommitTest(this);
 			else
-				ViewModel.UndoCommitTest(this);
+				_viewModel.UndoCommitTest(this);
 		}
 	}
 }

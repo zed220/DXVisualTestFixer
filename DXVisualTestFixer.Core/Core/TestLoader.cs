@@ -26,7 +26,7 @@ namespace DXVisualTestFixer.Core {
 		public DateTime? TestsBuildTime { get; }
 	}
 
-	internal class ElapsedTimeInfo : IElapsedTimeInfo {
+	class ElapsedTimeInfo : IElapsedTimeInfo {
 		public ElapsedTimeInfo(string name, TimeSpan time) {
 			Name = name;
 			Time = time;
@@ -59,9 +59,10 @@ namespace DXVisualTestFixer.Core {
 				if(failedTestsTasks.Count > 0) {
 					Task.WaitAll(failedTestsTasks.ToArray());
 					failedTestsTasks.ForEach(t => failedTests.AddRange(t.Result));
-				}	
+				}
 			}
-			if(buildNode == null || (!IsSuccessBuild(buildNode) && failedTests.Count == 0))
+
+			if(buildNode == null || !IsSuccessBuild(buildNode) && failedTests.Count == 0)
 				failedTests.Add(CorpDirTestInfo.CreateError(taskInfo, "BuildError", "BuildError", "BuildError"));
 
 			return new CorpDirTestInfoContainer(failedTests, FindUsedFilesLinks(buildNode).ToList(), FindElapsedTimes(buildNode), FindTeams(taskInfo.Repository.Version, buildNode), FindTimings(buildNode));
@@ -84,7 +85,9 @@ namespace DXVisualTestFixer.Core {
 			throw new NotSupportedException();
 		}
 
-		static bool IsSuccessBuild(XmlNode buildNode) => !buildNode.TryGetAttribute("error", out string _);
+		static bool IsSuccessBuild(XmlNode buildNode) {
+			return !buildNode.TryGetAttribute("error", out string _);
+		}
 
 		static (DateTime sources, DateTime tests)? FindTimings(XmlNode buildNode) {
 			var timingsNode = buildNode?.FindByName("Timings");
@@ -105,9 +108,13 @@ namespace DXVisualTestFixer.Core {
 			return new DateTime(Convert.ToInt32(dateSplit[0]), Convert.ToInt32(dateSplit[1]), Convert.ToInt32(dateSplit[2]), Convert.ToInt32(timeSplit[0]), Convert.ToInt32(timeSplit[1]), 0);
 		}
 
-		static IEnumerable<XmlElement> FindFailedTests(XmlNode buildNode) => buildNode.FindAllByName("test-results").SelectMany(FindAllFailedTests);
+		static IEnumerable<XmlElement> FindFailedTests(XmlNode buildNode) {
+			return buildNode.FindAllByName("test-results").SelectMany(FindAllFailedTests);
+		}
 
-		static IEnumerable<XmlElement> FindErrors(XmlNode buildNode) => buildNode.FindAllByName("root").SelectMany(root => root.FindAllByName("error").Cast<XmlElement>());
+		static IEnumerable<XmlElement> FindErrors(XmlNode buildNode) {
+			return buildNode.FindAllByName("root").SelectMany(root => root.FindAllByName("error").Cast<XmlElement>());
+		}
 
 		static IEnumerable<string> FindUsedFilesLinks(XmlNode buildNode) {
 			if(buildNode == null)
@@ -180,13 +187,12 @@ namespace DXVisualTestFixer.Core {
 		}
 
 		static IEnumerable<XmlElement> FindAllFailedTests(XmlNode testResults) {
-			foreach(XmlNode node in testResults.ChildNodes) {
+			foreach(XmlNode node in testResults.ChildNodes)
 				if(node is XmlElement xmlElement && xmlElement.Name == "test-case" && xmlElement.GetAttribute("success") == "False")
 					yield return xmlElement;
 				else
 					foreach(var subNode in FindAllFailedTests(node))
 						yield return subNode;
-			}
 		}
 
 		static XmlNode FindByName(this XmlNode element, string name) {
@@ -214,10 +220,9 @@ namespace DXVisualTestFixer.Core {
 				yield break;
 			}
 
-			foreach(var part in themedResultPaths) {
+			foreach(var part in themedResultPaths)
 				if(TryParseMessagePart(farmTaskInfo, testNameAndNamespace, part, out var info))
 					yield return info;
-			}
 		}
 
 		static bool TryParseMessagePart(IFarmTaskInfo farmTaskInfo, string testNameAndNamespace, string message, out CorpDirTestInfo info) {

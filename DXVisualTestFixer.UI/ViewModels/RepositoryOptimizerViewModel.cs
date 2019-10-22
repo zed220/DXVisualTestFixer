@@ -12,67 +12,66 @@ using DXVisualTestFixer.UI.Models;
 using JetBrains.Annotations;
 using Prism.Interactivity.InteractionRequest;
 using BindableBase = Prism.Mvvm.BindableBase;
+using INotification = Prism.Interactivity.InteractionRequest.INotification;
 
 namespace DXVisualTestFixer.UI.ViewModels {
 	[UsedImplicitly]
 	public class RepositoryOptimizerViewModel : BindableBase, IConfirmation {
-		readonly Dispatcher Dispatcher;
-		readonly IMinioWorker minioWorker;
-		readonly ITestsService testsService;
-		ObservableCollection<RepositoryFileModel> _RemovedFiles;
-		ProgramStatus _Status;
+		readonly Dispatcher _dispatcher;
+		readonly IMinioWorker _minioWorker;
+		readonly ITestsService _testsService;
 
-		ObservableCollection<RepositoryFileModel> _UnusedFiles;
+		ObservableCollection<RepositoryFileModel> _removedFiles;
+		ProgramStatus _status;
+		ObservableCollection<RepositoryFileModel> _unusedFiles;
 
 		public RepositoryOptimizerViewModel(ITestsService testsService, IMinioWorker minioWorker) {
-			Title = "Repository Optimizer";
-			Dispatcher = Dispatcher.CurrentDispatcher;
-			this.minioWorker = minioWorker;
-			this.testsService = testsService;
+			_dispatcher = Dispatcher.CurrentDispatcher;
+			_minioWorker = minioWorker;
+			_testsService = testsService;
 			RemovedFiles = new ObservableCollection<RepositoryFileModel>();
 			Commands = UICommand.GenerateFromMessageButton(MessageButton.OKCancel, new DialogService(), MessageResult.OK, MessageResult.Cancel);
-			Commands.Where(c => c.IsDefault).Single().Command = new DelegateCommand(() => Commit());
+			Commands.Single(c => c.IsDefault).Command = new DelegateCommand(() => Commit());
 			Status = ProgramStatus.Loading;
 			Task.Factory.StartNew(() => UpdateUnusedFiles(testsService.ActualState.UsedFilesLinks, testsService.ActualState.Teams)).ConfigureAwait(false);
 		}
 
+		[UsedImplicitly]
 		public ObservableCollection<RepositoryFileModel> UnusedFiles {
-			get => _UnusedFiles;
-			set => SetProperty(ref _UnusedFiles, value);
+			get => _unusedFiles;
+			set => SetProperty(ref _unusedFiles, value);
 		}
 
+		[UsedImplicitly]
 		public ObservableCollection<RepositoryFileModel> RemovedFiles {
-			get => _RemovedFiles;
-			set => SetProperty(ref _RemovedFiles, value);
+			get => _removedFiles;
+			set => SetProperty(ref _removedFiles, value);
 		}
 
+		[UsedImplicitly]
 		public ProgramStatus Status {
-			get => _Status;
-			set => SetProperty(ref _Status, value);
+			get => _status;
+			set => SetProperty(ref _status, value);
 		}
 
-		public IEnumerable<UICommand> Commands { get; }
-		public InteractionRequest<IConfirmation> ConfirmationRequest { get; } = new InteractionRequest<IConfirmation>();
+		[UsedImplicitly] public IEnumerable<UICommand> Commands { get; }
+
+		[UsedImplicitly] public InteractionRequest<IConfirmation> ConfirmationRequest { get; } = new InteractionRequest<IConfirmation>();
 
 		public bool Confirmed { get; set; }
-		public string Title { get; set; }
-		public object Content { get; set; }
+		string INotification.Title { get; set; } = "Repository Optimizer";
+		object INotification.Content { get; set; }
 
-		List<RepositoryFileModel> Commit() {
-			var removedFiltes = new List<RepositoryFileModel>();
-			foreach(var fileToRemove in RemovedFiles.ToArray())
-				if(File.Exists(fileToRemove.Path) && (File.GetAttributes(fileToRemove.Path) & FileAttributes.ReadOnly) != FileAttributes.ReadOnly) {
+		void Commit() {
+			foreach(var fileToRemove in RemovedFiles)
+				if(File.Exists(fileToRemove.Path) && (File.GetAttributes(fileToRemove.Path) & FileAttributes.ReadOnly) != FileAttributes.ReadOnly)
 					File.Delete(fileToRemove.Path);
-					removedFiltes.Add(fileToRemove);
-				}
-
 			Confirmed = true;
-			return removedFiltes;
 		}
 
 		async Task UpdateUnusedFiles(Dictionary<Repository, List<string>> usedFilesByRepLinks, Dictionary<Repository, List<Team>> teams) {
-			var result = await Task.WhenAll(usedFilesByRepLinks.ToList().Select(x => GetUnusedFilesByRepository(x.Key, x.Value, teams[x.Key], testsService, minioWorker)));
-			await Dispatcher.InvokeAsync(() => {
+			var result = await Task.WhenAll(usedFilesByRepLinks.ToList().Select(x => GetUnusedFilesByRepository(x.Key, x.Value, teams[x.Key], _testsService, _minioWorker)));
+			await _dispatcher.InvokeAsync(() => {
 					UnusedFiles = new ObservableCollection<RepositoryFileModel>(result.SelectMany(x => x));
 					Status = ProgramStatus.Idle;
 				}
@@ -109,7 +108,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 		static async Task<List<RepositoryFileModel>> GetUnusedFilesByRepository(Repository repository, List<string> usedFilesByRepLinks, List<Team> teams, ITestsService testsService, IMinioWorker minioWorker) {
 			var usedFiles = await GetUsedFilesByRepository(repository, usedFilesByRepLinks, testsService, minioWorker).ConfigureAwait(false);
 			var result = new List<RepositoryFileModel>();
-			foreach(var team in teams)
+			foreach(var team in teams ?? Enumerable.Empty<Team>())
 			foreach(var teamPath in team.TeamInfos.Select(i => testsService.GetResourcePath(repository, i.TestResourcesPath)).Distinct()) {
 				if(!Directory.Exists(teamPath))
 					continue;

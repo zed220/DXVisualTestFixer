@@ -6,7 +6,7 @@ using System.Windows.Input;
 using DevExpress.Xpf.Bars.Native;
 
 namespace DXVisualTestFixer.UI.Controls.Native {
-	internal class FocusedPixelSynchronizer : ControlsRegistrator<ScrollViewer> {
+	class FocusedPixelSynchronizer : ControlsRegistrator<ScrollViewer> {
 		bool _IsEnabled;
 
 		public bool IsEnabled {
