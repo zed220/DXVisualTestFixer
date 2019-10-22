@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using DXVisualTestFixer.Common;
-using Microsoft.Practices.ServiceLocation;
+using CommonServiceLocator;
 
 namespace DXVisualTestFixer.Core.Configuration {
 	class Config : IConfig {

@@ -1,0 +1,52 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.0</TargetFramework>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+      <OutputPath>..\bin\Build\</OutputPath>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="LibGit2Sharp" Version="0.27.0-preview-0029" />
+      <PackageReference Include="Minio" Version="3.1.6" />
+      <PackageReference Include="Prism.Wpf" Version="7.2.0.1367" />
+      <PackageReference Include="SharpSerializer" Version="3.0.1" />
+      <PackageReference Include="System.Linq" Version="4.3.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="Properties\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="Properties\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Properties\**" />
+      <None Update="git2-572e4d8.dll">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="git2-7ce88e6.dll">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\DXVisualTestFixer.Common\DXVisualTestFixer.Common.NetCore.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="DXVisualTestFixer.Common.NetCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>..\bin\Build\netcoreapp3.0\DXVisualTestFixer.Common.NetCore.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+</Project>
