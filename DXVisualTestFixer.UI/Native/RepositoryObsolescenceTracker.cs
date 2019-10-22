@@ -2,7 +2,7 @@ using System;
 using System.Windows.Threading;
 
 namespace DXVisualTestFixer.UI.Native {
-	internal class RepositoryObsolescenceTracker {
+	class RepositoryObsolescenceTracker {
 		readonly DispatcherTimer timer;
 
 		public RepositoryObsolescenceTracker(Action onObsolescence) {

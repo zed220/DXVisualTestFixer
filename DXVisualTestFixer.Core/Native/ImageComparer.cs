@@ -3,12 +3,14 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.InteropServices;
+using JetBrains.Annotations;
 
 namespace DXVisualTestFixer.Native {
 	public static class ImageHelper {
 		[DllImport("msvcrt.dll", CallingConvention = CallingConvention.Cdecl)]
 		static extern int memcmp(IntPtr b1, IntPtr b2, long count);
 
+		[UsedImplicitly]
 		public static bool CompareMemCmp(Bitmap b1, Bitmap b2) {
 			if(b1 == null != (b2 == null)) return false;
 			if(b1.Size != b2.Size) return false;
@@ -31,6 +33,7 @@ namespace DXVisualTestFixer.Native {
 			}
 		}
 
+		[UsedImplicitly]
 		public static unsafe bool CompareUnsafe(Bitmap b1, Bitmap b2) {
 			if(b1 == null != (b2 == null)) return false;
 			if(b1.Size != b2.Size) return false;
@@ -57,6 +60,7 @@ namespace DXVisualTestFixer.Native {
 			}
 		}
 
+		[UsedImplicitly]
 		public static unsafe int DeltaUnsafe(Bitmap b1, Bitmap b2) {
 			if(b1 == null != (b2 == null)) return -1;
 			if(b1.Size != b2.Size) return -1;

@@ -18,9 +18,9 @@ namespace DXVisualTestFixer.Core {
 		readonly ILoadingProgressController loadingProgressController;
 		readonly ILoggingService loggingService;
 
-		string _CurrentFilter;
-
 		readonly Dictionary<IFarmTaskInfo, TestInfoCached> RealUrlCache = new Dictionary<IFarmTaskInfo, TestInfoCached>();
+
+		string _CurrentFilter;
 
 		public TestsService(ILoadingProgressController loadingProgressController, IConfigSerializer configSerializer, ILoggingService loggingService, IFarmIntegrator farmIntegrator) {
 			this.loadingProgressController = loadingProgressController;
@@ -49,7 +49,9 @@ namespace DXVisualTestFixer.Core {
 			ActualState = actualState;
 		}
 
-		public string GetResourcePath(Repository repository, string relativePath) => Path.Combine(repository.Path, relativePath);
+		public string GetResourcePath(Repository repository, string relativePath) {
+			return Path.Combine(repository.Path, relativePath);
+		}
 
 		public bool ApplyTest(TestInfo test, Func<string, bool> checkoutFunc) {
 			var actualTestResourceName = GetTestResourceName(test, false);
@@ -71,6 +73,7 @@ namespace DXVisualTestFixer.Core {
 				using var ms = new MemoryStream(File.ReadAllBytes(xmlPath));
 				test.TextCurrentSha = GetSHA256(ms);
 			}
+
 			if(test.ImageCurrentSha == null) {
 				using var ms = new MemoryStream(test.ImageCurrentArrLazy.Value);
 				test.ImageCurrentSha = GetSHA256(ms);
@@ -111,11 +114,13 @@ namespace DXVisualTestFixer.Core {
 			await Task.WhenAll(allTasks);
 			return result;
 		}
+
 		async Task<TestInfoCached> LoadTestsCoreAsync(IFarmTaskInfo farmTaskInfo) {
 			if(RealUrlCache.TryGetValue(farmTaskInfo, out var cache) && cache.RealUrl == farmTaskInfo.Url) {
 				await ActualizeTestsAsync(cache.TestList);
 				return cache;
 			}
+
 			var allTasks = new List<Task<TestInfo>>();
 			var corpDirTestInfoContainer = LoadFromFarmTaskInfo(farmTaskInfo, farmTaskInfo.Url);
 			foreach(var corpDirTestInfo in corpDirTestInfoContainer.FailedTests) {
@@ -138,7 +143,9 @@ namespace DXVisualTestFixer.Core {
 			return corpDirTestInfoContainer;
 		}
 
-		async Task<TestInfo> LoadTestInfoAsync(CorpDirTestInfo corpDirTestInfo, List<Team> teams) => await LoadTestInfo(corpDirTestInfo, teams);
+		async Task<TestInfo> LoadTestInfoAsync(CorpDirTestInfo corpDirTestInfo, List<Team> teams) {
+			return await LoadTestInfo(corpDirTestInfo, teams);
+		}
 
 		async Task<TestInfo> LoadTestInfo(CorpDirTestInfo corpDirTestInfo, List<Team> teams) {
 			loggingService.SendMessage($"Start load test v{corpDirTestInfo.FarmTaskInfo.Repository.Version} {corpDirTestInfo.TestName}.{corpDirTestInfo.ThemeName}");
@@ -329,17 +336,16 @@ namespace DXVisualTestFixer.Core {
 
 				if(line < leftArr.Length) sbCompact.AppendLine("-" + leftArr[line]);
 				if(line < rightArr.Length) sbCompact.AppendLine("+" + rightArr[line]);
-				if(!diffLines.Contains(line + 1)) {
-					inRegion = false;
-					for(var i = line + 1; i < line + 3; i++) {
-						if(i < 0)
-							continue;
-						if(i < leftArr.Length) sbCompact.AppendLine(leftArr[i]);
-						if(i < rightArr.Length) sbCompact.AppendLine(rightArr[i]);
-					}
-
-					if(diffLines.IndexOf(line) == diffLines.Count - 1 && line < Math.Min(leftArr.Length, rightArr.Length)) sbCompact.AppendLine("<...>");
+				if(diffLines.Contains(line + 1)) continue;
+				inRegion = false;
+				for(var i = line + 1; i < line + 3; i++) {
+					if(i < 0)
+						continue;
+					if(i < leftArr.Length) sbCompact.AppendLine(leftArr[i]);
+					if(i < rightArr.Length) sbCompact.AppendLine(rightArr[i]);
 				}
+
+				if(diffLines.IndexOf(line) == diffLines.Count - 1 && line < Math.Min(leftArr.Length, rightArr.Length)) sbCompact.AppendLine("<...>");
 			}
 
 			return sbCompact.ToString();
@@ -373,7 +379,9 @@ namespace DXVisualTestFixer.Core {
 			});
 		}
 
-		async Task UpdateTestStatusAsync(TestInfo test) => await Task.Factory.StartNew(() => UpdateTestStatus(test));
+		async Task UpdateTestStatusAsync(TestInfo test) {
+			await Task.Factory.StartNew(() => UpdateTestStatus(test));
+		}
 
 		void UpdateTestStatus(TestInfo test) {
 			if(test.Valid == TestState.Error)
@@ -453,22 +461,18 @@ namespace DXVisualTestFixer.Core {
 			if(test.Optimized)
 				testResourceName = testResourceName + "_optimized";
 			var xmlPath = testResourceName + ".xml";
-			if(checkExists && !File.Exists(xmlPath)) {
-				test.LogFileNotFound(xmlPath);
-				return null;
-			}
-
-			return xmlPath;
+			return checkExists && !CheckFileExistsAndLog(test, xmlPath) ? null : xmlPath;
 		}
 
 		static string GetImageFilePath(string testResourceName, TestInfo test, bool checkExists) {
 			var imagePath = testResourceName + ".png";
-			if(checkExists && !File.Exists(imagePath)) {
-				test.LogFileNotFound(imagePath);
-				return null;
-			}
+			return checkExists && !CheckFileExistsAndLog(test, imagePath) ? null : imagePath;
+		}
 
-			return imagePath;
+		static bool CheckFileExistsAndLog(TestInfo test, string filePath) {
+			if(File.Exists(filePath)) return true;
+			test.LogFileNotFound(filePath);
+			return false;
 		}
 
 		static bool SafeDeleteFile(string path, Func<string, bool> checkoutFunc) {
@@ -476,14 +480,11 @@ namespace DXVisualTestFixer.Core {
 				return true;
 			if((File.GetAttributes(path) & FileAttributes.ReadOnly) != FileAttributes.ReadOnly)
 				return true;
-			if(checkoutFunc(path)) {
-				if((File.GetAttributes(path) & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
-					return false;
-				File.Delete(path);
-				return true;
-			}
-
-			return false;
+			if(!checkoutFunc(path)) return false;
+			if((File.GetAttributes(path) & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+				return false;
+			File.Delete(path);
+			return true;
 		}
 
 		class TextDifferenceInfo {

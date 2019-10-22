@@ -333,7 +333,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 			foreach(var group in TestService.ActualState.ChangedTests.GroupBy(t => t.Repository)) {
 				var commitResult = await _GitWorker.Commit(group.Key, commitCaption);
 				if(commitResult != GitCommitResult.Error) continue;
-				Dispatcher.Invoke(() => notificationService.DoNotification("Pushing failed", $"Can't push repository {@group.Key.Version} that located at {@group.Key.Path}", MessageBoxImage.Error));
+				Dispatcher.Invoke(() => notificationService.DoNotification("Pushing failed", $"Can't push repository {group.Key.Version} that located at {group.Key.Path}", MessageBoxImage.Error));
 				return await Task.FromResult(false);
 			}
 
@@ -390,8 +390,6 @@ namespace DXVisualTestFixer.UI.ViewModels {
 			TestService.ActualState.ChangedTests.Remove(testInfoModel.TestInfo);
 		}
 
-		#region private properties
-
 		IConfig Config;
 
 		List<ITestInfoModel> _Tests;
@@ -404,7 +402,5 @@ namespace DXVisualTestFixer.UI.ViewModels {
 		List<SolutionModel> _Solutions;
 		readonly IGitWorker _GitWorker;
 		List<TimingInfo> _TimingInfo = new List<TimingInfo>();
-
-		#endregion
 	}
 }

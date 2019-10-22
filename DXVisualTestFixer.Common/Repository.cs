@@ -5,8 +5,12 @@ namespace DXVisualTestFixer.Common {
 		public string Version { get; set; }
 		public string Path { get; set; }
 
-		public bool IsDownloaded() => File.Exists(System.IO.Path.Combine(Path, "VisualTestsConfig.xml"));
+		public bool IsDownloaded() {
+			return File.Exists(System.IO.Path.Combine(Path, "VisualTestsConfig.xml"));
+		}
 
-		public string GetTaskName() => $"Test.v{Version} WPF VisualTests";
+		public string GetTaskName() {
+			return $"Test.v{Version} WPF VisualTests";
+		}
 	}
 }

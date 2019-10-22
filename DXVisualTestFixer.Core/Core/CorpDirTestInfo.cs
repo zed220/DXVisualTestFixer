@@ -126,9 +126,7 @@ namespace DXVisualTestFixer.Core {
 					continue;
 				}
 
-				if(sha.StartsWith("png_instant")) {
-					temp.InstantImageSHA = ExtractSHA(sha);
-				}
+				if(sha.StartsWith("png_instant")) temp.InstantImageSHA = ExtractSHA(sha);
 			}
 
 			if(temp.CurrentTextEditPath == null || temp.CurrentImagePath == null) return false; // && temp.ImageDiffPath != null
@@ -186,7 +184,7 @@ namespace DXVisualTestFixer.Core {
 		}
 	}
 
-	internal class ThemeNameComparer : IComparer<string> {
+	class ThemeNameComparer : IComparer<string> {
 		public int Compare(string x, string y) {
 			if(x.Length > y.Length)
 				return -1;
