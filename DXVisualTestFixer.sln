@@ -23,12 +23,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DXVisualTestFixer.Common", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DXVisualTestFixer.FarmIntegrator2", "DXVisualTestFixer.FarmIntegrator2\DXVisualTestFixer.FarmIntegrator2.csproj", "{A3DE4F31-4D45-4CDB-9460-39F77F05E42F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DXVisualTestFixer.Core.NetCore", "DXVisualTestFixer.Core\DXVisualTestFixer.Core.NetCore.csproj", "{D13F0025-C0CE-49D6-A90B-DD758FA64B17}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DXVisualTestFixer.Common.NetCore", "DXVisualTestFixer.Common\DXVisualTestFixer.Common.NetCore.csproj", "{9DB3941F-95CF-4101-A1EB-B3AFBBDACCB6}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DXVisualTestFixer.FarmIntegrator2.NetCore", "DXVisualTestFixer.FarmIntegrator2\DXVisualTestFixer.FarmIntegrator2.NetCore.csproj", "{01610ACE-DFA7-48D5-A9E5-D5474DA09D50}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -66,24 +60,6 @@ Global
 		{A3DE4F31-4D45-4CDB-9460-39F77F05E42F}.DebugPublish|Any CPU.Build.0 = DebugPublish|Any CPU
 		{A3DE4F31-4D45-4CDB-9460-39F77F05E42F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A3DE4F31-4D45-4CDB-9460-39F77F05E42F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D13F0025-C0CE-49D6-A90B-DD758FA64B17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D13F0025-C0CE-49D6-A90B-DD758FA64B17}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D13F0025-C0CE-49D6-A90B-DD758FA64B17}.DebugPublish|Any CPU.ActiveCfg = Debug|Any CPU
-		{D13F0025-C0CE-49D6-A90B-DD758FA64B17}.DebugPublish|Any CPU.Build.0 = Debug|Any CPU
-		{D13F0025-C0CE-49D6-A90B-DD758FA64B17}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D13F0025-C0CE-49D6-A90B-DD758FA64B17}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9DB3941F-95CF-4101-A1EB-B3AFBBDACCB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9DB3941F-95CF-4101-A1EB-B3AFBBDACCB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9DB3941F-95CF-4101-A1EB-B3AFBBDACCB6}.DebugPublish|Any CPU.ActiveCfg = Debug|Any CPU
-		{9DB3941F-95CF-4101-A1EB-B3AFBBDACCB6}.DebugPublish|Any CPU.Build.0 = Debug|Any CPU
-		{9DB3941F-95CF-4101-A1EB-B3AFBBDACCB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9DB3941F-95CF-4101-A1EB-B3AFBBDACCB6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{01610ACE-DFA7-48D5-A9E5-D5474DA09D50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{01610ACE-DFA7-48D5-A9E5-D5474DA09D50}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{01610ACE-DFA7-48D5-A9E5-D5474DA09D50}.DebugPublish|Any CPU.ActiveCfg = Debug|Any CPU
-		{01610ACE-DFA7-48D5-A9E5-D5474DA09D50}.DebugPublish|Any CPU.Build.0 = Debug|Any CPU
-		{01610ACE-DFA7-48D5-A9E5-D5474DA09D50}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{01610ACE-DFA7-48D5-A9E5-D5474DA09D50}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

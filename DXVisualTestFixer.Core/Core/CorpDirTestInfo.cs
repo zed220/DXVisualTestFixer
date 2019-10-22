@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using CommonServiceLocator;
 using DXVisualTestFixer.Common;
+using Microsoft.Practices.ServiceLocation;
 
 namespace DXVisualTestFixer.Core {
 	public class CorpDirTestInfo {
