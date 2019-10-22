@@ -126,6 +126,8 @@
     <Compile Include="Core\CorpDirTestInfo.cs" />
     <Compile Include="Core\GitWorker.cs" />
     <Compile Include="Core\MinioWorker.cs" />
+    <Compile Include="Core\Native\TestInfoCached.cs" />
+    <Compile Include="Core\Native\TestInfoContainer.cs" />
     <Compile Include="Native\ImageComparer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Core\TestLoader.cs" />

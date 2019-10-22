@@ -7,104 +7,9 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using DXVisualTestFixer.Common;
-using DXVisualTestFixer.Native;
 using Prism.Mvvm;
 
 namespace DXVisualTestFixer.Core {
-	internal class TestInfoCached {
-		public TestInfoCached(Repository repository, string realUrl, List<TestInfo> testList, CorpDirTestInfoContainer container) {
-			Repository = repository;
-			RealUrl = realUrl;
-			TestList = testList;
-			UsedFilesLinks = container.UsedFilesLinks;
-			ElapsedTimes = container.ElapsedTimes;
-			Teams = container.Teams;
-			SourcesBuildTime = container.SourcesBuildTime;
-			TestsBuildTime = container.TestsBuildTime;
-		}
-
-		public Repository Repository { get; }
-		public string RealUrl { get; }
-		public List<TestInfo> TestList { get; }
-		public List<string> UsedFilesLinks { get; }
-		public List<IElapsedTimeInfo> ElapsedTimes { get; }
-		public List<Team> Teams { get; }
-		public DateTime? SourcesBuildTime { get; }
-		public DateTime? TestsBuildTime { get; }
-	}
-
-	internal class TestInfoContainer : ITestInfoContainer {
-		public TestInfoContainer() {
-			TestList = new List<TestInfo>();
-			UsedFilesLinks = new Dictionary<Repository, List<string>>();
-			ElapsedTimes = new Dictionary<Repository, List<IElapsedTimeInfo>>();
-			Teams = new Dictionary<Repository, List<Team>>();
-			ChangedTests = new List<TestInfo>();
-			Timings = new List<TimingInfo>();
-		}
-
-		public List<TestInfo> TestList { get; }
-		public Dictionary<Repository, List<string>> UsedFilesLinks { get; }
-		public Dictionary<Repository, List<IElapsedTimeInfo>> ElapsedTimes { get; }
-		public Dictionary<Repository, List<Team>> Teams { get; }
-		public List<TimingInfo> Timings { get; }
-		public List<TestInfo> ChangedTests { get; }
-
-		public async Task UpdateProblems() {
-			await Task.Factory.StartNew(() => {
-				Parallel.ForEach(TestList, test => {
-					test.Problem = int.MinValue;
-					test.ImageDiffsCount = test.PredefinedImageDiffsCount ?? CalculateImageDiffsCount(test);
-				});
-			}).ConfigureAwait(false);
-
-			var diffs = new List<int>();
-			TestList.ForEach(t => diffs.Add(t.ImageDiffsCount));
-			diffs.Sort();
-			diffs = diffs.Distinct().ToList();
-			var problems = new Dictionary<int, int>();
-			var proplemNumber = 1;
-			var currentD = 0;
-			foreach(var d in diffs)
-				if(currentD * 1.2d < d) {
-					problems.Add(currentD, proplemNumber++);
-					currentD = d;
-				}
-
-			if(!problems.ContainsKey(currentD))
-				problems.Add(currentD, proplemNumber++);
-			var namedProblems = new Dictionary<int, HashSet<string>>();
-			foreach(var d in problems)
-			foreach(var test in TestList)
-				if(test.ImageDiffsCount < d.Key * 1.2d && test.Problem == int.MinValue) {
-					test.Problem = d.Value;
-					HashSet<string> tests = null;
-					if(!namedProblems.TryGetValue(d.Value, out tests))
-						namedProblems[d.Value] = tests = new HashSet<string>();
-					if(!tests.Contains(test.Team.Name))
-						tests.Add(test.Team.Name);
-				}
-
-			foreach(var test in TestList) {
-				if(!namedProblems.TryGetValue(test.Problem, out var namedProblemsList))
-					namedProblemsList = new HashSet<string>();
-				var problemNumber = $"{test.Problem:D2}";
-				test.ProblemName = $"#{problemNumber} ({string.Join(", ", namedProblemsList)})";
-			}
-		}
-
-		int CalculateImageDiffsCount(TestInfo test) {
-			if(test.ImageDiffArrLazy.Value == null)
-				return int.MaxValue;
-			if(TestsService.CompareSHA256(test.ImageBeforeSha, test.ImageCurrentSha))
-				return int.MaxValue;
-			if(test.ImageBeforeSha == null || test.ImageCurrentSha == null)
-				return int.MaxValue;
-			using var imgDiff = ImageHelper.CreateImageFromArray(test.ImageDiffArrLazy.Value);
-			return ImageHelper.RedCount(imgDiff);
-		}
-	}
-
 	public class TestsService : BindableBase, ITestsService {
 		static readonly object lockLoadFromDisk = new object();
 		static readonly object lockLoadFromNet = new object();
@@ -144,9 +49,7 @@ namespace DXVisualTestFixer.Core {
 			ActualState = actualState;
 		}
 
-		public string GetResourcePath(Repository repository, string relativePath) {
-			return Path.Combine(repository.Path, relativePath);
-		}
+		public string GetResourcePath(Repository repository, string relativePath) => Path.Combine(repository.Path, relativePath);
 
 		public bool ApplyTest(TestInfo test, Func<string, bool> checkoutFunc) {
 			var actualTestResourceName = GetTestResourceName(test, false);
@@ -208,7 +111,6 @@ namespace DXVisualTestFixer.Core {
 			await Task.WhenAll(allTasks);
 			return result;
 		}
-
 		async Task<TestInfoCached> LoadTestsCoreAsync(IFarmTaskInfo farmTaskInfo) {
 			if(RealUrlCache.TryGetValue(farmTaskInfo, out var cache) && cache.RealUrl == farmTaskInfo.Url) {
 				await ActualizeTestsAsync(cache.TestList);
