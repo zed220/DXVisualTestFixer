@@ -2,22 +2,22 @@
 using System.ComponentModel;
 using System.Windows.Input;
 using DXVisualTestFixer.Common;
+using JetBrains.Annotations;
 using Prism.Commands;
 using Prism.Interactivity.InteractionRequest;
 using Prism.Mvvm;
 
 namespace DXVisualTestFixer.UI.ViewModels {
+	[UsedImplicitly]
 	public class ShellViewModel : BindableBase {
-		readonly IDXNotification notification;
-		readonly INotificationService notificationService;
-		readonly IUpdateService updateService;
+		readonly IDXNotification _notification;
+		readonly IUpdateService _updateService;
 
-		UpdateState _UpdateState = UpdateState.None;
+		UpdateState _updateState = UpdateState.None;
 
 		public ShellViewModel(IUpdateService updateService, IDXNotification notification, INotificationService notificationService) {
-			this.updateService = updateService;
-			this.notification = notification;
-			this.notificationService = notificationService;
+			_updateService = updateService;
+			_notification = notification;
 			notificationService.Notification += NotificationService_Notification;
 			Commands = new List<ICommand> {new DelegateCommand(Update).ObservesCanExecute(() => HasUpdate)};
 			if(updateService.HasUpdate) {
@@ -31,32 +31,33 @@ namespace DXVisualTestFixer.UI.ViewModels {
 			updateService.Start();
 		}
 
-		public InteractionRequest<INotification> NotificationRequest { get; } = new InteractionRequest<INotification>();
+		[UsedImplicitly] public InteractionRequest<INotification> NotificationRequest { get; } = new InteractionRequest<INotification>();
 
-		public IEnumerable<ICommand> Commands { get; }
+		[UsedImplicitly] public IEnumerable<ICommand> Commands { get; }
 
+		[UsedImplicitly]
 		public UpdateState UpdateState {
-			get => _UpdateState;
+			get => _updateState;
 			set {
-				SetProperty(ref _UpdateState, value);
+				SetProperty(ref _updateState, value);
 				RaisePropertyChanged(nameof(HasUpdate));
 			}
 		}
 
-		public bool HasUpdate => UpdateState == UpdateState.Ready;
+		bool HasUpdate => UpdateState == UpdateState.Ready;
 
 		void NotificationService_Notification(object sender, INotificationServiceArgs e) {
-			ViewModelBase.SetupNotification(notification, e.Title, e.Content, e.Image);
-			NotificationRequest.Raise(notification);
+			ViewModelBase.SetupNotification(_notification, e.Title, e.Content, e.Image);
+			NotificationRequest.Raise(_notification);
 		}
 
 		void UpdateService_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if(updateService.HasUpdate) {
+			if(_updateService.HasUpdate) {
 				UpdateState = UpdateState.Ready;
 				return;
 			}
 
-			if(updateService.IsInUpdate) {
+			if(_updateService.IsInUpdate) {
 				UpdateState = UpdateState.Downloading;
 				return;
 			}
@@ -65,7 +66,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 		}
 
 		void Update() {
-			updateService.Update();
+			_updateService.Update();
 		}
 	}
 

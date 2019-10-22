@@ -3,21 +3,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:DXVisualTestFixer.UI.Views"
-             xmlns:core="http://schemas.dxvisualtests.com/winfx/2008/xaml/core"
              xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
              xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
-             xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
              xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
-             xmlns:dxc="http://schemas.devexpress.com/winfx/2008/xaml/controls"
-             xmlns:dxdi="http://schemas.devexpress.com/winfx/2008/xaml/dialogs"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-             xmlns:behaviors="clr-namespace:DXVisualTestFixer.UI.Behaviors"
-             xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
              xmlns:prism="http://prismlibrary.com/"
              xmlns:prismcommon="clr-namespace:DXVisualTestFixer.UI.PrismCommon"
              xmlns:converters="clr-namespace:DXVisualTestFixer.UI.Converters"
-             xmlns:common="clr-namespace:DXVisualTestFixer.Common;assembly=DXVisualTestFixer.Common"
              xmlns:controls="clr-namespace:DXVisualTestFixer.UI.Controls"
              prism:ViewModelLocator.AutoWireViewModel="False"
              mc:Ignorable="d"
@@ -114,19 +106,6 @@
                 </dxe:ListBoxEdit>
             </Grid>
         </dx:DXTabItem>
-        <!--<dx:DXTabItem Header="Application">
-            <dxlc:LayoutControl Orientation="Vertical" VerticalAlignment="Top">
-                <dxlc:LayoutItem Label="Default theme: " VerticalAlignment="Center">
-                    <dxe:ComboBoxEdit 
-                            EditValue="{Binding Path=ThemeName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                            IsTextEditable="False"
-                            ItemsSource="{x:Static dx:Theme.Themes}" 
-                            DisplayMember="FullName" 
-                            ValueMember="Name">
-                    </dxe:ComboBoxEdit>
-                </dxlc:LayoutItem>
-            </dxlc:LayoutControl>
-        </dx:DXTabItem>-->
     </dx:DXTabControl>
 
 </UserControl>

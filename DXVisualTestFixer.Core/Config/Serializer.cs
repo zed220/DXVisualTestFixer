@@ -7,20 +7,6 @@ using Polenter.Serialization.Advanced.Serializing;
 
 namespace DXVisualTestFixer.Core.Configuration {
 	public static class Serializer {
-		class LegacyTypeNameConverter : ITypeNameConverter {
-			readonly TypeNameConverter innerConverter = new TypeNameConverter();
-
-			public Type ConvertToType(string typeName) {
-				if(typeName != null && typeName.Contains("Config"))
-					return typeof(Config);
-				if(typeName != null && typeName.Contains("Team"))
-					return typeof(Team);
-				return innerConverter.ConvertToType(typeName);
-			}
-
-			public string ConvertToTypeName(Type type) => innerConverter.ConvertToTypeName(type);
-		}
-		
 		public static void Serialize<T>(string path, T value) {
 			var settings = new SharpSerializerXmlSettings();
 			settings.IncludeAssemblyVersionInTypeName = false;
@@ -44,6 +30,22 @@ namespace DXVisualTestFixer.Core.Configuration {
 			settings.AdvancedSettings.TypeNameConverter = new LegacyTypeNameConverter();
 			var serializer = new SharpSerializer(settings);
 			return (T) serializer.Deserialize(path);
+		}
+
+		class LegacyTypeNameConverter : ITypeNameConverter {
+			readonly TypeNameConverter innerConverter = new TypeNameConverter();
+
+			public Type ConvertToType(string typeName) {
+				if(typeName != null && typeName.Contains("Config"))
+					return typeof(Config);
+				if(typeName != null && typeName.Contains("Team"))
+					return typeof(Team);
+				return innerConverter.ConvertToType(typeName);
+			}
+
+			public string ConvertToTypeName(Type type) {
+				return innerConverter.ConvertToTypeName(type);
+			}
 		}
 	}
 }

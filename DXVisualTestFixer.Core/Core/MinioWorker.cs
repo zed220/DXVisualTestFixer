@@ -1,15 +1,16 @@
-﻿using DXVisualTestFixer.Common;
-using Minio;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
+using DXVisualTestFixer.Common;
+using Minio;
 
 namespace DXVisualTestFixer.Core {
 	public class MinioWorker : IMinioWorker {
-		private const string bucketName = "visualtests";
-		
+		const string bucketName = "visualtests";
+
+
 		static readonly MinioClient minio = new MinioClient("gitlabci4-minio:9000", "xpfminio", "xpfminiostorage");
 
 		public async Task<string> Download(string path) {
@@ -25,10 +26,11 @@ namespace DXVisualTestFixer.Core {
 				return null;
 			}
 		}
+
 		public async Task<string[]> Discover(string path) {
 			try {
 				var result = new List<string>();
-				var observable = minio.ListObjectsAsync(bucketName, path, false);
+				var observable = minio.ListObjectsAsync(bucketName, path);
 				using var subscription = observable.Subscribe
 				(
 					item => result.Add(item.Key),

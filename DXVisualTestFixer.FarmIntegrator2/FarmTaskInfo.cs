@@ -1,7 +1,7 @@
 ﻿using DXVisualTestFixer.Common;
 
 namespace DXVisualTestFixer.FarmIntegrator2 {
-	internal class FarmTaskInfo : IFarmTaskInfo {
+	class FarmTaskInfo : IFarmTaskInfo {
 		public FarmTaskInfo(Repository repository, string url) {
 			Repository = repository;
 			Url = url;

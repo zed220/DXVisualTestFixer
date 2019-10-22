@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using DXVisualTestFixer.Common;
 using ThoughtWorks.CruiseControl.Remote;
 
@@ -11,6 +10,8 @@ namespace DXVisualTestFixer.FarmIntegrator2 {
 			return repositories.Select(repository => new FarmTaskInfo(repository, GetUrl(serverRemotingClient, repository.GetTaskName()))).Cast<IFarmTaskInfo>().ToList();
 		}
 
-		static string GetUrl(CruiseServerClientBase serverRemotingClient, string taskName) => $"http://ccnet.devexpress.devx/ccnet/server/farm/project/{taskName.Replace(" ", "%20")}/build/{serverRemotingClient.GetLatestBuildName(taskName)}/ViewBuildReport.aspx";
+		static string GetUrl(CruiseServerClientBase serverRemotingClient, string taskName) {
+			return $"http://ccnet.devexpress.devx/ccnet/server/farm/project/{taskName.Replace(" ", "%20")}/build/{serverRemotingClient.GetLatestBuildName(taskName)}/ViewBuildReport.aspx";
+		}
 	}
 }

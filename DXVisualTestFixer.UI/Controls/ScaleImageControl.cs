@@ -90,9 +90,9 @@ namespace DXVisualTestFixer.UI.Controls {
 		}
 
 		static Bitmap BitmapSourceToBitmap(BitmapSource srs) {
-			using var outStream = new MemoryStream();
 			BitmapEncoder enc = new BmpBitmapEncoder();
 			enc.Frames.Add(BitmapFrame.Create(srs, null, null, null));
+			using var outStream = new MemoryStream();
 			enc.Save(outStream);
 			return new Bitmap(outStream);
 		}
@@ -106,7 +106,7 @@ namespace DXVisualTestFixer.UI.Controls {
 
 		static Bitmap GetSourceImagePart(BitmapSource imageSource, int scale, Point offset, Size viewportSize) {
 			using var image = BitmapSourceToBitmap(imageSource);
-			offset = CorrectOffset(image, scale, offset, viewportSize);
+			offset = CorrectOffset(image, scale, offset);
 
 			var scaledViewportSize = new Size(viewportSize.Width / scale + 1, viewportSize.Height / scale + 1);
 
@@ -126,7 +126,7 @@ namespace DXVisualTestFixer.UI.Controls {
 			return destImage;
 		}
 
-		static Point CorrectOffset(Image image, int scale, Point offset, Size viewportSize) {
+		static Point CorrectOffset(Image image, int scale, Point offset) {
 			return new Point(offset.X / scale, offset.Y / scale);
 		}
 
@@ -146,11 +146,10 @@ namespace DXVisualTestFixer.UI.Controls {
 				for(var x = scale; x < destRect.Width; x += scale) graphics.DrawLine(pen, x, 0, x, destRect.Height);
 				for(var y = scale; y < destRect.Height; y += scale) graphics.DrawLine(pen, 0, y, destRect.Width, y);
 			}
-
 			return Convert(destImage);
 		}
 
-		static Graphics CreateGraphics(Bitmap destImage) {
+		static Graphics CreateGraphics(Image destImage) {
 			var graphics = Graphics.FromImage(destImage);
 			graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
 			graphics.CompositingQuality = CompositingQuality.AssumeLinear;
@@ -161,7 +160,7 @@ namespace DXVisualTestFixer.UI.Controls {
 		}
 
 		[DllImport("gdi32.dll")]
-		public static extern bool DeleteObject(IntPtr hObject);
+		static extern bool DeleteObject(IntPtr hObject);
 
 		static BitmapSource Convert(Bitmap src) {
 			var intPtr = src.GetHbitmap();
@@ -309,8 +308,6 @@ namespace DXVisualTestFixer.UI.Controls {
 			}
 		}
 
-		#region IScrollInfo
-
 		public bool CanVerticallyScroll { get; set; }
 
 		public bool CanHorizontallyScroll { get; set; }
@@ -390,7 +387,5 @@ namespace DXVisualTestFixer.UI.Controls {
 		public Rect MakeVisible(Visual visual, Rect rectangle) {
 			throw new NotImplementedException();
 		}
-
-		#endregion
 	}
 }

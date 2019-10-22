@@ -3,10 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:DXVisualTestFixer.UI.Views"
              xmlns:prism="http://prismlibrary.com/"
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-             xmlns:prismcommon="clr-namespace:DXVisualTestFixer.UI.PrismCommon"
              xmlns:converters="clr-namespace:DXVisualTestFixer.UI.Converters"
              xmlns:viewModels="clr-namespace:DXVisualTestFixer.UI.ViewModels"
              xmlns:dxdo="http://schemas.devexpress.com/winfx/2008/xaml/docking"
@@ -19,8 +16,8 @@
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
-        <converters:FilePathToImageSourceConverter x:Key="filePathToImageSourceConverter" />
-        <converters:FilePathToTextConverter x:Key="filePathToTextConverter" />
+        <converters:FilePathToImageSourceConverter x:Key="FilePathToImageSourceConverter" />
+        <converters:FilePathToTextConverter x:Key="FilePathToTextConverter" />
     </UserControl.Resources>
     <dxdo:DockLayoutManager BorderThickness="0">
         <dxdo:LayoutGroup Orientation="Horizontal" ShowCaption="False">
@@ -50,14 +47,14 @@
                             <DataTemplate>
                                 <ScrollViewer>
                                     <Image Stretch="None"
-                                           Source="{Binding Converter={StaticResource filePathToImageSourceConverter}}" />
+                                           Source="{Binding Converter={StaticResource FilePathToImageSourceConverter}}" />
                                 </ScrollViewer>
                             </DataTemplate>
                         </common:FilePreviewTemplateSelector.ImageTemplate>
                         <common:FilePreviewTemplateSelector.TextTemplate>
                             <DataTemplate>
                                 <avalonedit:TextEditor
-                                    DataContext="{Binding Converter={StaticResource filePathToTextConverter}}"
+                                    DataContext="{Binding Converter={StaticResource FilePathToTextConverter}}"
                                     FontFamily="Consolas" IsReadOnly="True">
                                     <dxmvvm:Interaction.Behaviors>
                                         <behaviors:AvalonEditTextBindingBehavior Text="{Binding}" />

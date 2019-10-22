@@ -14,12 +14,12 @@ using Microsoft.Win32;
 
 namespace DXVisualTestFixer.UI.Models {
 	public class OpenSolutionModel : ImmutableObject {
-		readonly string associatedProgramPath;
-		readonly string solutionPath;
+		readonly string _associatedProgramPath;
+		readonly string _solutionPath;
 
 		public OpenSolutionModel(string solutionPath, string associatedProgramPath, string programName, ImageSource programImage) {
-			this.solutionPath = solutionPath;
-			this.associatedProgramPath = associatedProgramPath;
+			_solutionPath = solutionPath;
+			_associatedProgramPath = associatedProgramPath;
 			ProgramName = programName;
 			ProgramImage = programImage;
 		}
@@ -27,15 +27,16 @@ namespace DXVisualTestFixer.UI.Models {
 		public string ProgramName { get; }
 		public ImageSource ProgramImage { get; }
 
+		[UsedImplicitly]
 		public void Open() {
-			var info = new ProcessStartInfo(associatedProgramPath, solutionPath);
+			var info = new ProcessStartInfo(_associatedProgramPath, _solutionPath);
 			info.Verb = "runas";
 			Process.Start(info);
 		}
 	}
 
 	public class SolutionModel : ImmutableObject {
-		readonly string SolutionPath;
+		[CanBeNull] readonly string SolutionPath;
 
 		public SolutionModel(string version, string path) {
 			Version = version;
@@ -48,7 +49,8 @@ namespace DXVisualTestFixer.UI.Models {
 		public string Version { get; }
 		public string Path { get; }
 		public List<OpenSolutionModel> OpenSolutionModels { get; }
-		public bool IsEnabled => File.Exists(SolutionPath) && (CanOpenByVS || CanOpenByRider);
+
+		[UsedImplicitly] public bool IsEnabled => File.Exists(SolutionPath) && (CanOpenByVS || CanOpenByRider);
 
 		public bool CanOpenByVS => File.Exists(GetAssociatedProgram());
 
@@ -108,6 +110,8 @@ namespace DXVisualTestFixer.UI.Models {
 		}
 
 		[UsedImplicitly]
-		public void OpenFolder() => Process.Start(Path);
+		public void OpenFolder() {
+			Process.Start(Path);
+		}
 	}
 }

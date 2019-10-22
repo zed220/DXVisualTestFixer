@@ -10,23 +10,17 @@
              xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
              xmlns:dxdo="http://schemas.devexpress.com/winfx/2008/xaml/docking"
              xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
-             xmlns:avalonedit="http://icsharpcode.net/sharpdevelop/avalonedit"
              xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
              xmlns:controls="clr-namespace:DXVisualTestFixer.UI.Controls"
              xmlns:viewModels="clr-namespace:DXVisualTestFixer.UI.ViewModels"
              xmlns:behaviors="clr-namespace:DXVisualTestFixer.UI.Behaviors"
              xmlns:converters="clr-namespace:DXVisualTestFixer.UI.Converters"
              xmlns:dxgt="http://schemas.devexpress.com/winfx/2008/xaml/grid/themekeys"
-             xmlns:sys="clr-namespace:System.Collections;assembly=mscorlib"
-             xmlns:sys1="clr-namespace:System;assembly=mscorlib"
              xmlns:prism="http://prismlibrary.com/"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:common="clr-namespace:DXVisualTestFixer.Common;assembly=DXVisualTestFixer.Common"
              xmlns:prismcommon="clr-namespace:DXVisualTestFixer.UI.PrismCommon"
              xmlns:dxfui="http://schemas.devexpress.com/winfx/2008/xaml/core/filteringui"
-             xmlns:dxt="http://schemas.devexpress.com/winfx/2008/xaml/core/themekeys"
-             xmlns:core="http://schemas.dxvisualtests.com/winfx/2008/xaml/core"
-             xmlns:root="clr-namespace:DXVisualTestFixer.UI"
              xmlns:dxght="http://schemas.devexpress.com/winfx/2008/xaml/grid/internal"
              prism:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d"
@@ -50,7 +44,7 @@
                 <dxmvvm:MapItem Source="0" Target="Collapsed" />
             </dxmvvm:ObjectToObjectConverter>
             <converters:StackPanelToTooltipConverter x:Key="StackPanelToTooltipConverter" />
-            <dxmvvm:ObjectToObjectConverter x:Key="ribbonMergeConverter" DefaultTarget="All">
+            <dxmvvm:ObjectToObjectConverter x:Key="RibbonMergeConverter" DefaultTarget="All">
                 <dxmvvm:MapItem Source="{x:Null}" Target="None" />
             </dxmvvm:ObjectToObjectConverter>
             <Style TargetType="{x:Type dxe:ComboBoxEdit}">
@@ -203,7 +197,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <dxr:RibbonControl x:Name="PART_Ribbon" RibbonStyle="Office2019" ToolbarShowMode="ShowAbove"
+            <dxr:RibbonControl RibbonStyle="Office2019" ToolbarShowMode="ShowAbove"
                                AllowCustomization="False" MinimizationButtonVisibility="Collapsed"
                                RibbonHeaderVisibility="Visible"
                                ToolbarShowCustomizationButton="False" ShowApplicationButton="False"
@@ -236,7 +230,7 @@
                         <dxr:RibbonPage.CaptionTemplate>
                             <DataTemplate>
                                 <DataTemplate.Resources>
-                                    <ControlTemplate x:Key="captionTemplate" TargetType="{x:Type Control}">
+                                    <ControlTemplate x:Key="CaptionTemplate" TargetType="{x:Type Control}">
                                         <StackPanel Orientation="Horizontal">
                                             <TextBlock Text="{Binding}" Margin="0, 0, 2, 0" />
                                             <TextBlock Text="(Nothing to commit)" Opacity="0.7"
@@ -249,9 +243,9 @@
                                     </ControlTemplate>
                                 </DataTemplate.Resources>
                                 <Grid>
-                                    <Control x:Name="normal" Template="{StaticResource captionTemplate}"
+                                    <Control x:Name="normal" Template="{StaticResource CaptionTemplate}"
                                              HorizontalAlignment="Center" />
-                                    <Control x:Name="bold" Template="{StaticResource captionTemplate}"
+                                    <Control x:Name="bold" Template="{StaticResource CaptionTemplate}"
                                              Visibility="Hidden" FontWeight="SemiBold" HorizontalAlignment="Center" />
                                 </Grid>
                                 <DataTemplate.Triggers>
@@ -542,7 +536,7 @@
                     </dxdo:LayoutGroup>
                     <dxdo:LayoutGroup AllowDrag="False" Orientation="Vertical" AllowSplitters="False">
                         <dxdo:LayoutPanel ShowCaption="False"
-                                          dxb:MergingProperties.ElementMergingBehavior="{Binding CurrentTest, Converter={StaticResource ribbonMergeConverter}}"
+                                          dxb:MergingProperties.ElementMergingBehavior="{Binding CurrentTest, Converter={StaticResource RibbonMergeConverter}}"
                                           Visibility="{Binding CurrentTest, Converter={dx:NullableToVisibilityConverter}}">
                             <controls:TestInfoControl />
                         </dxdo:LayoutPanel>
@@ -555,7 +549,7 @@
                 </dxdo:LayoutGroup>
             </dxdo:DockLayoutManager>
         </Grid>
-        <Grid x:Name="loadingControl" IsHitTestVisible="True" Background="Transparent"
+        <Grid IsHitTestVisible="True" Background="Transparent"
               Visibility="{Binding Status, Converter={StaticResource StatusToVisibilityConverter}}">
             <dx:WaitIndicator DeferedVisibility="True" />
         </Grid>

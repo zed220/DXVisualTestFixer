@@ -9,54 +9,53 @@ using DevExpress.Utils.CommonDialogs.Internal;
 using DevExpress.Xpf.Core;
 using DXVisualTestFixer.Common;
 using DXVisualTestFixer.UI.Models;
+using JetBrains.Annotations;
 using Microsoft.Practices.ServiceLocation;
 using Prism.Interactivity.InteractionRequest;
 
 namespace DXVisualTestFixer.UI.ViewModels {
 	public class SettingsViewModel : ViewModelBase, ISettingsViewModel {
-		readonly IConfigSerializer configSerializer;
+		readonly IConfigSerializer _configSerializer;
 
-		IConfig _Config;
-		bool _IsLoading;
-		ObservableCollection<RepositoryModel> _Repositories;
-		string _ThemeName;
-		string _WorkingDirectory;
+		IConfig _config;
+		ObservableCollection<RepositoryModel> _repositories;
+		string _themeName;
+		string _workingDirectory;
 
 		public SettingsViewModel(IConfigSerializer configSerializer) {
 			Title = "Settings";
-			this.configSerializer = configSerializer;
+			_configSerializer = configSerializer;
 			Config = configSerializer.GetConfig();
 			Commands = UICommand.GenerateFromMessageButton(MessageButton.OKCancel, new DialogService(), MessageResult.OK, MessageResult.Cancel);
-			Commands.Where(c => c.IsDefault).Single().Command = new DelegateCommand(Save, () => !IsAnyRepositoryDownloading());
-			Commands.Where(c => c.IsCancel).Single().Command = new DelegateCommand(Cancel, () => !IsAnyRepositoryDownloading());
+			Commands.Single(c => c.IsDefault).Command = new DelegateCommand(Save, () => !IsAnyRepositoryDownloading());
+			Commands.Single(c => c.IsCancel).Command = new DelegateCommand(Cancel, () => !IsAnyRepositoryDownloading());
 		}
 
-		public bool IsLoading {
-			get => _IsLoading;
-			set => SetProperty(ref _IsLoading, value);
-		}
-
+		[UsedImplicitly]
 		public ObservableCollection<RepositoryModel> Repositories {
-			get => _Repositories;
-			set => SetProperty(ref _Repositories, value);
+			get => _repositories;
+			set => SetProperty(ref _repositories, value);
 		}
 
+		[PublicAPI]
 		public string ThemeName {
-			get => _ThemeName;
-			set { SetProperty(ref _ThemeName, value, () => Config.ThemeName = ThemeName); }
+			get => _themeName;
+			set { SetProperty(ref _themeName, value, () => Config.ThemeName = ThemeName); }
 		}
 
+		[UsedImplicitly]
 		public string WorkingDirectory {
-			get => _WorkingDirectory;
-			set => SetProperty(ref _WorkingDirectory, value, OnWorkingDirectoryChanged);
+			get => _workingDirectory;
+			set => SetProperty(ref _workingDirectory, value, OnWorkingDirectoryChanged);
 		}
 
-		public IEnumerable<UICommand> Commands { get; }
-		public InteractionRequest<IConfirmation> ConfirmationRequest { get; } = new InteractionRequest<IConfirmation>();
+		[UsedImplicitly] public IEnumerable<UICommand> Commands { get; }
+
+		[UsedImplicitly] public InteractionRequest<IConfirmation> ConfirmationRequest { get; } = new InteractionRequest<IConfirmation>();
 
 		public IConfig Config {
-			get => _Config;
-			set => SetProperty(ref _Config, value, OnConfigChanged);
+			get => _config;
+			set => SetProperty(ref _config, value, OnConfigChanged);
 		}
 
 		public bool Confirmed { get; set; }
@@ -91,15 +90,10 @@ namespace DXVisualTestFixer.UI.ViewModels {
 		}
 
 		bool IsChanged() {
-			return !configSerializer.IsConfigEquals(configSerializer.GetConfig(false), Config);
+			return !_configSerializer.IsConfigEquals(_configSerializer.GetConfig(false), Config);
 		}
 
-		bool IsAnyRepositoryDownloading() {
-			foreach(var repo in Repositories)
-				if(repo.DownloadState == DownloadState.Downloading)
-					return true;
-			return false;
-		}
+		bool IsAnyRepositoryDownloading() => Repositories.Any(repo => repo.DownloadState == DownloadState.Downloading);
 
 		void Save() {
 			if(IsAnyRepositoryDownloading())
