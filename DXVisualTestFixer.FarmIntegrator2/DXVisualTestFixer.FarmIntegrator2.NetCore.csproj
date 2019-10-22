@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.0</TargetFramework>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <OutputPath>..\bin\Build\</OutputPath>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\DXVisualTestFixer.Common\DXVisualTestFixer.Common.NetCore.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="Properties\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="Properties\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Properties\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="ThoughtWorks.CruiseControl.Remote, Version=1.8.0.0, Culture=neutral, PublicKeyToken=949e8f45cd68eb9d">
+        <HintPath>..\lib\DXFarm2\ThoughtWorks.CruiseControl.Remote.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+</Project>

@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Configuration;
 using System.IO;
 using DXVisualTestFixer.Common;
 using Polenter.Serialization;
 using Polenter.Serialization.Advanced;
 using Polenter.Serialization.Advanced.Serializing;
+using TypeNameConverter = Polenter.Serialization.Advanced.TypeNameConverter;
 
 namespace DXVisualTestFixer.Core.Configuration {
 	public static class Serializer {

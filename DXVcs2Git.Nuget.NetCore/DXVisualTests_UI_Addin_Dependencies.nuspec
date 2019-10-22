@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata>
+        <id>DXVisualTests_UI_Addin_Dependencies</id>
+        <version>19.2.1.3</version>
+        <title>DXVisualTests UI Addin Dependencies</title>
+        <authors>DevExpress</authors>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>DXVisualTests Addin UI dependencies</description>
+		<dependencies>
+			<group targetFramework=".NETFramework4.7.2" />
+		</dependencies>
+    </metadata>
+    <files>
+        <file src="files\DevExpress.Data.v19.2.dll" target="lib\net472\DevExpress.Data.v19.2.dll" />
+        <file src="files\DevExpress.CodeParser.v19.2.dll" target="lib\net472\DevExpress.CodeParser.v19.2.dll" />
+        <file src="files\DevExpress.Images.v19.2.dll" target="lib\net472\DevExpress.Images.v19.2.dll" />
+        <file src="files\DevExpress.Mvvm.v19.2.dll" target="lib\net472\DevExpress.Mvvm.v19.2.dll" />
+        <file src="files\DevExpress.Printing.v19.2.Core.dll" target="lib\net472\DevExpress.Printing.v19.2.Core.dll" />
+        <file src="files\DevExpress.Xpf.Core.v19.2.dll" target="lib\net472\DevExpress.Xpf.Core.v19.2.dll" />
+        <file src="files\DevExpress.Xpf.Layout.v19.2.Core.dll" target="lib\net472\DevExpress.Xpf.Layout.v19.2.Core.dll" />
+        <file src="files\DevExpress.Xpf.Docking.v19.2.dll" target="lib\net472\DevExpress.Xpf.Docking.v19.2.dll" />
+        <file src="files\DevExpress.Xpf.LayoutControl.v19.2.dll" target="lib\net472\DevExpress.Xpf.LayoutControl.v19.2.dll" />
+        <file src="files\DevExpress.Xpf.Grid.v19.2.Core.dll" target="lib\net472\DevExpress.Xpf.Grid.v19.2.Core.dll" />
+        <file src="files\DevExpress.Xpf.Grid.v19.2.dll" target="lib\net472\DevExpress.Xpf.Grid.v19.2.dll" />
+        <file src="files\DevExpress.Xpf.PropertyGrid.v19.2.dll" target="lib\net472\DevExpress.Xpf.PropertyGrid.v19.2.dll" />
+        <file src="files\DevExpress.Xpf.Ribbon.v19.2.dll" target="lib\net472\DevExpress.Xpf.Ribbon.v19.2.dll" />
+        <file src="files\DevExpress.Xpf.Controls.v19.2.dll" target="lib\net472\DevExpress.Xpf.Controls.v19.2.dll" />
+        <file src="files\DevExpress.Xpf.Accordion.v19.2.dll" target="lib\net472\DevExpress.Xpf.Accordion.v19.2.dll" />
+        <file src="files\DevExpress.Pdf.v19.2.Core.dll" target="lib\net472\DevExpress.Pdf.v19.2.Core.dll" />
+        <file src="files\DevExpress.Diagram.v19.2.Core.dll" target="lib\net472\DevExpress.Diagram.v19.2.Core.dll" />
+        <file src="files\DevExpress.Xpf.Diagram.v19.2.dll" target="lib\net472\DevExpress.Xpf.Diagram.v19.2.dll" />
+        <file src="files\DevExpress.Xpf.DocumentViewer.v19.2.Core.dll" target="lib\net472\DevExpress.Xpf.DocumentViewer.v19.2.Core.dll" />
+        <file src="files\DevExpress.Xpf.NavBar.v19.2.dll" target="lib\net472\DevExpress.Xpf.NavBar.v19.2.dll" />
+        <file src="files\DevExpress.Dialogs.v19.2.Core.dll" target="lib\net472\DevExpress.Dialogs.v19.2.Core.dll" />
+        <file src="files\DevExpress.Xpf.Dialogs.v19.2.dll" target="lib\net472\DevExpress.Xpf.Dialogs.v19.2.dll" />
+		<file src="files\DevExpress.Xpf.Themes.Office2019Colorful.v19.2.dll" target="lib\net472\DevExpress.Xpf.Themes.Office2019Colorful.v19.2.dll" />
+    </files>
+</package>
