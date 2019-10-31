@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Threading;
 using DevExpress.Mvvm;
 using DXVisualTestFixer.Common;
+using DXVisualTestFixer.UI.Native;
 using JetBrains.Annotations;
 using Microsoft.Practices.ServiceLocation;
 
@@ -55,9 +56,45 @@ namespace DXVisualTestFixer.UI.Models {
 				if(!dirName.Contains($"20{ver}") && !dirName.Contains(ver)) continue;
 				if(!File.Exists(directoryPath + "\\VisualTestsConfig.xml"))
 					continue;
-				repositories.Add(new RepositoryModel(new Repository {Version = ver, Path = directoryPath + "\\"}));
+				var repository = new RepositoryModel(new Repository {Version = ver, Path = directoryPath + "\\"}); 
+				repositories.Add(repository);
+				InitializeBinIfNeed(repository.Path, repository.Version);
 			}
 		}
+
+		public static void InitializeBinIfNeed(string repositoryPath, string version) {
+			static bool TryCreateDirectoryLink(string workPath, string targetPath) {
+				if(!Directory.Exists(workPath)) return false;
+				FileSystemHelper.CreateDirectoryLink(workPath, targetPath);
+				return true;
+			}
+			
+			var workPath1 = System.IO.Path.Combine(repositoryPath, "..", version, "Bin");
+			var workPath2 = System.IO.Path.Combine(repositoryPath, "..", $"20{version}", "Bin");
+			if(!Directory.Exists(workPath1) && !Directory.Exists(workPath2))
+				return;
+			
+			var binPath = System.IO.Path.Combine(repositoryPath, "Bin");
+			if(Directory.Exists(binPath)) {
+				var pathInfo = new FileInfo(binPath);
+				if(pathInfo.Attributes.HasFlag(FileAttributes.ReparsePoint))
+					return;
+				var oldBinPath = System.IO.Path.Combine(repositoryPath, "Bin_old");
+				if(Directory.Exists(oldBinPath))
+					return;
+				try {
+					Directory.Move(binPath, oldBinPath);
+				}
+				catch {
+					return;
+				}
+			}
+			
+			if(TryCreateDirectoryLink(workPath1, binPath)) return;
+			TryCreateDirectoryLink(workPath2, binPath);
+		}
+		
+		
 
 		public void UpdateDownloadState() {
 			DownloadState = GetDownloadState();
