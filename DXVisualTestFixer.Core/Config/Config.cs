@@ -12,6 +12,7 @@ namespace DXVisualTestFixer.Core.Configuration {
 		public Repository[] Repositories { get; set; } = new Repository[0];
 		public string ThemeName { get; set; } = "Office2016White";
 		public string WorkingDirectory { get; set; } = @"C:\Work";
+		public string WhatsNewSeenForVersion { get; set; } = "1.0.0";
 
 		public IEnumerable<Repository> GetLocalRepositories() {
 			return Repositories?.Where(r => r.IsDownloaded()) ?? Enumerable.Empty<Repository>();
@@ -30,6 +31,8 @@ namespace DXVisualTestFixer.Core.Configuration {
 				config.InstallPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 			if(string.IsNullOrEmpty(config.WorkingDirectory))
 				config.WorkingDirectory = @"C:\Work";
+			if(string.IsNullOrEmpty(config.WhatsNewSeenForVersion))
+				config.WhatsNewSeenForVersion = "1.0.0";
 			if(config.Repositories == null)
 				config.Repositories = new Repository[0];
 			var versions = RepositoryLoader.GetVersions();

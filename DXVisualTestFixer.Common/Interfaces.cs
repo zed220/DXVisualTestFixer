@@ -56,6 +56,7 @@ namespace DXVisualTestFixer.Common {
 
 	public interface IVersionService {
 		Version Version { get; }
+		(Version version, string content)[] WhatsNewInfo { get; }
 	}
 
 	public interface ITestInfoModel : INotifyPropertyChanged {
@@ -87,6 +88,7 @@ namespace DXVisualTestFixer.Common {
 		string ThemeName { get; set; }
 		Repository[] Repositories { get; set; }
 		string WorkingDirectory { get; set; }
+		string WhatsNewSeenForVersion { get; set; }
 
 		IEnumerable<Repository> GetLocalRepositories();
 	}

@@ -180,8 +180,10 @@ namespace DXVisualTestFixer.UI.ViewModels {
 			}
 
 			var actualSolutions = new List<SolutionModel>();
-			foreach(var repository in Config.GetLocalRepositories())
+			foreach(var repository in Config.GetLocalRepositories()) {
 				actualSolutions.Add(new SolutionModel(repository.Version, repository.Path));
+				RepositoryModel.InitializeBinIfNeed(repository.Path, repository.Version);
+			}
 			Solutions = actualSolutions;
 		}
 
