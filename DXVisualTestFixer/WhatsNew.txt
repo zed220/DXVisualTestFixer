@@ -1,1 +1,1 @@
-Version 3.3.4::Creating symbolic link to bin folder by default for all visual tests repositories. Old bin folder was renamed to "Bin_old"
+Version 3.3.5::Creating symbolic link to bin folder by default for all visual tests repositories. Old bin folder was renamed to "Bin_old"
