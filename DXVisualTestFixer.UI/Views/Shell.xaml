@@ -22,7 +22,8 @@
                  Title="{DXBinding Expr='`Visual Tests Tool v` + $native:VersionHelper.Version'}" MinHeight="768"
                  MinWidth="1024"
                  prismcommon:PrismExtensions.ViewModel="{Binding}"
-                 HeaderItemsSource="{Binding Commands}">
+                 HeaderItemsSource="{Binding Commands}"
+                 Loaded="{DXEvent Handler='ShowWhatsNew()'}">
     <dx:ThemedWindow.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
