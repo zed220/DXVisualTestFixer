@@ -50,10 +50,10 @@ namespace DXVisualTestFixer.UI.ViewModels {
 			this.farmIntegrator = farmIntegrator;
 			this.configSerializer = configSerializer;
 			this.isActiveService = isActiveService;
-			obsolescenceTracker = new RepositoryObsolescenceTracker(NoticeRepositoryObsolescence);
+			_GitWorker = gitWorker;
+			obsolescenceTracker = new RepositoryObsolescenceTracker(_GitWorker, () => Config.Repositories, NoticeRepositoryObsolescence);
 			LoadingProgressController = loadingProgressController;
 			TestService = testsService;
-			_GitWorker = gitWorker;
 			TestService.PropertyChanged += TestService_PropertyChanged;
 			loggingService.MessageReserved += OnLoggingMessageReserved;
 			UpdateConfig();
@@ -132,7 +132,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 
 		void NoticeRepositoryObsolescenceCore() {
 			obsolescenceTracker.Start();
-			if(CheckConfirmation(ConfirmationRequest, "Repositories may be outdated", "Repositories may be outdated. Refresh tests list?"))
+			if(CheckConfirmation(ConfirmationRequest, "Repositories outdated", "Repositories outdated. Refresh tests list?"))
 				UpdateContent();
 		}
 

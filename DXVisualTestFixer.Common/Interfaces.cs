@@ -140,6 +140,7 @@ namespace DXVisualTestFixer.Common {
 	public interface IGitWorker {
 		bool SetHttpRepository(Repository repository);
 		Task<GitUpdateResult> Update(Repository repository);
+		Task<bool> IsOutdatedAsync(Repository repository);
 		Task<GitCommitResult> Commit(Repository repository, string commitCaption);
 		Task<bool> Clone(Repository repository);
 	}
