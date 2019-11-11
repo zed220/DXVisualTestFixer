@@ -65,7 +65,7 @@ namespace DXVisualTestFixer.UI.Models {
 		public static void InitializeBinIfNeed(string repositoryPath, string version) {
 			static bool TryCreateDirectoryLink(string workPath, string targetPath) {
 				if(!Directory.Exists(workPath)) return false;
-				FileSystemHelper.CreateDirectoryLink(workPath, targetPath);
+				FileSystemHelper.Create(workPath, targetPath, false);
 				return true;
 			}
 
