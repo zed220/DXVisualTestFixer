@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using System.Windows.Threading;
 using DXVisualTestFixer.Common;
 
@@ -8,7 +9,7 @@ namespace DXVisualTestFixer.UI.Native {
 		readonly IGitWorker gitWorker;
 		readonly Func<Repository[]> getReposForCheck;
 
-		public RepositoryObsolescenceTracker(IGitWorker gitWorker, Func<Repository[]> getReposForCheck, Action onObsolescence) {
+		public RepositoryObsolescenceTracker(IGitWorker gitWorker, Func<Repository[]> getReposForCheck, Func<Task> onObsolescence) {
 			timer = new DispatcherTimer();
 			this.gitWorker = gitWorker;
 			this.getReposForCheck = getReposForCheck;
@@ -17,7 +18,7 @@ namespace DXVisualTestFixer.UI.Native {
 				timer.Stop();
 				foreach(var repo in this.getReposForCheck()) {
 					if(await this.gitWorker.IsOutdatedAsync(repo)) {
-						onObsolescence();
+						await onObsolescence();
 						return;
 					}
 				}
