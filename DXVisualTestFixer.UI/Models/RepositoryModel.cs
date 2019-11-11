@@ -68,10 +68,15 @@ namespace DXVisualTestFixer.UI.Models {
 				FileSystemHelper.CreateDirectoryLink(workPath, targetPath);
 				return true;
 			}
+
+			var workPaths = new[] {
+				System.IO.Path.Combine(repositoryPath, "..", version, "Bin"),
+				System.IO.Path.Combine(repositoryPath, "..", $"20{version}", "Bin"),
+				System.IO.Path.Combine("c:\\Work", version, "Bin"),
+				System.IO.Path.Combine("c:\\Work", $"20{version}", "Bin"),
+			};
 			
-			var workPath1 = System.IO.Path.Combine(repositoryPath, "..", version, "Bin");
-			var workPath2 = System.IO.Path.Combine(repositoryPath, "..", $"20{version}", "Bin");
-			if(!Directory.Exists(workPath1) && !Directory.Exists(workPath2))
+			if(!workPaths.Any(Directory.Exists))
 				return;
 			
 			var binPath = System.IO.Path.Combine(repositoryPath, "Bin");
@@ -89,9 +94,9 @@ namespace DXVisualTestFixer.UI.Models {
 					return;
 				}
 			}
-			
-			if(TryCreateDirectoryLink(workPath1, binPath)) return;
-			TryCreateDirectoryLink(workPath2, binPath);
+
+			foreach(var workPath in workPaths)
+				if(TryCreateDirectoryLink(workPath, binPath)) return;	
 		}
 		
 		

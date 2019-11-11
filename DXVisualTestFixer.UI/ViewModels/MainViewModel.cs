@@ -51,7 +51,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 			this.configSerializer = configSerializer;
 			this.isActiveService = isActiveService;
 			_GitWorker = gitWorker;
-			obsolescenceTracker = new RepositoryObsolescenceTracker(_GitWorker, () => Config.Repositories, NoticeRepositoryObsolescence);
+			obsolescenceTracker = new RepositoryObsolescenceTracker(_GitWorker, () => Config.Repositories, NoticeRepositoryObsolescenceAsync);
 			LoadingProgressController = loadingProgressController;
 			TestService = testsService;
 			TestService.PropertyChanged += TestService_PropertyChanged;
@@ -113,24 +113,25 @@ namespace DXVisualTestFixer.UI.ViewModels {
 		public InteractionRequest<INotification> RepositoryAnalyzerRequest { get; } = new InteractionRequest<INotification>();
 		public InteractionRequest<INotification> ViewResourcesRequest { get; } = new InteractionRequest<INotification>();
 
-		void NoticeRepositoryObsolescence() {
+		async Task NoticeRepositoryObsolescenceAsync() {
 			if(!isActiveService.IsActive) {
 				obsolescenceTracker.Stop();
 				isActiveService.PropertyChanged += LinqExtensions.WithReturnValue<PropertyChangedEventHandler>(x => {
-					return (sender, args) => {
+					return async (sender, args) => {
 						if(args.PropertyName != nameof(IActiveService.IsActive))
 							return;
 						isActiveService.PropertyChanged -= x.Value;
-						NoticeRepositoryObsolescenceCore();
+						await NoticeRepositoryObsolescenceCoreAsync();
 					};
 				});
 				return;
 			}
 
-			NoticeRepositoryObsolescenceCore();
+			await NoticeRepositoryObsolescenceCoreAsync();
 		}
 
-		void NoticeRepositoryObsolescenceCore() {
+		async Task NoticeRepositoryObsolescenceCoreAsync() {
+			await Task.Delay(TimeSpan.FromSeconds(1));
 			obsolescenceTracker.Start();
 			if(CheckConfirmation(ConfirmationRequest, "Repositories outdated", "Repositories outdated. Refresh tests list?"))
 				UpdateContent();
