@@ -23,6 +23,7 @@
                 <Setter Property="MaxHeight" Value="100" />
                 <Setter Property="IsTextEditable" Value="False" />
                 <Setter Property="IncrementalFiltering" Value="True" />
+                <Setter Property="ShowCustomItems" Value="True" />
                 <Setter Property="AllowDefaultButton" Value="True" />
                 <Setter Property="ValidateOnTextInput" Value="True" />
                 <Setter Property="AllowLiveDataShaping" Value="True" />
@@ -41,8 +42,9 @@
                 <Setter Property="DisplayMember" Value="Value" />
                 <Setter Property="StyleSettings">
                     <Setter.Value>
-                        <dxe:TokenComboBoxStyleSettings AllowEditTokens="False" EnableTokenWrapping="True"
-                                                        VerticalAlignment="Center" />
+                        <dxe:CheckedTokenComboBoxStyleSettings AllowEditTokens="False" EnableTokenWrapping="True"
+                                                        VerticalAlignment="Center" FilterOutSelectedTokens="False"
+                                                        ShowSelectAllItem="True"/>
                     </Setter.Value>
                 </Setter>
                 <Setter Property="ItemTemplate">
@@ -142,15 +144,7 @@
                 <dxfui:CheckedListFilterElement FieldName="TeamName" SelectAllWhenFilterIsNull="True">
                     <dxfui:CheckedListFilterElement.FilterModelTemplate>
                         <DataTemplate>
-                            <dxe:ComboBoxEdit MaxHeight="200" ShowCustomItems="True">
-                                <dxe:ComboBoxEdit.StyleSettings>
-                                    <dxe:CheckedTokenComboBoxStyleSettings AllowEditTokens="False"
-                                                                           EnableTokenWrapping="True"
-                                                                           VerticalAlignment="Center"
-                                                                           FilterOutSelectedTokens="False"
-                                                                           ShowSelectAllItem="True" />
-                                </dxe:ComboBoxEdit.StyleSettings>
-                            </dxe:ComboBoxEdit>
+                            <dxe:ComboBoxEdit MaxHeight="200" />
                         </DataTemplate>
                     </dxfui:CheckedListFilterElement.FilterModelTemplate>
                 </dxfui:CheckedListFilterElement>
@@ -177,15 +171,7 @@
                 <dxfui:CheckedListFilterElement FieldName="ProblemName">
                     <dxfui:CheckedListFilterElement.FilterModelTemplate>
                         <DataTemplate>
-                            <dxe:ComboBoxEdit>
-                                <dxe:ComboBoxEdit.StyleSettings>
-                                    <dxe:CheckedTokenComboBoxStyleSettings AllowEditTokens="False"
-                                                                           EnableTokenWrapping="True"
-                                                                           VerticalAlignment="Center"
-                                                                           ShowSelectAllItem="True"
-                                                                           FilterOutSelectedTokens="True" />
-                                </dxe:ComboBoxEdit.StyleSettings>
-                            </dxe:ComboBoxEdit>
+                            <dxe:ComboBoxEdit />
                         </DataTemplate>
                     </dxfui:CheckedListFilterElement.FilterModelTemplate>
                 </dxfui:CheckedListFilterElement>
