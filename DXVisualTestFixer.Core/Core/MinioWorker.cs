@@ -24,6 +24,7 @@ namespace DXVisualTestFixer.Core {
 				catch(Exception e) {
 					exception = e;
 				}
+				await Task.Delay(TimeSpan.FromSeconds(10));
 			}
 
 			throw exception;
