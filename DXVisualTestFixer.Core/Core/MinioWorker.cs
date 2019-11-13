@@ -32,8 +32,7 @@ namespace DXVisualTestFixer.Core {
 		public async Task<string> Download(string path) {
 			return await RepeatableAction(async () => {
 				string result = null;
-				var minio = CreateClient();
-				await minio.GetObjectAsync(bucketName, path, stream => {
+				await CreateClient().GetObjectAsync(bucketName, path, stream => {
 					using var reader = new StreamReader(stream);
 					result = reader.ReadToEnd();
 				});
@@ -44,16 +43,15 @@ namespace DXVisualTestFixer.Core {
 		public async Task<string[]> Discover(string path) {
 			return await RepeatableAction(async () => {
 				var result = new List<string>();
-				var minio = CreateClient();
-				var observable = minio.ListObjectsAsync(bucketName, path);
-				
-				using(var subscription = observable.Subscribe
+				var observable = CreateClient().ListObjectsAsync(bucketName, path);
+				var tcs = new TaskCompletionSource<bool>();
+				using var subscription = observable.Subscribe
 				(
 					item => result.Add(item.Key),
-					ex => throw ex
-				)) {
-					await observable.ToTask();	
-				}
+					ex => throw ex,
+					() => tcs.SetResult(true)
+				);
+				await observable.ToTask();
 				return result.ToArray();
 			});
 		}
@@ -61,8 +59,7 @@ namespace DXVisualTestFixer.Core {
 		public async Task<string> DiscoverLast(string path) {
 			return await RepeatableAction(async () => {
 				var result = new List<string>();
-				var minio = CreateClient();
-				var observable = minio.ListObjectsAsync(bucketName, path);
+				var observable = CreateClient().ListObjectsAsync(bucketName, path);
 				var tcs = new TaskCompletionSource<bool>();
 				using var subscription = observable.Subscribe
 				(
@@ -71,7 +68,6 @@ namespace DXVisualTestFixer.Core {
 					() => tcs.SetResult(true)
 				);
 				await tcs.Task;
-//				await observable.ToTask();
 				return result.ToArray().Last();
 			});
 		}
