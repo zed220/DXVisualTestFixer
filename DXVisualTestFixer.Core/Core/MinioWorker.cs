@@ -51,7 +51,7 @@ namespace DXVisualTestFixer.Core {
 					ex => throw ex,
 					() => tcs.SetResult(true)
 				);
-				await observable.ToTask();
+				await tcs.Task;
 				return result.ToArray();
 			});
 		}

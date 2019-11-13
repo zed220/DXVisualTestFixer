@@ -53,8 +53,16 @@ namespace DXVisualTestFixer.Core {
 			(DateTime sources, DateTime tests)? timings = null;
 
 			var tasks = new List<Task>();
+
+			string[] files = null;
+			for(int i = 0; i < 10; i++) {
+				files = await minio.Discover(dir);
+				if(files.FirstOrDefault(x => x.EndsWith("final")) != null)
+					break;
+				await Task.Delay(TimeSpan.FromSeconds(5));
+			}
 			
-			foreach(var file in await minio.Discover(dir)) {
+			foreach(var file in files) {
 				if(!file.EndsWith(".xml"))
 					continue;
 				if(file.Contains("fail"))
