@@ -63,12 +63,15 @@ namespace DXVisualTestFixer.Core {
 				var result = new List<string>();
 				var minio = CreateClient();
 				var observable = minio.ListObjectsAsync(bucketName, path);
+				var tcs = new TaskCompletionSource<bool>();
 				using var subscription = observable.Subscribe
 				(
 					item => result.Add(item.Key),
-					ex => throw ex
+					ex => throw ex,
+					() => tcs.SetResult(true)
 				);
-				await observable.ToTask();
+				await tcs.Task;
+//				await observable.ToTask();
 				return result.ToArray().Last();
 			});
 		}
