@@ -122,7 +122,7 @@ namespace DXVisualTestFixer.Core {
 			}
 
 			var allTasks = new List<Task<TestInfo>>();
-			var corpDirTestInfoContainer = LoadFromFarmTaskInfo(farmTaskInfo, farmTaskInfo.Url);
+			var corpDirTestInfoContainer = await LoadForRepositoryAsync(farmTaskInfo.Repository);
 			foreach(var corpDirTestInfo in corpDirTestInfoContainer.FailedTests) {
 				var info = corpDirTestInfo;
 				allTasks.Add(LoadTestInfoAsync(info, corpDirTestInfoContainer.Teams));
@@ -137,8 +137,8 @@ namespace DXVisualTestFixer.Core {
 			await Task.WhenAll(allTasks);
 		}
 
-		CorpDirTestInfoContainer LoadFromFarmTaskInfo(IFarmTaskInfo farmTaskInfo, string realUrl) {
-			var corpDirTestInfoContainer = TestLoader.LoadFromInfo(farmTaskInfo, realUrl);
+		async Task<CorpDirTestInfoContainer> LoadForRepositoryAsync(Repository repository) {
+			var corpDirTestInfoContainer = await TestLoader.LoadFromMinio(repository);
 			loadingProgressController.Enlarge(corpDirTestInfoContainer.FailedTests.Count);
 			return corpDirTestInfoContainer;
 		}
@@ -148,9 +148,9 @@ namespace DXVisualTestFixer.Core {
 		}
 
 		async Task<TestInfo> LoadTestInfo(CorpDirTestInfo corpDirTestInfo, List<Team> teams) {
-			loggingService.SendMessage($"Start load test v{corpDirTestInfo.FarmTaskInfo.Repository.Version} {corpDirTestInfo.TestName}.{corpDirTestInfo.ThemeName}");
+			loggingService.SendMessage($"Start load test v{corpDirTestInfo.Version} {corpDirTestInfo.TestName}.{corpDirTestInfo.ThemeName}");
 			var testInfo = TryCreateTestInfo(corpDirTestInfo, teams);
-			loggingService.SendMessage($"End load test v{corpDirTestInfo.FarmTaskInfo.Repository.Version} {corpDirTestInfo.TestName}.{corpDirTestInfo.ThemeName}");
+			loggingService.SendMessage($"End load test v{corpDirTestInfo.Version} {corpDirTestInfo.TestName}.{corpDirTestInfo.ThemeName}");
 			if(testInfo != null)
 				await UpdateTestStatusAsync(testInfo);
 			loadingProgressController.IncreaseProgress(1);
@@ -169,8 +169,8 @@ namespace DXVisualTestFixer.Core {
 		}
 
 		static TestInfo TryCreateTestInfo(CorpDirTestInfo corpDirTestInfo, List<Team> teams) {
-			var testInfo = new TestInfo(corpDirTestInfo.FarmTaskInfo.Repository);
-			testInfo.Version = corpDirTestInfo.FarmTaskInfo.Repository.Version;
+			var testInfo = new TestInfo(corpDirTestInfo.Repository);
+			testInfo.Version = corpDirTestInfo.Version;
 			testInfo.Name = corpDirTestInfo.TestName;
 			testInfo.AdditionalParameters = corpDirTestInfo.AdditionalParameter;
 			testInfo.NameWithNamespace = corpDirTestInfo.TestNameWithNamespace;
@@ -181,19 +181,19 @@ namespace DXVisualTestFixer.Core {
 				testInfo.TextDiffFullLazy = new Lazy<string>(() => string.Empty);
 				testInfo.Theme = "Error";
 				testInfo.Dpi = 0;
-				testInfo.Team = Team.CreateErrorTeam(corpDirTestInfo.FarmTaskInfo.Repository.Version);
+				testInfo.Team = Team.CreateErrorTeam(corpDirTestInfo.Version);
 				return testInfo;
 			}
 
 			TeamInfo info = null;
-			var team = testInfo.Team = GetTeam(teams, corpDirTestInfo.FarmTaskInfo.Repository.Version, corpDirTestInfo.ServerFolderName, out info);
+			var team = testInfo.Team = GetTeam(teams, corpDirTestInfo.Version, corpDirTestInfo.ServerFolderName, out info);
 			if(team == null) {
 				testInfo.Valid = TestState.Error;
 				testInfo.TextDiffLazy = new Lazy<string>(() => "+" + testInfo.Name + Environment.NewLine + Environment.NewLine + corpDirTestInfo.ErrorText);
 				testInfo.TextDiffFullLazy = new Lazy<string>(() => string.Empty);
 				testInfo.Theme = "Error";
 				testInfo.Dpi = 0;
-				testInfo.Team = Team.CreateErrorTeam(corpDirTestInfo.FarmTaskInfo.Repository.Version);
+				testInfo.Team = Team.CreateErrorTeam(corpDirTestInfo.Version);
 				return testInfo;
 			}
 
@@ -201,15 +201,8 @@ namespace DXVisualTestFixer.Core {
 			testInfo.Dpi = info.Dpi;
 			testInfo.Theme = corpDirTestInfo.ThemeName;
 			testInfo.PredefinedImageDiffsCount = corpDirTestInfo.DiffCount;
-			if(Convert.ToInt32(testInfo.Version.Split('.')[0]) < 18) {
-				if(testInfo.TeamInfo.Optimized.HasValue)
-					testInfo.Optimized = !corpDirTestInfo.FarmTaskInfo.Url.Contains("UnoptimizedMode");
-			}
-			else {
-				//new version
-				if(testInfo.TeamInfo.Optimized.HasValue)
-					testInfo.Optimized = testInfo.TeamInfo.Optimized.Value;
-			}
+			if(testInfo.TeamInfo.Optimized.HasValue)
+				testInfo.Optimized = testInfo.TeamInfo.Optimized.Value;
 
 			testInfo.TextBeforeLazy = new Lazy<string>(() => LoadTextFile(corpDirTestInfo.InstantTextEditPath));
 			testInfo.TextBeforeSha = corpDirTestInfo.InstantTextEditSHA ?? LoadBytes(corpDirTestInfo.InstantTextEditSHAPath);
