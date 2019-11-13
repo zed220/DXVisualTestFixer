@@ -2,7 +2,7 @@
 
 namespace DXVisualTestFixer.Configuration {
 	public static class VersionInfo {
-		public const string VersionString = "3.3.14";
+		public const string VersionString = "3.3.15";
 		public static readonly Version Version = new Version(VersionString);
 	}
 }
