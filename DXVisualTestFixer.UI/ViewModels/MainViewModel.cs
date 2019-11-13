@@ -365,6 +365,8 @@ namespace DXVisualTestFixer.UI.ViewModels {
 		}
 
 		public void RefreshTestList(bool checkConfirmation = true) {
+			if(Status == ProgramStatus.Loading)
+				return;
 			if(checkConfirmation && CheckHasUncommittedChanges())
 				return;
 			obsolescenceTracker.Stop();

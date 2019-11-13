@@ -148,5 +148,6 @@ namespace DXVisualTestFixer.Common {
 	public interface IMinioWorker {
 		Task<string> Download(string path);
 		Task<string[]> Discover(string path);
+		Task<string> DiscoverLast(string path);
 	}
 }

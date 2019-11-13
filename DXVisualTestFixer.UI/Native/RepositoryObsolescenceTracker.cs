@@ -17,9 +17,13 @@ namespace DXVisualTestFixer.UI.Native {
 			timer.Tick += async (s, a) => {
 				timer.Stop();
 				foreach(var repo in this.getReposForCheck()) {
-					if(await this.gitWorker.IsOutdatedAsync(repo)) {
-						await onObsolescence();
-						return;
+					try {
+						if(await this.gitWorker.IsOutdatedAsync(repo)) {
+							await onObsolescence();
+							return;
+						}
+					}
+					catch {
 					}
 				}
 				timer.Start();
