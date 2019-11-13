@@ -7,8 +7,8 @@ using Microsoft.Practices.ServiceLocation;
 
 namespace DXVisualTestFixer.Core {
 	public class CorpDirTestInfo {
-		public IFarmTaskInfo FarmTaskInfo { get; set; }
-
+		public Repository Repository { get; set; }
+		public string Version => Repository?.Version;
 		public string CurrentTextEditPath { get; set; }
 		public string CurrentTextEditSHAPath { get; set; }
 		public byte[] CurrentTextEditSHA { get; set; }
@@ -44,21 +44,20 @@ namespace DXVisualTestFixer.Core {
 			return GetTestName(firstTestNamePart) + testNameAndNamespace.Remove(0, firstTestNamePart.Length);
 		}
 
-		public static CorpDirTestInfo CreateError(IFarmTaskInfo farmTaskInfo, string testNameAndNamespace, string errorText, string stackTrace) {
-			var result = new CorpDirTestInfo();
-			result.FarmTaskInfo = farmTaskInfo;
-			result.ErrorText = errorText;
-			result.TeamName = Team.ErrorName;
-			result.StackTrace = stackTrace;
-			result.TestName = GetTestName(testNameAndNamespace);
-			result.TestNameWithNamespace = testNameAndNamespace;
-			return result;
-		}
+		public static CorpDirTestInfo CreateError(Repository repository, string testNameAndNamespace, string errorText, string stackTrace) =>
+			new CorpDirTestInfo {
+				Repository = repository,
+				ErrorText = errorText,
+				TeamName = Team.ErrorName,
+				StackTrace = stackTrace,
+				TestName = GetTestName(testNameAndNamespace),
+				TestNameWithNamespace = testNameAndNamespace
+			};
 
-		public static bool TryCreate(IFarmTaskInfo farmTaskInfo, string testNameAndNamespace, List<string> corpPaths, List<string> shaList, int? diffCount, out CorpDirTestInfo result) {
+		public static bool TryCreate(Repository repository, string testNameAndNamespace, List<string> corpPaths, List<string> shaList, int? diffCount, out CorpDirTestInfo result) {
 			result = null;
 			var temp = new CorpDirTestInfo();
-			temp.FarmTaskInfo = farmTaskInfo;
+			temp.Repository = repository;
 			temp.TestName = GetTestName(testNameAndNamespace);
 			temp.TestNameWithNamespace = testNameAndNamespace;
 			temp.DiffCount = diffCount;
