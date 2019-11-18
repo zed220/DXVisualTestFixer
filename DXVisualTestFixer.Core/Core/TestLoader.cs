@@ -55,54 +55,59 @@ namespace DXVisualTestFixer.Core {
 			var tasks = new List<Task>();
 
 			string[] files = null;
-			for(int i = 0; i < 10; i++) {
+			for(int i = 0; i < 10; i++, await Task.Delay(TimeSpan.FromSeconds(10))) {
 				files = await minio.Discover(dir);
 				if(files.FirstOrDefault(x => x.EndsWith("final")) != null)
 					break;
-				await Task.Delay(TimeSpan.FromSeconds(5));
-			}
-			
-			foreach(var file in files) {
-				if(!file.EndsWith(".xml"))
-					continue;
-				if(file.Contains("fail"))
-					failed = true;
-				var task = Task.Run(async () => {
-					var xmlString = await minio.Download(file);
-					var myXmlDocument = new XmlDocument();
-					myXmlDocument.LoadXml("<root>" + xmlString + "</root>");
-					var rootNode = myXmlDocument.FindByName("root");
-				
-					if(file.EndsWith("tests_timings.xml")) {
-						timings = FindTimings(rootNode);
-						return;
-					}
-				
-					foreach(var testCaseXml in FindAllFailedTests(rootNode)) {
-						var testNameAndNamespace = testCaseXml.GetAttribute("name");
-						var failureNode = testCaseXml.FindByName("failure");
-						var resultNode = failureNode.FindByName("message");
-						var stackTraceNode = failureNode.FindByName("stack-trace");
-						foreach(var test in ParseMessage(repository, testNameAndNamespace, resultNode.InnerText, stackTraceNode.InnerText))
-							failedTests.Add(test);
-					}
-				
-					FindErrors(rootNode)?.ForEach(error => failedTests.Add(CorpDirTestInfo.CreateError(repository, "Error", error.InnerText, null)));
-
-					usedFiles.Add(FindUsedFilesLink(rootNode));
-					elapsedTimes.Add(FindElapsedTime(rootNode));
-					teams.Add(FindTeam(repository.Version, rootNode));	
-				});
-				tasks.Add(task);
+				files = null;
 			}
 
-			await Task.WhenAll(tasks);
+			var failedTestsList = new List<CorpDirTestInfo>();
+			if(files != null) {
+				foreach(var file in files) {
+					if(!file.EndsWith(".xml"))
+						continue;
+					if(file.Contains("fail"))
+						failed = true;
+					var task = Task.Run(async () => {
+						var xmlString = await minio.Download(file);
+						var myXmlDocument = new XmlDocument();
+						myXmlDocument.LoadXml("<root>" + xmlString + "</root>");
+						var rootNode = myXmlDocument.FindByName("root");
 
-			var failedTestsList = failedTests.ToList();
+						if(file.EndsWith("tests_timings.xml")) {
+							timings = FindTimings(rootNode);
+							return;
+						}
 
-			if(failedTestsList.Count == 0 && failed)
-				failedTestsList.Add(CorpDirTestInfo.CreateError(repository, "BuildError", "BuildError", "BuildError"));
-			
+						foreach(var testCaseXml in FindAllFailedTests(rootNode)) {
+							var testNameAndNamespace = testCaseXml.GetAttribute("name");
+							var failureNode = testCaseXml.FindByName("failure");
+							var resultNode = failureNode.FindByName("message");
+							var stackTraceNode = failureNode.FindByName("stack-trace");
+							foreach(var test in ParseMessage(repository, testNameAndNamespace, resultNode.InnerText, stackTraceNode.InnerText))
+								failedTests.Add(test);
+						}
+
+						FindErrors(rootNode)?.ForEach(error => failedTests.Add(CorpDirTestInfo.CreateError(repository, "Error", error.InnerText, null)));
+
+						usedFiles.Add(FindUsedFilesLink(rootNode));
+						elapsedTimes.Add(FindElapsedTime(rootNode));
+						teams.Add(FindTeam(repository.Version, rootNode));
+					});
+					tasks.Add(task);
+				}
+
+				await Task.WhenAll(tasks);
+
+				failedTestsList = failedTests.ToList();
+
+				if(failedTestsList.Count == 0 && failed)
+					failedTestsList.Add(CorpDirTestInfo.CreateError(repository, "BuildError", "BuildError", "BuildError"));
+			}
+			else
+				failedTestsList.Add(CorpDirTestInfo.CreateError(repository, "Error", $"Files on the minio server does not stored correctly for v{repository.Version}. Please try again later.", null));
+
 			return new CorpDirTestInfoContainer(failedTestsList, usedFiles.ToList(), elapsedTimes.ToList(), MergeTeams(teams.ToList()), timings);
 		}
 
