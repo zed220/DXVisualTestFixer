@@ -2,4 +2,5 @@ Version 3.3.5::Creating symbolic link to bin folder by default for all visual te
 Version 3.3.6::Repository obsolescence message now shown only if the one of repositories is really obsolesced
 Version 3.3.8::Fix creating symbolic link to bin folder
 Version 3.3.10::Filter panel: checked popup for all filters
-Version 3.3.11::Now you don't need to wait when the cctray task will started and finished. So, after the gitlab pipeline was finished, you can immediately refresh tests list (F5).
+Version 3.3.11::Now you don't need to wait when the cctray task will started and finished. So, after the gitlab pipeline was finished, you can immediately refresh tests list (F5)
+Version 3.3.16::Try to fix the infinity loading
