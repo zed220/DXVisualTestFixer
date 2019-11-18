@@ -48,7 +48,7 @@ namespace DXVisualTestFixer.Core {
 				using var subscription = observable.Subscribe
 				(
 					item => result.Add(item.Key),
-					ex => throw ex,
+					tcs.SetException,
 					() => tcs.SetResult(true)
 				);
 				await tcs.Task;
@@ -64,9 +64,8 @@ namespace DXVisualTestFixer.Core {
 				using var subscription = observable.Subscribe
 				(
 					item => result.Add(item.Key),
-					ex => throw ex,
-					() => tcs.SetResult(true)
-				);
+					tcs.SetException,
+					() => tcs.SetResult(true));
 				await tcs.Task;
 				return result.ToArray().Last();
 			});
