@@ -289,30 +289,40 @@ namespace DXVisualTestFixer.UI.ViewModels {
 		}
 
 		public void ApplyChanges() {
+			obsolescenceTracker.Stop();
 			if(TestsToCommitCount == 0) {
 				notificationService.DoNotification("Nothing to commit", "Nothing to commit");
+				obsolescenceTracker.Start();
 				return;
 			}
 
 			if(TestService.ActualState.ChangedTests.Count == 0) {
 				notificationService.DoNotification("Nothing to commit", "Nothing to commit");
+				obsolescenceTracker.Start();
 				return;
 			}
 
 			var confirmation = ServiceLocator.Current.TryResolve<ApplyChangesViewModel>();
 			ApplyChangesRequest.Raise(confirmation);
-			if(!confirmation.Confirmed)
+			if(!confirmation.Confirmed) {
+				obsolescenceTracker.Start();
 				return;
+			}
+
 			Status = ProgramStatus.Loading;
 			Task.Factory.StartNew(() => ApplyChangesCore(confirmation.IsAutoCommit, confirmation.CommitCaption));
 		}
 
 		async Task ApplyChangesCore(bool commitIntoGitRepo, string commitCaption) {
-			if(commitIntoGitRepo && !await ActualizeRepositories())
+			if(commitIntoGitRepo && !await ActualizeRepositories()) {
+				obsolescenceTracker.Start();
 				return;
+			}
 			await Task.Factory.StartNew(() => TestService.ActualState.ChangedTests.ForEach(ApplyTest));
-			if(commitIntoGitRepo && !await PushTestsInRepository(commitCaption))
+			if(commitIntoGitRepo && !await PushTestsInRepository(commitCaption)) {
+				obsolescenceTracker.Start();
 				return;
+			}
 			TestsToCommitCount = 0;
 			UpdateContent();
 		}

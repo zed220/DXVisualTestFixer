@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
@@ -14,6 +15,7 @@ using System.Windows.Media.Imaging;
 using Color = System.Windows.Media.Color;
 using Image = System.Drawing.Image;
 using Pen = System.Drawing.Pen;
+using PixelFormat = System.Drawing.Imaging.PixelFormat;
 using Point = System.Windows.Point;
 using Size = System.Windows.Size;
 
@@ -88,10 +90,29 @@ namespace DXVisualTestFixer.UI.Controls {
 			ScrollOwner.InvalidateScrollInfo();
 			return currentSize = new Size(Math.Min(ImageSource.PixelWidth * Scale, availableSize.Width), Math.Min(ImageSource.PixelHeight * Scale, availableSize.Height));
 		}
+		
+		static PixelFormat ConvertPixelFormat(System.Windows.Media.PixelFormat sourceFormat) {
+			if(sourceFormat == System.Windows.Media.PixelFormats.Bgr24)
+				return PixelFormat.Format24bppRgb;
+			if(sourceFormat == System.Windows.Media.PixelFormats.Bgra32)
+				return PixelFormat.Format32bppArgb;
+			if(sourceFormat == System.Windows.Media.PixelFormats.Bgr32)
+				return PixelFormat.Format32bppRgb;
+			if(sourceFormat == System.Windows.Media.PixelFormats.Indexed8)
+				return PixelFormat.Format8bppIndexed;
+			throw new NotSupportedException();
+		}
 
-		static Bitmap BitmapSourceToBitmap(BitmapSource srs) {
+		static Bitmap BitmapSourceToBitmap(BitmapSource source) {
+			if(source.Format == System.Windows.Media.PixelFormats.Bgra32) {//Fast
+				var bmp = new Bitmap(source.PixelWidth, source.PixelHeight, ConvertPixelFormat(source.Format));
+				var data = bmp.LockBits(new Rectangle(System.Drawing.Point.Empty, bmp.Size), ImageLockMode.WriteOnly, ConvertPixelFormat(source.Format));
+				source.CopyPixels(Int32Rect.Empty, data.Scan0, data.Height * data.Stride, data.Stride);
+				bmp.UnlockBits(data);
+				return bmp;
+			}
 			BitmapEncoder enc = new BmpBitmapEncoder();
-			enc.Frames.Add(BitmapFrame.Create(srs, null, null, null));
+			enc.Frames.Add(BitmapFrame.Create(source, null, null, null));
 			using var outStream = new MemoryStream();
 			enc.Save(outStream);
 			return new Bitmap(outStream);

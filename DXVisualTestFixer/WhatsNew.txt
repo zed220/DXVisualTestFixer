@@ -4,3 +4,6 @@ Version 3.3.8::Fix creating symbolic link to bin folder
 Version 3.3.10::Filter panel: checked popup for all filters
 Version 3.3.11::Now you don't need to wait when the cctray task will started and finished. So, after the gitlab pipeline was finished, you can immediately refresh tests list (F5)
 Version 3.3.16::Try to fix the infinity loading
+Version 3.3.16::Try to fix the infinity loading
+Version 3.3.17::Performance: images render faster
+Version 3.3.18::Try to fix the infinity loading

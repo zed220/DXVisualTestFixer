@@ -10,6 +10,7 @@ using System.Xml;
 using DXVisualTestFixer.Common;
 using Microsoft.Practices.ObjectBuilder2;
 using Microsoft.Practices.ServiceLocation;
+using Minio.Exceptions;
 
 namespace DXVisualTestFixer.Core {
 	public class CorpDirTestInfoContainer {
