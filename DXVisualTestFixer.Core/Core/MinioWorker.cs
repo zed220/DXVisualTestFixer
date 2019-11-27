@@ -12,7 +12,7 @@ namespace DXVisualTestFixer.Core {
 	public class MinioWorker : IMinioWorker {
 		const string bucketName = "visualtests";
 		
-		static async Task<T> RepeatableAction<T>(Func<Task<T>> action, int iterationCount = 5) {
+		static async Task<T> RepeatableAction<T>(Func<Task<T>> action, int iterationCount = 1) {
 			Exception exception = null;
 			for(var i = 0; i < iterationCount; i++) {
 				try {

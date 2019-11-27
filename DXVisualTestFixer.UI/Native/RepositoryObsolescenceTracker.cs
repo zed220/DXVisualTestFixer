@@ -31,7 +31,8 @@ namespace DXVisualTestFixer.UI.Native {
 		}
 
 		public void Stop() {
-			timer.Stop();
+			if(timer.IsEnabled)
+				timer.Stop();
 		}
 
 		public void Start() {
