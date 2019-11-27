@@ -226,7 +226,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 					Status = ProgramStatus.Idle;
 					return;
 				}
-
+			Status = ProgramStatus.Idle;
 			RefreshTestList();
 		}
 
@@ -289,16 +289,19 @@ namespace DXVisualTestFixer.UI.ViewModels {
 		}
 
 		public void ApplyChanges() {
+			Status = ProgramStatus.Loading;
 			obsolescenceTracker.Stop();
 			if(TestsToCommitCount == 0) {
 				notificationService.DoNotification("Nothing to commit", "Nothing to commit");
 				obsolescenceTracker.Start();
+				Status = ProgramStatus.Idle;
 				return;
 			}
 
 			if(TestService.ActualState.ChangedTests.Count == 0) {
 				notificationService.DoNotification("Nothing to commit", "Nothing to commit");
 				obsolescenceTracker.Start();
+				Status = ProgramStatus.Idle;
 				return;
 			}
 
@@ -306,21 +309,23 @@ namespace DXVisualTestFixer.UI.ViewModels {
 			ApplyChangesRequest.Raise(confirmation);
 			if(!confirmation.Confirmed) {
 				obsolescenceTracker.Start();
+				Status = ProgramStatus.Idle;
 				return;
 			}
-
-			Status = ProgramStatus.Loading;
+			
 			Task.Factory.StartNew(() => ApplyChangesCore(confirmation.IsAutoCommit, confirmation.CommitCaption));
 		}
 
 		async Task ApplyChangesCore(bool commitIntoGitRepo, string commitCaption) {
 			if(commitIntoGitRepo && !await ActualizeRepositories()) {
 				obsolescenceTracker.Start();
+				Status = ProgramStatus.Idle;
 				return;
 			}
 			await Task.Factory.StartNew(() => TestService.ActualState.ChangedTests.ForEach(ApplyTest));
 			if(commitIntoGitRepo && !await PushTestsInRepository(commitCaption)) {
 				obsolescenceTracker.Start();
+				Status = ProgramStatus.Idle;
 				return;
 			}
 			TestsToCommitCount = 0;

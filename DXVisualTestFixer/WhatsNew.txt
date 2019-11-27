@@ -7,3 +7,4 @@ Version 3.3.16::Try to fix the infinity loading
 Version 3.3.16::Try to fix the infinity loading
 Version 3.3.17::Performance: images render faster
 Version 3.3.18::Try to fix the infinity loading
+Version 3.3.19::Try to fix the infinity loading
