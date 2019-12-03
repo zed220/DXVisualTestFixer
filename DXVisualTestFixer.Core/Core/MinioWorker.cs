@@ -6,13 +6,14 @@ using System.Reactive.Threading.Tasks;
 using System.Text;
 using System.Threading.Tasks;
 using DXVisualTestFixer.Common;
+using LibGit2Sharp;
 using Minio;
 
 namespace DXVisualTestFixer.Core {
 	public class MinioWorker : IMinioWorker {
 		const string bucketName = "visualtests";
 		
-		static async Task<T> RepeatableAction<T>(Func<Task<T>> action, int iterationCount = 1) {
+		static async Task<T> RepeatAsync<T>(Func<Task<T>> action, int iterationCount = 10) {
 			Exception exception = null;
 			for(var i = 0; i < iterationCount; i++) {
 				try {
@@ -26,11 +27,27 @@ namespace DXVisualTestFixer.Core {
 
 			throw exception;
 		}
+		static async Task RepeatAsync(Func<Task> action, int iterationCount = 10) {
+			Exception exception = null;
+			for(var i = 0; i < iterationCount; i++) {
+				try {
+					await action();
+					return;
+				}
+				catch(Exception e) {
+					exception = e;
+				}
+				await Task.Delay(TimeSpan.FromSeconds(10));
+			}
+
+			throw exception;
+		}
+
 		
 		static MinioClient CreateClient() => new MinioClient("gitlabci4-minio:9000", "xpfminio", "xpfminiostorage");
 
 		public async Task<string> Download(string path) {
-			return await RepeatableAction(async () => {
+			return await RepeatAsync(async () => {
 				string result = null;
 				await CreateClient().GetObjectAsync(bucketName, path, stream => {
 					using var reader = new StreamReader(stream);
@@ -39,9 +56,31 @@ namespace DXVisualTestFixer.Core {
 				return result;
 			});
 		}
+		
+		public async Task<bool> Exists(string root, string child) {
+			return await RepeatAsync(async () => {
+				var result = new List<string>();
+				var observable = CreateClient().ListObjectsAsync(bucketName, root);
+				var tcs = new TaskCompletionSource<bool>();
+				using var subscription = observable.Subscribe
+				(
+					item => result.Add(item.Key),
+					tcs.SetException,
+					() => tcs.SetResult(true)
+				);
+				await tcs.Task;
+				var fullPath = root + child + "/";
+				return result.Contains(fullPath);
+			});
+		}
 
+		public async Task WaitIfObjectNotLoaded(string root, string child) {
+			if(!await Exists(root, child))
+				await Task.FromException(new NotFoundException(root + child));
+		}
+		
 		public async Task<string[]> Discover(string path) {
-			return await RepeatableAction(async () => {
+			return await RepeatAsync(async () => {
 				var result = new List<string>();
 				var observable = CreateClient().ListObjectsAsync(bucketName, path);
 				var tcs = new TaskCompletionSource<bool>();
@@ -56,19 +95,11 @@ namespace DXVisualTestFixer.Core {
 			});
 		}
 		
-		public async Task<string> DiscoverLast(string path) {
-			return await RepeatableAction(async () => {
-				var result = new List<string>();
-				var observable = CreateClient().ListObjectsAsync(bucketName, path);
-				var tcs = new TaskCompletionSource<bool>();
-				using var subscription = observable.Subscribe
-				(
-					item => result.Add(item.Key),
-					tcs.SetException,
-					() => tcs.SetResult(true));
-				await tcs.Task;
-				return result.ToArray().Last();
-			});
+		public async Task<string> DiscoverLast(string path) => (await Discover(path)).Last();
+
+		public async Task<string> DiscoverPrev(string path) {
+			var all = await Discover(path);
+			return all.Reverse().Skip(1).First();
 		}
 	}
 }

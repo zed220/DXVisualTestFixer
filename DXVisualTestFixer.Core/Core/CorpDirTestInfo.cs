@@ -7,33 +7,33 @@ using Microsoft.Practices.ServiceLocation;
 
 namespace DXVisualTestFixer.Core {
 	public class CorpDirTestInfo {
-		public Repository Repository { get; set; }
-		public string Version => Repository?.Version;
-		public string CurrentTextEditPath { get; set; }
-		public string CurrentTextEditSHAPath { get; set; }
-		public byte[] CurrentTextEditSHA { get; set; }
+		public Repository Repository { get; private set; }
+		public string Version { get; private set; }
+		public string CurrentTextEditPath { get; private set; }
+		public string CurrentTextEditSHAPath { get; private set; }
+		public byte[] CurrentTextEditSHA { get; private set; }
 		public string InstantTextEditPath { get; set; }
-		public string InstantTextEditSHAPath { get; set; }
-		public byte[] InstantTextEditSHA { get; set; }
-		public string CurrentImagePath { get; set; }
-		public string CurrentImageSHAPath { get; set; }
-		public byte[] CurrentImageSHA { get; set; }
-		public string InstantImagePath { get; set; }
-		public string InstantImageSHAPath { get; set; }
-		public byte[] InstantImageSHA { get; set; }
-		public string ImageDiffPath { get; set; }
-		public int? DiffCount { get; set; }
+		public string InstantTextEditSHAPath { get; private set; }
+		public byte[] InstantTextEditSHA { get; private set; }
+		public string CurrentImagePath { get; private set; }
+		public string CurrentImageSHAPath { get; private set; }
+		public byte[] CurrentImageSHA { get; private set; }
+		public string InstantImagePath { get; private set; }
+		public string InstantImageSHAPath { get; private set; }
+		public byte[] InstantImageSHA { get; private set; }
+		public string ImageDiffPath { get; private set; }
+		public int? DiffCount { get; private set; }
 
-		public string TeamName { get; set; }
-		public string ServerFolderName { get; set; }
-		public string TestName { get; set; }
-		public string TestNameWithNamespace { get; set; }
-		public string ResourceFolderName { get; set; }
-		public string ThemeName { get; set; }
+		public string TeamName { get; private set; }
+		public string ServerFolderName { get; private set; }
+		public string TestName { get; private set; }
+		public string TestNameWithNamespace { get; private set; }
+		public string ResourceFolderName { get; private set; }
+		public string ThemeName { get; private set; }
 		public string StackTrace { get; set; }
-		public string ErrorText { get; set; }
+		public string ErrorText { get; private set; }
 		public int Dpi { get; set; } = 96;
-		public string AdditionalParameter { get; set; } = string.Empty;
+		public string AdditionalParameter { get; private set; } = string.Empty;
 
 		static string GetTestName(string testNameAndNamespace) {
 			if(!testNameAndNamespace.Contains('.'))
@@ -47,6 +47,7 @@ namespace DXVisualTestFixer.Core {
 		public static CorpDirTestInfo CreateError(Repository repository, string testNameAndNamespace, string errorText, string stackTrace) =>
 			new CorpDirTestInfo {
 				Repository = repository,
+				Version = repository.Version,
 				ErrorText = errorText,
 				TeamName = Team.ErrorName,
 				StackTrace = stackTrace,
@@ -58,6 +59,7 @@ namespace DXVisualTestFixer.Core {
 			result = null;
 			var temp = new CorpDirTestInfo();
 			temp.Repository = repository;
+			temp.Version = repository.Version;
 			temp.TestName = GetTestName(testNameAndNamespace);
 			temp.TestNameWithNamespace = testNameAndNamespace;
 			temp.DiffCount = diffCount;

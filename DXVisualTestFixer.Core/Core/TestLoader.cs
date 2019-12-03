@@ -42,9 +42,16 @@ namespace DXVisualTestFixer.Core {
 	}
 
 	public static class TestLoader {
+		static async Task<string> GetResultPath(IMinioWorker minio, Repository repository) {
+			var lastBuild = await minio.DiscoverLast($"XPF/{repository.Version}/");
+			if(!await minio.Exists(lastBuild, "results"))
+				lastBuild = await minio.DiscoverPrev($"XPF/{repository.Version}/");
+			return await minio.DiscoverLast($"{lastBuild}results/");
+		}
+		
 		public static async Task<CorpDirTestInfoContainer> LoadFromMinio(Repository repository) {
 			var minio = ServiceLocator.Current.GetInstance<IMinioWorker>();
-			var dir = await minio.DiscoverLast($"XPF/{repository.Version}/");
+			var lastResults = await GetResultPath(minio, repository);
 			
 			var failedTests = new ConcurrentBag<CorpDirTestInfo>();
 			var usedFiles = new ConcurrentBag<string>();
@@ -57,7 +64,7 @@ namespace DXVisualTestFixer.Core {
 
 			string[] files = null;
 			for(int i = 0; i < 10; i++, await Task.Delay(TimeSpan.FromSeconds(10))) {
-				files = await minio.Discover(dir);
+				files = await minio.Discover(lastResults);
 				if(files.FirstOrDefault(x => x.EndsWith("final")) != null)
 					break;
 				files = null;
