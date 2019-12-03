@@ -125,7 +125,8 @@ namespace DXVisualTestFixer.Core {
 			var corpDirTestInfoContainer = await LoadForRepositoryAsync(farmTaskInfo.Repository);
 			foreach(var corpDirTestInfo in corpDirTestInfoContainer.FailedTests) {
 				var info = corpDirTestInfo;
-				allTasks.Add(LoadTestInfoAsync(info, corpDirTestInfoContainer.Teams));
+				var testInfoTask = LoadTestInfo(farmTaskInfo.Repository, info, corpDirTestInfoContainer.Teams); 
+				allTasks.Add(testInfoTask);
 			}
 
 			var result = (await Task.WhenAll(allTasks)).ToList();
@@ -143,13 +144,9 @@ namespace DXVisualTestFixer.Core {
 			return corpDirTestInfoContainer;
 		}
 
-		async Task<TestInfo> LoadTestInfoAsync(CorpDirTestInfo corpDirTestInfo, List<Team> teams) {
-			return await LoadTestInfo(corpDirTestInfo, teams);
-		}
-
-		async Task<TestInfo> LoadTestInfo(CorpDirTestInfo corpDirTestInfo, List<Team> teams) {
+		async Task<TestInfo> LoadTestInfo(Repository repository, CorpDirTestInfo corpDirTestInfo, List<Team> teams) {
 			loggingService.SendMessage($"Start load test v{corpDirTestInfo.Version} {corpDirTestInfo.TestName}.{corpDirTestInfo.ThemeName}");
-			var testInfo = TryCreateTestInfo(corpDirTestInfo, teams);
+			var testInfo = TryCreateTestInfo(repository, corpDirTestInfo, teams);
 			loggingService.SendMessage($"End load test v{corpDirTestInfo.Version} {corpDirTestInfo.TestName}.{corpDirTestInfo.ThemeName}");
 			if(testInfo != null)
 				await UpdateTestStatusAsync(testInfo);
@@ -168,8 +165,8 @@ namespace DXVisualTestFixer.Core {
 			return null;
 		}
 
-		static TestInfo TryCreateTestInfo(CorpDirTestInfo corpDirTestInfo, List<Team> teams) {
-			var testInfo = new TestInfo(corpDirTestInfo.Repository);
+		static TestInfo TryCreateTestInfo(Repository repository, CorpDirTestInfo corpDirTestInfo, List<Team> teams) {
+			var testInfo = new TestInfo(repository);
 			testInfo.Version = corpDirTestInfo.Version;
 			testInfo.Name = corpDirTestInfo.TestName;
 			testInfo.AdditionalParameters = corpDirTestInfo.AdditionalParameter;

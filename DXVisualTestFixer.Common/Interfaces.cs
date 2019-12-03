@@ -149,5 +149,8 @@ namespace DXVisualTestFixer.Common {
 		Task<string> Download(string path);
 		Task<string[]> Discover(string path);
 		Task<string> DiscoverLast(string path);
+		Task<string> DiscoverPrev(string path);
+		Task WaitIfObjectNotLoaded(string root, string child);
+		Task<bool> Exists(string root, string child);
 	}
 }
