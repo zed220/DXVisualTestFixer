@@ -94,7 +94,7 @@ namespace DXVisualTestFixer.UI.Models {
 
 		static string GetRiderPath() {
 			var pathToJB = System.IO.Path.Combine(Environment.ExpandEnvironmentVariables("%ProgramW6432%"), "JetBrains");
-			return !Directory.Exists(pathToJB) ? null : Directory.GetFiles(pathToJB, "rider64.exe", SearchOption.AllDirectories).LastOrDefault();
+			return !Directory.Exists(pathToJB) ? null : Directory.GetFiles(pathToJB, "rider64.exe", SearchOption.AllDirectories).LastOrDefault(x => !x.Contains("Back"));
 		}
 
 		static string GetAssociatedProgram() {
