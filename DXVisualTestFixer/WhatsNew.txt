@@ -11,3 +11,4 @@ Version 3.3.19::Try to fix the infinity loading
 Version 3.3.20::Server-side improvements
 Version 3.3.21::Better Rider executable detection
 Version 3.3.22::Added visual information for long app loading, minio server integration improvements
+Version 3.3.23::Fixed exception if pipeline started but not completely finished
