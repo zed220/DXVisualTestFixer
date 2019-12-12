@@ -26,7 +26,6 @@ namespace DXVisualTestFixer.UI.ViewModels {
 		public static string NavigationParameter_Test = "Test";
 		readonly IConfigSerializer configSerializer;
 		readonly Dispatcher Dispatcher;
-		readonly IFarmIntegrator farmIntegrator;
 		readonly IActiveService isActiveService;
 		readonly ILoggingService loggingService;
 
@@ -37,7 +36,6 @@ namespace DXVisualTestFixer.UI.ViewModels {
 		public MainViewModel(INotificationService notificationService,
 			IRegionManager regionManager,
 			ILoggingService loggingService,
-			IFarmIntegrator farmIntegrator,
 			IConfigSerializer configSerializer,
 			ILoadingProgressController loadingProgressController,
 			ITestsService testsService,
@@ -47,7 +45,6 @@ namespace DXVisualTestFixer.UI.ViewModels {
 			this.notificationService = notificationService;
 			this.regionManager = regionManager;
 			this.loggingService = loggingService;
-			this.farmIntegrator = farmIntegrator;
 			this.configSerializer = configSerializer;
 			this.isActiveService = isActiveService;
 			_GitWorker = gitWorker;
@@ -385,7 +382,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 			if(checkConfirmation && CheckHasUncommittedChanges())
 				return;
 			obsolescenceTracker.Stop();
-			loggingService.SendMessage("Waiting response from farm integrator");
+			loggingService.SendMessage("Waiting response from minio");
 			Tests = null;
 			Status = ProgramStatus.Loading;
 			Task.Factory.StartNew(FarmRefresh).ConfigureAwait(false);

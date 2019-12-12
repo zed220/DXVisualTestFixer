@@ -21,8 +21,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DXVisualTestFixer.UI", "DXV
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DXVisualTestFixer.Common", "DXVisualTestFixer.Common\DXVisualTestFixer.Common.csproj", "{BCEC7D6C-B798-4DC7-A803-EBC75B0EFBBD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DXVisualTestFixer.FarmIntegrator2", "DXVisualTestFixer.FarmIntegrator2\DXVisualTestFixer.FarmIntegrator2.csproj", "{A3DE4F31-4D45-4CDB-9460-39F77F05E42F}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,12 +52,6 @@ Global
 		{BCEC7D6C-B798-4DC7-A803-EBC75B0EFBBD}.DebugPublish|Any CPU.Build.0 = DebugPublish|Any CPU
 		{BCEC7D6C-B798-4DC7-A803-EBC75B0EFBBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BCEC7D6C-B798-4DC7-A803-EBC75B0EFBBD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A3DE4F31-4D45-4CDB-9460-39F77F05E42F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A3DE4F31-4D45-4CDB-9460-39F77F05E42F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A3DE4F31-4D45-4CDB-9460-39F77F05E42F}.DebugPublish|Any CPU.ActiveCfg = DebugPublish|Any CPU
-		{A3DE4F31-4D45-4CDB-9460-39F77F05E42F}.DebugPublish|Any CPU.Build.0 = DebugPublish|Any CPU
-		{A3DE4F31-4D45-4CDB-9460-39F77F05E42F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A3DE4F31-4D45-4CDB-9460-39F77F05E42F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

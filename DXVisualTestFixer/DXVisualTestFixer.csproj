@@ -344,10 +344,6 @@
       <Project>{a3d50801-f65f-4201-8aee-7254dae4732f}</Project>
       <Name>DXVisualTestFixer.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DXVisualTestFixer.FarmIntegrator2\DXVisualTestFixer.FarmIntegrator2.csproj">
-      <Project>{a3de4f31-4d45-4cdb-9460-39f77f05e42f}</Project>
-      <Name>DXVisualTestFixer.FarmIntegrator2</Name>
-    </ProjectReference>
     <ProjectReference Include="..\DXVisualTestFixer.UI\DXVisualTestFixer.UI.csproj">
       <Project>{6e5e8bc1-a7a3-4ded-ad5e-4c8a09870875}</Project>
       <Name>DXVisualTestFixer.UI</Name>
