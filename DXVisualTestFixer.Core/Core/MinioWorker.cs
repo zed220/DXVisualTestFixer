@@ -95,7 +95,7 @@ namespace DXVisualTestFixer.Core {
 			});
 		}
 		
-		public async Task<string> DiscoverLast(string path) => (await Discover(path)).Last();
+		public async Task<string> DiscoverLast(string path) => await RepeatAsync(async () => (await Discover(path)).Last());
 
 		public async Task<string> DiscoverPrev(string path) {
 			var all = await Discover(path);
