@@ -7,6 +7,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using DXVisualTestFixer.Common;
+using Minio.Exceptions;
 using Prism.Mvvm;
 
 namespace DXVisualTestFixer.Core {
@@ -14,19 +15,19 @@ namespace DXVisualTestFixer.Core {
 		static readonly object lockLoadFromDisk = new object();
 		static readonly object lockLoadFromNet = new object();
 		readonly IConfigSerializer configSerializer;
-		readonly IFarmIntegrator farmIntegrator;
 		readonly ILoadingProgressController loadingProgressController;
 		readonly ILoggingService loggingService;
+		readonly IMinioWorker minioWorker;
 
-		readonly Dictionary<IFarmTaskInfo, TestInfoCached> RealUrlCache = new Dictionary<IFarmTaskInfo, TestInfoCached>();
+		readonly Dictionary<string, TestInfoCached> MinioPathCache = new Dictionary<string, TestInfoCached>();
 
 		string _CurrentFilter;
 
-		public TestsService(ILoadingProgressController loadingProgressController, IConfigSerializer configSerializer, ILoggingService loggingService, IFarmIntegrator farmIntegrator) {
+		public TestsService(ILoadingProgressController loadingProgressController, IConfigSerializer configSerializer, ILoggingService loggingService, IMinioWorker minioWorker) {
 			this.loadingProgressController = loadingProgressController;
 			this.configSerializer = configSerializer;
 			this.loggingService = loggingService;
-			this.farmIntegrator = farmIntegrator;
+			this.minioWorker = minioWorker;
 		}
 
 		public ITestInfoContainer ActualState { get; set; }
@@ -41,12 +42,34 @@ namespace DXVisualTestFixer.Core {
 
 		public async Task UpdateTests(INotificationService notificationService) {
 			CurrentFilter = null;
-			var allTasks = farmIntegrator.GetAllTasks(configSerializer.GetConfig().GetLocalRepositories());
-			var actualState = await LoadTestsAsync(allTasks, notificationService);
+			var actualRepositories = await GetMinioRepositories(configSerializer.GetConfig().GetLocalRepositories());
+			var actualState = await LoadTestsAsync(actualRepositories, notificationService);
 			loggingService.SendMessage("Start updating problems");
 			await ((TestInfoContainer) actualState).UpdateProblems();
 			loggingService.SendMessage("Almost there");
 			ActualState = actualState;
+		}
+
+		async Task<List<MinioRepository>> GetMinioRepositories(IEnumerable<Repository> repositories) {
+			List<MinioRepository> result = new List<MinioRepository>();
+			foreach(var repository in repositories) 
+				result.Add(new MinioRepository(repository, await GetResultPath(minioWorker, repository)));
+			return result;
+		}
+		
+		async Task<string> GetResultPath(IMinioWorker minio, Repository repository) {
+			var lastBuild = await minio.DiscoverLast($"XPF/{repository.Version}/");
+			if(!await minio.Exists(lastBuild, "results"))
+				lastBuild = await minio.DiscoverPrev($"XPF/{repository.Version}/");
+			var last = await minio.DiscoverLast($"{lastBuild}results/");
+			
+			for(int i = 0; i < 20; i++, await Task.Delay(TimeSpan.FromSeconds(10))) {
+				var files = await minio.Discover(last);
+				if(files.FirstOrDefault(x => x.EndsWith("final")) != null)
+					return last;
+				loggingService.SendMessage($"Waiting while the {repository.Version} was completely finished in the path {last}");
+			}
+			throw new MinioException($"Results for {repository.Version} does not stored correctly in {last}");
 		}
 
 		public string GetResourcePath(Repository repository, string relativePath) {
@@ -85,21 +108,21 @@ namespace DXVisualTestFixer.Core {
 			return true;
 		}
 
-		async Task<ITestInfoContainer> LoadTestsAsync(List<IFarmTaskInfo> farmTasks, INotificationService notificationService) {
+		async Task<ITestInfoContainer> LoadTestsAsync(List<MinioRepository> minioRepositories, INotificationService notificationService) {
 			loadingProgressController.Flush();
-			loadingProgressController.Enlarge(farmTasks.Count);
-			loggingService.SendMessage("Collecting tests information from farm");
+			loadingProgressController.Enlarge(minioRepositories.Count);
+			loggingService.SendMessage("Collecting tests information from minio");
 			var allTasks = new List<Task>();
 			var result = new TestInfoContainer();
 			result.Timings.Clear();
 			var locker = new object();
-			foreach(var farmTaskInfo in farmTasks) {
-				if(string.IsNullOrEmpty(farmTaskInfo.Url)) {
-					notificationService?.DoNotification($"Farm Task Not Found For {farmTaskInfo.Repository.Version}", $"Farm Task {farmTaskInfo.Repository.Version} from path {farmTaskInfo.Repository.Path} does not found. Maybe new branch created, but corresponding farm task missing. It well be added later. Otherwise, contact app owner for details.");
+			foreach(var minioRepository in minioRepositories) {
+				if(string.IsNullOrEmpty(minioRepository.Path)) {
+					notificationService?.DoNotification($"Minio path not found for {minioRepository.Repository.Version}", $"Version {minioRepository.Repository.Version} from path {minioRepository.Repository.Path} does not found. Maybe new branch created, but corresponding minio path mission. It will be added later. Otherwise, contact app owners (Zinovyev, Litvinov) for details.");
 					continue;
 				}
 
-				allTasks.Add(LoadTestsCoreAsync(farmTaskInfo).ContinueWith(cachedResult => {
+				allTasks.Add(LoadTestsCoreAsync(minioRepository).ContinueWith(cachedResult => {
 					var cached = cachedResult.Result;
 					lock(locker) {
 						result.TestList.AddRange(cached.TestList);
@@ -115,22 +138,22 @@ namespace DXVisualTestFixer.Core {
 			return result;
 		}
 
-		async Task<TestInfoCached> LoadTestsCoreAsync(IFarmTaskInfo farmTaskInfo) {
-			if(RealUrlCache.TryGetValue(farmTaskInfo, out var cache) && cache.RealUrl == farmTaskInfo.Url) {
+		async Task<TestInfoCached> LoadTestsCoreAsync(MinioRepository minioRepository) {
+			if(MinioPathCache.TryGetValue(minioRepository.Repository.Version, out var cache) && cache.RealUrl == minioRepository.Path) {
 				await ActualizeTestsAsync(cache.TestList);
 				return cache;
 			}
 
 			var allTasks = new List<Task<TestInfo>>();
-			var corpDirTestInfoContainer = await LoadForRepositoryAsync(farmTaskInfo.Repository);
+			var corpDirTestInfoContainer = await LoadForRepositoryAsync(minioRepository);
 			foreach(var corpDirTestInfo in corpDirTestInfoContainer.FailedTests) {
 				var info = corpDirTestInfo;
-				var testInfoTask = LoadTestInfo(farmTaskInfo.Repository, info, corpDirTestInfoContainer.Teams); 
+				var testInfoTask = LoadTestInfo(minioRepository.Repository, info, corpDirTestInfoContainer.Teams); 
 				allTasks.Add(testInfoTask);
 			}
 
 			var result = (await Task.WhenAll(allTasks)).ToList();
-			return RealUrlCache[farmTaskInfo] = new TestInfoCached(farmTaskInfo.Repository, farmTaskInfo.Url, result, corpDirTestInfoContainer);
+			return MinioPathCache[minioRepository.Repository.Version] = new TestInfoCached(minioRepository.Repository, minioRepository.Path, result, corpDirTestInfoContainer);
 		}
 
 		async Task ActualizeTestsAsync(List<TestInfo> testList) {
@@ -138,8 +161,8 @@ namespace DXVisualTestFixer.Core {
 			await Task.WhenAll(allTasks);
 		}
 
-		async Task<CorpDirTestInfoContainer> LoadForRepositoryAsync(Repository repository) {
-			var corpDirTestInfoContainer = await TestLoader.LoadFromMinio(repository);
+		async Task<CorpDirTestInfoContainer> LoadForRepositoryAsync(MinioRepository minioRepository) {
+			var corpDirTestInfoContainer = await TestLoader.LoadFromMinio(minioRepository);
 			loadingProgressController.Enlarge(corpDirTestInfoContainer.FailedTests.Count);
 			return corpDirTestInfoContainer;
 		}

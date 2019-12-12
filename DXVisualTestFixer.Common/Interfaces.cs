@@ -97,10 +97,6 @@ namespace DXVisualTestFixer.Common {
 		IConfig Config { get; }
 	}
 
-	public interface IFarmIntegrator {
-		List<IFarmTaskInfo> GetAllTasks(IEnumerable<Repository> repositories);
-	}
-
 	public interface ITestsService : INotifyPropertyChanged {
 		ITestInfoContainer ActualState { get; }
 		string CurrentFilter { get; set; }
@@ -108,12 +104,6 @@ namespace DXVisualTestFixer.Common {
 		bool ApplyTest(TestInfo test, Func<string, bool> checkoutFunc);
 		Task UpdateTests(INotificationService notificationService);
 		string GetResourcePath(Repository repository, string relativePath);
-	}
-
-	public interface IFarmTaskInfo {
-		Repository Repository { get; }
-		string Url { get; }
-		bool Success { get; }
 	}
 
 	public interface ITestInfoContainer {

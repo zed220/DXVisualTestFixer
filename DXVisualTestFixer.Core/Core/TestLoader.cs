@@ -41,17 +41,9 @@ namespace DXVisualTestFixer.Core {
 		public TimeSpan Time { get; }
 	}
 
-	public static class TestLoader {
-		static async Task<string> GetResultPath(IMinioWorker minio, Repository repository) {
-			var lastBuild = await minio.DiscoverLast($"XPF/{repository.Version}/");
-			if(!await minio.Exists(lastBuild, "results"))
-				lastBuild = await minio.DiscoverPrev($"XPF/{repository.Version}/");
-			return await minio.DiscoverLast($"{lastBuild}results/");
-		}
-		
-		public static async Task<CorpDirTestInfoContainer> LoadFromMinio(Repository repository) {
+	static class TestLoader {
+		public static async Task<CorpDirTestInfoContainer> LoadFromMinio(MinioRepository minioRepository) {
 			var minio = ServiceLocator.Current.GetInstance<IMinioWorker>();
-			var lastResults = await GetResultPath(minio, repository);
 			
 			var failedTests = new ConcurrentBag<CorpDirTestInfo>();
 			var usedFiles = new ConcurrentBag<string>();
@@ -62,13 +54,7 @@ namespace DXVisualTestFixer.Core {
 
 			var tasks = new List<Task>();
 
-			string[] files = null;
-			for(int i = 0; i < 10; i++, await Task.Delay(TimeSpan.FromSeconds(10))) {
-				files = await minio.Discover(lastResults);
-				if(files.FirstOrDefault(x => x.EndsWith("final")) != null)
-					break;
-				files = null;
-			}
+			var files = await minio.Discover(minioRepository.Path);
 
 			var failedTestsList = new List<CorpDirTestInfo>();
 			if(files != null) {
@@ -93,15 +79,15 @@ namespace DXVisualTestFixer.Core {
 							var failureNode = testCaseXml.FindByName("failure");
 							var resultNode = failureNode.FindByName("message");
 							var stackTraceNode = failureNode.FindByName("stack-trace");
-							foreach(var test in ParseMessage(repository, testNameAndNamespace, resultNode.InnerText, stackTraceNode.InnerText))
+							foreach(var test in ParseMessage(minioRepository.Repository, testNameAndNamespace, resultNode.InnerText, stackTraceNode.InnerText))
 								failedTests.Add(test);
 						}
 
-						FindErrors(rootNode)?.ForEach(error => failedTests.Add(CorpDirTestInfo.CreateError(repository, "Error", error.InnerText, null)));
+						FindErrors(rootNode)?.ForEach(error => failedTests.Add(CorpDirTestInfo.CreateError(minioRepository.Repository, "Error", error.InnerText, null)));
 
 						usedFiles.Add(FindUsedFilesLink(rootNode));
 						elapsedTimes.Add(FindElapsedTime(rootNode));
-						teams.Add(FindTeam(repository.Version, rootNode));
+						teams.Add(FindTeam(minioRepository.Repository.Version, rootNode));
 					});
 					tasks.Add(task);
 				}
@@ -111,10 +97,10 @@ namespace DXVisualTestFixer.Core {
 				failedTestsList = failedTests.ToList();
 
 				if(failedTestsList.Count == 0 && failed)
-					failedTestsList.Add(CorpDirTestInfo.CreateError(repository, "BuildError", "BuildError", "BuildError"));
+					failedTestsList.Add(CorpDirTestInfo.CreateError(minioRepository.Repository, "BuildError", "BuildError", "BuildError"));
 			}
 			else
-				failedTestsList.Add(CorpDirTestInfo.CreateError(repository, "Error", $"Files on the minio server does not stored correctly for v{repository.Version}. Please try again later.", null));
+				failedTestsList.Add(CorpDirTestInfo.CreateError(minioRepository.Repository, "Error", $"Files on the minio server does not stored correctly for v{minioRepository.Repository.Version}. Please try again later.", null));
 
 			return new CorpDirTestInfoContainer(failedTestsList, usedFiles.ToList(), elapsedTimes.ToList(), MergeTeams(teams.ToList()), timings);
 		}

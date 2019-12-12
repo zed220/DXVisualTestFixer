@@ -5,7 +5,6 @@ using DevExpress.Xpf.Docking;
 using DXVisualTestFixer.Common;
 using DXVisualTestFixer.Core;
 using DXVisualTestFixer.Core.Configuration;
-using DXVisualTestFixer.FarmIntegrator2;
 using DXVisualTestFixer.PrismCommon;
 using DXVisualTestFixer.Services;
 using DXVisualTestFixer.UI.Common;
@@ -38,7 +37,6 @@ namespace DXVisualTestFixer {
 			RegisterTypeIfMissing(typeof(ITestsService), typeof(TestsService), true);
 			RegisterTypeIfMissing(typeof(IGitWorker), typeof(GitWorker), true);
 			RegisterTypeIfMissing(typeof(IMinioWorker), typeof(MinioWorker), true);
-			RegisterTypeIfMissing(typeof(IFarmIntegrator), typeof(FarmIntegrator), true);
 			RegisterTypeIfMissing(typeof(IVersionService), typeof(VersionService), true);
 			RegisterTypeIfMissing(typeof(ISettingsViewModel), typeof(SettingsViewModel), false);
 			RegisterTypeIfMissing(typeof(IFolderBrowserDialog), typeof(DXFolderBrowserDialog), false);
