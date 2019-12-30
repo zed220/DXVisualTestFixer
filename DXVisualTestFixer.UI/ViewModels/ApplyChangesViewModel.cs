@@ -28,7 +28,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 					_CommitCaption = CommitCaption.Substring(0, 255);
 				Confirmed = true;
 			});
-			ChangedTests = testsService.ActualState.ChangedTests;
+			ChangedTests = testsService.SelectedState.ChangedTests;
 		}
 
 		public IEnumerable<UICommand> DialogCommands { get; set; }

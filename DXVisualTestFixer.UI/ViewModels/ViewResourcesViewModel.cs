@@ -25,7 +25,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 			_testsService = testsService;
 			_minioWorker = minioWorker;
 			Status = ProgramStatus.Loading;
-			Task.Factory.StartNew(() => UpdateUsedFiles(testsService.ActualState.UsedFilesLinks, testsService.ActualState.Teams)).ConfigureAwait(false);
+			Task.Factory.StartNew(() => UpdateUsedFiles(testsService.SelectedState.UsedFilesLinks, testsService.SelectedState.Teams)).ConfigureAwait(false);
 		}
 
 		[UsedImplicitly] public IEnumerable<UICommand> Commands { get; }

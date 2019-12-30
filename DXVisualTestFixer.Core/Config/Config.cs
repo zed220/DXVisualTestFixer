@@ -43,7 +43,7 @@ namespace DXVisualTestFixer.Core.Configuration {
 			foreach(var version in versions) {
 				if(config.Repositories.Select(r => r.Version).Contains(version))
 					continue;
-				reposToDownload.Add(new Repository {Version = version, Path = Path.Combine(config.WorkingDirectory, $"20{version}_VisualTests")});
+				reposToDownload.Add(Repository.CreateRegular(version, Path.Combine(config.WorkingDirectory, $"20{version}_VisualTests")));
 			}
 
 			if(reposToDownload.Count > 0)

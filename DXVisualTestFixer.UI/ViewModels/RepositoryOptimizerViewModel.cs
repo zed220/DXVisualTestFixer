@@ -33,7 +33,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 			Commands = UICommand.GenerateFromMessageButton(MessageButton.OKCancel, new DialogService(), MessageResult.OK, MessageResult.Cancel);
 			Commands.Single(c => c.IsDefault).Command = new DelegateCommand(() => Commit());
 			Status = ProgramStatus.Loading;
-			Task.Factory.StartNew(() => UpdateUnusedFiles(testsService.ActualState.UsedFilesLinks, testsService.ActualState.Teams)).ConfigureAwait(false);
+			Task.Factory.StartNew(() => UpdateUnusedFiles(testsService.SelectedState.UsedFilesLinks, testsService.SelectedState.Teams)).ConfigureAwait(false);
 		}
 
 		[UsedImplicitly]

@@ -87,7 +87,10 @@ namespace DXVisualTestFixer.Core {
 
 						usedFiles.Add(FindUsedFilesLink(rootNode));
 						elapsedTimes.Add(FindElapsedTime(rootNode));
-						teams.Add(FindTeam(minioRepository.Repository.Version, rootNode));
+						var team = FindTeam(minioRepository.Repository.Version, rootNode);
+						if(team == null)
+							return;
+						teams.Add(team);
 					});
 					tasks.Add(task);
 				}
@@ -158,6 +161,8 @@ namespace DXVisualTestFixer.Core {
 			if(buildNode == null)
 				return null;
 			var teamNode = buildNode.FindByName("Project");
+			if(teamNode == null)
+				return null;
 			if(!teamNode.TryGetAttribute("Dpi", out int dpi))
 				return null;
 			if(!teamNode.TryGetAttribute("IncludedCategories", out string teamName))
