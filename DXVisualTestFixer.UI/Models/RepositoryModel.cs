@@ -15,8 +15,6 @@ namespace DXVisualTestFixer.UI.Models {
 		readonly Dispatcher _dispatcher;
 		public readonly Repository Repository;
 
-		public RepositoryModel() : this(new Repository()) { }
-
 		public RepositoryModel(Repository source) {
 			Repository = source;
 			Version = Repository.Version;
@@ -56,7 +54,7 @@ namespace DXVisualTestFixer.UI.Models {
 				if(!dirName.Contains($"20{ver}") && !dirName.Contains(ver)) continue;
 				if(!File.Exists(directoryPath + "\\VisualTestsConfig.xml"))
 					continue;
-				var repository = new RepositoryModel(new Repository {Version = ver, Path = directoryPath + "\\"}); 
+				var repository = new RepositoryModel(Repository.CreateRegular(ver, directoryPath + "\\")); 
 				repositories.Add(repository);
 				InitializeBinIfNeed(repository.Path, repository.Version);
 			}

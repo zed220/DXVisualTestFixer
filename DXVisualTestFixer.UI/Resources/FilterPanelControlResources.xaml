@@ -150,7 +150,7 @@
                 </dxfui:CheckedListFilterElement>
             </dxdo:LayoutControlItem>
             <dxdo:LayoutControlItem Caption="Versions">
-                <dxfui:CheckedListFilterElement FieldName="Version" SelectAllWhenFilterIsNull="True">
+                <dxfui:CheckedListFilterElement FieldName="VersionAndFork" SelectAllWhenFilterIsNull="True">
                     <dxfui:CheckedListFilterElement.FilterModelTemplate>
                         <DataTemplate>
                             <dxe:ComboBoxEdit />

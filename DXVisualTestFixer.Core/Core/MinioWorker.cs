@@ -101,5 +101,19 @@ namespace DXVisualTestFixer.Core {
 			var all = await Discover(path);
 			return all.Reverse().Skip(1).First();
 		}
+		public async Task<string[]> DetectUserPaths() {
+			var excludedPaths = new[] { "XPF/", "usedfiles/", "visualtestsscripts-2.0/", "visualtestsscripts-3.0/", "visualtestsscripts-4.0/" };
+			
+			var rootPaths = await Discover(null);
+			rootPaths = rootPaths.Except(excludedPaths).ToArray();
+
+			var result = new List<string>();
+			foreach(var rootPath in rootPaths) {
+				foreach(var version in await Discover(rootPath + "Common/")) 
+					result.Add(await DiscoverLast(version));
+			}
+			
+			return result.ToArray();
+		}
 	}
 }

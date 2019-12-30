@@ -53,7 +53,6 @@ namespace DXVisualTestFixer.UI.ViewModels {
 			TestService = testsService;
 			TestService.PropertyChanged += TestService_PropertyChanged;
 			loggingService.MessageReserved += OnLoggingMessageReserved;
-			UpdateConfig();
 		}
 
 		public List<ITestInfoModel> Tests {
@@ -156,11 +155,39 @@ namespace DXVisualTestFixer.UI.ViewModels {
 			}
 		}
 
+		[PublicAPI]
+		public string SelectedStateName {
+			get => _selectedStateName;
+			set {
+				_selectedStateName = value;
+				RefreshTestList();
+			}
+		}
+
+		[PublicAPI]
+		public List<string> AvailableStates {
+			get => _availableStates;
+			private set {
+				_availableStates = value;
+				OnPropertyChanged(nameof(AvailableStates));
+			}
+		}
+		[PublicAPI]
+		public bool IsReadOnly {
+			get => _isReadOnly;
+			set {
+				_isReadOnly = value;
+				OnPropertyChanged(nameof(IsReadOnly));
+			}
+		} 
+
 		async Task UpdateAllTests() {
 			loggingService.SendMessage("Refreshing tests");
 			LoadingProgressController.Start();
-			await TestService.UpdateTests(notificationService).ConfigureAwait(false);
-			var testInfoContainer = TestService.ActualState;
+			await TestService.SelectState(SelectedStateName).ConfigureAwait(false);
+			AvailableStates = TestService.States.Keys.ToList(); 
+			var testInfoContainer = TestService.SelectedState;
+			IsReadOnly = !testInfoContainer.AllowEditing;
 			var tests = testInfoContainer.TestList.Where(t => t != null).Select(t => new TestInfoModel(this, t)).Cast<ITestInfoModel>().ToList();
 			loggingService.SendMessage("");
 			await Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
@@ -185,7 +212,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 			Solutions = actualSolutions;
 		}
 
-		void UpdateConfig() {
+		public void Initialize() {
 			loggingService.SendMessage("Checking config");
 			var config = configSerializer.GetConfig(false);
 			if(Config != null && configSerializer.IsConfigEquals(config, Config))
@@ -266,7 +293,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 				return;
 			TestsToCommitCount = 0;
 			configSerializer.SaveConfig(confirmation.Config);
-			UpdateConfig();
+			Initialize();
 		}
 
 		public void CommitCurrentTest() {
@@ -295,7 +322,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 				return;
 			}
 
-			if(TestService.ActualState.ChangedTests.Count == 0) {
+			if(TestService.SelectedState.ChangedTests.Count == 0) {
 				notificationService.DoNotification("Nothing to commit", "Nothing to commit");
 				obsolescenceTracker.Start();
 				Status = ProgramStatus.Idle;
@@ -319,7 +346,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 				Status = ProgramStatus.Idle;
 				return;
 			}
-			await Task.Factory.StartNew(() => TestService.ActualState.ChangedTests.ForEach(ApplyTest));
+			await Task.Factory.StartNew(() => TestService.SelectedState.ChangedTests.ForEach(ApplyTest));
 			if(commitIntoGitRepo && !await PushTestsInRepository(commitCaption)) {
 				obsolescenceTracker.Start();
 				Status = ProgramStatus.Idle;
@@ -345,7 +372,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 		}
 
 		async Task<bool> PushTestsInRepository(string commitCaption) {
-			foreach(var group in TestService.ActualState.ChangedTests.GroupBy(t => t.Repository)) {
+			foreach(var group in TestService.SelectedState.ChangedTests.GroupBy(t => t.Repository)) {
 				var commitResult = await _GitWorker.Commit(group.Key, commitCaption);
 				if(commitResult != GitCommitResult.Error) continue;
 				Dispatcher.Invoke(() => notificationService.DoNotification("Pushing failed", $"Can't push repository {group.Key.Version} that located at {group.Key.Path}", MessageBoxImage.Error));
@@ -376,35 +403,41 @@ namespace DXVisualTestFixer.UI.ViewModels {
 			return !CheckConfirmation(ConfirmationRequest, "Warning", "This tool is powerful and dangerous. Unbridled using may cause repository errors! Are you really sure?");
 		}
 
+		[PublicAPI]
 		public void RefreshTestList(bool checkConfirmation = true) {
 			if(Status == ProgramStatus.Loading)
 				return;
-			if(checkConfirmation && CheckHasUncommittedChanges())
+			Status = ProgramStatus.Loading;
+			if(checkConfirmation && CheckHasUncommittedChanges()) {
+				SelectedStateName = "XPF";
+				Status = ProgramStatus.Idle;
 				return;
+			}
 			obsolescenceTracker.Stop();
 			loggingService.SendMessage("Waiting response from minio");
 			Tests = null;
-			Status = ProgramStatus.Loading;
 			Task.Factory.StartNew(FarmRefresh).ConfigureAwait(false);
 			obsolescenceTracker.Start();
 		}
-
+		
+		[PublicAPI]
 		public void ClearCommits() {
 			if(TestsToCommitCount == 0)
 				return;
 			foreach(var test in Tests)
 				test.CommitChange = false;
-			TestService.ActualState?.ChangedTests?.Clear();
+			TestService.SelectedState?.ChangedTests?.Clear();
 		}
 
+		[PublicAPI]
 		public void CommitTest(TestInfoModel testInfoModel) {
 			TestsToCommitCount++;
-			TestService.ActualState.ChangedTests.Add(testInfoModel.TestInfo);
+			TestService.SelectedState.ChangedTests.Add(testInfoModel.TestInfo);
 		}
 
 		public void UndoCommitTest(TestInfoModel testInfoModel) {
 			TestsToCommitCount--;
-			TestService.ActualState.ChangedTests.Remove(testInfoModel.TestInfo);
+			TestService.SelectedState.ChangedTests.Remove(testInfoModel.TestInfo);
 		}
 
 		IConfig Config;
@@ -419,5 +452,8 @@ namespace DXVisualTestFixer.UI.ViewModels {
 		List<SolutionModel> _Solutions;
 		readonly IGitWorker _GitWorker;
 		List<TimingInfo> _TimingInfo = new List<TimingInfo>();
+		string _selectedStateName = "XPF";
+		List<string> _availableStates;
+		bool _isReadOnly;
 	}
 }

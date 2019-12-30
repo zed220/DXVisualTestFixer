@@ -19,14 +19,8 @@ using Prism.Unity;
 
 namespace DXVisualTestFixer {
 	public class Bootstrapper : UnityBootstrapper {
-		protected override DependencyObject CreateShell() {
-			return new Shell();
-		}
-
-		protected override void InitializeShell() {
-			Application.Current.MainWindow.Show();
-		}
-
+		protected override DependencyObject CreateShell() => new Shell();
+		protected override void InitializeShell() => Application.Current.MainWindow.Show();
 		protected override void ConfigureContainer() {
 			base.ConfigureContainer();
 			RegisterTypeIfMissing(typeof(INotificationService), typeof(NotificationService), true);
@@ -55,7 +49,6 @@ namespace DXVisualTestFixer {
 
 		protected override void ConfigureViewModelLocator() {
 			base.ConfigureViewModelLocator();
-
 			Container.Resolve<IRegionManager>().RegisterViewWithRegion(Regions.Main, typeof(MainView));
 		}
 	}

@@ -3,6 +3,7 @@ using System.Windows.Input;
 using DevExpress.Xpf.Grid;
 using DXVisualTestFixer.Common;
 using DXVisualTestFixer.UI.ViewModels;
+using JetBrains.Annotations;
 
 namespace DXVisualTestFixer.UI.Controls {
 	public class TableViewAdvNavigation : TableView {
@@ -27,6 +28,7 @@ namespace DXVisualTestFixer.UI.Controls {
 				FocusedRowHandle = focusedRowHandleCandidate;
 		}
 
+		[PublicAPI]
 		public void ProcessDoubleClick(RowDoubleClickEventArgs e) {
 			if(!e.HitInfo.InRow)
 				return;
@@ -49,7 +51,7 @@ namespace DXVisualTestFixer.UI.Controls {
 
 		void InverseCommitChange(int rowHandle) {
 			var model = GetValidTestInfoModel(rowHandle);
-			if(model != null)
+			if(model != null && !model.TestInfo.Repository.ReadOnly)
 				model.CommitChange = !model.CommitChange;
 		}
 
@@ -69,19 +71,21 @@ namespace DXVisualTestFixer.UI.Controls {
 				SetCommitChange(rowHandle, value);
 		}
 
+		[PublicAPI]
 		public void CommitAllInViewport() {
 			var i = 0;
 			while(i < Grid.VisibleRowCount - 1)
 				SetCommitChange(Grid.GetRowHandleByVisibleIndex(i++), true);
 		}
 
+		[PublicAPI]
 		public void ClearCommitsInViewport() {
 			var i = 0;
 			while(i < Grid.VisibleRowCount - 1)
 				SetCommitChange(Grid.GetRowHandleByVisibleIndex(i++), false);
 		}
 
-
+		[PublicAPI]
 		public void ProcessKeyDown(KeyEventArgs e) {
 			if(e.Key != Key.Space)
 				return;
