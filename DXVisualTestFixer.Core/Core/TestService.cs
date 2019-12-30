@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -12,25 +13,30 @@ using Prism.Mvvm;
 
 namespace DXVisualTestFixer.Core {
 	public class TestsService : BindableBase, ITestsService {
+		const string xpfStateName = "XPF";
+		
 		static readonly object lockLoadFromDisk = new object();
 		static readonly object lockLoadFromNet = new object();
 		readonly IConfigSerializer configSerializer;
 		readonly ILoadingProgressController loadingProgressController;
 		readonly ILoggingService loggingService;
 		readonly IMinioWorker minioWorker;
+		readonly INotificationService notificationService;
 
 		readonly Dictionary<string, TestInfoCached> MinioPathCache = new Dictionary<string, TestInfoCached>();
 
 		string _CurrentFilter;
+		string SelectedStateName;
 
-		public TestsService(ILoadingProgressController loadingProgressController, IConfigSerializer configSerializer, ILoggingService loggingService, IMinioWorker minioWorker) {
+		public TestsService(ILoadingProgressController loadingProgressController, IConfigSerializer configSerializer, ILoggingService loggingService, IMinioWorker minioWorker, INotificationService notificationService) {
 			this.loadingProgressController = loadingProgressController;
 			this.configSerializer = configSerializer;
 			this.loggingService = loggingService;
 			this.minioWorker = minioWorker;
+			this.notificationService = notificationService;
 		}
 
-		public ITestInfoContainer ActualState { get; set; }
+		public ITestInfoContainer SelectedState { get; private set; }
 
 		public string CurrentFilter {
 			get => _CurrentFilter;
@@ -40,36 +46,85 @@ namespace DXVisualTestFixer.Core {
 			}
 		}
 
-		public async Task UpdateTests(INotificationService notificationService) {
+		public Dictionary<string, List<Repository>> States { get; } = new Dictionary<string, List<Repository>>();
+		
+		async Task UpdateTests() {
 			CurrentFilter = null;
-			var actualRepositories = await GetMinioRepositories(configSerializer.GetConfig().GetLocalRepositories());
-			var actualState = await LoadTestsAsync(actualRepositories, notificationService);
+			await FillStates();
+			bool forked = SelectedStateName != xpfStateName;
+			var actualRepositories = forked ? GetForkedMinioRepositories() : await GetXpfMinioRepositories();
+			var state = await LoadTestsAsync(actualRepositories, !forked);
 			loggingService.SendMessage("Start updating problems");
-			await ((TestInfoContainer) actualState).UpdateProblems();
+			await ((TestInfoContainer) state).UpdateProblems();
 			loggingService.SendMessage("Almost there");
-			ActualState = actualState;
+			SelectedState = state;
 		}
 
-		async Task<List<MinioRepository>> GetMinioRepositories(IEnumerable<Repository> repositories) {
-			List<MinioRepository> result = new List<MinioRepository>();
-			foreach(var repository in repositories) 
-				result.Add(new MinioRepository(repository, await GetResultPath(minioWorker, repository)));
+		async Task FillStates() {
+			States.Clear();
+			States[xpfStateName] = configSerializer.GetConfig().GetLocalRepositories().ToList();
+			var forkedRepositories = await DetectUsersPaths();
+			foreach(var userName in forkedRepositories.Keys) 
+				States[userName] = forkedRepositories[userName].ToList();
+		}
+		
+		public async Task SelectState(string stateName) {
+			SelectedStateName = stateName;
+			await UpdateTests();
+		}
+		
+		async Task<List<MinioRepository>> GetXpfMinioRepositories() {
+			var result = new List<MinioRepository>();
+			foreach(var repository in States[xpfStateName]) {
+				repository.MinioPath = await GetResultPath(repository);
+				result.Add(new MinioRepository(repository, repository.MinioPath));
+			}
+			return result;
+		}
+
+		async Task<Dictionary<string, List<Repository>>> DetectUsersPaths() {
+			var result = new Dictionary<string, List<Repository>>();
+			foreach(var userPath in await minioWorker.DetectUserPaths()) {
+				var fullUserPath = userPath + "testbuild/";
+				if(!await minioWorker.Exists(fullUserPath, "results"))
+					continue;
+				var resultsPath = fullUserPath + "results/";
+				var last = await minioWorker.DiscoverLast(resultsPath);
+				if(!await IsResultsLoaded(last))
+					continue;
+				var userName = userPath.Split('/').First();
+				if(!result.TryGetValue(userName, out var repos))
+					result[userName] = repos = new List<Repository>();
+				var forkName = userPath.Split(new[] {"Common"}, StringSplitOptions.RemoveEmptyEntries).Last().Split(new[] {"/"}, StringSplitOptions.RemoveEmptyEntries).First();
+				var version = await minioWorker.Download(fullUserPath + "version.txt");
+				version = version.Replace(Environment.NewLine, string.Empty);
+				repos.Add(Repository.CreateFork(userName, version, forkName, last));
+			}
+			return result;
+		}
+		List<MinioRepository> GetForkedMinioRepositories() {
+			var result = new List<MinioRepository>();
+			foreach(var repository in States[SelectedStateName]) {
+				result.Add(new MinioRepository(repository, repository.MinioPath));
+			}
 			return result;
 		}
 		
-		async Task<string> GetResultPath(IMinioWorker minio, Repository repository) {
-			var lastBuild = await minio.DiscoverLast($"XPF/{repository.Version}/");
-			if(!await minio.Exists(lastBuild, "results"))
-				lastBuild = await minio.DiscoverPrev($"XPF/{repository.Version}/");
-			var last = await minio.DiscoverLast($"{lastBuild}results/");
+		async Task<string> GetResultPath(Repository repository) {
+			var lastBuild = await minioWorker.DiscoverLast($"XPF/{repository.Version}/");
+			if(!await minioWorker.Exists(lastBuild, "results"))
+				lastBuild = await minioWorker.DiscoverPrev($"XPF/{repository.Version}/");
+			var last = await minioWorker.DiscoverLast($"{lastBuild}results/");
 			
 			for(int i = 0; i < 20; i++, await Task.Delay(TimeSpan.FromSeconds(10))) {
-				var files = await minio.Discover(last);
-				if(files.FirstOrDefault(x => x.EndsWith("final")) != null)
+				if(await IsResultsLoaded(last))
 					return last;
 				loggingService.SendMessage($"Waiting while the {repository.Version} was completely finished in the path {last}");
 			}
 			throw new MinioException($"Results for {repository.Version} does not stored correctly in {last}");
+		}
+		async Task<bool> IsResultsLoaded(string resultsPath) {
+			return (await minioWorker.Discover(resultsPath)).FirstOrDefault(x => x.EndsWith("final")) != null;
 		}
 
 		public string GetResourcePath(Repository repository, string relativePath) {
@@ -108,13 +163,12 @@ namespace DXVisualTestFixer.Core {
 			return true;
 		}
 
-		async Task<ITestInfoContainer> LoadTestsAsync(List<MinioRepository> minioRepositories, INotificationService notificationService) {
+		async Task<ITestInfoContainer> LoadTestsAsync(List<MinioRepository> minioRepositories, bool allowEditing) {
 			loadingProgressController.Flush();
 			loadingProgressController.Enlarge(minioRepositories.Count);
 			loggingService.SendMessage("Collecting tests information from minio");
 			var allTasks = new List<Task>();
-			var result = new TestInfoContainer();
-			result.Timings.Clear();
+			var result = new TestInfoContainer(allowEditing);
 			var locker = new object();
 			foreach(var minioRepository in minioRepositories) {
 				if(string.IsNullOrEmpty(minioRepository.Path)) {

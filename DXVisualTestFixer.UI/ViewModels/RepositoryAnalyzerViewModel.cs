@@ -18,9 +18,9 @@ namespace DXVisualTestFixer.UI.ViewModels {
 			Commands = UICommand.GenerateFromMessageButton(MessageButton.OK, new DialogService(), MessageResult.OK);
 			ElapsedTimes = new Dictionary<string, List<TimingModel>>();
 			Versions = new List<string>();
-			if(testsService.ActualState.ElapsedTimes == null || testsService.ActualState.ElapsedTimes.Count == 0)
+			if(testsService.SelectedState.ElapsedTimes == null || testsService.SelectedState.ElapsedTimes.Count == 0)
 				return;
-			foreach(var et in testsService.ActualState.ElapsedTimes) {
+			foreach(var et in testsService.SelectedState.ElapsedTimes) {
 				ElapsedTimes.Add(et.Key.Version, et.Value.Select(eti => new TimingModel(eti.Name, eti.Time)).ToList());
 				Versions.Add(et.Key.Version);
 			}

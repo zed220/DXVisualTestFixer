@@ -16,6 +16,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 		public TestInfo TestInfo { get; }
 		public TestState Valid => TestInfo.Valid;
 		public string Version => TestInfo.Version;
+		public string VersionAndFork => TestInfo.Repository.VersionAndFork;
 		public bool Optimized => TestInfo.Optimized;
 		public string TeamName => TestInfo.Team.Name;
 		public string Theme => TestInfo.Theme;

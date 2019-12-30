@@ -6,13 +6,14 @@ using DXVisualTestFixer.Native;
 
 namespace DXVisualTestFixer.Core {
 	class TestInfoContainer : ITestInfoContainer {
-		public TestInfoContainer() {
+		public TestInfoContainer(bool allowEditing) {
 			TestList = new List<TestInfo>();
 			UsedFilesLinks = new Dictionary<Repository, List<string>>();
 			ElapsedTimes = new Dictionary<Repository, List<IElapsedTimeInfo>>();
 			Teams = new Dictionary<Repository, List<Team>>();
 			ChangedTests = new List<TestInfo>();
 			Timings = new List<TimingInfo>();
+			AllowEditing = allowEditing;
 		}
 
 		public List<TestInfo> TestList { get; }
@@ -21,6 +22,7 @@ namespace DXVisualTestFixer.Core {
 		public Dictionary<Repository, List<Team>> Teams { get; }
 		public List<TimingInfo> Timings { get; }
 		public List<TestInfo> ChangedTests { get; }
+		public bool AllowEditing { get; }
 
 		public async Task UpdateProblems() {
 			await Task.Factory.StartNew(() => {

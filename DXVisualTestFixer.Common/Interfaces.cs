@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows;
@@ -62,6 +63,7 @@ namespace DXVisualTestFixer.Common {
 	public interface ITestInfoModel : INotifyPropertyChanged {
 		bool CommitChange { get; set; }
 		string TeamName { get; }
+		string VersionAndFork { get; }
 		int Problem { get; }
 		string ProblemName { get; }
 		string Theme { get; }
@@ -98,12 +100,13 @@ namespace DXVisualTestFixer.Common {
 	}
 
 	public interface ITestsService : INotifyPropertyChanged {
-		ITestInfoContainer ActualState { get; }
+		ITestInfoContainer SelectedState { get; }
 		string CurrentFilter { get; set; }
 
 		bool ApplyTest(TestInfo test, Func<string, bool> checkoutFunc);
-		Task UpdateTests(INotificationService notificationService);
 		string GetResourcePath(Repository repository, string relativePath);
+		Task SelectState(string stateName);
+		Dictionary<string, List<Repository>> States { get; }
 	}
 
 	public interface ITestInfoContainer {
@@ -113,6 +116,7 @@ namespace DXVisualTestFixer.Common {
 		Dictionary<Repository, List<Team>> Teams { get; }
 		List<TestInfo> ChangedTests { get; }
 		List<TimingInfo> Timings { get; }
+		bool AllowEditing { get; }
 	}
 
 	public interface IConfigSerializer {
@@ -142,5 +146,6 @@ namespace DXVisualTestFixer.Common {
 		Task<string> DiscoverPrev(string path);
 		Task WaitIfObjectNotLoaded(string root, string child);
 		Task<bool> Exists(string root, string child);
+		Task<string[]> DetectUserPaths();
 	}
 }

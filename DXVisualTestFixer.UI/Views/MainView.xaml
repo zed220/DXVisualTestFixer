@@ -24,7 +24,8 @@
              xmlns:dxght="http://schemas.devexpress.com/winfx/2008/xaml/grid/internal"
              prism:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="300"
+             Loaded="{DXEvent Handler='Initialize()'}">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -320,14 +321,16 @@
                                 IsEnabled="{DXBinding Expr='CurrentTest.Valid != $common:TestState.Error'}"
                                 ItemClick="{DXEvent Handler='CommitCurrentTest(); @e(PART_View).MoveNextDataRow()'}"
                                 ShowKeyGesture="True"
-                                KeyGesture="Ctrl+D" />
+                                KeyGesture="Ctrl+D" 
+                                IsVisible="{Binding IsReadOnly, Converter={dxmvvm:BooleanNegationConverter}}"/>
                             <dxb:BarButtonItem
                                 Content="Unstage And Move Down"
                                 Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_RemoveCircled.svg}"
                                 IsEnabled="{DXBinding Expr='CurrentTest.Valid != $common:TestState.Error'}"
                                 ItemClick="{DXEvent Handler='UncommitCurrentTest(); @e(PART_View).MoveNextDataRow()'}"
                                 ShowKeyGesture="True"
-                                KeyGesture="Ctrl+B" />
+                                KeyGesture="Ctrl+B"
+                                IsVisible="{Binding IsReadOnly, Converter={dxmvvm:BooleanNegationConverter}}" />
                             <dxb:BarItemSeparator />
                             <dxb:BarButtonItem
                                 Content="Move Up"
@@ -363,9 +366,16 @@
             </dxr:RibbonControl>
             <dxdo:DockLayoutManager Grid.Row="1">
                 <dxdo:LayoutGroup AllowDrag="False">
-                    <dxdo:LayoutGroup AllowDrag="False" Orientation="Vertical" ItemWidth="300" AllowSplitters="False">
-                        <dxdo:LayoutPanel ShowCaption="False" ItemHeight="Auto" Caption="Filters"
-                                          Visibility="{Binding Tests, Converter={dx:NullableToVisibilityConverter}}">
+                    <dxdo:LayoutGroup AllowDrag="False" Orientation="Vertical" ItemWidth="300" AllowSplitters="False" Visibility="{Binding Tests, Converter={dx:NullableToVisibilityConverter}}">
+                        <dxdo:LayoutPanel ShowCaption="False" ItemHeight="Auto" Caption="States" Margin="5,0,0,0">
+                            <dxdo:LayoutControlItem Caption="User">
+                                <dxe:ComboBoxEdit EditValue="{Binding SelectedStateName, UpdateSourceTrigger=PropertyChanged}" 
+                                                  ItemsSource="{Binding AvailableStates}" 
+                                                  AllowUpdateTwoWayBoundPropertiesOnSynchronization="False"
+                                                  IsTextEditable="False" />
+                            </dxdo:LayoutControlItem>
+                        </dxdo:LayoutPanel>
+                        <dxdo:LayoutPanel ShowCaption="False" ItemHeight="Auto" Caption="Filters">
                             <controls:FilterPanelControl
                                 dxfui:FilterElement.Context="{Binding FilteringContext, ElementName=PART_GridTests}"
                                 dxg:DataControlBase.ActiveView="{Binding ElementName=PART_View}"
@@ -381,13 +391,13 @@
                                 <dxmvvm:Interaction.Behaviors>
                                     <behaviors:GridControlClearFilterBehavior />
                                 </dxmvvm:Interaction.Behaviors>
-                                <dxg:GridColumn FieldName="Version" GroupIndex="0" MergeWithPreviousGroup="False"
-                                                Header="Version" Visible="False" AllowSearchPanel="True" />
+                                <dxg:GridColumn FieldName="VersionAndFork" GroupIndex="0" MergeWithPreviousGroup="False"
+                                                Header="Version" Visible="False" AllowSearchPanel="True"/>
                                 <dxg:GridColumn FieldName="TeamName" GroupIndex="1" MergeWithPreviousGroup="True"
                                                 Header="Team" Visible="False" AllowSearchPanel="True" />
                                 <dxg:GridColumn FieldName="TestInfo.Name" GroupIndex="2" MergeWithPreviousGroup="False"
                                                 Header="Name" Visible="False" AllowSearchPanel="True" />
-                                <dxg:GridColumn FieldName="CommitChange" Header="Commit" Width="29">
+                                <dxg:GridColumn FieldName="CommitChange" Header="Commit" Width="29" Visible="{Binding IsReadOnly, Converter={dxmvvm:BooleanNegationConverter}}">
                                     <dxg:GridColumn.CellTemplate>
                                         <DataTemplate>
                                             <dxe:CheckEdit HorizontalAlignment="Center"
@@ -495,13 +505,16 @@
                                             <dxb:PopupMenu>
                                                 <dxb:BarButtonItem Content="Commit All In Viewport"
                                                                    Glyph="{dx:DXImage SvgImages/PDF Viewer/SelectAll.svg}"
-                                                                   Command="{DXCommand Execute='@e(PART_View).CommitAllInViewport()'}" />
+                                                                   Command="{DXCommand Execute='@e(PART_View).CommitAllInViewport()'}"
+                                                                   IsVisible="{Binding IsReadOnly, Converter={dxmvvm:BooleanNegationConverter}}" />
                                                 <dxb:BarButtonItem Content="Clear Commits In Viewport"
                                                                    Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Clear.svg}"
-                                                                   Command="{DXCommand Execute='@e(PART_View).ClearCommitsInViewport()'}" />
+                                                                   Command="{DXCommand Execute='@e(PART_View).ClearCommitsInViewport()'}"
+                                                                   IsVisible="{Binding IsReadOnly, Converter={dxmvvm:BooleanNegationConverter}}" />
                                                 <dxb:BarButtonItem Content="Clear All Commits"
                                                                    Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Clear.svg}"
-                                                                   Command="{DXCommand Execute='ClearCommits()'}" />
+                                                                   Command="{DXCommand Execute='ClearCommits()'}"
+                                                                   IsVisible="{Binding IsReadOnly, Converter={dxmvvm:BooleanNegationConverter}}" />
                                             </dxb:PopupMenu>
                                         </dxb:BarManager.DXContextMenu>
                                         <dxmvvm:Interaction.Behaviors>
@@ -583,7 +596,7 @@
                                             <TextBlock.Inlines>
                                                 <Run Text="-=[" />
                                                 <Run Text="Version:" />
-                                                <Run Text="{Binding Repository.Version, Mode=OneWay}" FontWeight="Bold" />
+                                                <Run Text="{Binding Repository.VersionAndFork, Mode=OneWay}" FontWeight="Bold" />
                                                 <Run Text="," />
                                                 <Run Text="Sources:" />
                                                 <Run
