@@ -60,7 +60,7 @@
                               Visibility="{Binding Path='Valid', Converter={StaticResource InvalidToVisibilityConverter}}">
                 <StackPanel>
                     <TextBlock Margin="4" VerticalAlignment="Center"
-                               Text="{DXBinding Expr='`Test Info wrong or possible new test. Update the ` + @c.Version + ` repostiroy to last version. Error log:`'}" />
+                               Text="{DXBinding Expr='`Test Info wrong or possible new test. Update the ` + @c.Version + ` repository to last version. Error log:`'}" />
                     <TextBlock Margin="4" VerticalAlignment="Center" Text="{DXBinding Expr='@c.InvalidLog'}" />
                 </StackPanel>
             </dxdo:LayoutPanel>

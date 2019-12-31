@@ -15,22 +15,22 @@ namespace DXVisualTestFixer.UI.Native {
         /// <summary>
         /// The reparse point attribute cannot be set because it conflicts with an existing attribute.
         /// </summary>
-        private const int ERROR_REPARSE_ATTRIBUTE_CONFLICT = 4391;
+        [UsedImplicitly] private const int ERROR_REPARSE_ATTRIBUTE_CONFLICT = 4391;
 
         /// <summary>
         /// The data present in the reparse point buffer is invalid.
         /// </summary>
-        private const int ERROR_INVALID_REPARSE_DATA = 4392;
+        [UsedImplicitly] private const int ERROR_INVALID_REPARSE_DATA = 4392;
 
         /// <summary>
         /// The tag present in the reparse point buffer is invalid.
         /// </summary>
-        private const int ERROR_REPARSE_TAG_INVALID = 4393;
+        [UsedImplicitly] private const int ERROR_REPARSE_TAG_INVALID = 4393;
 
         /// <summary>
         /// There is a mismatch between the tag specified in the request and the tag present in the reparse point.
         /// </summary>
-        private const int ERROR_REPARSE_TAG_MISMATCH = 4394;
+        [UsedImplicitly] private const int ERROR_REPARSE_TAG_MISMATCH = 4394;
 
         /// <summary>
         /// Command to set the reparse point data block.
@@ -63,7 +63,7 @@ namespace DXVisualTestFixer.UI.Native {
             GenericRead = 0x80000000,
             GenericWrite = 0x40000000,
             GenericExecute = 0x20000000,
-            GenericAll = 0x10000000,
+            GenericAll = 0x10000000
         }
 
         [Flags]
@@ -71,44 +71,44 @@ namespace DXVisualTestFixer.UI.Native {
             None = 0x00000000,
             Read = 0x00000001,
             Write = 0x00000002,
-            Delete = 0x00000004,
+            Delete = 0x00000004
         }
 
         private enum ECreationDisposition : uint {
-            New = 1,
-            CreateAlways = 2,
+            [UsedImplicitly] New = 1,
+            [UsedImplicitly] CreateAlways = 2,
             OpenExisting = 3,
-            OpenAlways = 4,
-            TruncateExisting = 5,
+            [UsedImplicitly] OpenAlways = 4,
+            [UsedImplicitly] TruncateExisting = 5
         }
 
         [Flags]
         private enum EFileAttributes : uint {
-            Readonly = 0x00000001,
-            Hidden = 0x00000002,
-            System = 0x00000004,
-            Directory = 0x00000010,
-            Archive = 0x00000020,
-            Device = 0x00000040,
-            Normal = 0x00000080,
-            Temporary = 0x00000100,
-            SparseFile = 0x00000200,
-            ReparsePoint = 0x00000400,
-            Compressed = 0x00000800,
-            Offline = 0x00001000,
-            NotContentIndexed = 0x00002000,
-            Encrypted = 0x00004000,
-            Write_Through = 0x80000000,
-            Overlapped = 0x40000000,
-            NoBuffering = 0x20000000,
-            RandomAccess = 0x10000000,
-            SequentialScan = 0x08000000,
-            DeleteOnClose = 0x04000000,
+            [UsedImplicitly] Readonly = 0x00000001,
+            [UsedImplicitly] Hidden = 0x00000002,
+            [UsedImplicitly] System = 0x00000004,
+            [UsedImplicitly] Directory = 0x00000010,
+            [UsedImplicitly] Archive = 0x00000020,
+            [UsedImplicitly] Device = 0x00000040,
+            [UsedImplicitly] Normal = 0x00000080,
+            [UsedImplicitly] Temporary = 0x00000100,
+            [UsedImplicitly] SparseFile = 0x00000200,
+            [UsedImplicitly] ReparsePoint = 0x00000400,
+            [UsedImplicitly] Compressed = 0x00000800,
+            [UsedImplicitly] Offline = 0x00001000,
+            [UsedImplicitly] NotContentIndexed = 0x00002000,
+            [UsedImplicitly] ncrypted = 0x00004000,
+            [UsedImplicitly] Write_Through = 0x80000000,
+            [UsedImplicitly] Overlapped = 0x40000000,
+            [UsedImplicitly] NoBuffering = 0x20000000,
+            [UsedImplicitly] RandomAccess = 0x10000000,
+            [UsedImplicitly] SequentialScan = 0x08000000,
+            [UsedImplicitly] DeleteOnClose = 0x04000000,
             BackupSemantics = 0x02000000,
-            PosixSemantics = 0x01000000,
+            [UsedImplicitly] PosixSemantics = 0x01000000,
             OpenReparsePoint = 0x00200000,
-            OpenNoRecall = 0x00100000,
-            FirstPipeInstance = 0x00080000
+            [UsedImplicitly] OpenNoRecall = 0x00100000,
+            [UsedImplicitly] FirstPipeInstance = 0x00080000
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -128,6 +128,7 @@ namespace DXVisualTestFixer.UI.Native {
             /// <summary>
             /// Reserved; do not use. 
             /// </summary>
+            [PublicAPI]
             public ushort Reserved;
 
             /// <summary>
@@ -184,49 +185,47 @@ namespace DXVisualTestFixer.UI.Native {
         /// </remarks>
         /// <param name="targetDir">The target directory to create</param>
         /// <param name="sourceDir">The source directory to alias</param>
-        /// <param name="overwrite">If true overwrites an existing reparse point or empty directory</param>
         /// <exception cref="IOException">Thrown when the junction point could not be created or when
         /// an existing directory was found and <paramref name="overwrite" /> if false</exception>
-        public static void Create(string sourceDir, string targetDir, bool overwrite) {
+        public static void Create(string sourceDir, string targetDir) {
             sourceDir = Path.GetFullPath(sourceDir);
 
             if (!Directory.Exists(sourceDir))
-                throw new IOException($"Source path does not exist or is not a directory.");
+                throw new IOException("Source path does not exist or is not a directory.");
 
             if (Directory.Exists(targetDir))
                 throw new IOException($"Directory '{targetDir}' already exists.");
 
             Directory.CreateDirectory(targetDir);
 
-            using (SafeFileHandle handle = OpenReparsePoint(targetDir, EFileAccess.GenericWrite)) {
-                byte[] sourceDirBytes = Encoding.Unicode.GetBytes(NonInterpretedPathPrefix + Path.GetFullPath(sourceDir));
+            using SafeFileHandle handle = OpenReparsePoint(targetDir, EFileAccess.GenericWrite);
+            byte[] sourceDirBytes = Encoding.Unicode.GetBytes(NonInterpretedPathPrefix + Path.GetFullPath(sourceDir));
 
-                REPARSE_DATA_BUFFER reparseDataBuffer = new REPARSE_DATA_BUFFER();
+            REPARSE_DATA_BUFFER reparseDataBuffer = new REPARSE_DATA_BUFFER();
 
-                reparseDataBuffer.ReparseTag = IO_REPARSE_TAG_MOUNT_POINT;
-                reparseDataBuffer.ReparseDataLength = (ushort)(sourceDirBytes.Length + 12);
-                reparseDataBuffer.SubstituteNameOffset = 0;
-                reparseDataBuffer.SubstituteNameLength = (ushort)sourceDirBytes.Length;
-                reparseDataBuffer.PrintNameOffset = (ushort)(sourceDirBytes.Length + 2);
-                reparseDataBuffer.PrintNameLength = 0;
-                reparseDataBuffer.PathBuffer = new byte[0x3ff0];
-                Array.Copy(sourceDirBytes, reparseDataBuffer.PathBuffer, sourceDirBytes.Length);
+            reparseDataBuffer.ReparseTag = IO_REPARSE_TAG_MOUNT_POINT;
+            reparseDataBuffer.ReparseDataLength = (ushort)(sourceDirBytes.Length + 12);
+            reparseDataBuffer.SubstituteNameOffset = 0;
+            reparseDataBuffer.SubstituteNameLength = (ushort)sourceDirBytes.Length;
+            reparseDataBuffer.PrintNameOffset = (ushort)(sourceDirBytes.Length + 2);
+            reparseDataBuffer.PrintNameLength = 0;
+            reparseDataBuffer.PathBuffer = new byte[0x3ff0];
+            Array.Copy(sourceDirBytes, reparseDataBuffer.PathBuffer, sourceDirBytes.Length);
 
-                int inBufferSize = Marshal.SizeOf(reparseDataBuffer);
-                IntPtr inBuffer = Marshal.AllocHGlobal(inBufferSize);
+            var inBufferSize = Marshal.SizeOf(reparseDataBuffer);
+            var inBuffer = Marshal.AllocHGlobal(inBufferSize);
 
-                try {
-                    Marshal.StructureToPtr(reparseDataBuffer, inBuffer, false);
+            try {
+                Marshal.StructureToPtr(reparseDataBuffer, inBuffer, false);
 
-                    int bytesReturned;
-                    bool result = DeviceIoControl(handle.DangerousGetHandle(), FSCTL_SET_REPARSE_POINT,
-                        inBuffer, sourceDirBytes.Length + 20, IntPtr.Zero, 0, out bytesReturned, IntPtr.Zero);
+                int bytesReturned;
+                var result = DeviceIoControl(handle.DangerousGetHandle(), FSCTL_SET_REPARSE_POINT,
+                    inBuffer, sourceDirBytes.Length + 20, IntPtr.Zero, 0, out bytesReturned, IntPtr.Zero);
 
-                    if (!result)
-                        ThrowLastWin32Error($"Unable to create junction point '{sourceDir}' -> '{targetDir}'.");
-                } finally {
-                    Marshal.FreeHGlobal(inBuffer);
-                }
+                if (!result)
+                    ThrowLastWin32Error($"Unable to create junction point '{sourceDir}' -> '{targetDir}'.");
+            } finally {
+                Marshal.FreeHGlobal(inBuffer);
             }
         }
 
@@ -238,6 +237,7 @@ namespace DXVisualTestFixer.UI.Native {
         /// Only works on NTFS.
         /// </remarks>
         /// <param name="junctionPoint">The junction point path</param>
+        [PublicAPI]
         public static void Delete(string junctionPoint) {
             if (!Directory.Exists(junctionPoint)) {
                 if (File.Exists(junctionPoint))
@@ -246,33 +246,32 @@ namespace DXVisualTestFixer.UI.Native {
                 return;
             }
 
-            using (SafeFileHandle handle = OpenReparsePoint(junctionPoint, EFileAccess.GenericWrite)) {
-                REPARSE_DATA_BUFFER reparseDataBuffer = new REPARSE_DATA_BUFFER();
+            using SafeFileHandle handle = OpenReparsePoint(junctionPoint, EFileAccess.GenericWrite);
+            var reparseDataBuffer = new REPARSE_DATA_BUFFER();
 
-                reparseDataBuffer.ReparseTag = IO_REPARSE_TAG_MOUNT_POINT;
-                reparseDataBuffer.ReparseDataLength = 0;
-                reparseDataBuffer.PathBuffer = new byte[0x3ff0];
+            reparseDataBuffer.ReparseTag = IO_REPARSE_TAG_MOUNT_POINT;
+            reparseDataBuffer.ReparseDataLength = 0;
+            reparseDataBuffer.PathBuffer = new byte[0x3ff0];
 
-                int inBufferSize = Marshal.SizeOf(reparseDataBuffer);
-                IntPtr inBuffer = Marshal.AllocHGlobal(inBufferSize);
-                try {
-                    Marshal.StructureToPtr(reparseDataBuffer, inBuffer, false);
+            var inBufferSize = Marshal.SizeOf(reparseDataBuffer);
+            var inBuffer = Marshal.AllocHGlobal(inBufferSize);
+            try {
+                Marshal.StructureToPtr(reparseDataBuffer, inBuffer, false);
 
-                    int bytesReturned;
-                    bool result = DeviceIoControl(handle.DangerousGetHandle(), FSCTL_DELETE_REPARSE_POINT,
-                        inBuffer, 8, IntPtr.Zero, 0, out bytesReturned, IntPtr.Zero);
+                int bytesReturned;
+                var result = DeviceIoControl(handle.DangerousGetHandle(), FSCTL_DELETE_REPARSE_POINT,
+                    inBuffer, 8, IntPtr.Zero, 0, out bytesReturned, IntPtr.Zero);
 
-                    if (!result)
-                        ThrowLastWin32Error("Unable to delete junction point.");
-                } finally {
-                    Marshal.FreeHGlobal(inBuffer);
-                }
+                if (!result)
+                    ThrowLastWin32Error("Unable to delete junction point.");
+            } finally {
+                Marshal.FreeHGlobal(inBuffer);
+            }
 
-                try {
-                    Directory.Delete(junctionPoint);
-                } catch (IOException ex) {
-                    throw new IOException("Unable to delete junction point.", ex);
-                }
+            try {
+                Directory.Delete(junctionPoint);
+            } catch (IOException ex) {
+                throw new IOException("Unable to delete junction point.", ex);
             }
         }
 
@@ -283,14 +282,14 @@ namespace DXVisualTestFixer.UI.Native {
         /// <returns>True if the specified path represents a junction point</returns>
         /// <exception cref="IOException">Thrown if the specified path is invalid
         /// or some other error occurs</exception>
+        [PublicAPI]
         public static bool Exists(string path) {
             if (!Directory.Exists(path))
                 return false;
 
-            using (SafeFileHandle handle = OpenReparsePoint(path, EFileAccess.GenericRead)) {
-                string target = InternalGetTarget(handle);
-                return target != null;
-            }
+            using SafeFileHandle handle = OpenReparsePoint(path, EFileAccess.GenericRead);
+            string target = InternalGetTarget(handle);
+            return target != null;
         }
 
         /// <summary>
@@ -303,23 +302,23 @@ namespace DXVisualTestFixer.UI.Native {
         /// <returns>The target of the junction point</returns>
         /// <exception cref="IOException">Thrown when the specified path does not
         /// exist, is invalid, is not a junction point, or some other error occurs</exception>
+        [PublicAPI]
         public static string GetTarget(string junctionPoint) {
-            using (SafeFileHandle handle = OpenReparsePoint(junctionPoint, EFileAccess.GenericRead)) {
-                string target = InternalGetTarget(handle);
-                if (target == null)
-                    throw new IOException("Path is not a junction point.");
+            using var handle = OpenReparsePoint(junctionPoint, EFileAccess.GenericRead);
+            var target = InternalGetTarget(handle);
+            if (target == null)
+                throw new IOException("Path is not a junction point.");
 
-                return target;
-            }
+            return target;
         }
 
         private static string InternalGetTarget(SafeFileHandle handle) {
-            int outBufferSize = Marshal.SizeOf(typeof(REPARSE_DATA_BUFFER));
-            IntPtr outBuffer = Marshal.AllocHGlobal(outBufferSize);
+            var outBufferSize = Marshal.SizeOf(typeof(REPARSE_DATA_BUFFER));
+            var outBuffer = Marshal.AllocHGlobal(outBufferSize);
 
             try {
                 int bytesReturned;
-                bool result = DeviceIoControl(handle.DangerousGetHandle(), FSCTL_GET_REPARSE_POINT,
+                var result = DeviceIoControl(handle.DangerousGetHandle(), FSCTL_GET_REPARSE_POINT,
                     IntPtr.Zero, 0, outBuffer, outBufferSize, out bytesReturned, IntPtr.Zero);
 
                 if (!result) {
@@ -330,13 +329,13 @@ namespace DXVisualTestFixer.UI.Native {
                     ThrowLastWin32Error("Unable to get information about junction point.");
                 }
 
-                REPARSE_DATA_BUFFER reparseDataBuffer = (REPARSE_DATA_BUFFER)
+                var reparseDataBuffer = (REPARSE_DATA_BUFFER)
                     Marshal.PtrToStructure(outBuffer, typeof(REPARSE_DATA_BUFFER));
 
                 if (reparseDataBuffer.ReparseTag != IO_REPARSE_TAG_MOUNT_POINT)
                     return null;
 
-                string targetDir = Encoding.Unicode.GetString(reparseDataBuffer.PathBuffer,
+                var targetDir = Encoding.Unicode.GetString(reparseDataBuffer.PathBuffer,
                     reparseDataBuffer.SubstituteNameOffset, reparseDataBuffer.SubstituteNameLength);
 
                 if (targetDir.StartsWith(NonInterpretedPathPrefix))
@@ -349,7 +348,7 @@ namespace DXVisualTestFixer.UI.Native {
         }
 
         private static SafeFileHandle OpenReparsePoint(string reparsePoint, EFileAccess accessMode) {
-            SafeFileHandle reparsePointHandle = new SafeFileHandle(CreateFile(reparsePoint, accessMode,
+            var reparsePointHandle = new SafeFileHandle(CreateFile(reparsePoint, accessMode,
                 EFileShare.Read | EFileShare.Write | EFileShare.Delete,
                 IntPtr.Zero, ECreationDisposition.OpenExisting,
                 EFileAttributes.BackupSemantics | EFileAttributes.OpenReparsePoint, IntPtr.Zero), true);

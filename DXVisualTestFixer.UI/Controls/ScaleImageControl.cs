@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
@@ -92,19 +91,19 @@ namespace DXVisualTestFixer.UI.Controls {
 		}
 		
 		static PixelFormat ConvertPixelFormat(System.Windows.Media.PixelFormat sourceFormat) {
-			if(sourceFormat == System.Windows.Media.PixelFormats.Bgr24)
+			if(sourceFormat == PixelFormats.Bgr24)
 				return PixelFormat.Format24bppRgb;
-			if(sourceFormat == System.Windows.Media.PixelFormats.Bgra32)
+			if(sourceFormat == PixelFormats.Bgra32)
 				return PixelFormat.Format32bppArgb;
-			if(sourceFormat == System.Windows.Media.PixelFormats.Bgr32)
+			if(sourceFormat == PixelFormats.Bgr32)
 				return PixelFormat.Format32bppRgb;
-			if(sourceFormat == System.Windows.Media.PixelFormats.Indexed8)
+			if(sourceFormat == PixelFormats.Indexed8)
 				return PixelFormat.Format8bppIndexed;
 			throw new NotSupportedException();
 		}
 
 		static Bitmap BitmapSourceToBitmap(BitmapSource source) {
-			if(source.Format == System.Windows.Media.PixelFormats.Bgra32) {//Fast
+			if(source.Format == PixelFormats.Bgra32) {//Fast
 				var bmp = new Bitmap(source.PixelWidth, source.PixelHeight, ConvertPixelFormat(source.Format));
 				var data = bmp.LockBits(new Rectangle(System.Drawing.Point.Empty, bmp.Size), ImageLockMode.WriteOnly, ConvertPixelFormat(source.Format));
 				source.CopyPixels(Int32Rect.Empty, data.Scan0, data.Height * data.Stride, data.Stride);
@@ -127,7 +126,7 @@ namespace DXVisualTestFixer.UI.Controls {
 
 		static Bitmap GetSourceImagePart(BitmapSource imageSource, int scale, Point offset, Size viewportSize) {
 			using var image = BitmapSourceToBitmap(imageSource);
-			offset = CorrectOffset(image, scale, offset);
+			offset = CorrectOffset(scale, offset);
 
 			var scaledViewportSize = new Size(viewportSize.Width / scale + 1, viewportSize.Height / scale + 1);
 
@@ -147,7 +146,7 @@ namespace DXVisualTestFixer.UI.Controls {
 			return destImage;
 		}
 
-		static Point CorrectOffset(Image image, int scale, Point offset) {
+		static Point CorrectOffset(int scale, Point offset) {
 			return new Point(offset.X / scale, offset.Y / scale);
 		}
 

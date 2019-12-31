@@ -158,8 +158,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Behaviors\AvalonEditTextBindingBehavior.cs" />
-    <Compile Include="Behaviors\BarItemIndicatorBehavior.cs" />
-    <Compile Include="Behaviors\BrowseDirBehavior.cs" />
     <Compile Include="Behaviors\GridControlClearFilterBehavior.cs" />
     <Compile Include="Behaviors\IsFilteredBehavior.cs" />
     <Compile Include="Behaviors\ScrollViewerRegistrationBehavior.cs" />
@@ -169,7 +167,7 @@
     <Compile Include="Controls\FilterPanelControl.cs" />
     <Compile Include="Controls\ImageScalingControl.cs" />
     <Compile Include="Controls\LoadingButton.cs" />
-    <Compile Include="Controls\Native\ControlsRegistrator.cs" />
+    <Compile Include="Controls\Native\ControlsRegister.cs" />
     <Compile Include="Controls\Native\FocusedPixelSynchronizer.cs" />
     <Compile Include="Controls\Native\ImageScaleSynchronizer.cs" />
     <Compile Include="Controls\ScaleImageControl.cs" />
@@ -189,7 +187,7 @@
     <Compile Include="Converters\OptimizedDisplayTextConverter.cs" />
     <Compile Include="Converters\PointToRectConverter.cs" />
     <Compile Include="Converters\StackPanelToTooltipConverter.cs" />
-    <Compile Include="Converters\MultiValueConverters.cs" />
+    <Compile Include="Converters\HighlightedColorPopupIsOpenConverter.cs" />
     <Compile Include="Native\DiffLineBackgroundRenderer.cs" />
     <Compile Include="Native\FileSystemHelper.cs" />
     <Compile Include="Native\RepositoryObsolescenceTracker.cs" />

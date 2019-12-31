@@ -55,59 +55,68 @@ namespace DXVisualTestFixer.UI.ViewModels {
 			loggingService.MessageReserved += OnLoggingMessageReserved;
 		}
 
+		[UsedImplicitly]
 		public List<ITestInfoModel> Tests {
 			get => _Tests;
 			set => SetProperty(ref _Tests, value, OnTestsChanged);
 		}
 
+		[UsedImplicitly]
 		public ITestInfoModel CurrentTest {
 			get => _CurrentTest;
 			set => SetProperty(ref _CurrentTest, value);
 		}
 
+		[UsedImplicitly]
 		public ProgramStatus Status {
 			get => _Status;
 			set => SetProperty(ref _Status, value);
 		}
 
+		[UsedImplicitly]
 		public string CurrentLogLine {
 			get => _CurrentLogLine;
 			set => SetProperty(ref _CurrentLogLine, value);
 		}
 
+		[UsedImplicitly]
 		public int TestsToCommitCount {
 			get => _TestsToCommitCount;
 			set => SetProperty(ref _TestsToCommitCount, value);
 		}
 
+		[UsedImplicitly]
 		public CriteriaOperator CurrentFilter {
 			get => _CurrentFilter;
 			set => SetProperty(ref _CurrentFilter, value);
 		}
 
+		[UsedImplicitly]
 		public ITestsService TestService {
 			get => _TestService;
 			set => SetProperty(ref _TestService, value);
 		}
-
+		
+		[UsedImplicitly]
 		public List<SolutionModel> Solutions {
 			get => _Solutions;
 			set => SetProperty(ref _Solutions, value);
 		}
 
+		[UsedImplicitly]
 		public List<TimingInfo> TimingInfo {
 			get => _TimingInfo;
 			set => SetProperty(ref _TimingInfo, value);
 		}
 
-		public ILoadingProgressController LoadingProgressController { get; }
+		[UsedImplicitly]public ILoadingProgressController LoadingProgressController { get; }
 
-		public InteractionRequest<IConfirmation> ConfirmationRequest { get; } = new InteractionRequest<IConfirmation>();
-		public InteractionRequest<IConfirmation> SettingsRequest { get; } = new InteractionRequest<IConfirmation>();
-		public InteractionRequest<IConfirmation> ApplyChangesRequest { get; } = new InteractionRequest<IConfirmation>();
-		public InteractionRequest<IConfirmation> RepositoryOptimizerRequest { get; } = new InteractionRequest<IConfirmation>();
-		public InteractionRequest<INotification> RepositoryAnalyzerRequest { get; } = new InteractionRequest<INotification>();
-		public InteractionRequest<INotification> ViewResourcesRequest { get; } = new InteractionRequest<INotification>();
+		[UsedImplicitly]public InteractionRequest<IConfirmation> ConfirmationRequest { get; } = new InteractionRequest<IConfirmation>();
+		[UsedImplicitly]public InteractionRequest<IConfirmation> SettingsRequest { get; } = new InteractionRequest<IConfirmation>();
+		[UsedImplicitly]public InteractionRequest<IConfirmation> ApplyChangesRequest { get; } = new InteractionRequest<IConfirmation>();
+		[UsedImplicitly]public InteractionRequest<IConfirmation> RepositoryOptimizerRequest { get; } = new InteractionRequest<IConfirmation>();
+		[UsedImplicitly]public InteractionRequest<INotification> RepositoryAnalyzerRequest { get; } = new InteractionRequest<INotification>();
+		[UsedImplicitly]public InteractionRequest<INotification> ViewResourcesRequest { get; } = new InteractionRequest<INotification>();
 
 		async Task NoticeRepositoryObsolescenceAsync() {
 			if(!isActiveService.IsActive) {
@@ -169,7 +178,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 			get => _availableStates;
 			private set {
 				_availableStates = value;
-				OnPropertyChanged(nameof(AvailableStates));
+				RaisePropertyChanged();
 			}
 		}
 		[PublicAPI]
@@ -177,7 +186,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 			get => _isReadOnly;
 			set {
 				_isReadOnly = value;
-				OnPropertyChanged(nameof(IsReadOnly));
+				RaisePropertyChanged();
 			}
 		} 
 
@@ -265,6 +274,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 			}
 		}
 
+		[UsedImplicitly]
 		public void ShowRepositoryOptimizer() {
 			if(CheckHasUncommittedChanges() || CheckAlarmAdmin())
 				return;
@@ -276,14 +286,13 @@ namespace DXVisualTestFixer.UI.ViewModels {
 			UpdateContent();
 		}
 
-		public void ShowRepositoryAnalyzer() {
-			RepositoryAnalyzerRequest.Raise(ServiceLocator.Current.TryResolve<RepositoryAnalyzerViewModel>());
-		}
+		[UsedImplicitly]
+		public void ShowRepositoryAnalyzer() => RepositoryAnalyzerRequest.Raise(ServiceLocator.Current.TryResolve<RepositoryAnalyzerViewModel>());
 
-		public void ShowViewResources() {
-			ViewResourcesRequest.Raise(ServiceLocator.Current.TryResolve<ViewResourcesViewModel>());
-		}
+		[UsedImplicitly]
+		public void ShowViewResources() => ViewResourcesRequest.Raise(ServiceLocator.Current.TryResolve<ViewResourcesViewModel>());
 
+		[UsedImplicitly]
 		public void ShowSettings() {
 			if(CheckHasUncommittedChanges())
 				return;
@@ -296,22 +305,21 @@ namespace DXVisualTestFixer.UI.ViewModels {
 			Initialize();
 		}
 
-		public void CommitCurrentTest() {
+		[UsedImplicitly]
+		public void StageCurrentTest() {
 			if(CurrentTest == null || CurrentTest.Valid == TestState.Error)
 				return;
 			CurrentTest.CommitChange = true;
 		}
 
-		public void UncommitCurrentTest() {
+		[UsedImplicitly]
+		public void UnstageCurrentTest() {
 			if(CurrentTest == null)
 				return;
 			CurrentTest.CommitChange = false;
 		}
 
-		public List<ITestInfoModel> GetChangedTests() {
-			return Tests.Where(t => t.CommitChange).ToList();
-		}
-
+		[UsedImplicitly]
 		public void ApplyChanges() {
 			Status = ProgramStatus.Loading;
 			obsolescenceTracker.Stop();

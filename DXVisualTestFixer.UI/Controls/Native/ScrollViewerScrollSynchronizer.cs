@@ -1,7 +1,7 @@
 ﻿using System.Windows.Controls;
 
 namespace DXVisualTestFixer.UI.Controls.Native {
-	class ScrollViewerScrollSynchronizer : ControlsRegistrator<DraggableScrollViewer> {
+	class ScrollViewerScrollSynchronizer : ControlsRegister<DraggableScrollViewer> {
 		protected override void RegisterCore(DraggableScrollViewer scrollViewer) {
 			scrollViewer.ScrollChanged += scrollChanged;
 		}

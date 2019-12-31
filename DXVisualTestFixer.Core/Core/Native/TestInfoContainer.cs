@@ -37,16 +37,16 @@ namespace DXVisualTestFixer.Core {
 			diffs.Sort();
 			diffs = diffs.Distinct().ToList();
 			var problems = new Dictionary<int, int>();
-			var proplemNumber = 1;
+			var problemNumber = 1;
 			var currentD = 0;
 			foreach(var d in diffs)
 				if(currentD * 1.2d < d) {
-					problems.Add(currentD, proplemNumber++);
+					problems.Add(currentD, problemNumber++);
 					currentD = d;
 				}
 
 			if(!problems.ContainsKey(currentD))
-				problems.Add(currentD, proplemNumber++);
+				problems.Add(currentD, problemNumber++);
 			var namedProblems = new Dictionary<int, HashSet<string>>();
 			foreach(var d in problems)
 			foreach(var test in TestList)
@@ -62,8 +62,7 @@ namespace DXVisualTestFixer.Core {
 			foreach(var test in TestList) {
 				if(!namedProblems.TryGetValue(test.Problem, out var namedProblemsList))
 					namedProblemsList = new HashSet<string>();
-				var problemNumber = $"{test.Problem:D2}";
-				test.ProblemName = $"#{problemNumber} ({string.Join(", ", namedProblemsList)})";
+				test.ProblemName = $"#{test.Problem:D2} ({string.Join(", ", namedProblemsList)})";
 			}
 		}
 

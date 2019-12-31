@@ -31,7 +31,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 			_testsService = testsService;
 			RemovedFiles = new ObservableCollection<RepositoryFileModel>();
 			Commands = UICommand.GenerateFromMessageButton(MessageButton.OKCancel, new DialogService(), MessageResult.OK, MessageResult.Cancel);
-			Commands.Single(c => c.IsDefault).Command = new DelegateCommand(() => Commit());
+			Commands.Single(c => c.IsDefault).Command = new DelegateCommand(Commit);
 			Status = ProgramStatus.Loading;
 			Task.Factory.StartNew(() => UpdateUnusedFiles(testsService.SelectedState.UsedFilesLinks, testsService.SelectedState.Teams)).ConfigureAwait(false);
 		}

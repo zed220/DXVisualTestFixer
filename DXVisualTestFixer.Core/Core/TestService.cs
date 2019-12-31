@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -98,7 +97,7 @@ namespace DXVisualTestFixer.Core {
 				var forkName = userPath.Split(new[] {"Common"}, StringSplitOptions.RemoveEmptyEntries).Last().Split(new[] {"/"}, StringSplitOptions.RemoveEmptyEntries).First();
 				var version = await minioWorker.Download(fullUserPath + "version.txt");
 				version = version.Replace(Environment.NewLine, string.Empty);
-				repos.Add(Repository.CreateFork(userName, version, forkName, last));
+				repos.Add(Repository.CreateFork(version, forkName, last));
 			}
 			return result;
 		}

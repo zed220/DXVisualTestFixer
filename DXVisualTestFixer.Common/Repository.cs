@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Xml.Schema;
 using JetBrains.Annotations;
 
 namespace DXVisualTestFixer.Common {
@@ -11,15 +10,13 @@ namespace DXVisualTestFixer.Common {
 			
 		}
 
-		Repository(string stateName, string version, string forkName, string path, bool readOnly) {
-			StateName = stateName;
+		Repository(string version, string forkName, string path, bool readOnly) {
 			Version = version;
 			VersionAndFork = version == forkName ? forkName : $"{version}({forkName})";
 			Path = path;
 			ReadOnly = readOnly;
 		}
 		
-		public string StateName { get; }
 		public string VersionAndFork { get; private set; }
 
 		public string Version {
@@ -36,7 +33,7 @@ namespace DXVisualTestFixer.Common {
 
 		public bool IsDownloaded() => File.Exists(System.IO.Path.Combine(Path, "VisualTestsConfig.xml"));
 
-		public static Repository CreateRegular(string version, string path) => new Repository("XPF", version, version, path, false);
-		public static Repository CreateFork(string userName, string version, string forkName, string minioPath) => new Repository(userName, version, forkName, null, true) { MinioPath = minioPath };
+		public static Repository CreateRegular(string version, string path) => new Repository(version, version, path, false);
+		public static Repository CreateFork(string version, string forkName, string minioPath) => new Repository(version, forkName, null, true) { MinioPath = minioPath };
 	}
 }
