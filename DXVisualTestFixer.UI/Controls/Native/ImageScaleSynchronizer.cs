@@ -6,7 +6,7 @@ using System.Windows.Threading;
 using DevExpress.Xpf.Bars.Native;
 
 namespace DXVisualTestFixer.UI.Controls.Native {
-	class ImageScaleSynchronizer : ControlsRegistrator<ScrollViewer> {
+	class ImageScaleSynchronizer : ControlsRegister<ScrollViewer> {
 		bool _ShowGridLines;
 
 		public bool ShowGridLines {

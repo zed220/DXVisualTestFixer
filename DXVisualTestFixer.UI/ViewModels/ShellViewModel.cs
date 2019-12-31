@@ -72,16 +72,16 @@ namespace DXVisualTestFixer.UI.ViewModels {
 			var configSerializer = ServiceLocator.Current.GetInstance<IConfigSerializer>();
 			var config = configSerializer.GetConfig();
 			var whatsNewVersion = new Version(config.WhatsNewSeenForVersion);
-			var whatsNewContent = GetWhatsNewContent(configVersion, whatsNewVersion);
+			var whatsNewContent = GetWhatsNewContent(whatsNewVersion);
 			if(!String.IsNullOrEmpty(whatsNewContent)) {
-				ViewModelBase.SetupNotification(_notification, "What's New", GetWhatsNewContent(configVersion, whatsNewVersion), MessageBoxImage.Information);
+				ViewModelBase.SetupNotification(_notification, "What's New", GetWhatsNewContent(whatsNewVersion), MessageBoxImage.Information);
 				NotificationRequest.Raise(_notification);
 				config.WhatsNewSeenForVersion = configVersion.ToString();
 			}
 			configSerializer.SaveConfig(config);
 		}
 
-		string GetWhatsNewContent(Version configVersion, Version whatsNewVersion) {
+		string GetWhatsNewContent(Version whatsNewVersion) {
 			var allInfos = ServiceLocator.Current.GetInstance<IVersionService>().WhatsNewInfo;
 			var sb = new StringBuilder();
 			foreach(var info in allInfos.Where(x => x.version > whatsNewVersion)) {

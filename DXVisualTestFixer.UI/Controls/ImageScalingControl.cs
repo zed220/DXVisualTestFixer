@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using DXVisualTestFixer.UI.Controls.Native;
 using DXVisualTestFixer.UI.ViewModels;
+using JetBrains.Annotations;
 
 namespace DXVisualTestFixer.UI.Controls {
 	public class ImageScalingControl : Control {
@@ -93,20 +94,21 @@ namespace DXVisualTestFixer.UI.Controls {
 				ZoomIn();
 		}
 
+		[UsedImplicitly]
 		public void ChangeView(bool reverse) {
 			MergedViewType = GetNextMergedTestViewType(reverse);
 		}
-
+		[UsedImplicitly]
 		public void ZoomIn() {
 			imageScaleSynchronizer.ZoomIn();
 			UpdateFocusedPixel();
 		}
-
+		[UsedImplicitly]
 		public void ZoomOut() {
 			imageScaleSynchronizer.ZoomOut();
 			UpdateFocusedPixel();
 		}
-
+		[UsedImplicitly]
 		public void Zoom100() {
 			imageScaleSynchronizer.Zoom100();
 			UpdateFocusedPixel();

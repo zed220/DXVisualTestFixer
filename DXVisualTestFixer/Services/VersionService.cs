@@ -2,10 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Windows.Documents;
-using System.Windows.Shapes;
-using DevExpress.Data;
 using DXVisualTestFixer.Common;
 using DXVisualTestFixer.Configuration;
 

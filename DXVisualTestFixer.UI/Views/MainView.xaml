@@ -319,7 +319,7 @@
                                 dxb:ImageColorizer.Color="Green"
                                 Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_AddCircled.svg}"
                                 IsEnabled="{DXBinding Expr='CurrentTest.Valid != $common:TestState.Error'}"
-                                ItemClick="{DXEvent Handler='CommitCurrentTest(); @e(PART_View).MoveNextDataRow()'}"
+                                ItemClick="{DXEvent Handler='StageCurrentTest(); @e(PART_View).MoveNextDataRow()'}"
                                 ShowKeyGesture="True"
                                 KeyGesture="Ctrl+D" 
                                 IsVisible="{Binding IsReadOnly, Converter={dxmvvm:BooleanNegationConverter}}"/>
@@ -327,7 +327,7 @@
                                 Content="Unstage And Move Down"
                                 Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_RemoveCircled.svg}"
                                 IsEnabled="{DXBinding Expr='CurrentTest.Valid != $common:TestState.Error'}"
-                                ItemClick="{DXEvent Handler='UncommitCurrentTest(); @e(PART_View).MoveNextDataRow()'}"
+                                ItemClick="{DXEvent Handler='UnstageCurrentTest(); @e(PART_View).MoveNextDataRow()'}"
                                 ShowKeyGesture="True"
                                 KeyGesture="Ctrl+B"
                                 IsVisible="{Binding IsReadOnly, Converter={dxmvvm:BooleanNegationConverter}}" />

@@ -10,10 +10,10 @@ namespace DXVisualTestFixer.UI.PrismCommon {
 		public LayoutPanelRegionAdapter(IRegionBehaviorFactory regionBehaviorFactory) : base(regionBehaviorFactory) { }
 
 		protected override void Adapt(IRegion region, LayoutPanel regionTarget) {
-			region.Views.CollectionChanged += (o, e) => Views_CollectionChanged(o, e, regionTarget);
+			region.Views.CollectionChanged += (o, e) => Views_CollectionChanged(e, regionTarget);
 		}
 
-		void Views_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e, LayoutPanel regionTarget) {
+		void Views_CollectionChanged(NotifyCollectionChangedEventArgs e, LayoutPanel regionTarget) {
 			switch(e.Action) {
 				case NotifyCollectionChangedAction.Add:
 					regionTarget.Content = e.NewItems.Cast<object>().Last();

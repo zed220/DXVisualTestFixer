@@ -7,7 +7,7 @@ namespace DXVisualTestFixer.UI.Views {
 	/// <summary>
 	///     Interaction logic for MainWindow.xaml
 	/// </summary>
-	public partial class Shell : ThemedWindow {
+	public partial class Shell {
 		public Shell() => InitializeComponent();
 
 		protected override void OnActivated(EventArgs e) {

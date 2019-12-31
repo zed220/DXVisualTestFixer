@@ -31,8 +31,10 @@ namespace DXVisualTestFixer.UI.ViewModels {
 			ChangedTests = testsService.SelectedState.ChangedTests;
 		}
 
+		[UsedImplicitly]
 		public IEnumerable<UICommand> DialogCommands { get; set; }
-
+		
+		[UsedImplicitly]
 		public List<TestInfo> ChangedTests {
 			get => _ChangedTests;
 			set => SetProperty(ref _ChangedTests, value);
@@ -40,14 +42,17 @@ namespace DXVisualTestFixer.UI.ViewModels {
 
 		public bool IsAutoCommit {
 			get => _IsAutoCommit;
+			[UsedImplicitly]
 			set => SetProperty(ref _IsAutoCommit, value);
 		}
 
 		public string CommitCaption {
 			get => _CommitCaption;
+			[UsedImplicitly]
 			set => SetProperty(ref _CommitCaption, value);
 		}
-
+		
+		[UsedImplicitly]
 		public IEnumerable<UICommand> Commands { get; }
 
 		public bool Confirmed { get; set; }

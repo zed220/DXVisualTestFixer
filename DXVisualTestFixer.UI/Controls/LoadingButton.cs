@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using JetBrains.Annotations;
 
 namespace DXVisualTestFixer.UI.Controls {
 	public class LoadingButton : Button {
@@ -35,8 +36,8 @@ namespace DXVisualTestFixer.UI.Controls {
 
 	public enum LoadingButtonState {
 		Enabled,
-		Loading,
-		Loaded,
-		Disabled
+		[UsedImplicitly]Loading,
+		[UsedImplicitly]Loaded,
+		[UsedImplicitly]Disabled
 	}
 }

@@ -4,13 +4,11 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using DXVisualTestFixer.Common;
 using Microsoft.Practices.ObjectBuilder2;
 using Microsoft.Practices.ServiceLocation;
-using Minio.Exceptions;
 
 namespace DXVisualTestFixer.Core {
 	public class CorpDirTestInfoContainer {
@@ -158,9 +156,7 @@ namespace DXVisualTestFixer.Core {
 
 		static Team FindTeam(string version, XmlNode buildNode) {
 			var result = new Dictionary<string, Team>();
-			if(buildNode == null)
-				return null;
-			var teamNode = buildNode.FindByName("Project");
+			var teamNode = buildNode?.FindByName("Project");
 			if(teamNode == null)
 				return null;
 			if(!teamNode.TryGetAttribute("Dpi", out int dpi))
