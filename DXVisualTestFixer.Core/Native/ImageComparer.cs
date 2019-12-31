@@ -112,11 +112,5 @@ namespace DXVisualTestFixer.Native {
 			using var s = new MemoryStream(arr);
 			return Image.FromStream(s) as Bitmap;
 		}
-
-		public static byte[] ImageToByte(Image img) {
-			using var stream = new MemoryStream();
-			img.Save(stream, ImageFormat.Bmp);
-			return stream.ToArray();
-		}
 	}
 }

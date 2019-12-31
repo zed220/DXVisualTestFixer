@@ -4,7 +4,7 @@ namespace DXVisualTestFixer.UI.Views {
 	/// <summary>
 	///     Interaction logic for RepositoryOptimizerView.xaml
 	/// </summary>
-	public partial class RepositoryOptimizerView : UserControl {
+	public partial class RepositoryOptimizerView {
 		public RepositoryOptimizerView() => InitializeComponent();
 	}
 }

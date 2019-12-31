@@ -4,7 +4,7 @@ namespace DXVisualTestFixer.UI.Views {
 	/// <summary>
 	///     Interaction logic for MainView.xaml
 	/// </summary>
-	public partial class MainView : UserControl {
+	public partial class MainView {
 		public MainView() => InitializeComponent();
 	}
 }

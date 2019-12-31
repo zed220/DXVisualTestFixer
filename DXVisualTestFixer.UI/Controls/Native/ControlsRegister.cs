@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using JetBrains.Annotations;
 
 namespace DXVisualTestFixer.UI.Controls.Native {
-	internal abstract class ControlsRegistrator<T> where T : FrameworkElement {
+	internal abstract class ControlsRegister<T> where T : FrameworkElement {
 		T before, current, diff;
 
 		public void Register(MergedTestViewType scrollViewerType, T control) {
@@ -25,6 +26,7 @@ namespace DXVisualTestFixer.UI.Controls.Native {
 			RegisterCore(control);
 		}
 
+		[PublicAPI]
 		public void Unregister(T control) {
 			if(control == null)
 				return;

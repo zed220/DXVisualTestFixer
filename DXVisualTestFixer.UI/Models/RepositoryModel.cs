@@ -63,7 +63,7 @@ namespace DXVisualTestFixer.UI.Models {
 		public static void InitializeBinIfNeed(string repositoryPath, string version) {
 			static bool TryCreateDirectoryLink(string workPath, string targetPath) {
 				if(!Directory.Exists(workPath)) return false;
-				FileSystemHelper.Create(workPath, targetPath, false);
+				FileSystemHelper.Create(workPath, targetPath);
 				return true;
 			}
 
@@ -71,7 +71,7 @@ namespace DXVisualTestFixer.UI.Models {
 				System.IO.Path.Combine(repositoryPath, "..", version, "Bin"),
 				System.IO.Path.Combine(repositoryPath, "..", $"20{version}", "Bin"),
 				System.IO.Path.Combine("c:\\Work", version, "Bin"),
-				System.IO.Path.Combine("c:\\Work", $"20{version}", "Bin"),
+				System.IO.Path.Combine("c:\\Work", $"20{version}", "Bin")
 			};
 			
 			if(!workPaths.Any(Directory.Exists))
