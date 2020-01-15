@@ -221,23 +221,31 @@ namespace DXVisualTestFixer.UI.ViewModels {
 			Solutions = actualSolutions;
 		}
 
-		public void Initialize() {
+		[UsedImplicitly]
+		public async void InitializeAsync() {
 			loggingService.SendMessage("Checking config");
-			var config = configSerializer.GetConfig(false);
-			if(Config != null && configSerializer.IsConfigEquals(config, Config))
+			if(!await UpdateConfigAndCheckUpdatedAsync())
 				return;
-			Config = config;
 			FillSolutions();
-			ServiceLocator.Current.GetInstance<IAppearanceService>()?.SetTheme( /*Config.ThemeName*/ "Office2019Colorful", "DarkLilac");
 			loggingService.SendMessage("Config loaded");
 			UpdateContent();
 		}
 
+		async Task<bool> UpdateConfigAndCheckUpdatedAsync() {
+			return await Task.Run(() => {
+				var config = configSerializer.GetConfig(false);
+				if(Config != null && configSerializer.IsConfigEquals(config, Config))
+					return false;
+				Config = config;
+				return true;	
+			});
+		}
+		
 		void UpdateContent() {
 			if(Config.GetLocalRepositories().ToList().Count == 0) {
 				Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
 					notificationService.DoNotification("Add repositories in settings", "Add repositories in settings");
-					ShowSettings();
+					ShowSettingsAsync();
 					if(Config.GetLocalRepositories().ToList().Count == 0) {
 						notificationService.DoNotification("Add repositories in settings", "Add repositories in settings");
 						Status = ProgramStatus.Idle;
@@ -253,7 +261,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 				if(!repo.IsDownloaded()) {
 					Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
 						notificationService.DoNotification("Missing Repositories", "Download repositories in Settings", MessageBoxImage.Warning);
-						ShowSettings();
+						ShowSettingsAsync();
 						RefreshTestList();
 					}));
 					Status = ProgramStatus.Idle;
@@ -293,16 +301,16 @@ namespace DXVisualTestFixer.UI.ViewModels {
 		public void ShowViewResources() => ViewResourcesRequest.Raise(ServiceLocator.Current.TryResolve<ViewResourcesViewModel>());
 
 		[UsedImplicitly]
-		public void ShowSettings() {
+		public async void ShowSettingsAsync() {
 			if(CheckHasUncommittedChanges())
 				return;
-			var confirmation = ServiceLocator.Current.TryResolve<ISettingsViewModel>();
-			SettingsRequest.Raise(confirmation);
-			if(!confirmation.Confirmed)
+			var settingsViewModel = ServiceLocator.Current.TryResolve<ISettingsViewModel>();
+			SettingsRequest.Raise(settingsViewModel);
+			if(!settingsViewModel.Confirmed)
 				return;
 			TestsToCommitCount = 0;
-			configSerializer.SaveConfig(confirmation.Config);
-			Initialize();
+			configSerializer.SaveConfig(settingsViewModel.Config);
+			await Task.Run(InitializeAsync);
 		}
 
 		[UsedImplicitly]

@@ -55,7 +55,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 
 		public IConfig Config {
 			get => _config;
-			set => SetProperty(ref _config, value, OnConfigChanged);
+			private set => SetProperty(ref _config, value, OnConfigChanged);
 		}
 
 		public bool Confirmed { get; set; }
@@ -112,6 +112,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 				Save();
 		}
 
+		[UsedImplicitly]
 		public void SelectWorkDirectory() {
 			var dialog = ServiceLocator.Current.TryResolve<IFolderBrowserDialog>();
 			var result = dialog.ShowDialog();

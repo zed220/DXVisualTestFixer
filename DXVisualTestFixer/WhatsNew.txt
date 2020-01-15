@@ -13,3 +13,4 @@ Version 3.3.21::Better Rider executable detection
 Version 3.3.22::Added visual information for long app loading, minio server integration improvements
 Version 3.3.23::Fixed exception if pipeline started but not completely finished
 Version 3.4.0::Support fork testing
+Version 3.4.1::Move to new minio server

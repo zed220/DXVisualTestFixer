@@ -20,7 +20,11 @@ using Prism.Unity;
 namespace DXVisualTestFixer {
 	public class Bootstrapper : UnityBootstrapper {
 		protected override DependencyObject CreateShell() => new Shell();
-		protected override void InitializeShell() => Application.Current.MainWindow.Show();
+		protected override void InitializeShell() {
+			Container.Resolve<IAppearanceService>()?.SetTheme( /*Config.ThemeName*/ "Office2019Colorful", "DarkLilac");
+			Application.Current.MainWindow.Show();
+		}
+
 		protected override void ConfigureContainer() {
 			base.ConfigureContainer();
 			RegisterTypeIfMissing(typeof(INotificationService), typeof(NotificationService), true);

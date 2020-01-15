@@ -42,7 +42,7 @@ namespace DXVisualTestFixer.Core {
 		}
 
 		
-		static MinioClient CreateClient() => new MinioClient("gitlabci4-minio:9000", "xpfminio", "xpfminiostorage");
+		static MinioClient CreateClient() => new MinioClient("anallytics-minio:9000", "xpfminio", "xpfminiostorage");
 
 		public async Task<string> Download(string path) {
 			return await RepeatAsync(async () => {
