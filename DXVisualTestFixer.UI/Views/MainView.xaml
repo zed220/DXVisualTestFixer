@@ -25,7 +25,7 @@
              prism:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
-             Loaded="{DXEvent Handler='Initialize()'}">
+             Initialized="{DXEvent Handler='InitializeAsync()'}">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -300,7 +300,7 @@
                         <dxr:RibbonPageGroup Caption="Settings">
                             <dxb:BarButtonItem
                                 Content="Config"
-                                Command="{DXCommand Execute='ShowSettings()'}"
+                                Command="{DXCommand Execute='ShowSettingsAsync()'}"
                                 Glyph="{dx:DXImage SvgImages/Scheduling/Properties.svg}" />
                             <dxb:BarCheckItem
                                 Content="Smart Grouping"
