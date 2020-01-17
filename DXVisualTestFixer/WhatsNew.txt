@@ -14,3 +14,4 @@ Version 3.3.22::Added visual information for long app loading, minio server inte
 Version 3.3.23::Fixed exception if pipeline started but not completely finished
 Version 3.4.0::Support fork testing
 Version 3.4.1::Move to new minio server
+Version 3.4.3::Allow to save on disk (without committing) tests results for fork
