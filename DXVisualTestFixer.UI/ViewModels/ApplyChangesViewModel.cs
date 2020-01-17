@@ -16,6 +16,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 		List<TestInfo> _ChangedTests;
 		string _CommitCaption = DefaultCommitCaption;
 		bool _IsAutoCommit = true;
+		bool _CanChangeAutoCommit = true;
 
 		public ApplyChangesViewModel(ITestsService testsService) {
 			this.testsService = testsService;
@@ -29,6 +30,10 @@ namespace DXVisualTestFixer.UI.ViewModels {
 				Confirmed = true;
 			});
 			ChangedTests = testsService.SelectedState.ChangedTests;
+			if(ChangedTests.FirstOrDefault(x => x.Repository.ReadOnly) != null) {
+				CanChangeAutoCommit = false;
+				IsAutoCommit = false;
+			}
 		}
 
 		[UsedImplicitly]
@@ -45,7 +50,11 @@ namespace DXVisualTestFixer.UI.ViewModels {
 			[UsedImplicitly]
 			set => SetProperty(ref _IsAutoCommit, value);
 		}
-
+		public bool CanChangeAutoCommit {
+			get => _CanChangeAutoCommit;
+			[UsedImplicitly]
+			set => SetProperty(ref _CanChangeAutoCommit, value);
+		}
 		public string CommitCaption {
 			get => _CommitCaption;
 			[UsedImplicitly]

@@ -321,16 +321,14 @@
                                 IsEnabled="{DXBinding Expr='CurrentTest.Valid != $common:TestState.Error'}"
                                 ItemClick="{DXEvent Handler='StageCurrentTest(); @e(PART_View).MoveNextDataRow()'}"
                                 ShowKeyGesture="True"
-                                KeyGesture="Ctrl+D" 
-                                IsVisible="{Binding IsReadOnly, Converter={dxmvvm:BooleanNegationConverter}}"/>
+                                KeyGesture="Ctrl+D" />
                             <dxb:BarButtonItem
                                 Content="Unstage And Move Down"
                                 Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_RemoveCircled.svg}"
                                 IsEnabled="{DXBinding Expr='CurrentTest.Valid != $common:TestState.Error'}"
                                 ItemClick="{DXEvent Handler='UnstageCurrentTest(); @e(PART_View).MoveNextDataRow()'}"
                                 ShowKeyGesture="True"
-                                KeyGesture="Ctrl+B"
-                                IsVisible="{Binding IsReadOnly, Converter={dxmvvm:BooleanNegationConverter}}" />
+                                KeyGesture="Ctrl+B" />
                             <dxb:BarItemSeparator />
                             <dxb:BarButtonItem
                                 Content="Move Up"
@@ -397,7 +395,7 @@
                                                 Header="Team" Visible="False" AllowSearchPanel="True" />
                                 <dxg:GridColumn FieldName="TestInfo.Name" GroupIndex="2" MergeWithPreviousGroup="False"
                                                 Header="Name" Visible="False" AllowSearchPanel="True" />
-                                <dxg:GridColumn FieldName="CommitChange" Header="Commit" Width="29" Visible="{Binding IsReadOnly, Converter={dxmvvm:BooleanNegationConverter}}">
+                                <dxg:GridColumn FieldName="CommitChange" Header="Commit" Width="29">
                                     <dxg:GridColumn.CellTemplate>
                                         <DataTemplate>
                                             <dxe:CheckEdit HorizontalAlignment="Center"
@@ -493,6 +491,7 @@
                                                                      ShowColumnHeaders="False"
                                                                      ShowGroupPanel="False"
                                                                      ShowFixedTotalSummary="True"
+                                                                     ScrollBarAnnotationMode="FocusedRow"
                                                                      RowDoubleClick="{DXEvent Handler='@s.ProcessDoubleClick(@args)'}"
                                                                      PreviewKeyDown="{DXEvent Handler='@s.ProcessKeyDown(@args)'}"
                                                                      GroupSummaryDisplayMode="Default"
@@ -505,16 +504,13 @@
                                             <dxb:PopupMenu>
                                                 <dxb:BarButtonItem Content="Commit All In Viewport"
                                                                    Glyph="{dx:DXImage SvgImages/PDF Viewer/SelectAll.svg}"
-                                                                   Command="{DXCommand Execute='@e(PART_View).CommitAllInViewport()'}"
-                                                                   IsVisible="{Binding IsReadOnly, Converter={dxmvvm:BooleanNegationConverter}}" />
+                                                                   Command="{DXCommand Execute='@e(PART_View).CommitAllInViewport()'}" />
                                                 <dxb:BarButtonItem Content="Clear Commits In Viewport"
                                                                    Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Clear.svg}"
-                                                                   Command="{DXCommand Execute='@e(PART_View).ClearCommitsInViewport()'}"
-                                                                   IsVisible="{Binding IsReadOnly, Converter={dxmvvm:BooleanNegationConverter}}" />
+                                                                   Command="{DXCommand Execute='@e(PART_View).ClearCommitsInViewport()'}" />
                                                 <dxb:BarButtonItem Content="Clear All Commits"
                                                                    Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Clear.svg}"
-                                                                   Command="{DXCommand Execute='ClearCommits()'}"
-                                                                   IsVisible="{Binding IsReadOnly, Converter={dxmvvm:BooleanNegationConverter}}" />
+                                                                   Command="{DXCommand Execute='ClearCommits()'}" />
                                             </dxb:PopupMenu>
                                         </dxb:BarManager.DXContextMenu>
                                         <dxmvvm:Interaction.Behaviors>

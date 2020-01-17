@@ -51,7 +51,7 @@ namespace DXVisualTestFixer.UI.Controls {
 
 		void InverseCommitChange(int rowHandle) {
 			var model = GetValidTestInfoModel(rowHandle);
-			if(model != null && !model.TestInfo.Repository.ReadOnly)
+			if(model != null)
 				model.CommitChange = !model.CommitChange;
 		}
 
