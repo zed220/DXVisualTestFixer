@@ -5,6 +5,8 @@ using DevExpress.Xpf.Docking;
 using DXVisualTestFixer.Common;
 using DXVisualTestFixer.Core;
 using DXVisualTestFixer.Core.Configuration;
+using DXVisualTestFixer.Minio;
+using DXVisualTestFixer.Git;
 using DXVisualTestFixer.PrismCommon;
 using DXVisualTestFixer.Services;
 using DXVisualTestFixer.UI.Common;

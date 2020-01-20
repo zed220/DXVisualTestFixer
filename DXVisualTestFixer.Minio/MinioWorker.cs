@@ -1,13 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using DXVisualTestFixer.Common;
-using LibGit2Sharp;
 using Minio;
+using Minio.Exceptions;
 
-namespace DXVisualTestFixer.Core {
+namespace DXVisualTestFixer.Minio {
 	public class MinioWorker : IMinioWorker {
 		const string bucketName = "visualtests";
 		
@@ -74,7 +74,7 @@ namespace DXVisualTestFixer.Core {
 
 		public async Task WaitIfObjectNotLoaded(string root, string child) {
 			if(!await Exists(root, child))
-				await Task.FromException(new NotFoundException(root + child));
+				await Task.FromException(new MinioException(root + child));
 		}
 		
 		public async Task<string[]> Discover(string path) {

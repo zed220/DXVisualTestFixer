@@ -14,3 +14,5 @@ DXVcs2Git.Nuget/Nuget.exe
 DXVcs2Git.Nuget/*.nupkg
 DXVisualTestFixer.FarmIntegrator2/obj/
 .idea/
+DXVisualTestFixer.Minio/obj
+DXVisualTestFixer.Git/obj
