@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using System.Security.Principal;
@@ -9,7 +9,7 @@ using LibGit2Sharp.Handlers;
 using CommonRepository = DXVisualTestFixer.Common.Repository;
 using Repository = LibGit2Sharp.Repository;
 
-namespace DXVisualTestFixer.Core {
+namespace DXVisualTestFixer.Git {
 	public class GitWorker : IGitWorker {
 		public bool SetHttpRepository(CommonRepository repository) {
 			if(!repository.IsDownloaded())

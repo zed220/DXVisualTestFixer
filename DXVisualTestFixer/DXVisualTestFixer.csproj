@@ -346,6 +346,14 @@
       <Project>{a3d50801-f65f-4201-8aee-7254dae4732f}</Project>
       <Name>DXVisualTestFixer.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DXVisualTestFixer.Git\DXVisualTestFixer.Git.csproj">
+      <Project>{ba984ee7-bc1b-4fe2-9ec4-b8b8bb2a7617}</Project>
+      <Name>DXVisualTestFixer.Git</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DXVisualTestFixer.Minio\DXVisualTestFixer.Minio.csproj">
+      <Project>{d4a8e594-2f8c-4acf-9d26-226f2cdccd4a}</Project>
+      <Name>DXVisualTestFixer.Minio</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DXVisualTestFixer.UI\DXVisualTestFixer.UI.csproj">
       <Project>{6e5e8bc1-a7a3-4ded-ad5e-4c8a09870875}</Project>
       <Name>DXVisualTestFixer.UI</Name>
