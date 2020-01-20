@@ -7,7 +7,6 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using DXVisualTestFixer.Common;
-using Minio.Exceptions;
 using Prism.Mvvm;
 
 namespace DXVisualTestFixer.Core {
@@ -120,7 +119,7 @@ namespace DXVisualTestFixer.Core {
 					return last;
 				loggingService.SendMessage($"Waiting while the {repository.Version} was completely finished in the path {last}");
 			}
-			throw new MinioException($"Results for {repository.Version} does not stored correctly in {last}");
+			throw new Exception($"Results for {repository.Version} does not stored correctly in {last}");
 		}
 		async Task<bool> IsResultsLoaded(string resultsPath) {
 			return (await minioWorker.Discover(resultsPath)).FirstOrDefault(x => x.EndsWith("final")) != null;
