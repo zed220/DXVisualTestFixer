@@ -93,11 +93,11 @@ namespace DXVisualTestFixer.Minio {
 			});
 		}
 		
-		public async Task<string> DiscoverLast(string path) => await RepeatAsync(async () => (await Discover(path)).Last());
+		public async Task<string> DiscoverLast(string path) => await RepeatAsync(async () => (await Discover(path)).LastOrDefault());
 
-		public async Task<string> DiscoverPrev(string path) {
+		public async Task<string> DiscoverPrev(string path, int prevCount) {
 			var all = await Discover(path);
-			return all.Reverse().Skip(1).First();
+			return all.Reverse().Skip(prevCount).First();
 		}
 		public async Task<string[]> DetectUserPaths() {
 			var excludedPaths = new[] { "XPF/", "usedfiles/", "visualtestsscripts-2.0/", "visualtestsscripts-3.0/", "visualtestsscripts-4.0/" };
@@ -107,8 +107,11 @@ namespace DXVisualTestFixer.Minio {
 
 			var result = new List<string>();
 			foreach(var rootPath in rootPaths) {
-				foreach(var version in await Discover(rootPath + "Common/")) 
-					result.Add(await DiscoverLast(version));
+				foreach(var version in await Discover(rootPath + "Common/")) {
+					var last = await DiscoverLast(version);
+					if(last != null)
+						result.Add(last);
+				}
 			}
 			
 			return result.ToArray();
