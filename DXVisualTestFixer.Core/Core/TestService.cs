@@ -88,6 +88,8 @@ namespace DXVisualTestFixer.Core {
 					continue;
 				var resultsPath = fullUserPath + "results/";
 				var last = await minioWorker.DiscoverLast(resultsPath);
+				if(last == null)
+					continue;
 				if(!await IsResultsLoaded(last))
 					continue;
 				var userName = userPath.Split('/').First();
@@ -109,9 +111,13 @@ namespace DXVisualTestFixer.Core {
 		}
 		
 		async Task<string> GetResultPath(Repository repository) {
-			var lastBuild = await minioWorker.DiscoverLast($"XPF/{repository.Version}/");
-			if(!await minioWorker.Exists(lastBuild, "results"))
-				lastBuild = await minioWorker.DiscoverPrev($"XPF/{repository.Version}/");
+			string lastBuild = null;
+			for(int prevCount = 0; prevCount < 5; prevCount++) {
+				lastBuild = await minioWorker.DiscoverPrev($"XPF/{repository.Version}/", prevCount);
+				if(await minioWorker.Exists(lastBuild, "results"))
+					break;
+			}
+
 			var last = await minioWorker.DiscoverLast($"{lastBuild}results/");
 			
 			for(int i = 0; i < 20; i++, await Task.Delay(TimeSpan.FromSeconds(10))) {
