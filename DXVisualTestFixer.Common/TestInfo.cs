@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Text;
 using JetBrains.Annotations;
+using Prism.Mvvm;
 
 namespace DXVisualTestFixer.Common {
-	public class TestInfo {
+	public class TestInfo : BindableBase {
 		StringBuilder _invalidLogBuilder;
 
 		public TestInfo(Repository repository) {
