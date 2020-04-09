@@ -139,7 +139,7 @@ namespace DXVisualTestFixer.Core {
 		
 		static IEnumerable<XmlElement> FindErrors(XmlNode rootNode) => rootNode.FindByName("root")?.FindAllByName("error").Cast<XmlElement>();
 
-		static string FindUsedFilesLink(XmlNode rootNode) => rootNode?.FindByName("FileUsingLogLink")?.InnerText.Replace("\r\n", string.Empty);
+		static string FindUsedFilesLink(XmlNode rootNode) => rootNode?.FindByName("FileUsingLogLink")?.InnerText.Replace("\r\n", string.Empty).Split('/').Last();//Remove tomorrow
 
 		static IElapsedTimeInfo FindElapsedTime(XmlNode rootNode) {
 			var elapsedTimeNode = rootNode.FindByName("ElapsedTime");
@@ -243,8 +243,36 @@ namespace DXVisualTestFixer.Core {
 			var resultPaths = PatchPaths(paths);
 			var shaList = PatchSHA(parts.Where(x => x.Contains("sha-")).Select(x => x.Replace("sha-", string.Empty)).ToList());
 			var diffCount = TryGetDiffCount(parts.Where(x => x.Contains("diffCount=")).Select(x => x.Replace("diffCount=", string.Empty)).LastOrDefault());
+			var testFullName = GetStringFromParts(parts, "TestFullName:");
+			var testDisplayName = GetStringFromParts(parts, "TestDisplayName:");
+			var testCategory = GetStringFromParts(parts, "TestCategory:");
+			var testResourcesFolder = GetStringFromParts(parts, "ResourcesFolder:");
+			var testProperties = GetTestProperties(parts);
 			info = null;
-			return CorpDirTestInfo.TryCreate(repository, testNameAndNamespace, resultPaths, shaList, diffCount, out info);
+			return CorpDirTestInfo.TryCreate(repository, testFullName, testDisplayName, resultPaths, shaList, testCategory, testResourcesFolder, testProperties, diffCount, out info);
+		}
+
+		static List<TestProperty> GetTestProperties(List<string> parts) {
+			var result = new List<TestProperty>();
+			foreach(var part in parts) {
+				var attributeStr = GetStringFromPart(part, "TestProperty:");
+				if(attributeStr == null)
+					continue;
+				var nameValue = attributeStr.Replace("Name=", "").Split(new [] { ",Value=" }, StringSplitOptions.RemoveEmptyEntries);
+				if(nameValue.Length != 2 || nameValue.Any(string.IsNullOrWhiteSpace))
+					continue;
+				result.Add(new TestProperty(nameValue[0], nameValue[1]));
+			}
+			return result;
+		}
+
+		static string GetStringFromParts(List<string> parts, string partName) {
+			return parts.Select(x => GetStringFromPart(x, partName)).LastOrDefault(x => x!= null);
+		}
+		static string GetStringFromPart(string part, string partName) {
+			if(part.Contains(partName))
+				return part.Replace(partName, string.Empty).Replace("\r", string.Empty).Replace("\n", string.Empty);
+			return null;
 		}
 
 		static int? TryGetDiffCount(string str) {

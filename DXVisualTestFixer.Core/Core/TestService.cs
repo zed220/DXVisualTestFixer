@@ -246,19 +246,26 @@ namespace DXVisualTestFixer.Core {
 			return null;
 		}
 
+		static bool GetBoolTestParameter(CorpDirTestInfo corpDirTestInfo, string parameter) {
+			return corpDirTestInfo.AdditionalParameters.FirstOrDefault(x => x.Name == parameter && x.Value == "True") != null;
+		}
+		
 		static TestInfo TryCreateTestInfo(Repository repository, CorpDirTestInfo corpDirTestInfo, List<Team> teams) {
 			var testInfo = new TestInfo(repository);
 			testInfo.Version = corpDirTestInfo.Version;
 			testInfo.Name = corpDirTestInfo.TestName;
-			testInfo.AdditionalParameters = corpDirTestInfo.AdditionalParameter;
+			if(corpDirTestInfo.AdditionalParameters.FirstOrDefault(p => p.Name == "Dpi")?.Value is var dpi_str && Int32.TryParse(dpi_str, out var dpi))
+				testInfo.Dpi = dpi;
 			testInfo.NameWithNamespace = corpDirTestInfo.TestNameWithNamespace;
-			testInfo.ResourceFolderName = corpDirTestInfo.ResourceFolderName;
+			testInfo.ResourcesFullPath = corpDirTestInfo.ResourcesFullPath;
+			testInfo.Theme = corpDirTestInfo.ThemeName;
+			testInfo.Optimized = GetBoolTestParameter(corpDirTestInfo, "Optimized");
+			testInfo.Colorized = GetBoolTestParameter(corpDirTestInfo, "Colorized");
+			//todo: found new parameter error
 			if(corpDirTestInfo.TeamName == Team.ErrorName) {
 				testInfo.Valid = TestState.Error;
 				testInfo.TextDiffLazy = new Lazy<string>(() => "+" + testInfo.Name + Environment.NewLine + Environment.NewLine + corpDirTestInfo.ErrorText);
 				testInfo.TextDiffFullLazy = new Lazy<string>(() => string.Empty);
-				testInfo.Theme = "Error";
-				testInfo.Dpi = 0;
 				testInfo.Team = Team.CreateErrorTeam(corpDirTestInfo.Version);
 				return testInfo;
 			}
@@ -269,18 +276,12 @@ namespace DXVisualTestFixer.Core {
 				testInfo.Valid = TestState.Error;
 				testInfo.TextDiffLazy = new Lazy<string>(() => "+" + testInfo.Name + Environment.NewLine + Environment.NewLine + corpDirTestInfo.ErrorText);
 				testInfo.TextDiffFullLazy = new Lazy<string>(() => string.Empty);
-				testInfo.Theme = "Error";
-				testInfo.Dpi = 0;
 				testInfo.Team = Team.CreateErrorTeam(corpDirTestInfo.Version);
 				return testInfo;
 			}
 
 			testInfo.TeamInfo = info;
-			testInfo.Dpi = info.Dpi;
-			testInfo.Theme = corpDirTestInfo.ThemeName;
 			testInfo.PredefinedImageDiffsCount = corpDirTestInfo.DiffCount;
-			if(testInfo.TeamInfo.Optimized.HasValue)
-				testInfo.Optimized = testInfo.TeamInfo.Optimized.Value;
 
 			testInfo.TextBeforeLazy = new Lazy<string>(() => LoadTextFile(corpDirTestInfo.InstantTextEditPath));
 			testInfo.TextBeforeSha = corpDirTestInfo.InstantTextEditSHA ?? LoadBytes(corpDirTestInfo.InstantTextEditSHAPath);
@@ -503,29 +504,15 @@ namespace DXVisualTestFixer.Core {
 			test.Valid = TestState.Valid;
 		}
 
-		public Repository GetRepository(string version) {
-			return configSerializer.GetConfig().Repositories.Where(r => r.Version == version).FirstOrDefault();
-		}
-
 		string GetTestResourceName(TestInfo test, bool checkDirectoryExists) {
-			var repository = GetRepository(test.Version);
-			if(repository == null) {
-				test.LogCustomError($"Config not found for version \"{test.Version}\"");
-				return null;
-			}
-
-			var testResourcesPath = test.Optimized && test.TeamInfo.TestResourcesPathOptimized != null ? test.TeamInfo.TestResourcesPathOptimized : test.TeamInfo.TestResourcesPath;
-			var actualTestResourcesPath = Path.Combine(repository.Path, testResourcesPath, test.ResourceFolderName);
-			if(!Directory.Exists(actualTestResourcesPath)) {
+			if(!Directory.Exists(test.ResourcesFullPath)) {
 				if(checkDirectoryExists) {
-					test.LogDirectoryNotFound(actualTestResourcesPath);
+					test.LogDirectoryNotFound(test.ResourcesFullPath);
 					return null;
 				}
-
-				Directory.CreateDirectory(actualTestResourcesPath);
+				Directory.CreateDirectory(test.ResourcesFullPath);
 			}
-
-			return Path.Combine(actualTestResourcesPath, test.Theme);
+			return Path.Combine(test.ResourcesFullPath, test.Theme);
 		}
 
 		static string GetXmlFilePath(string testResourceName, TestInfo test, bool checkExists) {
