@@ -188,6 +188,8 @@
     <Compile Include="Converters\PointToRectConverter.cs" />
     <Compile Include="Converters\StackPanelToTooltipConverter.cs" />
     <Compile Include="Converters\HighlightedColorPopupIsOpenConverter.cs" />
+    <Compile Include="Models\OpenSolutionModel.cs" />
+    <Compile Include="Models\OpenSolutionModelHelper.cs" />
     <Compile Include="Native\DiffLineBackgroundRenderer.cs" />
     <Compile Include="Native\FileSystemHelper.cs" />
     <Compile Include="Native\RepositoryObsolescenceTracker.cs" />
