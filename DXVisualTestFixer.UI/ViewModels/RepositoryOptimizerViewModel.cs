@@ -89,7 +89,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 
 			await Task.WhenAll(filesLinks.Select(async fileRelLink => {
 				var localUsedFiles = new List<string>();
-				var filesStr = await minioWorker.Download(fileRelLink);
+				var filesStr = await minioWorker.Download(repository.MinioPath + fileRelLink);
 				if(string.IsNullOrEmpty(filesStr))
 					return;
 				foreach(var fileRelPath in filesStr.Split(new[] {"\r\n"}, StringSplitOptions.RemoveEmptyEntries)) {

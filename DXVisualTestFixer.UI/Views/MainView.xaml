@@ -439,8 +439,8 @@
                                                         <TextBlock Text="Optimized" Foreground="Black" FontSize="8" />
                                                     </Border>
                                                     <Border Background="LightGray"
-                                                            Visibility="{Binding Path=RowData.Row.AdditionalParameters, Converter={converters:NullableStringToVisibilityConverter}}">
-                                                        <TextBlock Text="{Binding RowData.Row.AdditionalParameters}"
+                                                            Visibility="{Binding Path=RowData.Row.Colorized, Converter={dx:BooleanToVisibilityConverter}}">
+                                                        <TextBlock Text="{Binding RowData.Row.Colorized}"
                                                                    Foreground="Black" FontSize="8" />
                                                     </Border>
                                                     <Border Background="Gray">

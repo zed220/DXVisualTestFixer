@@ -1,4 +1,5 @@
-﻿using DevExpress.Mvvm;
+﻿using System.Collections.Generic;
+using DevExpress.Mvvm;
 using DXVisualTestFixer.Common;
 using JetBrains.Annotations;
 
@@ -18,10 +19,10 @@ namespace DXVisualTestFixer.UI.ViewModels {
 		public string Version => TestInfo.Version;
 		public string VersionAndFork => TestInfo.Repository.VersionAndFork;
 		public bool Optimized => TestInfo.Optimized;
+		public bool Colorized => TestInfo.Colorized;
 		public string TeamName => TestInfo.Team.Name;
 		public string Theme => TestInfo.Theme;
 		public int Dpi => TestInfo.Dpi;
-		public string AdditionalParameters => TestInfo.AdditionalParameters;
 		public int Problem => TestInfo.Problem;
 		public string ProblemName => TestInfo.ProblemName;
 

@@ -28,12 +28,12 @@ namespace DXVisualTestFixer.Core {
 		public string ServerFolderName { get; private set; }
 		public string TestName { get; private set; }
 		public string TestNameWithNamespace { get; private set; }
-		public string ResourceFolderName { get; private set; }
+		public string ResourcesFullPath { get; private set; }
+		
 		public string ThemeName { get; private set; }
 		public string StackTrace { get; set; }
 		public string ErrorText { get; private set; }
-		public int Dpi { get; set; } = 96;
-		public string AdditionalParameter { get; private set; } = string.Empty;
+		public List<TestProperty> AdditionalParameters { get; private set; } = new List<TestProperty>();
 
 		static string GetTestName(string testNameAndNamespace) {
 			if(!testNameAndNamespace.Contains('.'))
@@ -55,13 +55,22 @@ namespace DXVisualTestFixer.Core {
 				TestNameWithNamespace = testNameAndNamespace
 			};
 
-		public static bool TryCreate(Repository repository, string testNameAndNamespace, List<string> corpPaths, List<string> shaList, int? diffCount, out CorpDirTestInfo result) {
+		public static bool TryCreate(Repository repository,
+			string fullName,
+			string displayName,
+			List<string> corpPaths,
+			List<string> shaList,
+			string category,
+			string testResourcesFolder,
+			List<TestProperty> properties,
+			int? diffCount,
+			out CorpDirTestInfo result) {
 			result = null;
 			var temp = new CorpDirTestInfo();
 			temp.Repository = repository;
 			temp.Version = repository.Version;
-			temp.TestName = GetTestName(testNameAndNamespace);
-			temp.TestNameWithNamespace = testNameAndNamespace;
+			temp.TestName = displayName;
+			temp.TestNameWithNamespace = fullName;
 			temp.DiffCount = diffCount;
 			foreach(var path in corpPaths) {
 				if(path.EndsWith("CurrentTextEdit.xml.sha")) {
@@ -108,10 +117,6 @@ namespace DXVisualTestFixer.Core {
 			}
 
 			foreach(var sha in shaList) {
-				//AppendSHA256Base64(sb, "xml_current", currentTxtSHA);
-				//AppendSHA256Base64(sb, "xml_instant", instantTxtSHA);
-				//AppendSHA256Base64(sb, "png_current", currentImageSHA);
-				//AppendSHA256Base64(sb, "png_instant", instantImageSHA);
 				if(sha.StartsWith("xml_current")) {
 					temp.CurrentTextEditSHA = ExtractSHA(sha);
 					continue;
@@ -130,33 +135,15 @@ namespace DXVisualTestFixer.Core {
 				if(sha.StartsWith("png_instant")) temp.InstantImageSHA = ExtractSHA(sha);
 			}
 
-			if(temp.CurrentTextEditPath == null || temp.CurrentImagePath == null) return false; // && temp.ImageDiffPath != null
-			//&& temp.InstantTextEditPath != null && temp.InstantImagePath != null
+			if(temp.CurrentTextEditPath == null || temp.CurrentImagePath == null) return false;
+			
+			temp.TeamName = category;
+			
 			temp.ServerFolderName = temp.CurrentTextEditPath.Split(new[] {@"\\corp\builds\testbuilds\"}, StringSplitOptions.RemoveEmptyEntries).First().Split('\\').First();
-			if(temp.ServerFolderName.Contains("_dpi_")) {
-				var nameAndDpi = temp.ServerFolderName.Split(new[] {"_dpi_"}, StringSplitOptions.RemoveEmptyEntries);
-				temp.TeamName = nameAndDpi[0];
-				temp.Dpi = int.Parse(nameAndDpi[1]);
-			}
-			else {
-				temp.TeamName = temp.ServerFolderName;
-			}
+			temp.AdditionalParameters = properties;
+			temp.ThemeName = properties.FirstOrDefault(p => p.Name == "ThemeName")?.Value ?? Team.ErrorName;
+			temp.ResourcesFullPath = Path.Combine(repository.Path, testResourcesFolder.Replace(@"C:\builds\", string.Empty));
 
-			if(temp.TeamName?.ToLower().Contains("scheduler") ?? false)
-				if(temp.CurrentImagePath.Contains("Colorized"))
-					temp.AdditionalParameter = "Colorized";
-
-			var folderNameAndTheme = Path.GetDirectoryName(temp.CurrentTextEditPath).Split('\\').Last();
-			if(!TryUpdateThemeAndFolderName(folderNameAndTheme, temp))
-				return false;
-			//string[] testNameAndTheme = Path.GetDirectoryName(temp.CurrentTextEditPath).Split('\\').Last().Split('.');
-			//temp.TestName = testNameAndTheme[0];
-			//temp.ThemeName = testNameAndTheme[1];
-			//if(temp.InstantTextEditPath == null || temp.InstantImagePath == null) {
-			//    temp.PossibleNewTest = true;
-			//}
-			//if(testNameAndTheme.Length > 2)
-			//    temp.ThemeName += '.' + testNameAndTheme[2];
 			result = temp;
 			return true;
 		}
@@ -166,30 +153,14 @@ namespace DXVisualTestFixer.Core {
 				return null;
 			return Convert.FromBase64String(str.Split(new[] {"{"}, StringSplitOptions.RemoveEmptyEntries).Last().Split(new[] {"}"}, StringSplitOptions.RemoveEmptyEntries).First());
 		}
-
-		static bool TryUpdateThemeAndFolderName(string folderNameAndTheme, CorpDirTestInfo result) {
-			var allThemes = ServiceLocator.Current.GetInstance<IThemesProvider>().AllThemes.ToList();
-			allThemes.Add("Base");
-			allThemes.Add("Super");
-			allThemes.Sort(new ThemeNameComparer());
-			foreach(var theme in allThemes.Where(t => t.Contains("Touch")).Concat(allThemes.Where(t => !t.Contains("Touch")))) {
-				var themeName = theme.Replace(";", ".");
-				if(!folderNameAndTheme.Contains(themeName))
-					continue;
-				result.ThemeName = themeName;
-				result.ResourceFolderName = folderNameAndTheme.Replace("." + themeName, "");
-				return true;
-			}
-
-			return false;
-		}
 	}
 
-	class ThemeNameComparer : IComparer<string> {
-		public int Compare(string x, string y) {
-			if(x.Length > y.Length)
-				return -1;
-			return x.Length < y.Length ? 1 : Comparer<string>.Default.Compare(x, y);
+	public class TestProperty {
+		public TestProperty(string name, string value) {
+			Name = name;
+			Value = value;
 		}
+		public string Name { get; }
+		public string Value { get; }
 	}
 }

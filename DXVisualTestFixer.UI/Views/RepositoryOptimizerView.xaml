@@ -41,6 +41,9 @@
                 <dxg:GridColumn FieldName="Version" GroupIndex="0" />
                 <dxg:GridColumn FieldName="DirName" GroupIndex="1" />
                 <dxg:GridColumn FieldName="FileName" Width="*" />
+                <dxg:GridControl.GroupSummary>
+                    <dxg:GridSummaryItem SummaryType="Count"/>
+                </dxg:GridControl.GroupSummary>
                 <dxg:GridControl.TotalSummary>
                     <dxg:GridSummaryItem SummaryType="Count" Alignment="Right" />
                 </dxg:GridControl.TotalSummary>

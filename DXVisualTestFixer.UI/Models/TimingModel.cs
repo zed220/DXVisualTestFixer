@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace DXVisualTestFixer.UI.Models {
 	public class TimingModel {
@@ -9,7 +10,6 @@ namespace DXVisualTestFixer.UI.Models {
 		}
 
 		public string FullName { get; }
-		public string Prefix { get; set; }
 		public string Team { get; set; }
 		public string Dpi { get; set; }
 		public string Part { get; set; }
@@ -17,19 +17,14 @@ namespace DXVisualTestFixer.UI.Models {
 		public TimeSpan Time { get; }
 
 		void PopulateAttributes() {
-			var split = FullName.Split(new[] {"_", "-"}, StringSplitOptions.RemoveEmptyEntries);
-			if(split.Length < 1)
-				return;
-			Prefix = split[0];
-			if(split.Length < 2)
-				return;
-			Team = split[1];
+			var split1 = FullName.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+			if(split1.Length > 1)
+				Part = split1[1];
+			var split = split1[0].Split(new[] {"_" }, StringSplitOptions.RemoveEmptyEntries);
 			if(split.Length < 3)
 				return;
-			Dpi = split[2];
-			if(split.Length < 4)
-				return;
-			Part = split[3];
+			Dpi = split.Last();
+			Team = string.Join("_", split.Skip(1).Take(split.Length - 2));
 		}
 	}
 }
