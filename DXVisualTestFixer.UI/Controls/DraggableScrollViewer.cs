@@ -1,6 +1,8 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Media;
 using DevExpress.Xpf.Utils;
 
 namespace DXVisualTestFixer.UI.Controls {
@@ -24,10 +26,25 @@ namespace DXVisualTestFixer.UI.Controls {
 			base.OnPreviewMouseLeftButtonDown(e);
 			if(ScrollMode == ScrollMode.Legacy)
 				return;
+			var hasScrollBar = false;
+			VisualTreeHelper.HitTest(this, target => HitTestFilterCallback(target, out hasScrollBar), ResultCallback, new PointHitTestParameters(e.GetPosition(this)));
+			if(hasScrollBar)
+				return;
 			scrollMousePoint = e.GetPosition(this);
 			offset = new Point(HorizontalOffset, VerticalOffset);
 			CaptureMouse();
 		}
+
+		HitTestFilterBehavior HitTestFilterCallback(DependencyObject potentialHitTestTarget, out bool hasScrollBar) {
+			if(potentialHitTestTarget is ScrollBar) {
+				hasScrollBar = true;
+				return HitTestFilterBehavior.Stop;
+			}
+			hasScrollBar = false;
+			return HitTestFilterBehavior.Continue;
+		}
+
+		HitTestResultBehavior ResultCallback(HitTestResult result) => HitTestResultBehavior.Continue;
 
 		protected override void OnPreviewMouseLeftButtonUp(MouseButtonEventArgs e) {
 			base.OnPreviewMouseLeftButtonUp(e);
