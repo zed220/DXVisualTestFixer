@@ -272,10 +272,11 @@
                                                 <dxb:BarSubItem.ItemTemplate>
                                                     <DataTemplate>
                                                         <ContentControl>
-                                                            <dxb:BarButtonItem Content="{Binding ProgramName}"
+                                                            <dxb:BarButtonItem Content="{Binding DisplayName}"
                                                                                Command="{DXCommand Execute='Open()'}"
                                                                                Glyph="{Binding ProgramImage}"
-                                                                               GlyphSize="Small" />
+                                                                               GlyphSize="Small"
+                                                                               Hint="{Binding AssociatedProgramPath}"/>
                                                         </ContentControl>
                                                     </DataTemplate>
                                                 </dxb:BarSubItem.ItemTemplate>

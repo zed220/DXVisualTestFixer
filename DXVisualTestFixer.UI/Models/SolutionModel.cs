@@ -14,22 +14,22 @@ using Microsoft.Win32;
 
 namespace DXVisualTestFixer.UI.Models {
 	public class OpenSolutionModel : ImmutableObject {
-		readonly string _associatedProgramPath;
 		readonly string _solutionPath;
 
-		public OpenSolutionModel(string solutionPath, string associatedProgramPath, string programName, ImageSource programImage) {
+		public OpenSolutionModel(string solutionPath, string associatedProgramPath, string displayName, ImageSource programImage) {
 			_solutionPath = solutionPath;
-			_associatedProgramPath = associatedProgramPath;
-			ProgramName = programName;
+			AssociatedProgramPath = associatedProgramPath;
+			DisplayName = displayName;
 			ProgramImage = programImage;
 		}
 
-		public string ProgramName { get; }
+		public string AssociatedProgramPath { get; }
+		public string DisplayName { get; }
 		public ImageSource ProgramImage { get; }
 
 		[UsedImplicitly]
 		public void Open() {
-			var info = new ProcessStartInfo(_associatedProgramPath, _solutionPath);
+			var info = new ProcessStartInfo(AssociatedProgramPath, _solutionPath);
 			info.Verb = "runas";
 			Process.Start(info);
 		}
@@ -50,20 +50,32 @@ namespace DXVisualTestFixer.UI.Models {
 		public string Path { get; }
 		public List<OpenSolutionModel> OpenSolutionModels { get; }
 
-		[UsedImplicitly] public bool IsEnabled => File.Exists(SolutionPath) && (CanOpenByVS || CanOpenByRider);
+		[UsedImplicitly] public bool IsEnabled => File.Exists(SolutionPath) && (CanOpenByAssociated || CanOpenByVS || CanOpenByRider);
 
-		public bool CanOpenByVS => File.Exists(GetAssociatedProgram());
-
-		public bool CanOpenByRider => File.Exists(GetRiderPath());
+		public bool CanOpenByAssociated => File.Exists(GetAssociatedProgram());
+		public bool CanOpenByVS => GetVSPaths().Any(File.Exists);
+		public bool CanOpenByRider => GetRiderPaths().Any(File.Exists);
 
 		void FillOpenSolutionsModels() {
-			if(CanOpenByVS)
-				OpenSolutionModels.Add(new OpenSolutionModel(SolutionPath, GetAssociatedProgram(), "MS Visual Studio", GetImageVS()));
-			if(CanOpenByRider)
-				OpenSolutionModels.Add(new OpenSolutionModel(SolutionPath, GetRiderPath(), "JB Rider", GetImageRider()));
+			if(CanOpenByAssociated)
+				OpenSolutionModels.Add(new OpenSolutionModel(SolutionPath, GetAssociatedProgram(), "Associated", GetImageAssociated()));
+			foreach(var vsPath in GetVSPaths())
+				OpenSolutionModels.Add(new OpenSolutionModel(SolutionPath, vsPath, GetExeDisplayText(vsPath), GetImageFromExe(vsPath)));
+			foreach(var riderPath in GetRiderPaths())
+				OpenSolutionModels.Add(new OpenSolutionModel(SolutionPath, riderPath, GetExeDisplayText(riderPath), GetImageFromExe(riderPath)));
 		}
 
-		ImageSource GetImageVS() {
+		static string GetExeDisplayText(string path) {
+			try {
+				var info = FileVersionInfo.GetVersionInfo(path);
+				return info.ProductName + $" ({info.ProductVersion})";
+			}
+			catch {
+				return System.IO.Path.GetFileNameWithoutExtension(path);
+			}
+		}
+		
+		ImageSource GetImageAssociated() {
 			if(SolutionPath == null || !File.Exists(SolutionPath))
 				return null;
 			try {
@@ -78,11 +90,11 @@ namespace DXVisualTestFixer.UI.Models {
 			}
 		}
 
-		ImageSource GetImageRider() {
+		ImageSource GetImageFromExe(string path) {
 			if(!CanOpenByRider)
 				return null;
 			try {
-				var appIcon = Icon.ExtractAssociatedIcon(GetRiderPath());
+				var appIcon = Icon.ExtractAssociatedIcon(path);
 				var bitmap = appIcon.ToBitmap();
 				var hBitmap = bitmap.GetHbitmap();
 				return Imaging.CreateBitmapSourceFromHBitmap(hBitmap, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
@@ -92,9 +104,13 @@ namespace DXVisualTestFixer.UI.Models {
 			}
 		}
 
-		static string GetRiderPath() {
+		static IEnumerable<string> GetVSPaths() {
+			var pathToVS = System.IO.Path.Combine(Environment.ExpandEnvironmentVariables("%programfiles(x86)%"), "Microsoft Visual Studio");
+			return !Directory.Exists(pathToVS) ? Enumerable.Empty<string>() : Directory.GetFiles(pathToVS, "devenv.exe", SearchOption.AllDirectories);
+		}
+		static IEnumerable<string> GetRiderPaths() {
 			var pathToJB = System.IO.Path.Combine(Environment.ExpandEnvironmentVariables("%ProgramW6432%"), "JetBrains");
-			return !Directory.Exists(pathToJB) ? null : Directory.GetFiles(pathToJB, "rider64.exe", SearchOption.AllDirectories).LastOrDefault(x => !x.Contains("Back"));
+			return !Directory.Exists(pathToJB) ? Enumerable.Empty<string>() : Directory.GetFiles(pathToJB, "rider64.exe", SearchOption.AllDirectories).Where(x => !x.Contains("Back"));
 		}
 
 		static string GetAssociatedProgram() {
