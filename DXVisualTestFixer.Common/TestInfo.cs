@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using JetBrains.Annotations;
 using Prism.Mvvm;
@@ -23,13 +24,13 @@ namespace DXVisualTestFixer.Common {
 
 		public string Name { get; set; }
 		public string NameWithNamespace { get; set; }
-		public string ResourceFolderName { get; set; }
+		public string ResourcesFullPath { get; set; }
 		public Repository Repository { get; }
 		public Team Team { get; set; }
 		public TeamInfo TeamInfo { get; set; }
 		public string Theme { get; set; }
 		public string Version { get; set; }
-		public int Dpi { get; set; }
+		public int Dpi { get; set; } = 96;
 		public Lazy<byte[]> ImageBeforeArrLazy { get; set; }
 		public byte[] ImageBeforeSha { get; set; }
 		public Lazy<byte[]> ImageCurrentArrLazy { get; set; }
@@ -40,6 +41,7 @@ namespace DXVisualTestFixer.Common {
 		public Lazy<string> TextCurrentLazy { get; set; }
 		public byte[] TextCurrentSha { get; set; }
 		public bool Optimized { get; set; }
+		public bool Colorized { get; set; }
 		public Lazy<string> TextDiffLazy { get; set; }
 		public Lazy<string> TextDiffFullLazy { get; set; }
 		public TestState Valid { get; set; }
@@ -51,7 +53,6 @@ namespace DXVisualTestFixer.Common {
 
 		[UsedImplicitly] public string InvalidLog => InvalidLogBuilder.ToString();
 
-		public string AdditionalParameters { get; set; }
 
 		public void LogCustomError(string text) {
 			InvalidLogBuilder.AppendLine(text);

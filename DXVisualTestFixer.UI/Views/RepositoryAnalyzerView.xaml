@@ -21,7 +21,6 @@
             </dxdo:LayoutPanel>
             <dxdo:LayoutPanel ShowCaption="False" ItemHeight="*" ShowBorder="False">
                 <dxg:GridControl ItemsSource="{Binding CurrentTimings}" ShowBorder="False" AutoGenerateColumns="AddNew">
-                    <dxg:GridColumn FieldName="Prefix" Visible="False" />
                     <dxg:GridColumn FieldName="Team" GroupIndex="0" ShowGroupedColumn="True" />
                     <dxg:GridColumn FieldName="Time" SortOrder="Descending" IsSmart="True" />
                     <dxg:GridControl.TotalSummary>
