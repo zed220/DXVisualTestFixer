@@ -12,23 +12,35 @@ using Microsoft.Win32;
 
 namespace DXVisualTestFixer.UI.Models {
 	public static class OpenSolutionModelHelper {
-		static List<OpenSolutionModel> OpenSolutionModels;
-		
-		public static List<OpenSolutionModel> GetOpenSolutionModels(string solutionPath) {
-			if(OpenSolutionModels == null) {
-				OpenSolutionModels = new List<OpenSolutionModel>();
-				FillOpenSolutionsModels(solutionPath);
+		class CodeApp {
+			public CodeApp(string path, string name, ImageSource icon) {
+				Path = path;
+				Name = name;
+				Icon = icon;
 			}
-			return OpenSolutionModels;
+			
+			public readonly string Path;
+			public readonly string Name;
+			public readonly ImageSource Icon;
 		}
 		
-		static void FillOpenSolutionsModels(string solutionPath) {
+		static List<CodeApp> CodeApps;
+		
+		public static List<OpenSolutionModel> GetOpenSolutionModels(string solutionPath) {
+			if(CodeApps == null) {
+				CodeApps = new List<CodeApp>();
+				FillCodeApps(solutionPath);
+			}
+			return CodeApps.Select(app => new OpenSolutionModel(solutionPath, app.Path, app.Name, app.Icon)).ToList();
+		}
+		
+		static void FillCodeApps(string solutionPath) {
 			if(File.Exists(GetAssociatedProgram()))
-				OpenSolutionModels.Add(new OpenSolutionModel(solutionPath, GetAssociatedProgram(), "Associated", GetImageAssociated(solutionPath)));
+				CodeApps.Add(new CodeApp(GetAssociatedProgram(), "Associated", GetImageAssociated(solutionPath)));
 			foreach(var vsPath in GetVSPaths())
-				OpenSolutionModels.Add(new OpenSolutionModel(solutionPath, vsPath, GetExeDisplayText(vsPath), GetImageFromExe(vsPath)));
+				CodeApps.Add(new CodeApp(vsPath, GetExeDisplayText(vsPath), GetImageFromExe(vsPath)));
 			foreach(var riderPath in GetRiderPaths())
-				OpenSolutionModels.Add(new OpenSolutionModel(solutionPath, riderPath, GetExeDisplayText(riderPath), GetImageFromExe(riderPath)));
+				CodeApps.Add(new CodeApp(riderPath, GetExeDisplayText(riderPath), GetImageFromExe(riderPath)));
 		}
 
 		static string GetExeDisplayText(string path) {
