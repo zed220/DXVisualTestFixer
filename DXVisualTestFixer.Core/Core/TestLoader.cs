@@ -136,8 +136,11 @@ namespace DXVisualTestFixer.Core {
 			var timeSplit = dateAndTime[1].Split('-');
 			return new DateTime(Convert.ToInt32(dateSplit[0]), Convert.ToInt32(dateSplit[1]), Convert.ToInt32(dateSplit[2]), Convert.ToInt32(timeSplit[0]), Convert.ToInt32(timeSplit[1]), 0);
 		}
-		
-		static IEnumerable<XmlElement> FindErrors(XmlNode rootNode) => rootNode.FindByName("root")?.FindAllByName("error").Cast<XmlElement>();
+
+		static IEnumerable<XmlElement> FindErrors(XmlNode rootNode) {
+			var result = rootNode.FindByName("root")?.FindAllByName("error").Cast<XmlElement>() ?? Enumerable.Empty<XmlElement>();
+			return result.Concat(rootNode.FindByName("test-results")?.FindAllByName("error").Cast<XmlElement>() ?? Enumerable.Empty<XmlElement>());
+		}
 
 		static string FindUsedFilesLink(XmlNode rootNode) => rootNode?.FindByName("FileUsingLogLink")?.InnerText.Replace("\r\n", string.Empty).Split('/').Last();//Remove tomorrow
 

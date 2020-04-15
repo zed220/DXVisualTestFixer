@@ -17,3 +17,4 @@ Version 3.4.1::Move to new minio server
 Version 3.4.3::Allow to save on disk (without committing) tests results for fork
 Version 3.4.5::Fix some exceptions
 Version 3.4.8::Update Open Solution Ribbon Menu
+Version 3.4.11::Additional error parsing
