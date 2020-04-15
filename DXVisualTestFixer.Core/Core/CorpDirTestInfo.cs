@@ -51,6 +51,7 @@ namespace DXVisualTestFixer.Core {
 				ErrorText = errorText,
 				TeamName = Team.ErrorName,
 				StackTrace = stackTrace,
+				ThemeName = "Error",
 				TestName = GetTestName(testNameAndNamespace),
 				TestNameWithNamespace = testNameAndNamespace
 			};
