@@ -33,7 +33,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 			Commands = UICommand.GenerateFromMessageButton(MessageButton.OKCancel, new DialogService(), MessageResult.OK, MessageResult.Cancel);
 			Commands.Single(c => c.IsDefault).Command = new DelegateCommand(Commit);
 			Status = ProgramStatus.Loading;
-			Task.Factory.StartNew(() => UpdateUnusedFiles(testsService.SelectedState.UsedFilesLinks, testsService.SelectedState.Teams)).ConfigureAwait(false);
+			// Task.Factory.StartNew(() => UpdateUnusedFiles(testsService.SelectedState.UsedFilesLinks, testsService.SelectedState.Teams)).ConfigureAwait(false);
 		}
 
 		[UsedImplicitly]
@@ -69,14 +69,14 @@ namespace DXVisualTestFixer.UI.ViewModels {
 			Confirmed = true;
 		}
 
-		async Task UpdateUnusedFiles(Dictionary<Repository, List<string>> usedFilesByRepLinks, Dictionary<Repository, List<Team>> teams) {
-			var result = await Task.WhenAll(usedFilesByRepLinks.ToList().Select(x => GetUnusedFilesByRepository(x.Key, x.Value, teams[x.Key], _testsService, _minioWorker)));
-			await _dispatcher.InvokeAsync(() => {
-					UnusedFiles = new ObservableCollection<RepositoryFileModel>(result.SelectMany(x => x));
-					Status = ProgramStatus.Idle;
-				}
-			);
-		}
+		// async Task UpdateUnusedFiles(Dictionary<Repository, List<string>> usedFilesByRepLinks, Dictionary<Repository, List<Team>> teams) {
+		// 	var result = await Task.WhenAll(usedFilesByRepLinks.ToList().Select(x => GetUnusedFilesByRepository(x.Key, x.Value, teams[x.Key], _testsService, _minioWorker)));
+		// 	await _dispatcher.InvokeAsync(() => {
+		// 			UnusedFiles = new ObservableCollection<RepositoryFileModel>(result.SelectMany(x => x));
+		// 			Status = ProgramStatus.Idle;
+		// 		}
+		// 	);
+		// }
 
 		public static async Task<HashSet<string>> GetUsedFiles(Dictionary<Repository, List<string>> usedFilesByRepLinks, ITestsService testsService, IMinioWorker minioWorker) {
 			var result = await Task.WhenAll(usedFilesByRepLinks.ToList().Select(x => GetUsedFilesByRepository(x.Key, x.Value, testsService, minioWorker)));
@@ -105,19 +105,19 @@ namespace DXVisualTestFixer.UI.ViewModels {
 			return new HashSet<string>(usedFiles);
 		}
 
-		static async Task<List<RepositoryFileModel>> GetUnusedFilesByRepository(Repository repository, List<string> usedFilesByRepLinks, List<Team> teams, ITestsService testsService, IMinioWorker minioWorker) {
-			var usedFiles = await GetUsedFilesByRepository(repository, usedFilesByRepLinks, testsService, minioWorker).ConfigureAwait(false);
-			var result = new List<RepositoryFileModel>();
-			foreach(var team in teams ?? Enumerable.Empty<Team>())
-			foreach(var teamPath in team.TeamInfos.Select(i => testsService.GetResourcePath(repository, i.TestResourcesPath)).Distinct()) {
-				if(!Directory.Exists(teamPath))
-					continue;
-				foreach(var file in Directory.EnumerateFiles(teamPath, "*", SearchOption.AllDirectories))
-					if(!usedFiles.Contains(file.ToLower()))
-						result.Add(new RepositoryFileModel(file, team.Version));
-			}
-
-			return result;
-		}
+		// static async Task<List<RepositoryFileModel>> GetUnusedFilesByRepository(Repository repository, List<string> usedFilesByRepLinks, List<Team> teams, ITestsService testsService, IMinioWorker minioWorker) {
+		// 	var usedFiles = await GetUsedFilesByRepository(repository, usedFilesByRepLinks, testsService, minioWorker).ConfigureAwait(false);
+		// 	var result = new List<RepositoryFileModel>();
+		// 	foreach(var team in teams ?? Enumerable.Empty<Team>())
+		// 	foreach(var teamPath in team.TeamInfos.Select(i => testsService.GetResourcePath(repository, i.TestResourcesPath)).Distinct()) {
+		// 		if(!Directory.Exists(teamPath))
+		// 			continue;
+		// 		foreach(var file in Directory.EnumerateFiles(teamPath, "*", SearchOption.AllDirectories))
+		// 			if(!usedFiles.Contains(file.ToLower()))
+		// 				result.Add(new RepositoryFileModel(file, team.Version));
+		// 	}
+		//
+		// 	return result;
+		// }
 	}
 }

@@ -10,7 +10,6 @@ namespace DXVisualTestFixer.Core {
 			TestList = testList;
 			UsedFilesLinks = container.UsedFilesLinks;
 			ElapsedTimes = container.ElapsedTimes;
-			Teams = container.Teams;
 			SourcesBuildTime = container.SourcesBuildTime;
 			TestsBuildTime = container.TestsBuildTime;
 		}
@@ -20,7 +19,6 @@ namespace DXVisualTestFixer.Core {
 		public List<TestInfo> TestList { get; }
 		public List<string> UsedFilesLinks { get; }
 		public List<IElapsedTimeInfo> ElapsedTimes { get; }
-		public List<Team> Teams { get; }
 		public DateTime? SourcesBuildTime { get; }
 		public DateTime? TestsBuildTime { get; }
 	}

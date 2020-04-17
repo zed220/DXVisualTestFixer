@@ -7,6 +7,8 @@ using Microsoft.Practices.ServiceLocation;
 
 namespace DXVisualTestFixer.Core {
 	public class CorpDirTestInfo {
+		public const string ErrorName = "Error";
+		
 		public Repository Repository { get; private set; }
 		public string Version { get; private set; }
 		public string CurrentTextEditPath { get; private set; }
@@ -49,9 +51,9 @@ namespace DXVisualTestFixer.Core {
 				Repository = repository,
 				Version = repository.Version,
 				ErrorText = errorText,
-				TeamName = Team.ErrorName,
+				TeamName = ErrorName,
 				StackTrace = stackTrace,
-				ThemeName = "Error",
+				ThemeName = ErrorName,
 				TestName = GetTestName(testNameAndNamespace),
 				TestNameWithNamespace = testNameAndNamespace
 			};
@@ -142,7 +144,7 @@ namespace DXVisualTestFixer.Core {
 			
 			temp.ServerFolderName = temp.CurrentTextEditPath.Split(new[] {@"\\corp\builds\testbuilds\"}, StringSplitOptions.RemoveEmptyEntries).First().Split('\\').First();
 			temp.AdditionalParameters = properties;
-			temp.ThemeName = properties.FirstOrDefault(p => p.Name == "ThemeName")?.Value ?? Team.ErrorName;
+			temp.ThemeName = properties.FirstOrDefault(p => p.Name == "ThemeName")?.Value ?? ErrorName;
 			temp.ResourcesFullPath = Path.Combine(repository.Path, testResourcesFolder.Replace(@"C:\builds\", string.Empty));
 
 			result = temp;

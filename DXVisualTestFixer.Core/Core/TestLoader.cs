@@ -12,11 +12,10 @@ using Microsoft.Practices.ServiceLocation;
 
 namespace DXVisualTestFixer.Core {
 	public class CorpDirTestInfoContainer {
-		public CorpDirTestInfoContainer(List<CorpDirTestInfo> failedTests, List<string> usedFilesLinks, List<IElapsedTimeInfo> elapsedTimes, List<Team> teams, (DateTime sources, DateTime tests)? buildTime) {
+		public CorpDirTestInfoContainer(List<CorpDirTestInfo> failedTests, List<string> usedFilesLinks, List<IElapsedTimeInfo> elapsedTimes, (DateTime sources, DateTime tests)? buildTime) {
 			FailedTests = failedTests;
 			UsedFilesLinks = usedFilesLinks;
 			ElapsedTimes = elapsedTimes;
-			Teams = teams;
 			SourcesBuildTime = buildTime?.sources;
 			TestsBuildTime = buildTime?.tests;
 		}
@@ -24,7 +23,6 @@ namespace DXVisualTestFixer.Core {
 		public List<CorpDirTestInfo> FailedTests { get; }
 		public List<string> UsedFilesLinks { get; }
 		public List<IElapsedTimeInfo> ElapsedTimes { get; }
-		public List<Team> Teams { get; }
 		public DateTime? SourcesBuildTime { get; }
 		public DateTime? TestsBuildTime { get; }
 	}
@@ -46,7 +44,6 @@ namespace DXVisualTestFixer.Core {
 			var failedTests = new ConcurrentBag<CorpDirTestInfo>();
 			var usedFiles = new ConcurrentBag<string>();
 			var elapsedTimes = new ConcurrentBag<IElapsedTimeInfo>();
-			var teams = new ConcurrentBag<Team>();
 			var failed = false;
 			(DateTime sources, DateTime tests)? timings = null;
 
@@ -85,10 +82,6 @@ namespace DXVisualTestFixer.Core {
 
 						usedFiles.Add(FindUsedFilesLink(rootNode));
 						elapsedTimes.Add(FindElapsedTime(rootNode));
-						var team = FindTeam(minioRepository.Repository.Version, rootNode);
-						if(team == null)
-							return;
-						teams.Add(team);
 					});
 					tasks.Add(task);
 				}
@@ -103,19 +96,7 @@ namespace DXVisualTestFixer.Core {
 			else
 				failedTestsList.Add(CorpDirTestInfo.CreateError(minioRepository.Repository, "Error", $"Files on the minio server does not stored correctly for v{minioRepository.Repository.Version}. Please try again later.", null));
 
-			return new CorpDirTestInfoContainer(failedTestsList, usedFiles.ToList(), elapsedTimes.ToList(), MergeTeams(teams.ToList()), timings);
-		}
-
-		static List<Team> MergeTeams(List<Team> teams) {
-			var result = new Dictionary<string, Team>();
-			foreach(var team in teams) {
-				if(!result.TryGetValue(team.Name, out var storedTeam)) {
-					result[team.Name] = team;
-					continue;
-				}
-				storedTeam.TeamInfos.AddRange(team.TeamInfos);
-			}
-			return result.Values.ToList();
+			return new CorpDirTestInfoContainer(failedTestsList, usedFiles.ToList(), elapsedTimes.ToList(), timings);
 		}
 
 		static (DateTime sources, DateTime tests)? FindTimings(XmlNode rootNode) {
@@ -155,38 +136,6 @@ namespace DXVisualTestFixer.Core {
 			if(int.TryParse(time.Split('.').FirstOrDefault() ?? time, out var sec))
 				return new ElapsedTimeInfo(name, TimeSpan.FromSeconds(sec));
 			return null;
-		}
-
-		static Team FindTeam(string version, XmlNode buildNode) {
-			var result = new Dictionary<string, Team>();
-			var teamNode = buildNode?.FindByName("Project");
-			if(teamNode == null)
-				return null;
-			if(!teamNode.TryGetAttribute("Dpi", out int dpi))
-				return null;
-			if(!teamNode.TryGetAttribute("IncludedCategories", out string teamName))
-				return null;
-			if(!teamNode.TryGetAttribute("ResourcesFolder", out string resourcesFolder))
-				return null;
-			if(!teamNode.TryGetAttribute("TestResourcesPath", out string testResourcesPath))
-				return null;
-			testResourcesPath = Path.Combine(resourcesFolder, testResourcesPath);
-			teamNode.TryGetAttribute("TestResourcesPath_Optimized", out string testResourcesPath_optimized);
-			if(testResourcesPath_optimized != null)
-				testResourcesPath_optimized = Path.Combine(resourcesFolder, testResourcesPath_optimized);
-			var projectInfosNode = teamNode.FindByName("ProjectInfos");
-			if(projectInfosNode == null)
-				return null;
-			Team team = null;
-			foreach(var projectInfoNode in projectInfosNode.FindAllByName("ProjectInfo")) {
-				if(!projectInfoNode.TryGetAttribute("ServerFolderName", out string serverFolderName))
-					continue;
-				projectInfoNode.TryGetAttribute("Optimized", out bool optimized);
-				if(!result.TryGetValue(teamName, out team))
-					result[teamName] = team = new Team(teamName, version);
-				team.TeamInfos.Add(new TeamInfo {Dpi = dpi, Optimized = optimized, ServerFolderName = serverFolderName, TestResourcesPath = testResourcesPath, TestResourcesPathOptimized = testResourcesPath_optimized});
-			}
-			return team;
 		}
 
 		static bool TryGetAttribute<T>(this XmlNode node, string name, out T value) {
