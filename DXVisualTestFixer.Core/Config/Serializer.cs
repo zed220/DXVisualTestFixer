@@ -38,8 +38,6 @@ namespace DXVisualTestFixer.Core.Configuration {
 			public Type ConvertToType(string typeName) {
 				if(typeName != null && typeName.Contains("Config"))
 					return typeof(Config);
-				if(typeName != null && typeName.Contains("Team"))
-					return typeof(Team);
 				return innerConverter.ConvertToType(typeName);
 			}
 

@@ -10,7 +10,6 @@ namespace DXVisualTestFixer.Core {
 			TestList = new List<TestInfo>();
 			UsedFilesLinks = new Dictionary<Repository, List<string>>();
 			ElapsedTimes = new Dictionary<Repository, List<IElapsedTimeInfo>>();
-			Teams = new Dictionary<Repository, List<Team>>();
 			ChangedTests = new List<TestInfo>();
 			Timings = new List<TimingInfo>();
 			AllowEditing = allowEditing;
@@ -19,7 +18,6 @@ namespace DXVisualTestFixer.Core {
 		public List<TestInfo> TestList { get; }
 		public Dictionary<Repository, List<string>> UsedFilesLinks { get; }
 		public Dictionary<Repository, List<IElapsedTimeInfo>> ElapsedTimes { get; }
-		public Dictionary<Repository, List<Team>> Teams { get; }
 		public List<TimingInfo> Timings { get; }
 		public List<TestInfo> ChangedTests { get; }
 		public bool AllowEditing { get; }
@@ -55,8 +53,8 @@ namespace DXVisualTestFixer.Core {
 					HashSet<string> tests = null;
 					if(!namedProblems.TryGetValue(d.Value, out tests))
 						namedProblems[d.Value] = tests = new HashSet<string>();
-					if(!tests.Contains(test.Team.Name))
-						tests.Add(test.Team.Name);
+					if(!tests.Contains(test.TeamName))
+						tests.Add(test.TeamName);
 				}
 
 			foreach(var test in TestList) {

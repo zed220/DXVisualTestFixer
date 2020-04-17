@@ -186,7 +186,6 @@ namespace DXVisualTestFixer.Core {
 						result.TestList.AddRange(cached.TestList);
 						result.UsedFilesLinks[cached.Repository] = cached.UsedFilesLinks;
 						result.ElapsedTimes[cached.Repository] = cached.ElapsedTimes.ToList();
-						result.Teams[cached.Repository] = cached.Teams;
 						result.Timings.Add(new TimingInfo(cached.Repository, cached.SourcesBuildTime, cached.TestsBuildTime));
 					}
 				}));
@@ -206,7 +205,7 @@ namespace DXVisualTestFixer.Core {
 			var corpDirTestInfoContainer = await LoadForRepositoryAsync(minioRepository);
 			foreach(var corpDirTestInfo in corpDirTestInfoContainer.FailedTests) {
 				var info = corpDirTestInfo;
-				var testInfoTask = LoadTestInfo(minioRepository.Repository, info, corpDirTestInfoContainer.Teams); 
+				var testInfoTask = LoadTestInfo(minioRepository.Repository, info); 
 				allTasks.Add(testInfoTask);
 			}
 
@@ -225,9 +224,9 @@ namespace DXVisualTestFixer.Core {
 			return corpDirTestInfoContainer;
 		}
 
-		async Task<TestInfo> LoadTestInfo(Repository repository, CorpDirTestInfo corpDirTestInfo, List<Team> teams) {
+		async Task<TestInfo> LoadTestInfo(Repository repository, CorpDirTestInfo corpDirTestInfo) {
 			loggingService.SendMessage($"Start load test v{corpDirTestInfo.Version} {corpDirTestInfo.TestName}.{corpDirTestInfo.ThemeName}");
-			var testInfo = TryCreateTestInfo(repository, corpDirTestInfo, teams);
+			var testInfo = TryCreateTestInfo(repository, corpDirTestInfo);
 			loggingService.SendMessage($"End load test v{corpDirTestInfo.Version} {corpDirTestInfo.TestName}.{corpDirTestInfo.ThemeName}");
 			if(testInfo != null)
 				await UpdateTestStatusAsync(testInfo);
@@ -235,25 +234,15 @@ namespace DXVisualTestFixer.Core {
 			return testInfo;
 		}
 
-		static Team GetTeam(List<Team> teams, string version, string serverFolderName, out TeamInfo info) {
-			foreach(var team in teams.Where(t => t.Version == version)) {
-				info = team.TeamInfos.FirstOrDefault(i => i.ServerFolderName == serverFolderName);
-				if(info != null)
-					return team;
-			}
-
-			info = null;
-			return null;
-		}
-
 		static bool GetBoolTestParameter(CorpDirTestInfo corpDirTestInfo, string parameter) {
 			return corpDirTestInfo.AdditionalParameters.FirstOrDefault(x => x.Name == parameter && x.Value == "True") != null;
 		}
 		
-		static TestInfo TryCreateTestInfo(Repository repository, CorpDirTestInfo corpDirTestInfo, List<Team> teams) {
+		static TestInfo TryCreateTestInfo(Repository repository, CorpDirTestInfo corpDirTestInfo) {
 			var testInfo = new TestInfo(repository);
 			testInfo.Version = corpDirTestInfo.Version;
 			testInfo.Name = corpDirTestInfo.TestName;
+			testInfo.TeamName = corpDirTestInfo.TeamName;
 			if(corpDirTestInfo.AdditionalParameters.FirstOrDefault(p => p.Name == "Dpi")?.Value is var dpi_str && Int32.TryParse(dpi_str, out var dpi))
 				testInfo.Dpi = dpi;
 			testInfo.NameWithNamespace = corpDirTestInfo.TestNameWithNamespace;
@@ -262,25 +251,13 @@ namespace DXVisualTestFixer.Core {
 			testInfo.Optimized = GetBoolTestParameter(corpDirTestInfo, "Optimized");
 			testInfo.Colorized = GetBoolTestParameter(corpDirTestInfo, "Colorized");
 			//todo: found new parameter error
-			if(corpDirTestInfo.TeamName == Team.ErrorName) {
+			if(corpDirTestInfo.TeamName == CorpDirTestInfo.ErrorName) {
 				testInfo.Valid = TestState.Error;
 				testInfo.TextDiffLazy = new Lazy<string>(() => "+" + testInfo.Name + Environment.NewLine + Environment.NewLine + corpDirTestInfo.ErrorText);
 				testInfo.TextDiffFullLazy = new Lazy<string>(() => string.Empty);
-				testInfo.Team = Team.CreateErrorTeam(corpDirTestInfo.Version);
 				return testInfo;
 			}
 
-			TeamInfo info = null;
-			var team = testInfo.Team = GetTeam(teams, corpDirTestInfo.Version, corpDirTestInfo.ServerFolderName, out info);
-			if(team == null) {
-				testInfo.Valid = TestState.Error;
-				testInfo.TextDiffLazy = new Lazy<string>(() => "+" + testInfo.Name + Environment.NewLine + Environment.NewLine + corpDirTestInfo.ErrorText);
-				testInfo.TextDiffFullLazy = new Lazy<string>(() => string.Empty);
-				testInfo.Team = Team.CreateErrorTeam(corpDirTestInfo.Version);
-				return testInfo;
-			}
-
-			testInfo.TeamInfo = info;
 			testInfo.PredefinedImageDiffsCount = corpDirTestInfo.DiffCount;
 
 			testInfo.TextBeforeLazy = new Lazy<string>(() => LoadTextFile(corpDirTestInfo.InstantTextEditPath));

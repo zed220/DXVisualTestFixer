@@ -320,7 +320,8 @@
                                         <Binding Path="ImageCurrentArrLazy.Value" />
                                         <Binding Path="ImageDiffArrLazy.Value" />
                                         <Binding Path="Theme" />
-                                        <Binding Path="Team" />
+                                        <Binding Path="TeamName" />
+                                        <Binding Path="Version" />
                                     </MultiBinding>
                                 </dxb:BarButtonItem.Command>
                             </dxb:BarButtonItem>
@@ -346,7 +347,8 @@
                                         <Binding Path="ImageCurrentArrLazy.Value" />
                                         <Binding Path="ImageDiffArrLazy.Value" />
                                         <Binding Path="Theme" />
-                                        <Binding Path="Team" />
+                                        <Binding Path="TeamName" />
+                                        <Binding Path="Version" />
                                     </MultiBinding>
                                 </dxb:BarButtonItem.Command>
                             </dxb:BarButtonItem>

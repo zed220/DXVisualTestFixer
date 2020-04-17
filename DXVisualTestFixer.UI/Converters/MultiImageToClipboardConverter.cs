@@ -20,10 +20,11 @@ namespace DXVisualTestFixer.UI.Converters {
 			var imgAfterArr = values[1] as byte[];
 			var imgDiffArr = values[2] as byte[];
 			var theme = values[3] as string;
-			var team = values[4] as Team;
+			var teamName = values[4] as string;
+			var version = values[5] as string;
 			if(imgBeforeArr == null && imgAfterArr == null && imgDiffArr == null)
 				return null;
-			if(theme == null || team == null)
+			if(theme == null || teamName == null)
 				theme = string.Empty;
 			return new DelegateCommand(() => {
 				var beforeImage = imgBeforeArr == null ? null : CreateImage(imgBeforeArr);
@@ -36,7 +37,7 @@ namespace DXVisualTestFixer.UI.Converters {
 				var left = 0;
 				using(var g = Graphics.FromImage(b)) {
 					g.FillRectangle(new SolidBrush(Color.White), new Rectangle(0, 0, size.Width, size.Height));
-					g.DrawString($"Theme: {theme.ToUpper()}, Version: {team.Version}, Team: {team.Name}", new Font("Arial", 10), new SolidBrush(Color.Black), new PointF(0, 0));
+					g.DrawString($"Theme: {theme.ToUpper()}, Version: {version}, Team: {teamName}", new Font("Arial", 10), new SolidBrush(Color.Black), new PointF(0, 0));
 					Draw(g, beforeImage, "BEFORE", textHeight, size.Height - textHeight, ref left);
 					Draw(g, afterImage, "CURRENT", textHeight, size.Height - textHeight, ref left);
 					Draw(g, diffImage, "DIFF", textHeight, size.Height - textHeight, ref left);
