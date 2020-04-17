@@ -112,7 +112,6 @@ namespace DXVisualTestFixer.Common {
 		List<TestInfo> TestList { get; }
 		Dictionary<Repository, List<string>> UsedFilesLinks { get; }
 		Dictionary<Repository, List<IElapsedTimeInfo>> ElapsedTimes { get; }
-		Dictionary<Repository, List<Team>> Teams { get; }
 		List<TestInfo> ChangedTests { get; }
 		List<TimingInfo> Timings { get; }
 		bool AllowEditing { get; }

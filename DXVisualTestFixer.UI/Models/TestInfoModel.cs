@@ -20,7 +20,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 		public string VersionAndFork => TestInfo.Repository.VersionAndFork;
 		public bool Optimized => TestInfo.Optimized;
 		public bool Colorized => TestInfo.Colorized;
-		public string TeamName => TestInfo.Team.Name;
+		public string TeamName => TestInfo.TeamName;
 		public string Theme => TestInfo.Theme;
 		public int Dpi => TestInfo.Dpi;
 		public int Problem => TestInfo.Problem;
@@ -32,7 +32,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 		}
 
 		public string ToLog() {
-			return $"Team: {TestInfo?.Team.Name}, Version: {TestInfo?.Version}, Test: {TestInfo?.NameWithNamespace}, Theme: {TestInfo?.Theme}";
+			return $"Team: {TestInfo?.TeamName}, Version: {TestInfo?.Version}, Test: {TestInfo?.NameWithNamespace}, Theme: {TestInfo?.Theme}";
 		}
 
 		void SetCommitChange(bool value) {

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 using JetBrains.Annotations;
 using Prism.Mvvm;
@@ -26,8 +25,7 @@ namespace DXVisualTestFixer.Common {
 		public string NameWithNamespace { get; set; }
 		public string ResourcesFullPath { get; set; }
 		public Repository Repository { get; }
-		public Team Team { get; set; }
-		public TeamInfo TeamInfo { get; set; }
+		public string TeamName { get; set; }
 		public string Theme { get; set; }
 		public string Version { get; set; }
 		public int Dpi { get; set; } = 96;
