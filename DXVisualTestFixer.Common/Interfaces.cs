@@ -103,7 +103,6 @@ namespace DXVisualTestFixer.Common {
 		string CurrentFilter { get; set; }
 
 		bool ApplyTest(TestInfo test, Func<string, bool> checkoutFunc);
-		string GetResourcePath(Repository repository, string relativePath);
 		Task SelectState(string stateName);
 		Dictionary<string, List<Repository>> States { get; }
 	}

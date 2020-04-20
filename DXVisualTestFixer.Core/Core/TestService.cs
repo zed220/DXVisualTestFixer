@@ -131,10 +131,6 @@ namespace DXVisualTestFixer.Core {
 			return (await minioWorker.Discover(resultsPath)).FirstOrDefault(x => x.EndsWith("final")) != null;
 		}
 
-		public string GetResourcePath(Repository repository, string relativePath) {
-			return Path.Combine(repository.Path, relativePath);
-		}
-
 		public bool ApplyTest(TestInfo test, Func<string, bool> checkoutFunc) {
 			var actualTestResourceName = GetTestResourceName(test, false);
 			var xmlPath = GetXmlFilePath(actualTestResourceName, test, false);

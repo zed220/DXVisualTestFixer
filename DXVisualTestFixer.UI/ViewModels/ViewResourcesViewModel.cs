@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using DevExpress.Mvvm;
+using DevExpress.Mvvm.Native;
 using DevExpress.Xpf.Core;
 using DXVisualTestFixer.Common;
 using DXVisualTestFixer.UI.Models;
@@ -25,7 +26,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 			_testsService = testsService;
 			_minioWorker = minioWorker;
 			Status = ProgramStatus.Loading;
-			// Task.Factory.StartNew(() => UpdateUsedFiles(testsService.SelectedState.UsedFilesLinks, testsService.SelectedState.Teams)).ConfigureAwait(false);
+			Task.Factory.StartNew(() => UpdateUsedFiles(testsService.SelectedState.UsedFilesLinks)).ConfigureAwait(false);
 		}
 
 		[UsedImplicitly] public IEnumerable<UICommand> Commands { get; }
@@ -51,30 +52,24 @@ namespace DXVisualTestFixer.UI.ViewModels {
 		public string Title { get; set; } = "Resources Viewer";
 		public object Content { get; set; }
 
-		// async Task UpdateUsedFiles(Dictionary<Repository, List<string>> usedFilesByRep, Dictionary<Repository, List<Team>> teams) {
-		// 	var usedFiles = await RepositoryOptimizerViewModel.GetUsedFiles(usedFilesByRep, _testsService, _minioWorker);
-		// 	UsedFiles = GetActualFiles(usedFilesByRep.Keys.Select(rep => rep.Version).Distinct().ToList(), usedFiles, teams);
-		// 	if(UsedFiles.Count > 0)
-		// 		CurrentFile = UsedFiles[0];
-		// 	Status = ProgramStatus.Idle;
-		// }
-		//
-		// List<RepositoryFileModel> GetActualFiles(List<string> usedVersions, HashSet<string> usedFiles, Dictionary<Repository, List<Team>> teams) {
-		// 	var result = new List<RepositoryFileModel>();
-		// 	foreach(var repository in teams.Keys)
-		// 	foreach(var team in teams[repository] ?? Enumerable.Empty<Team>()) {
-		// 		if(!usedVersions.Contains(team.Version))
-		// 			continue;
-		// 		foreach(var teamPath in team.TeamInfos.Select(i => _testsService.GetResourcePath(repository, i.TestResourcesPath)).Distinct()) {
-		// 			if(!Directory.Exists(teamPath))
-		// 				continue;
-		// 			foreach(var file in Directory.EnumerateFiles(teamPath, "*", SearchOption.AllDirectories))
-		// 				if(usedFiles.Contains(file.ToLower()))
-		// 					result.Add(new RepositoryFileModel(file, team.Version));
-		// 		}
-		// 	}
-		//
-		// 	return result;
-		// }
+		async Task UpdateUsedFiles(Dictionary<Repository, List<string>> usedFilesByRep) {
+			var allTasks = usedFilesByRep.Select(info => GetUsedFilesSafeAsync(info.Key, info.Value)).ToList();
+			await Task.WhenAll(allTasks);
+			var usedFiles = new List<RepositoryFileModel>();
+			foreach(var info in allTasks.Select(x => x.Result)) {
+				usedFiles.AddRange(info.Item2.Select(y => new RepositoryFileModel(y, info.Item1.Version)));
+			}
+			UsedFiles = usedFiles;
+			if(UsedFiles.Count > 0)
+			 	CurrentFile = UsedFiles[0];
+			Status = ProgramStatus.Idle;
+		}
+
+		
+		
+		async Task<(Repository, List<string>)> GetUsedFilesSafeAsync(Repository repository, List<string> usedFilesLinks) {
+			var usedFiles = await RepositoryOptimizerViewModel.GetUsedFilesByRepository(repository, usedFilesLinks, _minioWorker);
+			return (repository, usedFiles.Where(File.Exists).Distinct().ToList());
+		}
 	}
 }
