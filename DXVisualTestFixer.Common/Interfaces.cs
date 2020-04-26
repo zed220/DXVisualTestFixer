@@ -6,10 +6,6 @@ using System.Windows;
 using Prism.Interactivity.InteractionRequest;
 
 namespace DXVisualTestFixer.Common {
-	public interface IThemesProvider {
-		List<string> AllThemes { get; }
-	}
-
 	public interface IDXNotification : INotification {
 		MessageBoxImage ImageType { get; set; }
 	}
