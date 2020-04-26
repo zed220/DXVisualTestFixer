@@ -14,7 +14,7 @@ namespace DXVisualTestFixer.UI.Converters {
 		const int textHeight = 20;
 
 		public override object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
-			if(values.Length != 5)
+			if(values.Length != 6)
 				return null;
 			var imgBeforeArr = values[0] as byte[];
 			var imgAfterArr = values[1] as byte[];

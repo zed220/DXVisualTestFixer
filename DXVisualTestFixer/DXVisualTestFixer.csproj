@@ -206,12 +206,12 @@
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
-    <Reference Include="Logify.Alert.Core, Version=1.0.52.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
-      <HintPath>..\packages\Logify.Alert.Core.1.0.52\lib\net45\Logify.Alert.Core.dll</HintPath>
+    <Reference Include="Logify.Alert.Core, Version=1.0.53.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
+      <HintPath>..\packages\Logify.Alert.Core.1.0.53\lib\net45\Logify.Alert.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Logify.Alert.Wpf, Version=1.0.52.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
-      <HintPath>..\packages\Logify.Alert.Wpf.1.0.52\lib\net45\Logify.Alert.Wpf.dll</HintPath>
+    <Reference Include="Logify.Alert.Wpf, Version=1.0.53.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
+      <HintPath>..\packages\Logify.Alert.Wpf.1.0.53\lib\net45\Logify.Alert.Wpf.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Expression.Interactions, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">

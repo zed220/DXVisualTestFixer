@@ -10,7 +10,6 @@ using DXVisualTestFixer.Git;
 using DXVisualTestFixer.PrismCommon;
 using DXVisualTestFixer.Services;
 using DXVisualTestFixer.UI.Common;
-using DXVisualTestFixer.UI.Native;
 using DXVisualTestFixer.UI.PrismCommon;
 using DXVisualTestFixer.UI.Services;
 using DXVisualTestFixer.UI.ViewModels;
@@ -31,7 +30,6 @@ namespace DXVisualTestFixer {
 			base.ConfigureContainer();
 			RegisterTypeIfMissing(typeof(INotificationService), typeof(NotificationService), true);
 			RegisterTypeIfMissing(typeof(IConfigSerializer), typeof(ConfigSerializer), true);
-			RegisterTypeIfMissing(typeof(IThemesProvider), typeof(ThemesProvider), true);
 			RegisterTypeIfMissing(typeof(ILoadingProgressController), typeof(LoadingProgressController), true);
 			RegisterTypeIfMissing(typeof(ILoggingService), typeof(LoggingService), true);
 			RegisterTypeIfMissing(typeof(ITestsService), typeof(TestsService), true);
