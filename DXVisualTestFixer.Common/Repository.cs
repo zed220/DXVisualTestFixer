@@ -34,6 +34,6 @@ namespace DXVisualTestFixer.Common {
 		public bool IsDownloaded() => File.Exists(System.IO.Path.Combine(Path, "VisualTestsConfig.xml"));
 
 		public static Repository CreateRegular(string version, string path) => new Repository(version, version, path, false);
-		public static Repository CreateFork(string version, string forkName, string minioPath) => new Repository(version, forkName, null, true) { MinioPath = minioPath };
+		public static Repository CreateFork(string version, string forkName, string minioPath, string path) => new Repository(version, forkName, path, true) { MinioPath = minioPath };
 	}
 }

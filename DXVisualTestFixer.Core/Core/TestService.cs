@@ -98,7 +98,7 @@ namespace DXVisualTestFixer.Core {
 				var forkName = userPath.Split(new[] {"Common"}, StringSplitOptions.RemoveEmptyEntries).Last().Split(new[] {"/"}, StringSplitOptions.RemoveEmptyEntries).First();
 				var version = await minioWorker.Download(fullUserPath + "version.txt");
 				version = version.Replace(Environment.NewLine, string.Empty);
-				repos.Add(Repository.CreateFork(version, forkName, last));
+				repos.Add(Repository.CreateFork(version, forkName, last, States[xpfStateName].FirstOrDefault(r => r.Version == version)?.Path));
 			}
 			return result;
 		}
