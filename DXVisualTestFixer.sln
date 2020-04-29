@@ -9,6 +9,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DXVisualTestFixer", "DXVisu
 		{A3D50801-F65F-4201-8AEE-7254DAE4732F} = {A3D50801-F65F-4201-8AEE-7254DAE4732F}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DXVisualTestFixerWinForms", "DXVisualTestFixerWinForms\DXVisualTestFixerWinForms.csproj", "{3A5EE350-6268-4FBD-8D74-5EB858EAE216}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6E5E8BC1-A7A3-4DED-AD5E-4C8A09870875} = {6E5E8BC1-A7A3-4DED-AD5E-4C8A09870875}
+		{A3D50801-F65F-4201-8AEE-7254DAE4732F} = {A3D50801-F65F-4201-8AEE-7254DAE4732F}
+	EndProjectSection
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DXVisualTestFixer.Core", "DXVisualTestFixer.Core\DXVisualTestFixer.Core.csproj", "{A3D50801-F65F-4201-8AEE-7254DAE4732F}"
 	ProjectSection(ProjectDependencies) = postProject
 		{BCEC7D6C-B798-4DC7-A803-EBC75B0EFBBD} = {BCEC7D6C-B798-4DC7-A803-EBC75B0EFBBD}
@@ -68,6 +74,12 @@ Global
 		{BA984EE7-BC1B-4FE2-9EC4-B8B8BB2A7617}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BA984EE7-BC1B-4FE2-9EC4-B8B8BB2A7617}.DebugPublish|Any CPU.ActiveCfg = DebugPublish|Any CPU
 		{BA984EE7-BC1B-4FE2-9EC4-B8B8BB2A7617}.DebugPublish|Any CPU.Build.0 = DebugPublish|Any CPU
+		{3A5EE350-6268-4FBD-8D74-5EB858EAE216}.DebugPublish|Any CPU.ActiveCfg = DebugPublish|Any CPU
+		{3A5EE350-6268-4FBD-8D74-5EB858EAE216}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A5EE350-6268-4FBD-8D74-5EB858EAE216}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A5EE350-6268-4FBD-8D74-5EB858EAE216}.DebugPublish|Any CPU.Build.0 = DebugPublish|Any CPU
+		{3A5EE350-6268-4FBD-8D74-5EB858EAE216}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A5EE350-6268-4FBD-8D74-5EB858EAE216}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

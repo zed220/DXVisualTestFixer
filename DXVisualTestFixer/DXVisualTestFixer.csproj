@@ -87,7 +87,7 @@
     <Prefer32Bit>true</Prefer32Bit>
     <PostBuildEvent>
 	  echo POSTBUILDSTEP for $(ProjectName)
-      "..\..\lib\SquirrelPublisher.exe"
+      "..\..\lib\Wpf\SquirrelPublisher.exe"
       if errorlevel 1 goto BuildEventFailed
       goto BuildEventOK
       :BuildEventFailed
@@ -263,6 +263,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="WPFPlatformInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

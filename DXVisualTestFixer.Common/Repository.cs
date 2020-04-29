@@ -10,13 +10,16 @@ namespace DXVisualTestFixer.Common {
 			
 		}
 
-		Repository(string version, string forkName, string path, bool readOnly) {
+		Repository(string server, string version, string forkName, string path, bool readOnly) {
+			Server = server;
 			Version = version;
 			VersionAndFork = version == forkName ? forkName : $"{version}({forkName})";
 			Path = path;
 			ReadOnly = readOnly;
 		}
-		
+
+		public string Server { get; set; }
+
 		public string VersionAndFork { get; private set; }
 
 		public string Version {
@@ -33,7 +36,7 @@ namespace DXVisualTestFixer.Common {
 
 		public bool IsDownloaded() => File.Exists(System.IO.Path.Combine(Path, "VisualTestsConfig.xml"));
 
-		public static Repository CreateRegular(string version, string path) => new Repository(version, version, path, false);
-		public static Repository CreateFork(string version, string forkName, string minioPath, string path) => new Repository(version, forkName, path, true) { MinioPath = minioPath };
+		public static Repository CreateRegular(string server, string version, string path) => new Repository(server, version, version, path, false);
+		public static Repository CreateFork(string server, string version, string forkName, string minioPath, string path) => new Repository(server, version, forkName, path, true) { MinioPath = minioPath };
 	}
 }

@@ -32,6 +32,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 		readonly INotificationService notificationService;
 		readonly RepositoryObsolescenceTracker obsolescenceTracker;
 		readonly IRegionManager regionManager;
+		readonly string defaultStateName;
 
 		public MainViewModel(INotificationService notificationService,
 			IRegionManager regionManager,
@@ -53,6 +54,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 			TestService = testsService;
 			TestService.PropertyChanged += TestService_PropertyChanged;
 			loggingService.MessageReserved += OnLoggingMessageReserved;
+			defaultStateName = _selectedStateName = ServiceLocator.Current.GetInstance<IPlatformInfo>().MinioRepository;
 		}
 
 		[UsedImplicitly]
@@ -425,7 +427,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 				return;
 			Status = ProgramStatus.Loading;
 			if(checkConfirmation && CheckHasUncommittedChanges()) {
-				SelectedStateName = "XPF";
+				SelectedStateName = defaultStateName;
 				Status = ProgramStatus.Idle;
 				return;
 			}
@@ -468,7 +470,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 		List<SolutionModel> _Solutions;
 		readonly IGitWorker _GitWorker;
 		List<TimingInfo> _TimingInfo = new List<TimingInfo>();
-		string _selectedStateName = "XPF";
+		string _selectedStateName;
 		List<string> _availableStates;
 		bool _isReadOnly;
 	}

@@ -7,11 +7,12 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using DXVisualTestFixer.Common;
+using Microsoft.Practices.ServiceLocation;
 using Prism.Mvvm;
 
 namespace DXVisualTestFixer.Core {
 	public class TestsService : BindableBase, ITestsService {
-		const string xpfStateName = "XPF";
+		readonly string masterStateName;
 		
 		static readonly object lockLoadFromDisk = new object();
 		static readonly object lockLoadFromNet = new object();
@@ -32,6 +33,7 @@ namespace DXVisualTestFixer.Core {
 			this.loggingService = loggingService;
 			this.minioWorker = minioWorker;
 			this.notificationService = notificationService;
+			masterStateName = ServiceLocator.Current.GetInstance<IPlatformInfo>().MinioRepository;
 		}
 
 		public ITestInfoContainer SelectedState { get; private set; }
@@ -49,7 +51,7 @@ namespace DXVisualTestFixer.Core {
 		async Task UpdateTests() {
 			CurrentFilter = null;
 			await FillStates();
-			bool forked = SelectedStateName != xpfStateName;
+			bool forked = SelectedStateName != masterStateName;
 			var actualRepositories = forked ? GetForkedMinioRepositories() : await GetXpfMinioRepositories();
 			var state = await LoadTestsAsync(actualRepositories, !forked);
 			loggingService.SendMessage("Start updating problems");
@@ -60,7 +62,7 @@ namespace DXVisualTestFixer.Core {
 
 		async Task FillStates() {
 			States.Clear();
-			States[xpfStateName] = configSerializer.GetConfig().GetLocalRepositories().ToList();
+			States[masterStateName] = configSerializer.GetConfig().GetLocalRepositories().ToList();
 			var forkedRepositories = await DetectUsersPaths();
 			foreach(var userName in forkedRepositories.Keys) 
 				States[userName] = forkedRepositories[userName].ToList();
@@ -73,7 +75,7 @@ namespace DXVisualTestFixer.Core {
 		
 		async Task<List<MinioRepository>> GetXpfMinioRepositories() {
 			var result = new List<MinioRepository>();
-			foreach(var repository in States[xpfStateName]) {
+			foreach(var repository in States[masterStateName]) {
 				repository.MinioPath = await GetResultPath(repository);
 				result.Add(new MinioRepository(repository, repository.MinioPath));
 			}
@@ -98,7 +100,7 @@ namespace DXVisualTestFixer.Core {
 				var forkName = userPath.Split(new[] {"Common"}, StringSplitOptions.RemoveEmptyEntries).Last().Split(new[] {"/"}, StringSplitOptions.RemoveEmptyEntries).First();
 				var version = await minioWorker.Download(fullUserPath + "version.txt");
 				version = version.Replace(Environment.NewLine, string.Empty);
-				repos.Add(Repository.CreateFork(version, forkName, last, States[xpfStateName].FirstOrDefault(r => r.Version == version)?.Path));
+				repos.Add(Repository.CreateFork(ServiceLocator.Current.GetInstance<IPlatformInfo>().GitRepository, version, forkName, last, States[masterStateName].FirstOrDefault(r => r.Version == version)?.Path));
 			}
 			return result;
 		}
@@ -113,7 +115,7 @@ namespace DXVisualTestFixer.Core {
 		async Task<string> GetResultPath(Repository repository) {
 			string lastBuild = null;
 			for(int prevCount = 0; prevCount < 5; prevCount++) {
-				lastBuild = await minioWorker.DiscoverPrev($"XPF/{repository.Version}/", prevCount);
+				lastBuild = await minioWorker.DiscoverPrev($"{masterStateName}/{repository.Version}/", prevCount);
 				if(await minioWorker.Exists(lastBuild, "results"))
 					break;
 			}
