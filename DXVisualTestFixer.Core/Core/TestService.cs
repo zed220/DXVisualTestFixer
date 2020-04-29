@@ -84,7 +84,7 @@ namespace DXVisualTestFixer.Core {
 
 		async Task<Dictionary<string, List<Repository>>> DetectUsersPaths() {
 			var result = new Dictionary<string, List<Repository>>();
-			foreach(var userPath in await minioWorker.DetectUserPaths()) {
+			foreach(var userPath in await minioWorker.DetectUserPaths(masterStateName)) {
 				var fullUserPath = userPath + "testbuild/";
 				if(!await minioWorker.Exists(fullUserPath, "results"))
 					continue;
@@ -115,7 +115,7 @@ namespace DXVisualTestFixer.Core {
 		async Task<string> GetResultPath(Repository repository) {
 			string lastBuild = null;
 			for(int prevCount = 0; prevCount < 5; prevCount++) {
-				lastBuild = await minioWorker.DiscoverPrev($"{masterStateName}/{repository.Version}/", prevCount);
+				lastBuild = await minioWorker.DiscoverPrev($"{masterStateName}/{masterStateName}/{repository.Version}/", prevCount);
 				if(await minioWorker.Exists(lastBuild, "results"))
 					break;
 			}
