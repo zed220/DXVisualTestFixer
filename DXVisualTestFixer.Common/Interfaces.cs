@@ -139,7 +139,7 @@ namespace DXVisualTestFixer.Common {
 		Task<string> DiscoverPrev(string path, int prevCount);
 		Task WaitIfObjectNotLoaded(string root, string child);
 		Task<bool> Exists(string root, string child);
-		Task<string[]> DetectUserPaths();
+		Task<string[]> DetectUserPaths(string platform);
 	}
 
 	public interface IPlatformInfo {

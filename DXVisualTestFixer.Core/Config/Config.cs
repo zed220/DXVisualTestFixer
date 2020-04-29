@@ -42,14 +42,16 @@ namespace DXVisualTestFixer.Core.Configuration {
 			if(currentRepos.Length != config.Repositories.Length)
 				config.Repositories = currentRepos;
 			var reposToDownload = new List<Repository>();
+			var gitRepository = ServiceLocator.Current.GetInstance<IPlatformInfo>().GitRepository;
 			foreach(var version in versions) {
 				if(config.Repositories.Select(r => r.Version).Contains(version))
 					continue;
 				reposToDownload.Add(
-					Repository.CreateRegular(
-						ServiceLocator.Current.GetInstance<IPlatformInfo>().GitRepository, version,
+					Repository.CreateRegular(gitRepository, version,
 						Path.Combine(config.WorkingDirectory, String.Format(ServiceLocator.Current.GetInstance<IPlatformInfo>().LocalPath, version))));
 			}
+			foreach(var repo in config.Repositories)
+				repo.Server = gitRepository;
 
 			if(reposToDownload.Count > 0)
 				config.Repositories = config.Repositories.Concat(reposToDownload).ToArray();
