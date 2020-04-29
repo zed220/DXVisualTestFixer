@@ -26,14 +26,15 @@ namespace DXVisualTestFixer.Core.Configuration {
 		}
 
 		public static Config Validate(Config config) {
+			var currentVersion = ServiceLocator.Current.GetInstance<IVersionService>().Version.ToString();
 			if(string.IsNullOrEmpty(config.LastVersion))
-				config.LastVersion = ServiceLocator.Current.GetInstance<IVersionService>().Version.ToString();
+				config.LastVersion = currentVersion;
 			if(string.IsNullOrEmpty(config.InstallPath))
 				config.InstallPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 			if(string.IsNullOrEmpty(config.WorkingDirectory))
 				config.WorkingDirectory = @"C:\Work";
 			if(string.IsNullOrEmpty(config.WhatsNewSeenForVersion))
-				config.WhatsNewSeenForVersion = "1.0.0";
+				config.WhatsNewSeenForVersion = currentVersion;
 			if(config.Repositories == null)
 				config.Repositories = new Repository[0];
 			var versions = RepositoryLoader.GetVersions();
