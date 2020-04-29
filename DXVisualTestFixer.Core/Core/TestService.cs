@@ -94,7 +94,7 @@ namespace DXVisualTestFixer.Core {
 					continue;
 				if(!await IsResultsLoaded(last))
 					continue;
-				var userName = userPath.Split('/').First();
+				var userName = userPath.Split('/').Skip(1).First();
 				if(!result.TryGetValue(userName, out var repos))
 					result[userName] = repos = new List<Repository>();
 				var forkName = userPath.Split(new[] {"Common"}, StringSplitOptions.RemoveEmptyEntries).Last().Split(new[] {"/"}, StringSplitOptions.RemoveEmptyEntries).First();
