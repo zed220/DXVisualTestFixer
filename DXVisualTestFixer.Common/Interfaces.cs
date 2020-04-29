@@ -141,4 +141,13 @@ namespace DXVisualTestFixer.Common {
 		Task<bool> Exists(string root, string child);
 		Task<string[]> DetectUserPaths();
 	}
+
+	public interface IPlatformInfo {
+		string Name { get; }
+		string GitRepository { get; }
+		string MinioRepository { get; }
+		string DeployPath { get; }
+		string LocalPath { get; }
+		string ApplicationName { get; }
+	}
 }

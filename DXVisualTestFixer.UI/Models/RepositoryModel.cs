@@ -51,10 +51,11 @@ namespace DXVisualTestFixer.UI.Models {
 			foreach(var ver in RepositoryLoader.GetVersions().Where(v => !savedVersions.Contains(v)))
 			foreach(var directoryPath in Directory.GetDirectories(filePath)) {
 				var dirName = System.IO.Path.GetFileName(directoryPath);
-				if(!dirName.Contains($"20{ver}") && !dirName.Contains(ver)) continue;
+				var localPath = string.Format(ServiceLocator.Current.GetInstance<IPlatformInfo>().LocalPath, ver);
+				if(dirName != localPath) continue;
 				if(!File.Exists(directoryPath + "\\VisualTestsConfig.xml"))
 					continue;
-				var repository = new RepositoryModel(Repository.CreateRegular(ver, directoryPath + "\\")); 
+				var repository = new RepositoryModel(Repository.CreateRegular(ServiceLocator.Current.GetInstance<IPlatformInfo>().GitRepository, ver, directoryPath + "\\")); 
 				repositories.Add(repository);
 				InitializeBinIfNeed(repository.Path, repository.Version);
 			}

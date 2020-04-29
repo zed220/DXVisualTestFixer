@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -43,7 +44,10 @@ namespace DXVisualTestFixer.Core.Configuration {
 			foreach(var version in versions) {
 				if(config.Repositories.Select(r => r.Version).Contains(version))
 					continue;
-				reposToDownload.Add(Repository.CreateRegular(version, Path.Combine(config.WorkingDirectory, $"20{version}_VisualTests")));
+				reposToDownload.Add(
+					Repository.CreateRegular(
+						ServiceLocator.Current.GetInstance<IPlatformInfo>().GitRepository, version,
+						Path.Combine(config.WorkingDirectory, String.Format(ServiceLocator.Current.GetInstance<IPlatformInfo>().LocalPath, version))));
 			}
 
 			if(reposToDownload.Count > 0)

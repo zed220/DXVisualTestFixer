@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.IO;
@@ -65,7 +66,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 		void OnWorkingDirectoryChanged() {
 			Config.WorkingDirectory = WorkingDirectory;
 			foreach(var repo in Repositories.Where(r => r.DownloadState == DownloadState.ReadyToDownload)) {
-				repo.Path = Path.Combine(WorkingDirectory, $"20{repo.Version}_VisualTests");
+				repo.Path = Path.Combine(WorkingDirectory, String.Format(ServiceLocator.Current.GetInstance<IPlatformInfo>().LocalPath, repo.Version));
 				repo.UpdateDownloadState();
 			}
 

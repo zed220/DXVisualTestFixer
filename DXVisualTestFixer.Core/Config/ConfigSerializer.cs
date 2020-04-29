@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using DXVisualTestFixer.Common;
+using Microsoft.Practices.ServiceLocation;
 
 namespace DXVisualTestFixer.Core.Configuration {
 	public class ConfigSerializer : IConfigSerializer {
@@ -8,7 +9,7 @@ namespace DXVisualTestFixer.Core.Configuration {
 
 		static Config cached;
 
-		static readonly string SettingsPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\DXVisualTestFixer\\";
+		static readonly string SettingsPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + $"\\{ServiceLocator.Current.GetInstance<IPlatformInfo>().ApplicationName}\\";
 		static readonly string SettingsFile = "ui_settings.config";
 		static string SettingsFilePath => SettingsPath + SettingsFile;
 
