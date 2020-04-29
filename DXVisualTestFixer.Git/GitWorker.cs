@@ -15,7 +15,7 @@ namespace DXVisualTestFixer.Git {
 			if(!repository.IsDownloaded())
 				return false;
 			using var repo = new Repository(repository.Path);
-			foreach(var remote in repo.Network.Remotes.Where(remote => !remote.PushUrl.StartsWith("http"))) repo.Network.Remotes.Update(remote.Name, r => r.PushUrl = r.Url = "http://gitserver/XPF/VisualTests.git");
+			foreach(var remote in repo.Network.Remotes.Where(remote => !remote.PushUrl.StartsWith("http"))) repo.Network.Remotes.Update(remote.Name, r => r.PushUrl = r.Url = repository.Server);
 			return true;
 		}
 
@@ -34,7 +34,7 @@ namespace DXVisualTestFixer.Git {
 			using var repo = new Repository(repository.Path);
 			var currentSha = repo.Head.Tip.Sha;
 			var remoteBranchName = repo.Head.CanonicalName.Replace("refs/heads/", "");
-			foreach(var remoteBranch in Repository.ListRemoteReferences("http://gitserver/XPF/VisualTests.git").OfType<DirectReference>()) {
+			foreach(var remoteBranch in Repository.ListRemoteReferences(repository.Server).OfType<DirectReference>()) {
 				if(remoteBranch.CanonicalName.Replace("refs/heads/", "") == remoteBranchName) {
 					var sha = remoteBranch.TargetIdentifier;
 					if(sha != currentSha)
@@ -135,7 +135,7 @@ namespace DXVisualTestFixer.Git {
 			var co = new CloneOptions();
 			co.CredentialsProvider = CredentialsHandler;
 			co.BranchName = $"20{repository.Version}";
-			var result = Repository.Clone("http://gitserver/XPF/VisualTests.git", repository.Path, co);
+			var result = Repository.Clone(repository.Server, repository.Path, co);
 			return Directory.Exists(result);
 		}
 

@@ -19,7 +19,7 @@
                  WindowKind="Ribbon"
                  prism:ViewModelLocator.AutoWireViewModel="True"
                  Icon="../89.ico"
-                 Title="{DXBinding Expr='`Visual Tests Tool v` + $native:VersionHelper.Version'}" MinHeight="768"
+                 Title="{DXBinding Expr='`Visual Tests Tool v` + $native:VersionHelper.Version + ` for ` + $native:VersionHelper.Platform'}" MinHeight="768"
                  MinWidth="1024"
                  prismcommon:PrismExtensions.ViewModel="{Binding}"
                  HeaderItemsSource="{Binding Commands}"

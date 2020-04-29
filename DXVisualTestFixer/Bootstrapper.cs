@@ -28,6 +28,7 @@ namespace DXVisualTestFixer {
 
 		protected override void ConfigureContainer() {
 			base.ConfigureContainer();
+			RegisterTypeIfMissing(typeof(IPlatformInfo), typeof(WPFPlatformInfo), true);
 			RegisterTypeIfMissing(typeof(INotificationService), typeof(NotificationService), true);
 			RegisterTypeIfMissing(typeof(IConfigSerializer), typeof(ConfigSerializer), true);
 			RegisterTypeIfMissing(typeof(ILoadingProgressController), typeof(LoadingProgressController), true);

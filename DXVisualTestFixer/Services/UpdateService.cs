@@ -11,9 +11,11 @@ using Squirrel;
 
 namespace DXVisualTestFixer.Services {
 	public class SquirrelUpdateService : UpdateServiceBase {
-		const string serverFolder = @"\\corp\internal\common\visualtests_squirrel";
+		readonly string serverFolder;
 
-		public SquirrelUpdateService(INotificationService notificationService) : base(notificationService) { }
+		public SquirrelUpdateService(INotificationService notificationService) : base(notificationService) {
+			serverFolder = new WPFPlatformInfo().DeployPath;
+		}
 
 		public override void Update() {
 			UpdateManager.RestartApp();
