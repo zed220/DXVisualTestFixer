@@ -122,7 +122,7 @@ namespace DXVisualTestFixer.UI.Models {
 				await _dispatcher.BeginInvoke(new Action(() => { DownloadState = DownloadState.CanNotDownload; }));
 				return;
 			}
-
+			InitializeBinIfNeed(Repository.Path, Repository.Version);
 			await _dispatcher.BeginInvoke(new Action(() => { DownloadState = DownloadState.Downloaded; }));
 		}
 	}
