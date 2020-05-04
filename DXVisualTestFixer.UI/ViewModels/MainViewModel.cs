@@ -402,10 +402,10 @@ namespace DXVisualTestFixer.UI.ViewModels {
 
 		bool UpdateConfigAndCheckUpdated() {
 			var config = configSerializer.GetConfig(false);
+			_defaultPlatform = config.DefaultPlatform;
 			if(_config != null && configSerializer.IsConfigEquals(config, _config))
 				return false;
 			_config = config;
-			_defaultPlatform = _config.DefaultPlatform;
 			return true;
 		}
 
