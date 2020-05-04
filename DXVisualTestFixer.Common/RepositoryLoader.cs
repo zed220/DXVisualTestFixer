@@ -3,9 +3,9 @@ using Microsoft.Practices.ServiceLocation;
 
 namespace DXVisualTestFixer.Common {
 	public class RepositoryLoader : FileStringLoaderBase {
-		RepositoryLoader() : base(ServiceLocator.Current.GetInstance<IPlatformInfo>().DeployPath + "versions.xml") { }
+		RepositoryLoader(IPlatformInfo platform) : base(@"\\corp\internal\common\visualTests_squirrel\" + platform.VersionsFileName) { }
 
-		public static string[] GetVersions() => new RepositoryLoader().Result.ToArray();
+		public static string[] GetVersions(IPlatformInfo platform) => new RepositoryLoader(platform).Result.ToArray();
 		protected override List<string> LoadIfFileNotFound() => new List<string> { "20.1" };
 	}
 }

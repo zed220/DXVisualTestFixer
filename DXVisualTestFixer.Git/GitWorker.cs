@@ -11,11 +11,11 @@ using Repository = LibGit2Sharp.Repository;
 
 namespace DXVisualTestFixer.Git {
 	public class GitWorker : IGitWorker {
-		public bool SetHttpRepository(CommonRepository repository) {
+		public bool SetHttpRepository(string serverPath, CommonRepository repository) {
 			if(!repository.IsDownloaded())
 				return false;
 			using var repo = new Repository(repository.Path);
-			foreach(var remote in repo.Network.Remotes.Where(remote => !remote.PushUrl.StartsWith("http"))) repo.Network.Remotes.Update(remote.Name, r => r.PushUrl = r.Url = repository.Server);
+			foreach(var remote in repo.Network.Remotes.Where(remote => !remote.PushUrl.StartsWith("http"))) repo.Network.Remotes.Update(remote.Name, r => r.PushUrl = r.Url = serverPath);
 			return true;
 		}
 
@@ -27,14 +27,14 @@ namespace DXVisualTestFixer.Git {
 				return await Task.FromResult(GitUpdateResult.Error);
 			return await Task.FromResult(GitUpdateResult.None);
 		}
-		public async Task<bool> IsOutdatedAsync(CommonRepository repository) {
+		public async Task<bool> IsOutdatedAsync(string serverPath, CommonRepository repository) {
 			if(!repository.IsDownloaded())
 				return false;
 			await Task.Run(() => Fetch(repository));
 			using var repo = new Repository(repository.Path);
 			var currentSha = repo.Head.Tip.Sha;
 			var remoteBranchName = repo.Head.CanonicalName.Replace("refs/heads/", "");
-			foreach(var remoteBranch in Repository.ListRemoteReferences(repository.Server).OfType<DirectReference>()) {
+			foreach(var remoteBranch in Repository.ListRemoteReferences(serverPath).OfType<DirectReference>()) {
 				if(remoteBranch.CanonicalName.Replace("refs/heads/", "") == remoteBranchName) {
 					var sha = remoteBranch.TargetIdentifier;
 					if(sha != currentSha)
@@ -71,12 +71,12 @@ namespace DXVisualTestFixer.Git {
 			return await Task.FromResult(GitCommitResult.None);
 		}
 
-		public async Task<bool> Clone(CommonRepository repository) {
+		public async Task<bool> Clone(string serverPath, CommonRepository repository) {
 			if(repository.IsDownloaded())
 				return await Task.FromResult(true);
 			if(!Directory.Exists(repository.Path))
 				Directory.CreateDirectory(repository.Path);
-			if(!CloneCore(repository))
+			if(!CloneCore(serverPath, repository))
 				return await Task.FromResult(false);
 			return await Task.FromResult(repository.IsDownloaded());
 		}
@@ -131,11 +131,11 @@ namespace DXVisualTestFixer.Git {
 			return true;
 		}
 
-		bool CloneCore(CommonRepository repository) {
+		bool CloneCore(string serverPath, CommonRepository repository) {
 			var co = new CloneOptions();
 			co.CredentialsProvider = CredentialsHandler;
 			co.BranchName = $"20{repository.Version}";
-			var result = Repository.Clone(repository.Server, repository.Path, co);
+			var result = Repository.Clone(serverPath, repository.Path, co);
 			return Directory.Exists(result);
 		}
 

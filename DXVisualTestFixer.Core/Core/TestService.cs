@@ -12,7 +12,37 @@ using Prism.Mvvm;
 
 namespace DXVisualTestFixer.Core {
 	public class TestsService : BindableBase, ITestsService {
-		readonly string masterStateName;
+		class PlatformAndVersion : IEquatable<PlatformAndVersion> {
+			public readonly string Platform;
+			public readonly string Version;
+			
+			public PlatformAndVersion(string platform, string version) {
+				Platform = platform;
+				Version = version;
+			}
+
+			public bool Equals(PlatformAndVersion other) {
+				if(ReferenceEquals(null, other)) return false;
+				if(ReferenceEquals(this, other)) return true;
+				return Platform == other.Platform && Version == other.Version;
+			}
+
+			public override bool Equals(object obj) {
+				if(ReferenceEquals(null, obj)) return false;
+				if(ReferenceEquals(this, obj)) return true;
+				if(obj.GetType() != this.GetType()) return false;
+				return Equals((PlatformAndVersion) obj);
+			}
+
+			public override int GetHashCode() {
+				unchecked {
+					return ((Platform != null ? Platform.GetHashCode() : 0) * 397) ^ (Version != null ? Version.GetHashCode() : 0);
+				}
+			}
+		}
+		
+		
+		readonly IPlatformProvider platformProvider;
 		
 		static readonly object lockLoadFromDisk = new object();
 		static readonly object lockLoadFromNet = new object();
@@ -22,9 +52,10 @@ namespace DXVisualTestFixer.Core {
 		readonly IMinioWorker minioWorker;
 		readonly INotificationService notificationService;
 
-		readonly Dictionary<string, TestInfoCached> MinioPathCache = new Dictionary<string, TestInfoCached>();
+		readonly Dictionary<PlatformAndVersion, TestInfoCached> MinioPathCache = new Dictionary<PlatformAndVersion, TestInfoCached>();
 
 		string _CurrentFilter;
+		string Platform;
 		string SelectedStateName;
 
 		public TestsService(ILoadingProgressController loadingProgressController, IConfigSerializer configSerializer, ILoggingService loggingService, IMinioWorker minioWorker, INotificationService notificationService) {
@@ -33,7 +64,7 @@ namespace DXVisualTestFixer.Core {
 			this.loggingService = loggingService;
 			this.minioWorker = minioWorker;
 			this.notificationService = notificationService;
-			masterStateName = ServiceLocator.Current.GetInstance<IPlatformInfo>().MinioRepository;
+			platformProvider = ServiceLocator.Current.GetInstance<IPlatformProvider>();
 		}
 
 		public ITestInfoContainer SelectedState { get; private set; }
@@ -51,8 +82,8 @@ namespace DXVisualTestFixer.Core {
 		async Task UpdateTests() {
 			CurrentFilter = null;
 			await FillStates();
-			bool forked = SelectedStateName != masterStateName;
-			var actualRepositories = forked ? GetForkedMinioRepositories() : await GetXpfMinioRepositories();
+			bool forked = SelectedStateName != Platform;
+			var actualRepositories = forked ? GetForkedMinioRepositories() : await GetRegularMinioRepositories();
 			var state = await LoadTestsAsync(actualRepositories, !forked);
 			loggingService.SendMessage("Start updating problems");
 			await ((TestInfoContainer) state).UpdateProblems();
@@ -62,29 +93,31 @@ namespace DXVisualTestFixer.Core {
 
 		async Task FillStates() {
 			States.Clear();
-			States[masterStateName] = configSerializer.GetConfig().GetLocalRepositories().ToList();
-			var forkedRepositories = await DetectUsersPaths();
+			States[Platform] = configSerializer.GetConfig().GetLocalRepositories().Where(r => r.Platform == Platform).ToList();
+			var forkedRepositories = await DetectUsersPaths(Platform);//TODO
 			foreach(var userName in forkedRepositories.Keys) 
 				States[userName] = forkedRepositories[userName].ToList();
 		}
 		
-		public async Task SelectState(string stateName) {
+		public async Task SelectState(string platform, string stateName) {
+			Platform = platform;
 			SelectedStateName = stateName;
 			await UpdateTests();
 		}
 		
-		async Task<List<MinioRepository>> GetXpfMinioRepositories() {
+		async Task<List<MinioRepository>> GetRegularMinioRepositories() {
 			var result = new List<MinioRepository>();
-			foreach(var repository in States[masterStateName]) {
+			foreach(var repository in States[Platform]) {
 				repository.MinioPath = await GetResultPath(repository);
-				result.Add(new MinioRepository(repository, repository.MinioPath));
+				if(repository.MinioPath != null)
+					result.Add(new MinioRepository(repository, repository.MinioPath));
 			}
 			return result;
 		}
 
-		async Task<Dictionary<string, List<Repository>>> DetectUsersPaths() {
+		async Task<Dictionary<string, List<Repository>>> DetectUsersPaths(string platform) {
 			var result = new Dictionary<string, List<Repository>>();
-			foreach(var userPath in await minioWorker.DetectUserPaths(masterStateName)) {
+			foreach(var userPath in await minioWorker.DetectUserPaths(platformProvider.PlatformInfos.Single(p => p.Name == Platform).MinioRepository)) {
 				var fullUserPath = userPath + "testbuild/";
 				if(!await minioWorker.Exists(fullUserPath, "results"))
 					continue;
@@ -100,7 +133,7 @@ namespace DXVisualTestFixer.Core {
 				var forkName = userPath.Split(new[] {"Common"}, StringSplitOptions.RemoveEmptyEntries).Last().Split(new[] {"/"}, StringSplitOptions.RemoveEmptyEntries).First();
 				var version = await minioWorker.Download(fullUserPath + "version.txt");
 				version = version.Replace(Environment.NewLine, string.Empty);
-				repos.Add(Repository.CreateFork(ServiceLocator.Current.GetInstance<IPlatformInfo>().GitRepository, version, forkName, last, States[masterStateName].FirstOrDefault(r => r.Version == version)?.Path));
+				repos.Add(Repository.CreateFork(platform, version, forkName, last, States[Platform].FirstOrDefault(r => r.Version == version)?.Path));
 			}
 			return result;
 		}
@@ -114,12 +147,14 @@ namespace DXVisualTestFixer.Core {
 		
 		async Task<string> GetResultPath(Repository repository) {
 			string lastBuild = null;
+			var minioPath = platformProvider.PlatformInfos.Single(p => p.Name == repository.Platform).MinioRepository;
 			for(int prevCount = 0; prevCount < 5; prevCount++) {
-				lastBuild = await minioWorker.DiscoverPrev($"{masterStateName}/{masterStateName}/{repository.Version}/", prevCount);
+				lastBuild = await minioWorker.DiscoverPrev($"{minioPath}/{minioPath}/{repository.Version}/", prevCount);
+				if(lastBuild == null && repository.ReadOnly)
+					return null;
 				if(await minioWorker.Exists(lastBuild, "results"))
 					break;
 			}
-
 			var last = await minioWorker.DiscoverLast($"{lastBuild}results/");
 			
 			for(int i = 0; i < 20; i++, await Task.Delay(TimeSpan.FromSeconds(10))) {
@@ -193,8 +228,10 @@ namespace DXVisualTestFixer.Core {
 			return result;
 		}
 
+		PlatformAndVersion CreatePlatformAndVersion(Repository repository) => new PlatformAndVersion(repository.Platform, repository.Version);
+		
 		async Task<TestInfoCached> LoadTestsCoreAsync(MinioRepository minioRepository) {
-			if(MinioPathCache.TryGetValue(minioRepository.Repository.Version, out var cache) && cache.RealUrl == minioRepository.Path) {
+			if(MinioPathCache.TryGetValue(CreatePlatformAndVersion(minioRepository.Repository), out var cache) && cache.RealUrl == minioRepository.Path) {
 				await ActualizeTestsAsync(cache.TestList);
 				return cache;
 			}
@@ -208,7 +245,7 @@ namespace DXVisualTestFixer.Core {
 			}
 
 			var result = (await Task.WhenAll(allTasks)).ToList();
-			return MinioPathCache[minioRepository.Repository.Version] = new TestInfoCached(minioRepository.Repository, minioRepository.Path, result, corpDirTestInfoContainer);
+			return MinioPathCache[CreatePlatformAndVersion(minioRepository.Repository)] = new TestInfoCached(minioRepository.Repository, minioRepository.Path, result, corpDirTestInfoContainer);
 		}
 
 		async Task ActualizeTestsAsync(List<TestInfo> testList) {

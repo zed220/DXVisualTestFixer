@@ -86,6 +86,7 @@ namespace DXVisualTestFixer.Common {
 		Repository[] Repositories { get; set; }
 		string WorkingDirectory { get; set; }
 		string WhatsNewSeenForVersion { get; set; }
+		string DefaultPlatform { get; set; }
 
 		IEnumerable<Repository> GetLocalRepositories();
 	}
@@ -99,7 +100,7 @@ namespace DXVisualTestFixer.Common {
 		string CurrentFilter { get; set; }
 
 		bool ApplyTest(TestInfo test, Func<string, bool> checkoutFunc);
-		Task SelectState(string stateName);
+		Task SelectState(string platform, string stateName);
 		Dictionary<string, List<Repository>> States { get; }
 	}
 
@@ -125,11 +126,11 @@ namespace DXVisualTestFixer.Common {
 	}
 
 	public interface IGitWorker {
-		bool SetHttpRepository(Repository repository);
+		bool SetHttpRepository(string serverPath, Repository repository);
 		Task<GitUpdateResult> Update(Repository repository);
-		Task<bool> IsOutdatedAsync(Repository repository);
+		Task<bool> IsOutdatedAsync(string serverPath, Repository repository);
 		Task<GitCommitResult> Commit(Repository repository, string commitCaption);
-		Task<bool> Clone(Repository repository);
+		Task<bool> Clone(string serverPath, Repository repository);
 	}
 
 	public interface IMinioWorker {
@@ -146,8 +147,11 @@ namespace DXVisualTestFixer.Common {
 		string Name { get; }
 		string GitRepository { get; }
 		string MinioRepository { get; }
-		string DeployPath { get; }
 		string LocalPath { get; }
-		string ApplicationName { get; }
+		string VersionsFileName { get; }
+	}
+
+	public interface IPlatformProvider {
+		public IPlatformInfo[] PlatformInfos { get; }
 	}
 }

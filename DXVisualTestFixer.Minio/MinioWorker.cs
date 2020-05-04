@@ -97,7 +97,7 @@ namespace DXVisualTestFixer.Minio {
 
 		public async Task<string> DiscoverPrev(string path, int prevCount) {
 			var all = await Discover(path);
-			return all.Reverse().Skip(prevCount).First();
+			return all.Reverse().Skip(prevCount).FirstOrDefault();
 		}
 		public async Task<string[]> DetectUserPaths(string platform) {
 			var excludedPaths = new[] { "XPF/XPF/", "WinForms/WinForms/", "usedfiles/", "visualtestsscripts-2.0/", "visualtestsscripts-3.0/", "visualtestsscripts-4.0/" };
