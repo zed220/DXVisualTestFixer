@@ -14,7 +14,7 @@ namespace DXVisualTestFixer.Services {
 		readonly string serverFolder;
 
 		public SquirrelUpdateService(INotificationService notificationService) : base(notificationService) {
-			serverFolder = new WPFPlatformInfo().DeployPath;
+			serverFolder = @"\\corp\internal\common\visualTests_squirrel\";
 		}
 
 		public override void Update() {

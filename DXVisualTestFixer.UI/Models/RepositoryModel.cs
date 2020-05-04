@@ -13,16 +13,20 @@ using Microsoft.Practices.ServiceLocation;
 namespace DXVisualTestFixer.UI.Models {
 	public class RepositoryModel : BindableBase {
 		readonly Dispatcher _dispatcher;
+		readonly IPlatformInfo _platform;
+		
 		public readonly Repository Repository;
 
-		public RepositoryModel(Repository source) {
+		public RepositoryModel(Repository source, IPlatformInfo platform) {
 			Repository = source;
 			Version = Repository.Version;
 			Path = Repository.Path;
 			_dispatcher = Dispatcher.CurrentDispatcher;
+			var platformProvider = ServiceLocator.Current.GetInstance<IPlatformProvider>();
+			_platform = platform;
 			UpdateDownloadState();
 		}
-
+		
 		public string Version {
 			get { return GetProperty(() => Version); }
 			set { SetProperty(() => Version, value, OnVersionChanged); }
@@ -46,16 +50,16 @@ namespace DXVisualTestFixer.UI.Models {
 			Repository.Path = Path;
 		}
 
-		public static void ActualizeRepositories(ICollection<RepositoryModel> repositories, string filePath) {
+		public static void ActualizeRepositories(IPlatformInfo platform, ICollection<RepositoryModel> repositories, string filePath) {
 			var savedVersions = repositories.Select(r => r.Version).ToList();
-			foreach(var ver in RepositoryLoader.GetVersions().Where(v => !savedVersions.Contains(v)))
+			foreach(var ver in RepositoryLoader.GetVersions(platform).Where(v => !savedVersions.Contains(v)))
 			foreach(var directoryPath in Directory.GetDirectories(filePath)) {
 				var dirName = System.IO.Path.GetFileName(directoryPath);
-				var localPath = string.Format(ServiceLocator.Current.GetInstance<IPlatformInfo>().LocalPath, ver);
+				var localPath = string.Format(platform.LocalPath, ver);
 				if(dirName != localPath) continue;
 				if(!File.Exists(directoryPath + "\\VisualTestsConfig.xml"))
 					continue;
-				var repository = new RepositoryModel(Repository.CreateRegular(ServiceLocator.Current.GetInstance<IPlatformInfo>().GitRepository, ver, directoryPath + "\\")); 
+				var repository = new RepositoryModel(Repository.CreateRegular(platform.Name, ver, directoryPath + "\\"), platform); 
 				repositories.Add(repository);
 				InitializeBinIfNeed(repository.Path, repository.Version);
 			}
@@ -118,7 +122,7 @@ namespace DXVisualTestFixer.UI.Models {
 		async Task DownloadAsync() {
 			await _dispatcher.BeginInvoke(new Action(() => { DownloadState = DownloadState.Downloading; }));
 			var git = ServiceLocator.Current.GetInstance<IGitWorker>();
-			if(!await git.Clone(Repository)) {
+			if(!await git.Clone(_platform.GitRepository, Repository)) {
 				await _dispatcher.BeginInvoke(new Action(() => { DownloadState = DownloadState.CanNotDownload; }));
 				return;
 			}

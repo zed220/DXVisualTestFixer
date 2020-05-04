@@ -13,7 +13,7 @@ using Microsoft.Win32;
 namespace DXVisualTestFixer.UI.Models {
 	public static class OpenSolutionModelHelper {
 		class CodeApp {
-			public CodeApp(string path, string name, ImageSource icon) {
+			public CodeApp(string path, string name, BitmapSource icon) {
 				Path = path;
 				Name = name;
 				Icon = icon;
@@ -21,7 +21,7 @@ namespace DXVisualTestFixer.UI.Models {
 			
 			public readonly string Path;
 			public readonly string Name;
-			public readonly ImageSource Icon;
+			public readonly BitmapSource Icon;
 		}
 		
 		static List<CodeApp> CodeApps;
@@ -53,7 +53,7 @@ namespace DXVisualTestFixer.UI.Models {
 			}
 		}
 		
-		static ImageSource GetImageAssociated(string solutionPath) {
+		static BitmapSource GetImageAssociated(string solutionPath) {
 			if(solutionPath == null || !File.Exists(solutionPath))
 				return null;
 			try {
@@ -61,24 +61,37 @@ namespace DXVisualTestFixer.UI.Models {
 				var bitmap = appIcon.ToBitmap();
 				var hBitmap = bitmap.GetHbitmap();
 
-				return Imaging.CreateBitmapSourceFromHBitmap(hBitmap, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+				var result = Imaging.CreateBitmapSourceFromHBitmap(hBitmap, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+				if(result.IsDownloading) {
+					
+				}
+				result.Freeze();
+				return result;
 			}
 			catch {
 				return null;
 			}
 		}
 
-		static ImageSource GetImageFromExe(string path) {
+		static BitmapSource GetImageFromExe(string path) {
 			try {
 				var appIcon = Icon.ExtractAssociatedIcon(path);
 				var bitmap = appIcon.ToBitmap();
 				var hBitmap = bitmap.GetHbitmap();
-				return Imaging.CreateBitmapSourceFromHBitmap(hBitmap, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+				
+				var result = Imaging.CreateBitmapSourceFromHBitmap(hBitmap, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+				if(result.IsDownloading) {
+					
+				}
+				result.Freeze();
+				return result;
 			}
 			catch {
 				return null;
 			}
 		}
+		
+		
 
 		static IEnumerable<string> GetVSPaths() {
 			var pathToVS = System.IO.Path.Combine(Environment.ExpandEnvironmentVariables("%programfiles(x86)%"), "Microsoft Visual Studio");
