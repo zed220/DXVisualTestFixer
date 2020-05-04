@@ -20,7 +20,6 @@ namespace DXVisualTestFixer.UI.Models {
 			Version = version;
 			Path = System.IO.Path.Combine(path, "VisualTests");
 			SolutionPath = Directory.EnumerateFiles(Path, "*.sln", SearchOption.TopDirectoryOnly).FirstOrDefault();
-			OpenSolutionModels = new List<OpenSolutionModel>();
 			OpenSolutionModels = OpenSolutionModelHelper.GetOpenSolutionModels(SolutionPath);
 		}
 

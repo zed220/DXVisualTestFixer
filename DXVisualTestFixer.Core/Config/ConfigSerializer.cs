@@ -9,7 +9,7 @@ namespace DXVisualTestFixer.Core.Configuration {
 
 		static Config cached;
 
-		static readonly string SettingsPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + $"\\{ServiceLocator.Current.GetInstance<IPlatformInfo>().ApplicationName}\\";
+		static readonly string SettingsPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\DXVisualTestFixer\\";
 		static readonly string SettingsFile = "ui_settings.config";
 		static string SettingsFilePath => SettingsPath + SettingsFile;
 

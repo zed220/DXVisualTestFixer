@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using DevExpress.Utils;
 using JetBrains.Annotations;
 
@@ -7,7 +8,7 @@ namespace DXVisualTestFixer.UI.Models {
 	public class OpenSolutionModel : ImmutableObject {
 		readonly string _solutionPath;
 
-		public OpenSolutionModel(string solutionPath, string associatedProgramPath, string displayName, ImageSource programImage) {
+		public OpenSolutionModel(string solutionPath, string associatedProgramPath, string displayName, BitmapSource programImage) {
 			_solutionPath = solutionPath;
 			AssociatedProgramPath = associatedProgramPath;
 			DisplayName = displayName;
@@ -16,7 +17,7 @@ namespace DXVisualTestFixer.UI.Models {
 
 		public string AssociatedProgramPath { get; }
 		public string DisplayName { get; }
-		public ImageSource ProgramImage { get; }
+		public BitmapSource ProgramImage { get; internal set; }
 
 		[UsedImplicitly]
 		public void Open() {

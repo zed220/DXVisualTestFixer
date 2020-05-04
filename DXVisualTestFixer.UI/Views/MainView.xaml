@@ -301,7 +301,7 @@
                         <dxr:RibbonPageGroup Caption="Settings">
                             <dxb:BarButtonItem
                                 Content="Config"
-                                Command="{DXCommand Execute='ShowSettingsAsync()'}"
+                                Command="{DXCommand Execute='ShowSettings()'}"
                                 Glyph="{dx:DXImage SvgImages/Scheduling/Properties.svg}" />
                             <dxb:BarCheckItem
                                 Content="Smart Grouping"

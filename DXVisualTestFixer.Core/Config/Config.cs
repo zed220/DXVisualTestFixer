@@ -14,6 +14,8 @@ namespace DXVisualTestFixer.Core.Configuration {
 		public string ThemeName { get; set; } = "Office2016White";
 		public string WorkingDirectory { get; set; } = @"C:\Work";
 		public string WhatsNewSeenForVersion { get; set; } = "1.0.0";
+		public string DefaultPlatform { get; set; }
+		
 
 		public IEnumerable<Repository> GetLocalRepositories() {
 			return Repositories?.Where(r => r.IsDownloaded()) ?? Enumerable.Empty<Repository>();
@@ -37,21 +39,17 @@ namespace DXVisualTestFixer.Core.Configuration {
 				config.WhatsNewSeenForVersion = currentVersion;
 			if(config.Repositories == null)
 				config.Repositories = new Repository[0];
-			var versions = RepositoryLoader.GetVersions();
-			var currentRepos = config.Repositories.Where(repo => versions.Contains(repo.Version)).ToArray();
-			if(currentRepos.Length != config.Repositories.Length)
-				config.Repositories = currentRepos;
+			if(config.Repositories.Any(r => r.Platform == null))
+				config.Repositories = config.Repositories.Where(r => r.Platform != null).ToArray();
+
 			var reposToDownload = new List<Repository>();
-			var gitRepository = ServiceLocator.Current.GetInstance<IPlatformInfo>().GitRepository;
-			foreach(var version in versions) {
-				if(config.Repositories.Select(r => r.Version).Contains(version))
-					continue;
-				reposToDownload.Add(
-					Repository.CreateRegular(gitRepository, version,
-						Path.Combine(config.WorkingDirectory, String.Format(ServiceLocator.Current.GetInstance<IPlatformInfo>().LocalPath, version))));
+			foreach(var platform in ServiceLocator.Current.GetInstance<IPlatformProvider>().PlatformInfos) {
+				foreach(var version in RepositoryLoader.GetVersions(platform)) {
+					if(config.Repositories.Where(r => r.Platform == platform.Name).Select(r => r.Version).Contains(version))
+						continue;
+					reposToDownload.Add(Repository.CreateRegular(platform.Name, version, Path.Combine(config.WorkingDirectory,platform.LocalPath, version)));
+				}
 			}
-			foreach(var repo in config.Repositories)
-				repo.Server = gitRepository;
 
 			if(reposToDownload.Count > 0)
 				config.Repositories = config.Repositories.Concat(reposToDownload).ToArray();

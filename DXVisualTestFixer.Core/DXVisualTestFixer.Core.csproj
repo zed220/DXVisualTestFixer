@@ -120,6 +120,9 @@
     <Compile Include="Core\Native\TestInfoCached.cs" />
     <Compile Include="Core\Native\TestInfoContainer.cs" />
     <Compile Include="Native\ImageComparer.cs" />
+    <Compile Include="Platforms\PlatformProvider.cs" />
+    <Compile Include="Platforms\WinFormsPlatformInfo.cs" />
+    <Compile Include="Platforms\WPFPlatformInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Core\TestLoader.cs" />
     <Compile Include="Core\TestService.cs" />
