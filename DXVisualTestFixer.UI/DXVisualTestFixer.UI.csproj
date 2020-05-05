@@ -204,7 +204,6 @@
     <Compile Include="PrismCommon\PrismExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Native\VersionHelper.cs" />
-    <Compile Include="Services\AppearanceService.cs" />
     <Compile Include="Services\IsActiveService.cs" />
     <Compile Include="Services\Notifications.cs" />
     <Compile Include="Services\NotificationService.cs" />

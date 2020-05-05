@@ -173,9 +173,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 
 		#region Public Methods
 
-		[UsedImplicitly]
-		public async void InitializeAsync() {
-			Status = ProgramStatus.Loading;
+		async void InitializeAsyncCore() {
 			await Task.Delay(1).ConfigureAwait(false);
 			loggingService.SendMessage("Checking config");
 			UpdateConfigAndCheckUpdated();
@@ -197,6 +195,12 @@ namespace DXVisualTestFixer.UI.ViewModels {
 				return Status = ProgramStatus.Idle;
 			}).Task.ConfigureAwait(false);
 			RefreshTestList();
+		}
+
+		[UsedImplicitly]
+		public void InitializeAsync() {
+			Status = ProgramStatus.Loading;
+			dispatcher.BeginInvoke(new Action(InitializeAsyncCore), DispatcherPriority.Background);
 		}
 
 		[UsedImplicitly]
