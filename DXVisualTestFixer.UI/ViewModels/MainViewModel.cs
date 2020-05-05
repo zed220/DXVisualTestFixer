@@ -413,17 +413,17 @@ namespace DXVisualTestFixer.UI.ViewModels {
 		async Task DoAsync(Action action) => await Task.Run(action);
 
 		bool ValidateConfigCheckChanged() {
+			if(string.IsNullOrWhiteSpace(_config.DefaultPlatform)) {
+				notificationService.DoNotification("Default Platform Does Not Set", "Select default platform in Settings", MessageBoxImage.Warning);
+				return ShowSettingsCore();
+			}
+			
 			if(_config.GetLocalRepositories().ToList().Count == 0) {
 				notificationService.DoNotification("Add repositories in settings", "Add repositories in settings");
 				var settingsChanged = ShowSettingsCore();
 				if(_config.GetLocalRepositories().ToList().Count == 0) 
 					notificationService.DoNotification("Add repositories in settings", "Add repositories in settings");
 				return settingsChanged;
-			}
-
-			if(string.IsNullOrWhiteSpace(_config.DefaultPlatform)) {
-				notificationService.DoNotification("Default Platform Does Not Set", "Select default platform in Settings", MessageBoxImage.Warning);
-				return ShowSettingsCore();
 			}
 
 			foreach(var repo in _config.Repositories.Where(r => r.Platform == _config.DefaultPlatform))
