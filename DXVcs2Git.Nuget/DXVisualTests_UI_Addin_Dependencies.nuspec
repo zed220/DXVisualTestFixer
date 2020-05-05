@@ -13,7 +13,7 @@
     </metadata>
     <files>
         <file src="files\DevExpress.Data.v20.1.dll" target="lib\net472\DevExpress.Data.v20.1.dll" />
-		<file src="files\DevExpress.Data.v20.1.dll" target="lib\net472\DevExpress.Data..Desktop.v20.1.dll" />
+		<file src="files\DevExpress.Data.Desktop.v20.1.dll" target="lib\net472\DevExpress.Data.Desktop.v20.1.dll" />
         <file src="files\DevExpress.CodeParser.v20.1.dll" target="lib\net472\DevExpress.CodeParser.v20.1.dll" />
         <file src="files\DevExpress.Images.v20.1.dll" target="lib\net472\DevExpress.Images.v20.1.dll" />
         <file src="files\DevExpress.Mvvm.v20.1.dll" target="lib\net472\DevExpress.Mvvm.v20.1.dll" />
