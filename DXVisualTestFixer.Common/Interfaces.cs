@@ -21,10 +21,6 @@ namespace DXVisualTestFixer.Common {
 		void Update();
 	}
 
-	public interface IAppearanceService {
-		void SetTheme(string themeName, string palette);
-	}
-
 	public interface IActiveService : INotifyPropertyChanged {
 		bool IsActive { get; set; }
 	}

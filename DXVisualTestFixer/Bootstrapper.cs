@@ -22,7 +22,6 @@ namespace DXVisualTestFixer {
 	public class Bootstrapper : UnityBootstrapper {
 		protected override DependencyObject CreateShell() => new Shell();
 		protected override void InitializeShell() {
-			Container.Resolve<IAppearanceService>()?.SetTheme( /*Config.ThemeName*/ "Office2019Colorful", "DarkLilac");
 			Application.Current.MainWindow.Show();
 		}
 
@@ -39,7 +38,6 @@ namespace DXVisualTestFixer {
 			RegisterTypeIfMissing(typeof(IVersionService), typeof(VersionService), true);
 			RegisterTypeIfMissing(typeof(ISettingsViewModel), typeof(SettingsViewModel), false);
 			RegisterTypeIfMissing(typeof(IFolderBrowserDialog), typeof(DXFolderBrowserDialog), false);
-			RegisterTypeIfMissing(typeof(IAppearanceService), typeof(AppearanceService), true);
 			RegisterTypeIfMissing(typeof(IUpdateService), typeof(SquirrelUpdateService), true);
 			RegisterTypeIfMissing(typeof(IDXNotification), typeof(DXNotification), false);
 			RegisterTypeIfMissing(typeof(IDXConfirmation), typeof(DXConfirmation), false);
