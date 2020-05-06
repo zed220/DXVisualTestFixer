@@ -267,7 +267,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 				return;
 			}
 
-			Task.Factory.StartNew(() => ApplyChangesCore(confirmation.IsAutoCommit, confirmation.CommitCaption));
+			DoAsync(() => ApplyChangesCore(confirmation.IsAutoCommit, confirmation.CommitCaption)).ConfigureAwait(false);
 		}
 
 		[PublicAPI]
@@ -415,6 +415,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 
 		async Task<T> DoAsync<T>(Func<T> func) => await Task.Run(func);
 		async Task DoAsync(Action action) => await Task.Run(action);
+		async Task DoAsync(Func<Task> func) => await func();
 
 		bool ValidateConfigCheckChanged() {
 			if(string.IsNullOrWhiteSpace(_config.DefaultPlatform)) {
@@ -451,20 +452,25 @@ namespace DXVisualTestFixer.UI.ViewModels {
 		}
 
 		async Task ApplyChangesCore(bool commitIntoGitRepo, string commitCaption) {
+			await Task.Delay(1).ConfigureAwait(false);
 			if(commitIntoGitRepo && !await ActualizeRepositories()) {
 				obsolescenceTracker.Start();
-				Status = ProgramStatus.Idle;
+				await dispatcher.InvokeAsync(() => Status = ProgramStatus.Idle, DispatcherPriority.Background).Task.ConfigureAwait(false);
 				return;
 			}
 
-			await Task.Factory.StartNew(() => testService.SelectedState.ChangedTests.ForEach(ApplyTest));
+			await DoAsync(() => testService.SelectedState.ChangedTests.ForEach(ApplyTest));
 			if(commitIntoGitRepo && !await PushTestsInRepository(commitCaption)) {
 				obsolescenceTracker.Start();
-				Status = ProgramStatus.Idle;
+				await dispatcher.InvokeAsync(() => Status = ProgramStatus.Idle, DispatcherPriority.Background).Task.ConfigureAwait(false);
 				return;
 			}
 
-			TestsToCommitCount = 0;
+			await dispatcher.InvokeAsync(() => {
+				TestsToCommitCount = 0;
+				Status = ProgramStatus.Idle;
+			}, DispatcherPriority.Background).Task.ConfigureAwait(false);
+			
 			RefreshTestList();
 		}
 
