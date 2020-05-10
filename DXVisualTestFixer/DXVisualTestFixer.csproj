@@ -332,6 +332,10 @@
       <Project>{d4a8e594-2f8c-4acf-9d26-226f2cdccd4a}</Project>
       <Name>DXVisualTestFixer.Minio</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DXVisualTestFixer.Ccnet\DXVisualTestFixer.Ccnet.csproj">
+      <Project>{1E452CE2-6CD0-4411-A759-902CD0C18389}</Project>
+      <Name>DXVisualTestFixer.Ccnet</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DXVisualTestFixer.UI\DXVisualTestFixer.UI.csproj">
       <Project>{6e5e8bc1-a7a3-4ded-ad5e-4c8a09870875}</Project>
       <Name>DXVisualTestFixer.UI</Name>

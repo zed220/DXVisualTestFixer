@@ -427,14 +427,36 @@
                                                     <Setter Property="VerticalAlignment" Value="Center" />
                                                 </Style>
                                             </DataTemplate.Resources>
-                                            <Grid HorizontalAlignment="Left"
-                                                  ToolTip="{Binding Path=RowData.Row.ProblemName, StringFormat={}{0}}">
+                                            <Grid HorizontalAlignment="Left">
+                                                <Grid.ToolTip>
+                                                    <Grid>
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition />
+                                                            <RowDefinition />
+                                                        </Grid.RowDefinitions>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Problem: "/>
+                                                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Path=RowData.Row.ProblemName}"/>
+                                                        <TextBlock Grid.Row="1" Text="Volunteer: "/>
+                                                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Path=RowData.Row.Volunteer, TargetNullValue='None'}"/>
+                                                    </Grid>
+                                                </Grid.ToolTip>
                                                 <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
                                                     <ColumnDefinition Width="*" />
                                                     <ColumnDefinition Width="Auto" />
                                                 </Grid.ColumnDefinitions>
-                                                <dxe:TextEdit x:Name="PART_Editor" />
-                                                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                                <Grid Visibility="{Binding RowData.Row.VolunteerShort, Converter={dx:NullableToVisibilityConverter}}">
+                                                    <Ellipse Fill="Green" StrokeThickness="0" Width="18" Height="18"/>
+                                                    <TextBlock Text="{Binding RowData.Row.VolunteerShort}" FontSize="8"
+                                                               Foreground="White"
+                                                               VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                                </Grid>
+                                                <dxe:TextEdit Grid.Column="1" x:Name="PART_Editor" />
+                                                <StackPanel Grid.Column="2" Orientation="Horizontal">
                                                     <Border Background="LightGray"
                                                             Visibility="{Binding Path=RowData.Row.Optimized, Converter={dx:BooleanToVisibilityConverter}}">
                                                         <TextBlock Text="Optimized" Foreground="Black" FontSize="8" />
@@ -482,6 +504,7 @@
                                 <dxg:GridColumn FieldName="ProblemName" Visible="False" />
                                 <dxg:GridColumn FieldName="Dpi" Visible="False" />
                                 <dxg:GridColumn FieldName="Optimized" Visible="False" />
+                                <dxg:GridColumn FieldName="Volunteer" Visible="False" />
                                 <dxg:GridControl.TotalSummary>
                                     <dxg:GridSummaryItem SummaryType="Count" Alignment="Left" />
                                 </dxg:GridControl.TotalSummary>
@@ -538,6 +561,13 @@
                                                                  Value1="{x:Static common:TestState.Fixed}"
                                                                  PredefinedFormatName="GreenFillWithDarkGreenText"
                                                                  ApplyToRow="True" />
+                                            <dxg:FormatCondition FieldName="Volunteer" ValueRule="NotEqual"
+                                                                 Value1="{x:Null}"
+                                                                 ApplyToRow="True">
+                                                <dxg:FormatCondition.Format>
+                                                    <dx:Format Foreground="Green" />
+                                                </dxg:FormatCondition.Format>
+                                            </dxg:FormatCondition>
                                         </controls:TableViewAdvNavigation.FormatConditions>
                                     </controls:TableViewAdvNavigation>
                                 </dxg:GridControl.View>

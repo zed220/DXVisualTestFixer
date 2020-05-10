@@ -22,8 +22,8 @@ namespace DXVisualTestFixer.UI.Converters {
 		}
 
 		string GetDisplayText(object value) {
-			var strValue = value.ToString();
-			return Predefined.Where(p => p.StrValue == strValue).SingleOrDefault()?.DisplayText ?? strValue;
+			var strValue = value?.ToString() ?? "None";
+			return Predefined.SingleOrDefault(p => p.StrValue == strValue)?.DisplayText ?? strValue;
 		}
 	}
 

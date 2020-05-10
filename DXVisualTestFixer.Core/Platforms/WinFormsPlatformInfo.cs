@@ -7,5 +7,6 @@ namespace DXVisualTestFixer {
 		public string MinioRepository => "WinForms";
 		public string LocalPath => "20{0}_VisualTests_WinForms";
 		public string VersionsFileName => "versions_WinForms.xml";
+		public string FarmTaskName => "Test.v{0} WinForms VisualTests";
 	}
 }

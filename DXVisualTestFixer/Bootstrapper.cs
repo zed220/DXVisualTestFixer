@@ -2,6 +2,7 @@
 using DevExpress.Utils.CommonDialogs;
 using DevExpress.Xpf.Dialogs;
 using DevExpress.Xpf.Docking;
+using DXVisualTestFixer.Ccnet;
 using DXVisualTestFixer.Common;
 using DXVisualTestFixer.Core;
 using DXVisualTestFixer.Core.Configuration;
@@ -27,6 +28,7 @@ namespace DXVisualTestFixer {
 
 		protected override void ConfigureContainer() {
 			base.ConfigureContainer();
+			RegisterTypeIfMissing(typeof(ICCNetProblemsLoader), typeof(CCNetProblemsLoader), true);
 			RegisterTypeIfMissing(typeof(IPlatformProvider), typeof(PlatformProvider), true);
 			RegisterTypeIfMissing(typeof(INotificationService), typeof(NotificationService), true);
 			RegisterTypeIfMissing(typeof(IConfigSerializer), typeof(ConfigSerializer), true);
