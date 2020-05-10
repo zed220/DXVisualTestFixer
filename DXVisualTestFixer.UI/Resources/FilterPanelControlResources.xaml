@@ -45,14 +45,14 @@
                     <Setter.Value>
                         <dxe:CheckedTokenComboBoxStyleSettings AllowEditTokens="False" EnableTokenWrapping="True"
                                                         VerticalAlignment="Center" FilterOutSelectedTokens="False"
-                                                        ShowSelectAllItem="True"/>
+                                                        ShowSelectAllItem="True" />
                     </Setter.Value>
                 </Setter>
                 <Setter Property="ItemTemplate">
                     <Setter.Value>
                         <DataTemplate>
                             <dxfui:ValueCountContentControl Count="{Binding Count}">
-                                <TextBlock Text="{Binding Value}" />
+                                <TextBlock Text="{Binding Value, TargetNullValue='None'}" />
                             </dxfui:ValueCountContentControl>
                         </DataTemplate>
                     </Setter.Value>
@@ -68,11 +68,6 @@
                         </DataTemplate>
                     </Setter.Value>
                 </Setter>
-                <!--<Style.Triggers>
-                    <DataTrigger Binding="{Binding Path=(behaviors:IsFilteredBehavior.IsFiltered), RelativeSource={RelativeSource Self}}" Value="True">
-                        <Setter Property="NullText" Value="Invalid Filter!"/>
-                    </DataTrigger>
-                </Style.Triggers>-->
             </Style>
             <Style x:Key="ItemContainerStyle" TargetType="{x:Type dxe:ListBoxEditItem}">
                 <Setter Property="Template">
@@ -118,6 +113,15 @@
             </Style>
         </ControlTemplate.Resources>
         <dxdo:LayoutGroup ShowCaption="False" AllowDrag="False" Orientation="Vertical">
+            <dxdo:LayoutControlItem Caption="Volunteers">
+                <dxfui:CheckedListFilterElement FieldName="Volunteer" SelectAllWhenFilterIsNull="True">
+                    <dxfui:CheckedListFilterElement.FilterModelTemplate>
+                        <DataTemplate>
+                            <dxe:ComboBoxEdit MaxHeight="200" />
+                        </DataTemplate>
+                    </dxfui:CheckedListFilterElement.FilterModelTemplate>
+                </dxfui:CheckedListFilterElement>
+            </dxdo:LayoutControlItem>
             <dxdo:LayoutControlItem Caption="Dpi">
                 <dxfui:CheckedListFilterElement FieldName="Dpi" SelectAllWhenFilterIsNull="True">
                     <dxfui:CheckedListFilterElement.FilterModelTemplate>

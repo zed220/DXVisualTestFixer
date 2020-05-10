@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using DevExpress.Mvvm;
 using DXVisualTestFixer.Common;
+using DXVisualTestFixer.UI.Common;
 using JetBrains.Annotations;
 
 namespace DXVisualTestFixer.UI.ViewModels {
@@ -20,6 +21,8 @@ namespace DXVisualTestFixer.UI.ViewModels {
 		public string VersionAndFork => TestInfo.Repository.VersionAndFork;
 		public bool Optimized => TestInfo.Optimized;
 		public bool Colorized => TestInfo.Colorized;
+		public string Volunteer => TestInfo.Volunteer;
+		public string VolunteerShort => Volunteer != null ? InitialsExtractor.Extract(Volunteer) : null;
 		public string TeamName => TestInfo.TeamName;
 		public string Theme => TestInfo.Theme;
 		public int Dpi => TestInfo.Dpi;

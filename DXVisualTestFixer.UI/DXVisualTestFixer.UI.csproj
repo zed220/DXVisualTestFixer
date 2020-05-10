@@ -196,6 +196,7 @@
     <Compile Include="Behaviors\ScrollViewerRegistrationBehavior.cs" />
     <Compile Include="Behaviors\UnusedFilesDragDropBehavior.cs" />
     <Compile Include="Common\FilePreviewTemplateSelector.cs" />
+    <Compile Include="Common\InitialsExtractor.cs" />
     <Compile Include="Controls\DraggableScrollViewer.cs" />
     <Compile Include="Controls\FilterPanelControl.cs" />
     <Compile Include="Controls\ImageScalingControl.cs" />

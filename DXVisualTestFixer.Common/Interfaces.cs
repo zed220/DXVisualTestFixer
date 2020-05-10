@@ -62,6 +62,8 @@ namespace DXVisualTestFixer.Common {
 		bool Colorized { get; }
 		int Dpi { get; }
 		string Version { get; }
+		string Volunteer { get; }
+		string VolunteerShort { get; }
 		TestInfo TestInfo { get; }
 		TestState Valid { get; }
 		string ToLog();
@@ -145,9 +147,17 @@ namespace DXVisualTestFixer.Common {
 		string MinioRepository { get; }
 		string LocalPath { get; }
 		string VersionsFileName { get; }
+		string FarmTaskName { get; }
 	}
 
 	public interface IPlatformProvider {
 		public IPlatformInfo[] PlatformInfos { get; }
+	}
+	public interface ICCNetProblemsLoader {
+		Task<List<ICCNetProblem>> GetProblemsAsync(string projectName);
+	}
+	public interface ICCNetProblem {
+		string TestName { get; }
+		string Volunteer { get; }
 	}
 }
