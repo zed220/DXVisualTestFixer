@@ -7,6 +7,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DXVisualTestFixer", "DXVisu
 	ProjectSection(ProjectDependencies) = postProject
 		{6E5E8BC1-A7A3-4DED-AD5E-4C8A09870875} = {6E5E8BC1-A7A3-4DED-AD5E-4C8A09870875}
 		{A3D50801-F65F-4201-8AEE-7254DAE4732F} = {A3D50801-F65F-4201-8AEE-7254DAE4732F}
+		{D4A8E594-2F8C-4ACF-9D26-226F2CDCCD4A} = {D4A8E594-2F8C-4ACF-9D26-226F2CDCCD4A}
+		{BA984EE7-BC1B-4FE2-9EC4-B8B8BB2A7617} = {BA984EE7-BC1B-4FE2-9EC4-B8B8BB2A7617}
+		{1E452CE2-6CD0-4411-A759-902CD0C18389} = {1E452CE2-6CD0-4411-A759-902CD0C18389}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DXVisualTestFixer.Core", "DXVisualTestFixer.Core\DXVisualTestFixer.Core.csproj", "{A3D50801-F65F-4201-8AEE-7254DAE4732F}"
@@ -24,6 +27,11 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DXVisualTestFixer.Minio", "DXVisualTestFixer.Minio\DXVisualTestFixer.Minio.csproj", "{D4A8E594-2F8C-4ACF-9D26-226F2CDCCD4A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DXVisualTestFixer.Git", "DXVisualTestFixer.Git\DXVisualTestFixer.Git.csproj", "{BA984EE7-BC1B-4FE2-9EC4-B8B8BB2A7617}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DXVisualTestFixer.Ccnet", "DXVisualTestFixer.Ccnet\DXVisualTestFixer.Ccnet.csproj", "{1E452CE2-6CD0-4411-A759-902CD0C18389}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BCEC7D6C-B798-4DC7-A803-EBC75B0EFBBD} = {BCEC7D6C-B798-4DC7-A803-EBC75B0EFBBD}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -68,6 +76,12 @@ Global
 		{BA984EE7-BC1B-4FE2-9EC4-B8B8BB2A7617}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BA984EE7-BC1B-4FE2-9EC4-B8B8BB2A7617}.DebugPublish|Any CPU.ActiveCfg = DebugPublish|Any CPU
 		{BA984EE7-BC1B-4FE2-9EC4-B8B8BB2A7617}.DebugPublish|Any CPU.Build.0 = DebugPublish|Any CPU
+		{1E452CE2-6CD0-4411-A759-902CD0C18389}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E452CE2-6CD0-4411-A759-902CD0C18389}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E452CE2-6CD0-4411-A759-902CD0C18389}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E452CE2-6CD0-4411-A759-902CD0C18389}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1E452CE2-6CD0-4411-A759-902CD0C18389}.DebugPublish|Any CPU.ActiveCfg = DebugPublish|Any CPU
+		{1E452CE2-6CD0-4411-A759-902CD0C18389}.DebugPublish|Any CPU.Build.0 = DebugPublish|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

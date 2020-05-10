@@ -28,6 +28,7 @@ namespace DXVisualTestFixer.Common {
 		public string TeamName { get; set; }
 		public string Theme { get; set; }
 		public string Version { get; set; }
+		public string Volunteer { get; set; }
 		public int Dpi { get; set; } = 96;
 		public Lazy<byte[]> ImageBeforeArrLazy { get; set; }
 		public byte[] ImageBeforeSha { get; set; }

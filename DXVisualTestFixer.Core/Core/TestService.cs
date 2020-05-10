@@ -86,7 +86,7 @@ namespace DXVisualTestFixer.Core {
 			var actualRepositories = forked ? GetForkedMinioRepositories() : await GetRegularMinioRepositories();
 			var state = await LoadTestsAsync(actualRepositories, !forked);
 			loggingService.SendMessage("Start updating problems");
-			await ((TestInfoContainer) state).UpdateProblems();
+			await state.UpdateProblems();
 			loggingService.SendMessage("Almost there");
 			SelectedState = state;
 		}
@@ -200,7 +200,7 @@ namespace DXVisualTestFixer.Core {
 			return true;
 		}
 
-		async Task<ITestInfoContainer> LoadTestsAsync(List<MinioRepository> minioRepositories, bool allowEditing) {
+		async Task<TestInfoContainer> LoadTestsAsync(List<MinioRepository> minioRepositories, bool allowEditing) {
 			loadingProgressController.Flush();
 			loadingProgressController.Enlarge(minioRepositories.Count);
 			loggingService.SendMessage("Collecting tests information from minio");
@@ -213,8 +213,8 @@ namespace DXVisualTestFixer.Core {
 					continue;
 				}
 
-				allTasks.Add(LoadTestsCoreAsync(minioRepository).ContinueWith(cachedResult => {
-					var cached = cachedResult.Result;
+				allTasks.Add(LoadTestsCoreAsync(minioRepository).ContinueWith(async c => await UpdateVolunteers(c.Result)).ContinueWith(cachedResult => {
+					var cached = cachedResult.Result.Result;
 					lock(locker) {
 						result.TestList.AddRange(cached.TestList);
 						result.UsedFilesLinks[cached.Repository] = cached.UsedFilesLinks;
@@ -228,6 +228,15 @@ namespace DXVisualTestFixer.Core {
 			return result;
 		}
 
+		async Task<TestInfoCached> UpdateVolunteers(TestInfoCached cached) {
+			var platformInfo = ServiceLocator.Current.GetInstance<IPlatformProvider>().PlatformInfos.Single(p => p.Name == cached.Repository.Platform);
+			var problems = await ServiceLocator.Current.GetInstance<ICCNetProblemsLoader>().GetProblemsAsync(String.Format(platformInfo.FarmTaskName, cached.Repository.Version)).ConfigureAwait(false);
+			foreach(var test in cached.TestList) {
+				test.Volunteer = problems.FirstOrDefault(p => p.TestName == test.NameWithNamespace)?.Volunteer;
+			}
+			return cached;
+		}
+		
 		PlatformAndVersion CreatePlatformAndVersion(Repository repository) => new PlatformAndVersion(repository.Platform, repository.Version);
 		
 		async Task<TestInfoCached> LoadTestsCoreAsync(MinioRepository minioRepository) {
