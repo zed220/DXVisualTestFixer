@@ -3,6 +3,7 @@ using System.Linq;
 using System.ServiceModel;
 using System.Threading.Tasks;
 using DevExpress.CCNetSmart.Lib;
+using DXVisualTestFixer.Ccnet.Core;
 using DXVisualTestFixer.Common;
 
 namespace DXVisualTestFixer.Ccnet {
@@ -12,28 +13,40 @@ namespace DXVisualTestFixer.Ccnet {
 
 		public async Task<List<ICCNetProblem>> GetProblemsAsync(string projectName) {
 			await Task.Delay(1).ConfigureAwait(false);
-			return await Task.Run(() => GetProblemsCore(projectName)).ConfigureAwait(false);
+			var cruiseManager = CreateCCNetManager();
+			var problems = await GetProblemsAsyncCore(cruiseManager, projectName);
+			return problems.Select(CCNetProblem.FromCCNet).ToList();
+		} 
+		async Task<List<ProjectProblem>> GetProblemsAsyncCore(ISmartCruiseManager cruiseManager, string projectName) {
+			await Task.Delay(1).ConfigureAwait(false);
+			return await Task.Run(() => GetProblemsCore(cruiseManager, projectName)).ConfigureAwait(false);
 		}
 
-		static List<ICCNetProblem> GetProblemsCore(string projectName) {
+
+		public async Task<bool> TakeVolunteers(string projectName, string[] testFullNames, string volunteer) {
+			await Task.Delay(1).ConfigureAwait(false);
+			var cruiseManager = CreateCCNetManager();
+			var problems = (await GetProblemsAsyncCore(cruiseManager, projectName).ConfigureAwait(false)).Select(p => p.Name).ToHashSet();
+			var validTestFullNames = testFullNames.Where(problems.Contains).Distinct().ToArray();
+			try {
+				cruiseManager.SetProjectProblemInfo(projectName, validTestFullNames, volunteer, string.Empty, volunteer);
+			}
+			catch {
+				return false;
+			}
+			return true;
+		}
+
+		static List<ProjectProblem> GetProblemsCore(ISmartCruiseManager cruiseManager, string projectName) {
+			var problems = cruiseManager.GetProjectProblems(projectName);
+			return problems.Problems.Where(p => p.IsActive && !p.IsUnstable).ToList();
+		}
+
+		static ISmartCruiseManager CreateCCNetManager() {
 			ChannelFactory<ISmartCruiseManager> cruiseManagerFactory =
 				new ChannelFactory<ISmartCruiseManager>(new NetTcpBinding(SecurityMode.None) {MaxReceivedMessageSize = 1024102464}, new EndpointAddress(wcfPath));
 			ISmartCruiseManager cruiseManager = cruiseManagerFactory.CreateChannel();
-			var problems = cruiseManager.GetProjectProblems(projectName);
-			return problems.Problems.Where(p => p.IsActive && !p.IsUnstable).Select(CCNetProblem.FromCCNet).ToList();
+			return cruiseManager;
 		}
     }
-	class CCNetProblem : ICCNetProblem {
-		CCNetProblem(string testName, string volunteer) {
-			TestName = testName;
-			Volunteer = volunteer;
-		}
-
-		public string TestName { get; }
-		public string Volunteer { get; }
-
-		public static ICCNetProblem FromCCNet(ProjectProblem problem) {
-			return new CCNetProblem(problem.Name, problem.Volunteer);
-		}
-	}
 }

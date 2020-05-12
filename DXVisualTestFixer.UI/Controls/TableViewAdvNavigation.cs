@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Input;
+using DevExpress.Mvvm.Native;
 using DevExpress.Xpf.Grid;
 using DXVisualTestFixer.Common;
 using DXVisualTestFixer.UI.ViewModels;
@@ -7,12 +10,45 @@ using JetBrains.Annotations;
 
 namespace DXVisualTestFixer.UI.Controls {
 	public class TableViewAdvNavigation : TableView {
-		public void MoveNextDataRow() {
-			RepeatMoveAction(i => ++i);
+		[PublicAPI]
+		public void MoveNextDataRow() => RepeatMoveAction(i => ++i);
+
+		[PublicAPI]
+		public void MovePrevDataRow() => RepeatMoveAction(i => --i);
+
+		[PublicAPI]
+		public void TakeVolunteerGroupRow(GridGroupRowMenuInfo info) {
+			((MainViewModel)DataContext).TakeVolunteerForManyTests(GetTestsFromGroupRow(info.Row.RowHandle.Value).Distinct().ToArray());
 		}
 
-		public void MovePrevDataRow() {
-			RepeatMoveAction(i => --i);
+		[PublicAPI]
+		public void TakeVolunteerForAllVisibleRows() {
+			var i = 0;
+			var result = new List<TestInfoModel>(); 
+			while(i < Grid.VisibleRowCount - 1) {
+				var rowHandle = Grid.GetRowHandleByVisibleIndex(i++);
+				if(Grid.IsGroupRowHandle(rowHandle)) {
+					result.AddRange(GetTestsFromGroupRow(rowHandle));
+					continue;
+				}
+				if(Grid.GetRow(rowHandle) is TestInfoModel test)
+					result.Add(test);
+			}
+			((MainViewModel)DataContext).TakeVolunteerForManyTests(result.Distinct().ToArray());
+		}
+
+		List<TestInfoModel> GetTestsFromGroupRow(int groupRowHandle) {
+			var result = new List<TestInfoModel>(); 
+			foreach(var rowHandle in GetChildHandles(groupRowHandle)) {
+				if(Grid.IsGroupRowHandle(rowHandle)) {
+					result.AddRange(GetTestsFromGroupRow(rowHandle));
+					continue;
+				}
+
+				if(Grid.GetRow(rowHandle) is TestInfoModel test)
+					result.Add(test);
+			}
+			return result;
 		}
 
 		void RepeatMoveAction(Func<int, int> action) {

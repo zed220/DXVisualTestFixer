@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
+using System.Windows.Threading;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.Native;
 using DevExpress.Utils.CommonDialogs;
@@ -12,6 +13,7 @@ using DevExpress.Xpf.Bars;
 using DevExpress.Xpf.Core;
 using DXVisualTestFixer.Common;
 using DXVisualTestFixer.UI.Models;
+using DXVisualTestFixer.UI.Native;
 using JetBrains.Annotations;
 using Microsoft.Practices.ServiceLocation;
 using Prism.Interactivity.InteractionRequest;
@@ -27,25 +29,30 @@ namespace DXVisualTestFixer.UI.ViewModels {
 		public ObservableCollection<RepositoryModel> Repositories { get; }
 		public override string ToString() => Platform.Name;
 	}
-	
+
 	public class SettingsViewModel : ViewModelBase, ISettingsViewModel {
 		readonly IConfigSerializer _configSerializer;
 		readonly IPlatformProvider _platformProvider;
+		readonly Dispatcher _dispatcher;
 
 		IConfig _config;
 		ObservableCollection<PlatformModel> _platformModels;
 		string _themeName;
+		string _volunteer;
 		string _workingDirectory;
-		PlatformModel _defaultPlatform; 
+		bool _isVolunteerLoading;
+		bool _isVolunteerValid = true;
+		PlatformModel _defaultPlatform;
 
 		public SettingsViewModel(IConfigSerializer configSerializer) {
 			Title = "Settings";
+			_dispatcher = Dispatcher.CurrentDispatcher;
 			_configSerializer = configSerializer;
 			_platformProvider = ServiceLocator.Current.GetInstance<IPlatformProvider>();
 			Config = configSerializer.GetConfig();
 			Commands = UICommand.GenerateFromMessageButton(MessageButton.OKCancel, new DialogService(), MessageResult.OK, MessageResult.Cancel);
-			Commands.Single(c => c.IsDefault).Command = new DelegateCommand(Save, () => !IsAnyRepositoryDownloading() && DefaultPlatform != null);
-			Commands.Single(c => c.IsCancel).Command = new DelegateCommand(Cancel, () => !IsAnyRepositoryDownloading() && DefaultPlatform != null);
+			Commands.Single(c => c.IsDefault).Command = new DelegateCommand(Save, AllowDialogButtons);
+			Commands.Single(c => c.IsCancel).Command = new DelegateCommand(Cancel, AllowDialogButtons);
 		}
 
 		[UsedImplicitly]
@@ -57,8 +64,28 @@ namespace DXVisualTestFixer.UI.ViewModels {
 		[PublicAPI]
 		public PlatformModel DefaultPlatform {
 			get => _defaultPlatform;
-			set => SetProperty(ref _defaultPlatform, value,() => Config.DefaultPlatform = DefaultPlatform?.Platform.Name);
+			set => SetProperty(ref _defaultPlatform, value, () => Config.DefaultPlatform = DefaultPlatform?.Platform.Name);
 		}
+
+		[PublicAPI]
+		public string Volunteer {
+			get => _volunteer;
+			set => SetProperty(ref _volunteer, value, UpdateVolunteer);
+		}
+
+		[PublicAPI]
+		public bool IsVolunteerLoading {
+			get => _isVolunteerLoading;
+			set => SetProperty(ref _isVolunteerLoading, value);
+		}
+		
+		[PublicAPI]
+		public bool IsVolunteerValid {
+			get => _isVolunteerValid;
+			set => SetProperty(ref _isVolunteerValid, value);
+		}
+		
+
 
 		[PublicAPI]
 		public string ThemeName {
@@ -91,8 +118,9 @@ namespace DXVisualTestFixer.UI.ViewModels {
 				repo.Path = Path.Combine(WorkingDirectory, string.Format(GetPlatform(_platformProvider, repo.Repository.Platform).LocalPath, repo.Version));
 				repo.UpdateDownloadState();
 			}
+
 			foreach(var platformModel in PlatformModels) {
-				RepositoryModel.ActualizeRepositories(platformModel.Platform, platformModel.Repositories, WorkingDirectory);	
+				RepositoryModel.ActualizeRepositories(platformModel.Platform, platformModel.Repositories, WorkingDirectory);
 			}
 		}
 
@@ -100,11 +128,38 @@ namespace DXVisualTestFixer.UI.ViewModels {
 			return platformProvider.PlatformInfos.Single(i => i.Name == platform);
 		}
 
+		bool AllowDialogButtons() {
+			return !IsAnyRepositoryDownloading() && DefaultPlatform != null && !string.IsNullOrWhiteSpace(_volunteer) && !IsVolunteerLoading;
+		}
+
 		void OnConfigChanged() {
 			LoadRepositories();
 			ThemeName = Config.ThemeName;
 			WorkingDirectory = Config.WorkingDirectory;
+			Volunteer = Config.Volunteer;
 			DefaultPlatform = PlatformModels.FirstOrDefault(p => p.Platform.Name == Config.DefaultPlatform);
+			UpdateVolunteer();
+		}
+
+		async void UpdateVolunteer() {
+			IsVolunteerLoading = true;
+			Config.Volunteer = Volunteer;
+			var volunteer = Volunteer;
+			if(volunteer == null) {
+				var login = await LoginExtractor.GetLoginAsync().ConfigureAwait(false);
+				_dispatcher.Invoke(() => {
+					Config.Volunteer = Volunteer = login;
+					IsVolunteerLoading = false;
+					IsVolunteerValid = true;
+				}, DispatcherPriority.Background);
+			}
+			else {
+				var loginValid = await LoginExtractor.CheckLoginAsync(volunteer).ConfigureAwait(false);
+				_dispatcher.Invoke(() => {
+					IsVolunteerValid = loginValid;
+					IsVolunteerLoading = false;
+				}, DispatcherPriority.Background);
+			}
 		}
 
 		void LoadRepositories() {
@@ -115,6 +170,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 				var platform = GetPlatform(_platformProvider, platformAndRepo.Key);
 				PlatformModels.Add(new PlatformModel(platform, platformAndRepo.Select(r => new RepositoryModel(r, platform)).ToObservableCollection()));
 			}
+
 			PlatformModels.CollectionChanged += Repositories_CollectionChanged;
 		}
 
