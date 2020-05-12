@@ -394,7 +394,7 @@
                                                 Header="Version" Visible="False" AllowSearchPanel="True"/>
                                 <dxg:GridColumn FieldName="TeamName" GroupIndex="1" MergeWithPreviousGroup="True"
                                                 Header="Team" Visible="False" AllowSearchPanel="True" />
-                                <dxg:GridColumn FieldName="TestInfo.Name" GroupIndex="2" MergeWithPreviousGroup="False"
+                                <dxg:GridColumn FieldName="Name" GroupIndex="2" MergeWithPreviousGroup="False"
                                                 Header="Name" Visible="False" AllowSearchPanel="True" />
                                 <dxg:GridColumn FieldName="CommitChange" Header="Commit" Width="29">
                                     <dxg:GridColumn.CellTemplate>
@@ -524,19 +524,42 @@
                                                                      SearchPanelHorizontalAlignment="Stretch"
                                                                      GroupRowCheckBoxFieldName="CommitChange"
                                                                      ShowFilterPanelMode="Never">
-                                        <dxb:BarManager.DXContextMenu>
-                                            <dxb:PopupMenu>
-                                                <dxb:BarButtonItem Content="Commit All In Viewport"
-                                                                   Glyph="{dx:DXImage SvgImages/PDF Viewer/SelectAll.svg}"
-                                                                   Command="{DXCommand Execute='@e(PART_View).CommitAllInViewport()'}" />
-                                                <dxb:BarButtonItem Content="Clear Commits In Viewport"
-                                                                   Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Clear.svg}"
-                                                                   Command="{DXCommand Execute='@e(PART_View).ClearCommitsInViewport()'}" />
-                                                <dxb:BarButtonItem Content="Clear All Commits"
-                                                                   Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Clear.svg}"
-                                                                   Command="{DXCommand Execute='ClearCommits()'}" />
-                                            </dxb:PopupMenu>
-                                        </dxb:BarManager.DXContextMenu>
+                                        <controls:TableViewAdvNavigation.GroupRowMenuCustomizations>
+                                            <dxb:BarButtonItem Content="Commit All In Viewport"
+                                                               Glyph="{dx:DXImage SvgImages/PDF Viewer/SelectAll.svg}"
+                                                               Command="{DXCommand Execute='@e(PART_View).CommitAllInViewport()'}" />
+                                            <dxb:BarButtonItem Content="Clear Commits In Viewport"
+                                                               Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Clear.svg}"
+                                                               Command="{DXCommand Execute='@e(PART_View).ClearCommitsInViewport()'}" />
+                                            <dxb:BarButtonItem Content="Clear All Commits"
+                                                               Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Clear.svg}"
+                                                               Command="{DXCommand Execute='@e(PART_View).DataContext.ClearCommits()'}" />
+                                            <dxb:BarItemSeparator/>
+                                            <dxb:BarButtonItem Content="Take Volunteer For All Tests In This Group"
+                                                               Glyph="{dx:DXImage SvgImages/Business Objects/BO_Person.svg}"
+                                                               Command="{DXCommand Execute='@e(PART_View).TakeVolunteerGroupRow(@c)'}" />
+                                            <dxb:BarButtonItem Content="Take Volunteer For All Tests In Viewport"
+                                                               Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_User.svg}"
+                                                               Command="{DXCommand Execute='@e(PART_View).TakeVolunteerForAllVisibleRows()'}" />
+                                        </controls:TableViewAdvNavigation.GroupRowMenuCustomizations>
+                                        <controls:TableViewAdvNavigation.RowCellMenuCustomizations>
+                                            <dxb:BarButtonItem Content="Commit All In Viewport"
+                                                               Glyph="{dx:DXImage SvgImages/PDF Viewer/SelectAll.svg}"
+                                                               Command="{DXCommand Execute='@e(PART_View).CommitAllInViewport()'}" />
+                                            <dxb:BarButtonItem Content="Clear Commits In Viewport"
+                                                               Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Clear.svg}"
+                                                               Command="{DXCommand Execute='@e(PART_View).ClearCommitsInViewport()'}" />
+                                            <dxb:BarButtonItem Content="Clear All Commits"
+                                                               Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Clear.svg}"
+                                                               Command="{DXCommand Execute='@e(PART_View).DataContext.ClearCommits()'}" />
+                                            <dxb:BarItemSeparator/>
+                                            <dxb:BarButtonItem Content="{DXBinding '`Take Volunteer For ` + @c.Row.Row.Name'}"
+                                                               Glyph="{dx:DXImage SvgImages/Business Objects/BO_Person.svg}"
+                                                               Command="{DXCommand Execute='@e(PART_View).DataContext.TakeVolunteer(@c.Row.Row)'}" />
+                                            <dxb:BarButtonItem Content="Take Volunteer For All Tests In Viewport"
+                                                               Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_User.svg}"
+                                                               Command="{DXCommand Execute='@e(PART_View).TakeVolunteerForAllVisibleRows()'}" />
+                                        </controls:TableViewAdvNavigation.RowCellMenuCustomizations>
                                         <dxmvvm:Interaction.Behaviors>
                                             <dxmvvm:EventToCommand EventName="MoveNext"
                                                                    Command="{DXCommand Execute='@s.AssociatedObject.MoveNextDataRow()'}"

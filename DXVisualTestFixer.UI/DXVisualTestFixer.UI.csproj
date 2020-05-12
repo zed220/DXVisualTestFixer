@@ -174,6 +174,8 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.DirectoryServices.AccountManagement" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -226,6 +228,7 @@
     <Compile Include="Models\OpenSolutionModelHelper.cs" />
     <Compile Include="Native\DiffLineBackgroundRenderer.cs" />
     <Compile Include="Native\FileSystemHelper.cs" />
+    <Compile Include="Native\LoginExtractor.cs" />
     <Compile Include="Native\RepositoryObsolescenceTracker.cs" />
     <Compile Include="PrismCommon\LayoutPanelRegionAdapter.cs" />
     <Compile Include="PrismCommon\PopupDXWindowAction.cs" />

@@ -23,6 +23,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 		public bool Colorized => TestInfo.Colorized;
 		public string Volunteer => TestInfo.Volunteer;
 		public string VolunteerShort => Volunteer != null ? InitialsExtractor.Extract(Volunteer) : null;
+		public string Name => TestInfo.Name;
 		public string TeamName => TestInfo.TeamName;
 		public string Theme => TestInfo.Theme;
 		public int Dpi => TestInfo.Dpi;
