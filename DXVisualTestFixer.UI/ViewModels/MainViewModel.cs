@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.DirectoryServices.AccountManagement;
 using System.Linq;
+using System.Net.NetworkInformation;
+using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -313,6 +316,29 @@ namespace DXVisualTestFixer.UI.ViewModels {
 		}
 
 		[PublicAPI]
+		public async void TakeVolunteer(TestInfoModel testInfoModel) {
+			TakeVolunteerForManyTests(new []{ testInfoModel });
+			// var ccnetTaskMask = platformProvider.PlatformInfos.Single(p => p.Name == _defaultPlatform).FarmTaskName;
+			//
+			// await ServiceLocator.Current.GetInstance<ICCNetProblemsLoader>().TakeVolunteer(string.Format(ccnetTaskMask, testInfoModel.Version), testInfoModel.TestInfo.NameWithNamespace, _config.Volunteer).ConfigureAwait(false);
+			// await dispatcher.InvokeAsync(() => Status = ProgramStatus.Loading, DispatcherPriority.Background).Task.ConfigureAwait(false);
+			// await UpdateAllTests().ConfigureAwait(false);//TODO: update volunteers only
+		}
+		
+		[PublicAPI]
+		public async void TakeVolunteerForManyTests(TestInfoModel[] testInfoModels) {
+			Status = ProgramStatus.Loading;
+			await Task.Delay(1).ConfigureAwait(false);
+			var ccnetTaskMask = platformProvider.PlatformInfos.Single(p => p.Name == _defaultPlatform).FarmTaskName;
+			foreach(var groupedByVersion in testInfoModels.GroupBy(t => t.Version)) {
+				var version = groupedByVersion.Key;
+				var testNames = groupedByVersion.Select(t => t.TestInfo.NameWithNamespace).Distinct().ToArray();
+				await ServiceLocator.Current.GetInstance<ICCNetProblemsLoader>().TakeVolunteers(string.Format(ccnetTaskMask, version), testNames, _config.Volunteer).ConfigureAwait(false);
+			}
+			await UpdateAllTests().ConfigureAwait(false);//TODO: update volunteers only
+		}
+
+		[PublicAPI]
 		public void CommitTest(TestInfoModel testInfoModel) {
 			TestsToCommitCount++;
 			testService.SelectedState.ChangedTests.Add(testInfoModel.TestInfo);
@@ -420,6 +446,10 @@ namespace DXVisualTestFixer.UI.ViewModels {
 		bool ValidateConfigCheckChanged() {
 			if(string.IsNullOrWhiteSpace(_config.DefaultPlatform)) {
 				notificationService.DoNotification("Default Platform Does Not Set", "Select default platform in Settings", MessageBoxImage.Warning);
+				return ShowSettingsCore();
+			}
+			if(string.IsNullOrWhiteSpace(_config.Volunteer)) {
+				notificationService.DoNotification("User Name Does Not Set", "Set user in settings", MessageBoxImage.Warning);
 				return ShowSettingsCore();
 			}
 			

@@ -57,6 +57,7 @@ namespace DXVisualTestFixer.Common {
 		string VersionAndFork { get; }
 		int Problem { get; }
 		string ProblemName { get; }
+		string Name { get; }
 		string Theme { get; }
 		bool Optimized { get; }
 		bool Colorized { get; }
@@ -81,6 +82,7 @@ namespace DXVisualTestFixer.Common {
 
 	public interface IConfig {
 		string ThemeName { get; set; }
+		string Volunteer { get; set; }
 		Repository[] Repositories { get; set; }
 		string WorkingDirectory { get; set; }
 		string WhatsNewSeenForVersion { get; set; }
@@ -155,6 +157,7 @@ namespace DXVisualTestFixer.Common {
 	}
 	public interface ICCNetProblemsLoader {
 		Task<List<ICCNetProblem>> GetProblemsAsync(string projectName);
+		Task<bool> TakeVolunteers(string projectName, string[] testFullNames, string volunteer);
 	}
 	public interface ICCNetProblem {
 		string TestName { get; }

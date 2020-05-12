@@ -91,6 +91,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <GroupBox Header="Auto loader" Margin="5">
@@ -113,6 +114,34 @@
                     </dx:BackgroundPanel>
                 </GroupBox>
                 <StackPanel Grid.Row="1" Orientation="Horizontal">
+                    <TextBlock Text="User Name:" Margin="2" VerticalAlignment="Center"/>
+                    <dxe:ButtonEdit x:Name="cbVolunteer" EditValue="{Binding Volunteer}" Width="150"
+                                      NullText="{Binding IsVolunteerLoading, Converter={dxmvvm:BooleanToObjectConverter TrueValue='Auto detecting user...', FalseValue='Enter your domain name here'}}" 
+                                      Margin="2" AllowDefaultButton="False"
+                                      IsTextEditable="{Binding IsVolunteerLoading, Converter={dxmvvm:BooleanNegationConverter}}">
+                        <dxe:ButtonEdit.Buttons>
+                            <dxe:LoadingIndicatorButtonInfo IsLeft="False" Visibility="{Binding IsVolunteerLoading, Converter={dx:BooleanToVisibilityConverter}}"/>
+                        </dxe:ButtonEdit.Buttons>
+                        <dxe:ButtonEdit.Style>
+                            <Style TargetType="{x:Type dxe:TextEdit}">
+                                <Style.Triggers>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding Volunteer}" Value="{x:Null}"/>
+                                            <Condition Binding="{Binding IsVolunteerLoading}" Value="False"/>
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="Background" Value="Red" />
+                                    </MultiDataTrigger>
+                                    <DataTrigger Binding="{Binding IsVolunteerLoading}" Value="True">
+                                        <Setter Property="Background" Value="LightYellow" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </dxe:ButtonEdit.Style>
+                    </dxe:ButtonEdit>
+                    <TextBlock Text="User not found on domain!" Foreground="Red" Margin="2" Visibility="{Binding IsVolunteerValid, Converter={dx:BooleanToVisibilityConverter Invert=True}}"/>
+                </StackPanel>
+                <StackPanel Grid.Row="2" Orientation="Horizontal">
                     <TextBlock Text="Default Platform:" Margin="2" VerticalAlignment="Center"/>
                     <dxe:ComboBoxEdit x:Name="cbDefaultPlatform" ItemsSource="{Binding PlatformModels}" EditValue="{Binding DefaultPlatform, UpdateSourceTrigger=PropertyChanged}" Width="150"
                                       NullText="Select Default Platform" IsTextEditable="False" Margin="2">
@@ -127,7 +156,7 @@
                         </dxe:ComboBoxEdit.Style>
                     </dxe:ComboBoxEdit>
                 </StackPanel>
-                <ItemsControl Grid.Row="2" ItemsSource="{Binding PlatformModels}" Grid.IsSharedSizeScope="True">
+                <ItemsControl Grid.Row="3" ItemsSource="{Binding PlatformModels}" Grid.IsSharedSizeScope="True">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Grid>
