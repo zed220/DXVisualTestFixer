@@ -44,13 +44,24 @@ namespace DXVisualTestFixer.Core.Configuration {
 				config.Repositories = config.Repositories.Where(r => r.Platform != null).ToArray();
 
 			var reposToDownload = new List<Repository>();
+			var reposOutdated = new List<Repository>();
 			foreach(var platform in ServiceLocator.Current.GetInstance<IPlatformProvider>().PlatformInfos) {
-				foreach(var version in RepositoryLoader.GetVersions(platform)) {
-					if(config.Repositories.Where(r => r.Platform == platform.Name).Select(r => r.Version).Contains(version))
+				var conigRepos = config.Repositories.Where(r => r.Platform == platform.Name);
+				var repoVersions = RepositoryLoader.GetVersions(platform);
+				foreach(var version in repoVersions) {
+					if(conigRepos.Select(r => r.Version).Contains(version))
 						continue;
 					reposToDownload.Add(Repository.CreateRegular(platform.Name, version, Path.Combine(config.WorkingDirectory,platform.LocalPath, version)));
 				}
+				foreach(var repo in conigRepos) {
+					if(!repoVersions.Contains(repo.Version))
+						reposOutdated.Add(repo);
+				}
 			}
+			
+			var repos = config.Repositories.ToList();
+			repos.RemoveAll(reposOutdated.Contains);
+			config.Repositories = repos.ToArray();
 
 			if(reposToDownload.Count > 0)
 				config.Repositories = config.Repositories.Concat(reposToDownload).ToArray();
