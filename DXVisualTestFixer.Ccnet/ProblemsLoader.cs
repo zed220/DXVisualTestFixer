@@ -39,7 +39,7 @@ namespace DXVisualTestFixer.Ccnet {
 
 		static List<ProjectProblem> GetProblemsCore(ISmartCruiseManager cruiseManager, string projectName) {
 			var problems = cruiseManager.GetProjectProblems(projectName);
-			return problems.Problems.Where(p => p.IsActive && !p.IsUnstable).ToList();
+			return problems.Problems.Where(p => p.IsActive).ToList();
 		}
 
 		static ISmartCruiseManager CreateCCNetManager() {
