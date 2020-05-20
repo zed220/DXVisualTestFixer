@@ -59,7 +59,7 @@ namespace DXVisualTestFixer.Core {
 					if(file.Contains("fail"))
 						failed = true;
 					var task = Task.Run(async () => {
-						var xmlString = await minio.Download(file);
+						var xmlString = (await minio.Download(file)).FixAmpersands();
 						var myXmlDocument = new XmlDocument();
 						myXmlDocument.LoadXml("<root>" + xmlString + "</root>");
 						var rootNode = myXmlDocument.FindByName("root");
@@ -99,6 +99,10 @@ namespace DXVisualTestFixer.Core {
 			return new CorpDirTestInfoContainer(failedTestsList, usedFiles.ToList(), elapsedTimes.ToList(), timings);
 		}
 
+		static string FixAmpersands(this string xml) {
+			return xml.Replace("&", "&amp;");
+		}
+
 		static (DateTime sources, DateTime tests)? FindTimings(XmlNode rootNode) {
 			var timingsNode = rootNode?.FindByName("Timings");
 			if(timingsNode == null)
@@ -119,7 +123,7 @@ namespace DXVisualTestFixer.Core {
 		}
 
 		static IEnumerable<XmlElement> FindErrors(XmlNode rootNode) {
-			var result = rootNode.FindByName("root")?.FindAllByName("error").Cast<XmlElement>() ?? Enumerable.Empty<XmlElement>();
+			var result = rootNode.FindAllByName("error").Cast<XmlElement>() ?? Enumerable.Empty<XmlElement>();
 			return result.Concat(rootNode.FindByName("test-results")?.FindAllByName("error").Cast<XmlElement>() ?? Enumerable.Empty<XmlElement>());
 		}
 
