@@ -603,9 +603,9 @@
                     <dxdo:LayoutGroup AllowDrag="False" ShowCaption="False"
                                       DataContext="{Binding CurrentTest}"
                                       Orientation="Vertical"
-                                      dxb:MergingProperties.ElementMergingBehavior="{Binding CurrentTest, Converter={StaticResource RibbonMergeConverter}}">
+                                      dxb:MergingProperties.ElementMergingBehavior="{Binding Converter={StaticResource RibbonMergeConverter}}">
                         <dxdo:LayoutPanel ShowCaption="False"
-                                          dxb:MergingProperties.ElementMergingBehavior="{Binding CurrentTest, Converter={StaticResource RibbonMergeConverter}}"
+                                          dxb:MergingProperties.ElementMergingBehavior="{Binding Converter={StaticResource RibbonMergeConverter}}"
                                           Visibility="{Binding Converter={converters:DisplayTestToVisibilityConverter}}">
                             <controls:TestInfoControl />
                         </dxdo:LayoutPanel>
