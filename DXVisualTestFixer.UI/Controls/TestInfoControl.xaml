@@ -35,9 +35,9 @@
     <dxdo:DockLayoutManager>
         <dxdo:LayoutGroup Orientation="Vertical" ShowCaption="False">
             <dxdo:LayoutPanel dxb:MergingProperties.ElementMergingBehavior="All" ShowCaption="False" ShowBorder="False">
-                <controls:ImageScalingControl TestInfoModel="{Binding CurrentTest}" />
+                <controls:ImageScalingControl TestInfoModel="{Binding}" />
             </dxdo:LayoutPanel>
-            <dxdo:LayoutPanel DataContext="{Binding CurrentTest}" ItemHeight="150" ShowCaption="False">
+            <dxdo:LayoutPanel DataContext="{Binding}" ItemHeight="150" ShowCaption="False">
                 <dx:DXTabControl Padding="1">
                     <dx:DXTabItem Header="Diff Compact">
                         <avalonedit:TextEditor DataContext="{Binding TestInfo}" FontFamily="Consolas" IsReadOnly="True">
@@ -55,7 +55,7 @@
                     </dx:DXTabItem>
                 </dx:DXTabControl>
             </dxdo:LayoutPanel>
-            <dxdo:LayoutPanel DataContext="{Binding CurrentTest.TestInfo}" Background="LightBlue" ItemWidth="*"
+            <dxdo:LayoutPanel DataContext="{Binding TestInfo}" Background="LightBlue" ItemWidth="*"
                               ItemHeight="Auto" ShowBorder="False" ShowCaption="False"
                               Visibility="{Binding Path='Valid', Converter={StaticResource InvalidToVisibilityConverter}}">
                 <StackPanel>
@@ -64,14 +64,14 @@
                     <TextBlock Margin="4" VerticalAlignment="Center" Text="{DXBinding Expr='@c.InvalidLog'}" />
                 </StackPanel>
             </dxdo:LayoutPanel>
-            <dxdo:LayoutPanel DataContext="{Binding CurrentTest.TestInfo}" Background="#5500FF00" ItemWidth="*"
+            <dxdo:LayoutPanel DataContext="{Binding TestInfo}" Background="#5500FF00" ItemWidth="*"
                               ItemHeight="Auto" ShowBorder="False" ShowCaption="False"
                               Visibility="{Binding Path='Valid', Converter={StaticResource FixedToVisibilityConverter}}">
                 <StackPanel>
                     <TextBlock Margin="4" VerticalAlignment="Center" Text="Test already fixed." />
                 </StackPanel>
             </dxdo:LayoutPanel>
-            <dxdo:LayoutPanel DataContext="{Binding CurrentTest}" ItemWidth="*" ShowBorder="False" ShowCaption="False"
+            <dxdo:LayoutPanel ItemWidth="*" ShowBorder="False" ShowCaption="False"
                               ItemHeight="Auto" AllowSizing="False">
                 <dxe:TextEdit Margin="4" VerticalAlignment="Center" EditValue="{DXBinding Expr='ToLog()', Mode=OneWay}"
                               IsReadOnly="True" ShowBorder="False" />

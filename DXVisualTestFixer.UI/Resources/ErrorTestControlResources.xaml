@@ -1,0 +1,17 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+                    xmlns:behaviors="clr-namespace:DXVisualTestFixer.UI.Behaviors"
+                    xmlns:controls="clr-namespace:DXVisualTestFixer.UI.Controls"
+                    xmlns:avalonedit="http://icsharpcode.net/sharpdevelop/avalonedit">
+    <ControlTemplate x:Key="ErrorTestControlTemplate" TargetType="{x:Type controls:ErrorTestControl}">
+        <avalonedit:TextEditor DataContext="{Binding TestInfo}" FontFamily="Consolas" IsReadOnly="True">
+            <dxmvvm:Interaction.Behaviors>
+                <behaviors:AvalonEditTextBindingBehavior Text="{Binding Path=TextDiffLazy.Value}" />
+            </dxmvvm:Interaction.Behaviors>
+        </avalonedit:TextEditor>
+    </ControlTemplate>
+    <Style TargetType="{x:Type controls:ErrorTestControl}">
+        <Setter Property="Template" Value="{StaticResource ErrorTestControlTemplate}" />
+    </Style>
+</ResourceDictionary>

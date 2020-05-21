@@ -18,10 +18,12 @@
              xmlns:dxgt="http://schemas.devexpress.com/winfx/2008/xaml/grid/themekeys"
              xmlns:prism="http://prismlibrary.com/"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-             xmlns:common="clr-namespace:DXVisualTestFixer.Common;assembly=DXVisualTestFixer.Common"
+             xmlns:commonLib="clr-namespace:DXVisualTestFixer.Common;assembly=DXVisualTestFixer.Common"
+             xmlns:common="clr-namespace:DXVisualTestFixer.UI.Common"
              xmlns:prismcommon="clr-namespace:DXVisualTestFixer.UI.PrismCommon"
              xmlns:dxfui="http://schemas.devexpress.com/winfx/2008/xaml/core/filteringui"
              xmlns:dxght="http://schemas.devexpress.com/winfx/2008/xaml/grid/internal"
+             xmlns:avalonedit="http://icsharpcode.net/sharpdevelop/avalonedit"
              prism:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
@@ -31,6 +33,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/DXVisualTestFixer.UI;component/Resources/Services.xaml" />
                 <ResourceDictionary Source="/DXVisualTestFixer.UI;component/Resources/FilterPanelControlResources.xaml" />
+                <ResourceDictionary Source="/DXVisualTestFixer.UI;component/Resources/ErrorTestControlResources.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <dxmvvm:ObjectToObjectConverter x:Key="StatusToVisibilityConverter" DefaultTarget="Collapsed">
                 <dxmvvm:MapItem Source="Loading" Target="Visible" />
@@ -319,14 +322,14 @@
                                 Content="Stage And Move Down"
                                 dxb:ImageColorizer.Color="Green"
                                 Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_AddCircled.svg}"
-                                IsEnabled="{DXBinding Expr='CurrentTest.Valid != $common:TestState.Error'}"
+                                IsEnabled="{DXBinding Expr='CurrentTest.Valid != $commonLib:TestState.Error'}"
                                 ItemClick="{DXEvent Handler='StageCurrentTest(); @e(PART_View).MoveNextDataRow()'}"
                                 ShowKeyGesture="True"
                                 KeyGesture="Ctrl+D" />
                             <dxb:BarButtonItem
                                 Content="Unstage And Move Down"
                                 Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_RemoveCircled.svg}"
-                                IsEnabled="{DXBinding Expr='CurrentTest.Valid != $common:TestState.Error'}"
+                                IsEnabled="{DXBinding Expr='CurrentTest.Valid != $commonLib:TestState.Error'}"
                                 ItemClick="{DXEvent Handler='UnstageCurrentTest(); @e(PART_View).MoveNextDataRow()'}"
                                 ShowKeyGesture="True"
                                 KeyGesture="Ctrl+B" />
@@ -574,14 +577,14 @@
                                                                  PredefinedFormatName="YellowFillWithDarkYellowText"
                                                                  ApplyToRow="True" />
                                             <dxg:FormatCondition FieldName="Valid" ValueRule="Equal"
-                                                                 Value1="{x:Static common:TestState.Invalid}"
+                                                                 Value1="{x:Static commonLib:TestState.Invalid}"
                                                                  ApplyToRow="True">
                                                 <dxg:FormatCondition.Format>
                                                     <dx:Format Background="LightBlue" Foreground="DarkBlue" />
                                                 </dxg:FormatCondition.Format>
                                             </dxg:FormatCondition>
                                             <dxg:FormatCondition FieldName="Valid" ValueRule="Equal"
-                                                                 Value1="{x:Static common:TestState.Fixed}"
+                                                                 Value1="{x:Static commonLib:TestState.Fixed}"
                                                                  PredefinedFormatName="GreenFillWithDarkGreenText"
                                                                  ApplyToRow="True" />
                                             <dxg:FormatCondition FieldName="Volunteer" ValueRule="NotEqual"
@@ -597,14 +600,21 @@
                             </dxg:GridControl>
                         </dxdo:LayoutPanel>
                     </dxdo:LayoutGroup>
-                    <dxdo:LayoutGroup AllowDrag="False" Orientation="Vertical" AllowSplitters="False">
+                    <dxdo:LayoutGroup AllowDrag="False" ShowCaption="False"
+                                      DataContext="{Binding CurrentTest}"
+                                      Orientation="Vertical"
+                                      dxb:MergingProperties.ElementMergingBehavior="{Binding CurrentTest, Converter={StaticResource RibbonMergeConverter}}">
                         <dxdo:LayoutPanel ShowCaption="False"
                                           dxb:MergingProperties.ElementMergingBehavior="{Binding CurrentTest, Converter={StaticResource RibbonMergeConverter}}"
-                                          Visibility="{Binding CurrentTest, Converter={dx:NullableToVisibilityConverter}}">
+                                          Visibility="{Binding Converter={converters:DisplayTestToVisibilityConverter}}">
                             <controls:TestInfoControl />
                         </dxdo:LayoutPanel>
                         <dxdo:LayoutPanel ShowCaption="False"
-                                          Visibility="{Binding CurrentTest, Converter={dx:NullableToVisibilityConverter Invert=True}}">
+                                          Visibility="{Binding Converter={converters:DisplayTestToVisibilityConverter IsError=True}}">
+                            <controls:ErrorTestControl />
+                        </dxdo:LayoutPanel>
+                        <dxdo:LayoutPanel ShowCaption="False"
+                                          Visibility="{Binding Converter={dx:NullableToVisibilityConverter Invert=True}}">
                             <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="Select Test"
                                        Opacity="0.3" FontSize="24" />
                         </dxdo:LayoutPanel>
