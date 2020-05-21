@@ -173,6 +173,7 @@
     <Compile Include="Common\FilePreviewTemplateSelector.cs" />
     <Compile Include="Common\InitialsExtractor.cs" />
     <Compile Include="Controls\DraggableScrollViewer.cs" />
+    <Compile Include="Controls\ErrorTestControl.cs" />
     <Compile Include="Controls\FilterPanelControl.cs" />
     <Compile Include="Controls\ImageScalingControl.cs" />
     <Compile Include="Controls\LoadingButton.cs" />
@@ -184,6 +185,7 @@
     <Compile Include="Controls\TableViewAdvNavigation.cs" />
     <Compile Include="Converters\ArrayToImageConverter.cs" />
     <Compile Include="Converters\BaseValueConverters.cs" />
+    <Compile Include="Converters\DisplayTestConverter.cs" />
     <Compile Include="Converters\DpiErrorConverter.cs" />
     <Compile Include="Converters\FilePathToTextConverter.cs" />
     <Compile Include="Converters\FilePathToImageSourceConverter.cs" />
@@ -316,6 +318,9 @@
       <Project>{bcec7d6c-b798-4dc7-a803-ebc75b0efbbd}</Project>
       <Name>DXVisualTestFixer.Common</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Resources\ErrorTestControlResources.xaml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
