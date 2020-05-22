@@ -297,7 +297,7 @@ namespace DXVisualTestFixer.Core {
 			//todo: found new parameter error
 			if(corpDirTestInfo.TeamName == CorpDirTestInfo.ErrorName) {
 				testInfo.Valid = TestState.Error;
-				testInfo.TextDiffLazy = new Lazy<string>(() => "+" + testInfo.Name + Environment.NewLine + Environment.NewLine + corpDirTestInfo.ErrorText);
+				testInfo.TextDiffLazy = new Lazy<string>(() => corpDirTestInfo.ErrorText);
 				testInfo.TextDiffFullLazy = new Lazy<string>(() => string.Empty);
 				return testInfo;
 			}

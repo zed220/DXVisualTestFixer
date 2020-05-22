@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using DXVisualTestFixer.Common;
@@ -78,7 +79,7 @@ namespace DXVisualTestFixer.Core {
 								failedTests.Add(test);
 						}
 
-						FindErrors(rootNode)?.ForEach(error => failedTests.Add(CorpDirTestInfo.CreateError(minioRepository.Repository, "Error", error.InnerText, null)));
+						FindErrors(rootNode)?.ForEach(error => failedTests.Add(CorpDirTestInfo.CreateError(minioRepository.Repository, "Error", error.ExtractErrorText(), null)));
 
 						usedFiles.Add(FindUsedFilesLink(rootNode));
 						elapsedTimes.Add(FindElapsedTime(rootNode));
@@ -103,6 +104,19 @@ namespace DXVisualTestFixer.Core {
 			return xml.Replace("&", "&amp;");
 		}
 
+		static string ExtractErrorText(this XmlElement xmlElement) {
+			const string errorBegin = "-[Error]-----------------------------------------------------------------";
+			const string errorEnd = "-------------------------------------------------------------------------";
+			var sb = new StringBuilder();
+			foreach(var msg in xmlElement.FindAllByName("message")) {
+				var innerText = msg.InnerText;
+				if(innerText == errorBegin || innerText == errorEnd)
+					continue;
+				sb.AppendLine(innerText);
+			}
+			return sb.ToString();
+		}
+
 		static (DateTime sources, DateTime tests)? FindTimings(XmlNode rootNode) {
 			var timingsNode = rootNode?.FindByName("Timings");
 			if(timingsNode == null)
@@ -122,10 +136,7 @@ namespace DXVisualTestFixer.Core {
 			return new DateTime(Convert.ToInt32(dateSplit[0]), Convert.ToInt32(dateSplit[1]), Convert.ToInt32(dateSplit[2]), Convert.ToInt32(timeSplit[0]), Convert.ToInt32(timeSplit[1]), 0);
 		}
 
-		static IEnumerable<XmlElement> FindErrors(XmlNode rootNode) {
-			var result = rootNode.FindAllByName("error").Cast<XmlElement>() ?? Enumerable.Empty<XmlElement>();
-			return result.Concat(rootNode.FindByName("test-results")?.FindAllByName("error").Cast<XmlElement>() ?? Enumerable.Empty<XmlElement>());
-		}
+		static IEnumerable<XmlElement> FindErrors(XmlNode rootNode) => rootNode.FindAllByName("buildresults").Cast<XmlElement>();
 
 		static string FindUsedFilesLink(XmlNode rootNode) => rootNode?.FindByName("FileUsingLogLink")?.InnerText.Replace("\r\n", string.Empty).Split('/').Last();//Remove tomorrow
 
