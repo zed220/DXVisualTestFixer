@@ -11,7 +11,7 @@ namespace DXVisualTestFixer.UI.PrismCommon {
 
 	public class PopupDXMessageBoxAction : PopupWindowAction {
 		protected override Window CreateWindow() {
-			return new ThemedMessageBoxWindow();
+			return new ThemedMessageBoxWindow() { WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen };
 		}
 	}
 }
