@@ -111,7 +111,7 @@ namespace DXVisualTestFixer.UI.Models {
 		DownloadState GetDownloadState() {
 			if(!Directory.Exists(Path) || !Directory.EnumerateFileSystemEntries(Path).Any())
 				return DownloadState.ReadyToDownload;
-			return File.Exists(System.IO.Path.Combine(Path, "VisualTestsConfig.xml")) ? DownloadState.Downloaded : DownloadState.CanNotDownload;
+			return File.Exists(System.IO.Path.Combine(Path, ".gitlab-ci.yml")) ? DownloadState.Downloaded : DownloadState.CanNotDownload;
 		}
 
 		[UsedImplicitly]

@@ -34,7 +34,7 @@ namespace DXVisualTestFixer.Common {
 		public bool ReadOnly { get; }
 		public string MinioPath { get; set; }
 
-		public bool IsDownloaded() => File.Exists(System.IO.Path.Combine(Path, "VisualTestsConfig.xml"));
+		public bool IsDownloaded() => File.Exists(System.IO.Path.Combine(Path, ".gitlab-ci.yml"));
 
 		public static Repository CreateRegular(string platform, string version, string path) => new Repository(platform, version, version, path, false);
 		public static Repository CreateFork(string platform, string version, string forkName, string minioPath, string path) => new Repository(platform, version, forkName, path, true) { MinioPath = minioPath };
