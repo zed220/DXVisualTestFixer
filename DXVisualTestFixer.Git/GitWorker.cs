@@ -11,14 +11,18 @@ using Repository = LibGit2Sharp.Repository;
 
 namespace DXVisualTestFixer.Git {
 	public class GitWorker : IGitWorker {
+		static readonly string remoteName = "origin_http";
+		
 		public bool SetHttpRepository(string serverPath, CommonRepository repository) {
 			if(!repository.IsDownloaded())
 				return false;
 			using var repo = new Repository(repository.Path);
-			foreach(var remote in repo.Network.Remotes.Where(remote => !remote.PushUrl.StartsWith("http"))) repo.Network.Remotes.Update(remote.Name, r => r.PushUrl = r.Url = serverPath);
+			using var remote = repo.Network.Remotes.FirstOrDefault(remote => remote.Name == remoteName);
+			if(remote == null)
+				repo.Network.Remotes.Add("origin_http", serverPath);
 			return true;
 		}
-
+		
 		public async Task<GitUpdateResult> Update(CommonRepository repository) {
 			if(!repository.IsDownloaded())
 				return await Task.FromResult(GitUpdateResult.Error);
@@ -27,6 +31,7 @@ namespace DXVisualTestFixer.Git {
 				return await Task.FromResult(GitUpdateResult.Error);
 			return await Task.FromResult(GitUpdateResult.None);
 		}
+		
 		public async Task<bool> IsOutdatedAsync(string serverPath, CommonRepository repository) {
 			if(!repository.IsDownloaded())
 				return false;
@@ -52,6 +57,15 @@ namespace DXVisualTestFixer.Git {
 			foreach(var remote in repo.Network.Remotes) {
 				var refSpecs = remote.FetchRefSpecs.Select(x => x.Specification);
 				Commands.Fetch(repo, remote.Name, refSpecs, options, logMessage);
+			}
+			UpdateTrackingBranch(repository);
+		}
+		static void UpdateTrackingBranch(CommonRepository repository) {
+			using var repo = new Repository(repository.Path);
+			var trackingBranch = repo.Branches[$"remotes/{remoteName}/20{repository.Version}"];
+			if(trackingBranch.IsRemote) {
+				var branch = repo.Head;
+				repo.Branches.Update(branch, b => b.TrackedBranch = trackingBranch.CanonicalName);
 			}
 		}
 
