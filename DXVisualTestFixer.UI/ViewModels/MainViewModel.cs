@@ -507,7 +507,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 		async Task<bool> ActualizeRepositories() {
 			_defaultPlatform ??= _config.DefaultPlatform;
 
-			foreach(var repo in _config.GetLocalRepositories()) {
+			foreach(var repo in _config.GetLocalRepositories().Where(s => s.Platform == _defaultPlatform)) {
 				if(!gitWorker.SetHttpRepository(platformProvider.PlatformInfos.Single(p => p.Name == repo.Platform).GitRepository, repo)) {
 					notificationService.DoNotification("Updating repository source failed", $"Can't update source (origin or upstream) for repository {repo.Version} that located at {repo.Path}", MessageBoxImage.Error);
 					return await Task.FromResult(false);
