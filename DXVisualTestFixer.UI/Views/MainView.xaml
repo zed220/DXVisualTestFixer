@@ -108,6 +108,13 @@
                     </Setter.Value>
                 </Setter>
             </Style>
+            <Style x:Key="{dxgt:TableViewThemeKey ResourceKey=NoRecordsControlStyle, IsThemeIndependent=True}" TargetType="{x:Type dxg:NoRecordsControl}">
+                <Style.Resources>
+                    <dxg:DynamicLocalizationStringValueConvertor x:Key="LocalizationStringValueConverter" />
+                </Style.Resources>
+                <Setter Property="NoRecordsText"  Value="{Binding Path=DataControl.View.LocalizationDescriptor, Converter={StaticResource LocalizationStringValueConverter}, ConverterParameter=NoRecords, RelativeSource={RelativeSource Self}}" />
+                <Setter Property="NoRecordsFoundText" Value="{Binding Path=DataControl.DataContext.Tests, Converter={converters:NoRecordsTextConverter}, RelativeSource={RelativeSource Self}}"/>
+            </Style>
         </ResourceDictionary>
     </UserControl.Resources>
     <i:Interaction.Triggers>
