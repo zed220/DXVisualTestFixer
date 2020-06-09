@@ -100,8 +100,39 @@ namespace DXVisualTestFixer.Core {
 			return new CorpDirTestInfoContainer(failedTestsList, usedFiles.ToList(), elapsedTimes.ToList(), timings);
 		}
 
+		static readonly (char escape, string replace)[] escapeSymbols = { ('<', "&lt;"), ('>', "&gt;") };
 		static string FixAmpersands(this string xml) {
-			return xml.Replace("&", "&amp;");
+			const string messageTagStart = "<message>";
+			const string messageTagEnd = "</message>";
+			
+			xml = xml.Replace("&", "&amp;");
+			var sb = new StringBuilder();
+			foreach(var str in xml.Split(new [] { Environment.NewLine}, StringSplitOptions.None)) {
+				var msgStartIndex = str.IndexOf(messageTagStart);
+				if(msgStartIndex == -1) {
+					sb.AppendLine(str);
+					continue;
+				}
+				var fixedStr = str;
+				var msgEndIndex = fixedStr.IndexOf(messageTagEnd);
+				if(msgEndIndex == -1) {
+					sb.AppendLine(str);
+					continue;
+				}
+				foreach(var symbol in escapeSymbols) {
+					while(true) {
+						var ltIndex= fixedStr.IndexOf(symbol.escape, msgStartIndex + messageTagStart.Length);
+						if(ltIndex < 0 || ltIndex > msgEndIndex - 1)
+							break;
+						var sbReplacer = new StringBuilder(fixedStr);
+						sbReplacer.Replace(symbol.escape.ToString(), symbol.replace, ltIndex, 1);
+						fixedStr = sbReplacer.ToString();
+						msgEndIndex = fixedStr.IndexOf(messageTagEnd);
+					}
+				}
+				sb.AppendLine(fixedStr);
+			}
+			return sb.ToString();
 		}
 
 		static string ExtractErrorText(this XmlElement xmlElement) {
