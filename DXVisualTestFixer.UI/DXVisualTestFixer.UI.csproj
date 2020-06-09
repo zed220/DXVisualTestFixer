@@ -203,6 +203,7 @@
     <Compile Include="Models\OpenSolutionModel.cs" />
     <Compile Include="Models\OpenSolutionModelHelper.cs" />
     <Compile Include="Native\DiffLineBackgroundRenderer.cs" />
+    <Compile Include="Native\ExceptionHelper.cs" />
     <Compile Include="Native\FileSystemHelper.cs" />
     <Compile Include="Native\LoginExtractor.cs" />
     <Compile Include="Native\RepositoryObsolescenceTracker.cs" />

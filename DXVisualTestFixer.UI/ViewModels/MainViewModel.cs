@@ -296,8 +296,8 @@ namespace DXVisualTestFixer.UI.ViewModels {
 			}
 			catch(Exception e) {
 				await dispatcher.InvokeAsync(() => {
-					notificationService.DoNotification("Error", e.Message, MessageBoxImage.Error);
-					Application.Current.MainWindow.Close();
+					notificationService.DoNotification("Error", string.Join(Environment.NewLine, e.Unwrap().Select(x => x.Message)), MessageBoxImage.Error);
+					throw e;
 				}).Task.ConfigureAwait(false);
 			}
 			await dispatcher.InvokeAsync(() => {
