@@ -316,7 +316,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 		}
 
 		[PublicAPI]
-		public async void TakeVolunteer(TestInfoModel testInfoModel) {
+		public void TakeVolunteer(TestInfoModel testInfoModel) {
 			TakeVolunteerForManyTests(new []{ testInfoModel });
 			// var ccnetTaskMask = platformProvider.PlatformInfos.Single(p => p.Name == _defaultPlatform).FarmTaskName;
 			//
@@ -324,7 +324,12 @@ namespace DXVisualTestFixer.UI.ViewModels {
 			// await dispatcher.InvokeAsync(() => Status = ProgramStatus.Loading, DispatcherPriority.Background).Task.ConfigureAwait(false);
 			// await UpdateAllTests().ConfigureAwait(false);//TODO: update volunteers only
 		}
-		
+		[PublicAPI]
+		public void CommitAsBlinking(TestInfoModel testInfoModel) {
+			testInfoModel.CommitChange = true;
+			testInfoModel.CommitAsBlinking = true;
+		}
+
 		[PublicAPI]
 		public async void TakeVolunteerForManyTests(TestInfoModel[] testInfoModels) {
 			Status = ProgramStatus.Loading;
