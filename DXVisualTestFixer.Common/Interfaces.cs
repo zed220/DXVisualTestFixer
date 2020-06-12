@@ -53,6 +53,7 @@ namespace DXVisualTestFixer.Common {
 
 	public interface ITestInfoModel : INotifyPropertyChanged {
 		bool CommitChange { get; set; }
+		bool CommitAsBlinking { get; set; }
 		string TeamName { get; }
 		string VersionAndFork { get; }
 		int Problem { get; }

@@ -34,6 +34,10 @@ namespace DXVisualTestFixer.UI.ViewModels {
 			get => GetProperty(() => CommitChange);
 			set => SetCommitChange(value);
 		}
+		public bool CommitAsBlinking {
+			get => TestInfo.CommitAsBlinking;
+			set => TestInfo.CommitAsBlinking = value;
+		}
 
 		public string ToLog() {
 			return $"Team: {TestInfo?.TeamName}, Version: {TestInfo?.Version}, Test: {TestInfo?.NameWithNamespace}, Theme: {TestInfo?.Theme}";
@@ -42,6 +46,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 		void SetCommitChange(bool value) {
 			if(Valid == TestState.Error)
 				return;
+			CommitAsBlinking = false;
 			SetProperty(() => CommitChange, value, OnChanged);
 		}
 
