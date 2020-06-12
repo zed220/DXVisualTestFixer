@@ -49,6 +49,7 @@ namespace DXVisualTestFixer.Common {
 		public int? PredefinedImageDiffsCount { get; set; }
 		public int Problem { get; set; } = int.MinValue;
 		public string ProblemName { get; set; }
+		public bool CommitAsBlinking { get; set; }
 
 		[UsedImplicitly] public string InvalidLog => InvalidLogBuilder.ToString();
 

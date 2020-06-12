@@ -535,13 +535,13 @@
                                                                      GroupRowCheckBoxFieldName="CommitChange"
                                                                      ShowFilterPanelMode="Never">
                                         <controls:TableViewAdvNavigation.GroupRowMenuCustomizations>
-                                            <dxb:BarButtonItem Content="Commit All In Viewport"
+                                            <dxb:BarButtonItem Content="Mark To Commit All In Viewport"
                                                                Glyph="{dx:DXImage SvgImages/PDF Viewer/SelectAll.svg}"
                                                                Command="{DXCommand Execute='@e(PART_View).CommitAllInViewport()'}" />
-                                            <dxb:BarButtonItem Content="Clear Commits In Viewport"
+                                            <dxb:BarButtonItem Content="Clear All Marks In Viewport"
                                                                Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Clear.svg}"
                                                                Command="{DXCommand Execute='@e(PART_View).ClearCommitsInViewport()'}" />
-                                            <dxb:BarButtonItem Content="Clear All Commits"
+                                            <dxb:BarButtonItem Content="Clear All Marks"
                                                                Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Clear.svg}"
                                                                Command="{DXCommand Execute='@e(PART_View).DataContext.ClearCommits()'}" />
                                             <dxb:BarItemSeparator/>
@@ -553,13 +553,13 @@
                                                                Command="{DXCommand Execute='@e(PART_View).TakeVolunteerForAllVisibleRows()'}" />
                                         </controls:TableViewAdvNavigation.GroupRowMenuCustomizations>
                                         <controls:TableViewAdvNavigation.RowCellMenuCustomizations>
-                                            <dxb:BarButtonItem Content="Commit All In Viewport"
+                                            <dxb:BarButtonItem Content="Mark To Commit All In Viewport"
                                                                Glyph="{dx:DXImage SvgImages/PDF Viewer/SelectAll.svg}"
                                                                Command="{DXCommand Execute='@e(PART_View).CommitAllInViewport()'}" />
-                                            <dxb:BarButtonItem Content="Clear Commits In Viewport"
+                                            <dxb:BarButtonItem Content="Clear All Marks In Viewport"
                                                                Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Clear.svg}"
                                                                Command="{DXCommand Execute='@e(PART_View).ClearCommitsInViewport()'}" />
-                                            <dxb:BarButtonItem Content="Clear All Commits"
+                                            <dxb:BarButtonItem Content="Clear All Marks"
                                                                Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Clear.svg}"
                                                                Command="{DXCommand Execute='@e(PART_View).DataContext.ClearCommits()'}" />
                                             <dxb:BarItemSeparator/>
@@ -569,6 +569,11 @@
                                             <dxb:BarButtonItem Content="Take Volunteer For All Tests In Viewport"
                                                                Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_User.svg}"
                                                                Command="{DXCommand Execute='@e(PART_View).TakeVolunteerForAllVisibleRows()'}" />
+                                            <dxb:BarItemSeparator/>
+                                            <dxb:BarButtonItem Content="{DXBinding '`Mark To Commit As Blinking For ` + @c.Row.Row.Theme'}"
+                                                               Glyph="{dx:DXImage SvgImages/XAF/State_Validation_Warning.svg}"
+                                                               Command="{DXCommand Execute='@e(PART_View).DataContext.CommitAsBlinking(@c.Row.Row)'}"
+                                                               IsVisible="{DXBinding Expr='@c.Row.Row.Valid == $commonLib:TestState.Valid'}" />
                                         </controls:TableViewAdvNavigation.RowCellMenuCustomizations>
                                         <dxmvvm:Interaction.Behaviors>
                                             <dxmvvm:EventToCommand EventName="MoveNext"

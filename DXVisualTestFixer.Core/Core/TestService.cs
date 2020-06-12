@@ -170,8 +170,8 @@ namespace DXVisualTestFixer.Core {
 
 		public bool ApplyTest(TestInfo test, Func<string, bool> checkoutFunc) {
 			var actualTestResourceName = GetTestResourceName(test, false);
-			var xmlPath = GetXmlFilePath(actualTestResourceName, test, false);
-			var imagePath = GetImageFilePath(actualTestResourceName, test, false);
+			var xmlPath = GetXmlFilePath(actualTestResourceName, test);
+			var imagePath = GetImageFilePath(actualTestResourceName, test);
 			if(imagePath == null || xmlPath == null) return false;
 			if(!SafeDeleteFile(xmlPath, checkoutFunc))
 				return false;
@@ -183,19 +183,30 @@ namespace DXVisualTestFixer.Core {
 			var imageSHAPath = imagePath + ".sha";
 			if(!SafeDeleteFile(imageSHAPath, checkoutFunc))
 				return false;
-			File.WriteAllText(xmlPath, test.TextCurrentLazy.Value);
+			
 			if(test.TextCurrentSha == null) {
 				using var ms = new MemoryStream(File.ReadAllBytes(xmlPath));
 				test.TextCurrentSha = GetSHA256(ms);
 			}
-
 			if(test.ImageCurrentSha == null) {
 				using var ms = new MemoryStream(test.ImageCurrentArrLazy.Value);
 				test.ImageCurrentSha = GetSHA256(ms);
 			}
+			if(!test.CommitAsBlinking) {
+				foreach(var xmlBlinkSha in GetAllBlinkingSha(Path.ChangeExtension(xmlPath, "").TrimEnd('.'), ".xml")) 
+					if(!SafeDeleteFile(xmlBlinkSha, checkoutFunc))
+						return false;
+				foreach(var xmlBlinkSha in GetAllBlinkingSha(Path.ChangeExtension(xmlPath, "").TrimEnd('.').Replace("_optimized", ""), ".xml")) 
+					if(!SafeDeleteFile(xmlBlinkSha, checkoutFunc))
+						return false;
+				foreach(var imageBlinkSha in GetAllBlinkingSha(Path.ChangeExtension(imagePath, "").TrimEnd('.'), ".png")) 
+					if(!SafeDeleteFile(imageBlinkSha, checkoutFunc))
+						return false;
+				File.WriteAllText(xmlPath, test.TextCurrentLazy.Value);
+				File.WriteAllBytes(imagePath, test.ImageCurrentArrLazy.Value);
+			}
 
 			File.WriteAllBytes(xmlSHAPath, test.TextCurrentSha);
-			File.WriteAllBytes(imagePath, test.ImageCurrentArrLazy.Value);
 			File.WriteAllBytes(imageSHAPath, test.ImageCurrentSha);
 			return true;
 		}
@@ -486,8 +497,8 @@ namespace DXVisualTestFixer.Core {
 				return;
 			}
 
-			var xmlPath = GetXmlFilePath(actualTestResourceName, test, true);
-			var imagePath = GetImageFilePath(actualTestResourceName, test, true);
+			var xmlPath = GetActualXmlFilePath(actualTestResourceName, test);
+			var imagePath = GetActualImageFilePath(actualTestResourceName, test);
 			if(xmlPath == null || imagePath == null) {
 				test.Valid = TestState.Invalid;
 				return;
@@ -510,13 +521,32 @@ namespace DXVisualTestFixer.Core {
 
 			if(CompareSHA256(test.ImageBeforeSha, test.ImageCurrentSha))
 				test.ImageEquals = true;
+
 			var imageFixed = test.ImageEquals;
 			if(!imageFixed)
 				imageFixed = CompareSHA256(LoadBytes(imagePath + ".sha"), test.ImageCurrentSha);
+			if(!imageFixed) {
+				foreach(var blinkShaPath in GetAllBlinkingSha(Path.ChangeExtension(imagePath, "").TrimEnd('.'), ".png")) {
+					if(CompareSHA256(test.ImageCurrentSha, LoadBytes(blinkShaPath))) {
+						imageFixed = true;
+						break;
+					}
+				}
+			}
+
 			var textEquals = CompareSHA256(test.TextBeforeSha, test.TextCurrentSha);
 			var textFixed = textEquals;
 			if(!textFixed)
 				textFixed = CompareSHA256(LoadBytes(xmlPath + ".sha"), test.TextCurrentSha);
+			if(!textFixed) {
+				foreach(var blinkShaPath in GetAllBlinkingSha(Path.ChangeExtension(xmlPath, "").TrimEnd('.'), ".xml")) {
+					if(CompareSHA256(test.TextCurrentSha, LoadBytes(blinkShaPath))) {
+						textFixed = true;
+						break;
+					}
+				}
+			}
+
 			if(imageFixed && textFixed) {
 				test.Valid = TestState.Fixed;
 				return;
@@ -525,6 +555,9 @@ namespace DXVisualTestFixer.Core {
 			test.Valid = TestState.Valid;
 		}
 
+		string[] GetAllBlinkingSha(string testResourceName, string extension) {
+			return Directory.GetFiles(Path.GetDirectoryName(testResourceName), $"{Path.GetFileName(testResourceName)}--*{extension}.sha");
+		}
 		string GetTestResourceName(TestInfo test, bool checkDirectoryExists) {
 			if(!Directory.Exists(test.ResourcesFullPath)) {
 				if(checkDirectoryExists) {
@@ -536,16 +569,43 @@ namespace DXVisualTestFixer.Core {
 			return Path.Combine(test.ResourcesFullPath, test.Theme);
 		}
 
-		static string GetXmlFilePath(string testResourceName, TestInfo test, bool checkExists) {
-			if(test.Optimized)
-				testResourceName = testResourceName + "_optimized";
-			var xmlPath = testResourceName + ".xml";
-			return checkExists && !CheckFileExistsAndLog(test, xmlPath) ? null : xmlPath;
+		static string GetBlinkingFilePath(string testResourceName, string extension) {
+			var result = testResourceName;
+			var i = 1;
+			while(true) {
+				if(i == 10)
+					return null;
+				result = $"{testResourceName}--{i++}";
+				if(!File.Exists(result + extension + ".sha"))
+					return result;
+			}
 		}
-
-		static string GetImageFilePath(string testResourceName, TestInfo test, bool checkExists) {
+		static string GetXmlFilePath(string testResourceName, TestInfo test) {
+			if(test.Optimized)
+				testResourceName += "_optimized";
+			if(test.CommitAsBlinking)
+				testResourceName = GetBlinkingFilePath(testResourceName, ".xml");
+			if(testResourceName == null)
+				return null;
+			return testResourceName + ".xml";
+		}
+		static string GetImageFilePath(string testResourceName, TestInfo test) {
+			if(test.CommitAsBlinking)
+				testResourceName = GetBlinkingFilePath(testResourceName, ".png");
+			if(testResourceName == null)
+				return null;
+			return testResourceName + ".png";
+		}
+		
+		static string GetActualXmlFilePath(string testResourceName, TestInfo test) {
+			if(test.Optimized)
+				testResourceName += "_optimized";
+			var xmlPath = testResourceName + ".xml";
+			return !CheckFileExistsAndLog(test, xmlPath) ? null : xmlPath;
+		}
+		static string GetActualImageFilePath(string testResourceName, TestInfo test) {
 			var imagePath = testResourceName + ".png";
-			return checkExists && !CheckFileExistsAndLog(test, imagePath) ? null : imagePath;
+			return CheckFileExistsAndLog(test, imagePath) ? imagePath : null;
 		}
 
 		static bool CheckFileExistsAndLog(TestInfo test, string filePath) {
@@ -557,11 +617,11 @@ namespace DXVisualTestFixer.Core {
 		static bool SafeDeleteFile(string path, Func<string, bool> checkoutFunc) {
 			if(!File.Exists(path))
 				return true;
-			if((File.GetAttributes(path) & FileAttributes.ReadOnly) != FileAttributes.ReadOnly)
-				return true;
-			if(!checkoutFunc(path)) return false;
-			if((File.GetAttributes(path) & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
-				return false;
+			if((File.GetAttributes(path) & FileAttributes.ReadOnly) == FileAttributes.ReadOnly) {
+				if(!checkoutFunc(path)) return false;
+				if((File.GetAttributes(path) & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+					return false;
+			}
 			File.Delete(path);
 			return true;
 		}
