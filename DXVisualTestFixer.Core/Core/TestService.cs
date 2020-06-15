@@ -186,7 +186,7 @@ namespace DXVisualTestFixer.Core {
 			
 			if(test.TextCurrentSha == null) {
 				using var ms = new MemoryStream(File.ReadAllBytes(xmlPath));
-				test.TextCurrentSha = GetSHA256(ms);
+				test.TextCurrentSha = StringToSha(test.TextCurrentLazy.Value);
 			}
 			if(test.ImageCurrentSha == null) {
 				using var ms = new MemoryStream(test.ImageCurrentArrLazy.Value);
@@ -209,6 +209,12 @@ namespace DXVisualTestFixer.Core {
 			File.WriteAllBytes(xmlSHAPath, test.TextCurrentSha);
 			File.WriteAllBytes(imageSHAPath, test.ImageCurrentSha);
 			return true;
+		}
+		
+		static byte[] StringToSha(String value) {
+			using var hash = SHA256Managed.Create();
+			var enc = Encoding.UTF8;
+			return hash.ComputeHash(enc.GetBytes(value));
 		}
 
 		async Task<TestInfoContainer> LoadTestsAsync(List<MinioRepository> minioRepositories, bool allowEditing) {
