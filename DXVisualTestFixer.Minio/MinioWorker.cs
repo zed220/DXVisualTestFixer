@@ -54,8 +54,18 @@ namespace DXVisualTestFixer.Minio {
 				return result;
 			});
 		}
+		public async Task<Stream> GetBinary(string path) {
+			return await RepeatAsync(async () => {
+				Stream result = null; 
+				await CreateClient().GetObjectAsync(bucketName, path, stream => {
+					result = new MemoryStream();
+					stream.CopyTo(result);
+				});
+				return result;
+			});
+		}
 		
-		public async Task<bool> Exists(string root, string child) {
+		public async Task<bool> ExistsDir(string root, string child) {
 			return await RepeatAsync(async () => {
 				var result = new List<string>();
 				var observable = CreateClient().ListObjectsAsync(bucketName, root);
@@ -71,9 +81,20 @@ namespace DXVisualTestFixer.Minio {
 				return result.Contains(fullPath);
 			});
 		}
+		public async Task<bool> ExistsFile(string path) {
+			return await RepeatAsync(async () => {
+				try {
+					var state = await CreateClient().StatObjectAsync(bucketName, path);
+					return true;
+				}
+				catch(ObjectNotFoundException) {
+					return false;
+				}
+			});
+		}
 
 		public async Task WaitIfObjectNotLoaded(string root, string child) {
-			if(!await Exists(root, child))
+			if(!await ExistsDir(root, child))
 				await Task.FromException(new MinioException(root + child));
 		}
 		

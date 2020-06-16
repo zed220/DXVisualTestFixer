@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using Prism.Interactivity.InteractionRequest;
@@ -136,11 +137,13 @@ namespace DXVisualTestFixer.Common {
 
 	public interface IMinioWorker {
 		Task<string> Download(string path);
+		Task<Stream> GetBinary(string path);
 		Task<string[]> Discover(string path);
 		Task<string> DiscoverLast(string path);
 		Task<string> DiscoverPrev(string path, int prevCount);
 		Task WaitIfObjectNotLoaded(string root, string child);
-		Task<bool> Exists(string root, string child);
+		Task<bool> ExistsDir(string root, string child);
+		Task<bool> ExistsFile(string path);
 		Task<string[]> DetectUserPaths(string platform);
 	}
 

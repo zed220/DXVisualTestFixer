@@ -119,7 +119,7 @@ namespace DXVisualTestFixer.Core {
 			var result = new Dictionary<string, List<Repository>>();
 			foreach(var userPath in await minioWorker.DetectUserPaths(platformProvider.PlatformInfos.Single(p => p.Name == Platform).MinioRepository)) {
 				var fullUserPath = userPath + "testbuild/";
-				if(!await minioWorker.Exists(fullUserPath, "results"))
+				if(!await minioWorker.ExistsDir(fullUserPath, "results"))
 					continue;
 				var resultsPath = fullUserPath + "results/";
 				var last = await minioWorker.DiscoverLast(resultsPath);
@@ -152,7 +152,7 @@ namespace DXVisualTestFixer.Core {
 				lastBuild = await minioWorker.DiscoverPrev($"{minioPath}/{minioPath}/{repository.Version}/", prevCount);
 				if(lastBuild == null && repository.ReadOnly)
 					return null;
-				if(await minioWorker.Exists(lastBuild, "results"))
+				if(await minioWorker.ExistsDir(lastBuild, "results"))
 					break;
 			}
 			var last = await minioWorker.DiscoverLast($"{lastBuild}results/");
@@ -280,7 +280,7 @@ namespace DXVisualTestFixer.Core {
 		}
 
 		async Task<CorpDirTestInfoContainer> LoadForRepositoryAsync(MinioRepository minioRepository) {
-			var corpDirTestInfoContainer = await TestLoader.LoadFromMinio(minioRepository);
+			var corpDirTestInfoContainer = await TestLoader.LoadFromMinioZip(minioRepository);
 			loadingProgressController.Enlarge(corpDirTestInfoContainer.FailedTests.Count);
 			return corpDirTestInfoContainer;
 		}
