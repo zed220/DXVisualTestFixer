@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -39,33 +40,34 @@ namespace DXVisualTestFixer.Core {
 	}
 
 	static class TestLoader {
-		public static async Task<CorpDirTestInfoContainer> LoadFromMinio(MinioRepository minioRepository) {
+		public static async Task<CorpDirTestInfoContainer> LoadFromMinioZip(MinioRepository minioRepository) {
 			var minio = ServiceLocator.Current.GetInstance<IMinioWorker>();
 			
 			var failedTests = new ConcurrentBag<CorpDirTestInfo>();
 			var usedFiles = new ConcurrentBag<string>();
 			var elapsedTimes = new ConcurrentBag<IElapsedTimeInfo>();
-			var failed = false;
 			(DateTime sources, DateTime tests)? timings = null;
-
-			var tasks = new List<Task>();
-
-			var files = await minio.Discover(minioRepository.Path);
-
+			var failed = await minio.ExistsFile(minioRepository.Path + "fail");
+			
 			var failedTestsList = new List<CorpDirTestInfo>();
-			if(files != null) {
-				foreach(var file in files) {
-					if(!file.EndsWith(".xml"))
+			if(await minio.ExistsFile(minioRepository.Path + "results.zip")) {
+				var tasks = new List<Task>();
+			
+				using var archive = new ZipArchive(await minio.GetBinary(minioRepository.Path + "results.zip"), ZipArchiveMode.Read);
+				foreach(var entry in archive.Entries) {
+					var fullName = entry.FullName;
+					if(!fullName.EndsWith(".xml", StringComparison.OrdinalIgnoreCase)) 
 						continue;
-					if(file.Contains("fail"))
-						failed = true;
+					using var s = entry.Open();
+					using var reader = new StreamReader(s);
+					var xml = await reader.ReadToEndAsync();
 					var task = Task.Run(async () => {
-						var xmlString = (await minio.Download(file)).FixAmpersands();
+						var xmlString = xml.FixAmpersands();
 						var myXmlDocument = new XmlDocument();
 						myXmlDocument.LoadXml("<root>" + xmlString + "</root>");
 						var rootNode = myXmlDocument.FindByName("root");
 
-						if(file.EndsWith("tests_timings.xml")) {
+						if(fullName.EndsWith("tests_timings.xml")) {
 							timings = FindTimings(rootNode);
 							return;
 						}
