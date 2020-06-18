@@ -89,7 +89,20 @@ namespace DXVisualTestFixer.UI.Controls {
 			ScrollOwner.InvalidateScrollInfo();
 			return currentSize = new Size(Math.Min(ImageSource.PixelWidth * Scale, availableSize.Width), Math.Min(ImageSource.PixelHeight * Scale, availableSize.Height));
 		}
-		
+
+		public void UpdateScaleAndOffset(int newScale, Point mouseRelPosition) {
+			var scaleDelta = (double)newScale / Scale;
+			Scale = newScale;
+			if(ImageSource == null)
+				return;
+			
+			var mouseHorOffset = HorizontalOffset + mouseRelPosition.X;
+			var mouseVerOffset = VerticalOffset + mouseRelPosition.Y;
+			
+			HorizontalOffset = (mouseHorOffset * scaleDelta) - mouseRelPosition.X;
+			VerticalOffset = (mouseVerOffset * scaleDelta) - mouseRelPosition.Y;
+		}
+
 		static PixelFormat ConvertPixelFormat(System.Windows.Media.PixelFormat sourceFormat) {
 			if(sourceFormat == PixelFormats.Bgr24)
 				return PixelFormat.Format24bppRgb;
