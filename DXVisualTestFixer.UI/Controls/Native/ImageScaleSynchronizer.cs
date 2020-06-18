@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using DevExpress.Xpf.Bars.Native;
@@ -8,6 +11,7 @@ using DevExpress.Xpf.Bars.Native;
 namespace DXVisualTestFixer.UI.Controls.Native {
 	class ImageScaleSynchronizer : ControlsRegister<ScrollViewer> {
 		bool _ShowGridLines;
+		Point mouseRelPosition = new Point();
 
 		public bool ShowGridLines {
 			get => _ShowGridLines;
@@ -35,9 +39,21 @@ namespace DXVisualTestFixer.UI.Controls.Native {
 
 		protected override void RegisterCore(ScrollViewer control) {
 			SetScale(Scale);
+			control.MouseMove += ControlOnMouseMove;
 		}
 
-		protected override void UnregisterCore(ScrollViewer control) { }
+		void ControlOnMouseMove(object sender, MouseEventArgs e) {
+			var control = GetActualControls().SingleOrDefault(x => x.IsMouseOver);
+			if(control == null) {
+				mouseRelPosition = new Point();
+				return;
+			}
+			mouseRelPosition = e.GetPosition(control);
+		}
+
+		protected override void UnregisterCore(ScrollViewer control) {
+			control.MouseMove -= ControlOnMouseMove;
+		}
 
 		public void SetScale(int scale) {
 			var notInitializedControls = SetScaleCore(scale);
@@ -60,7 +76,7 @@ namespace DXVisualTestFixer.UI.Controls.Native {
 				if(scale > 100) {
 					scaleTransform.ScaleX = 1;
 					scaleTransform.ScaleY = 1;
-					scaleImageControl.Scale = scale / 100;
+					scaleImageControl.UpdateScaleAndOffset(scale / 100, mouseRelPosition);
 					scaleImageControl.ShowGridLines = ShowGridLines;
 				}
 				else {
