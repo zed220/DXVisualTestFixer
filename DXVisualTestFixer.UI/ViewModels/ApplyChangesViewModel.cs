@@ -30,6 +30,8 @@ namespace DXVisualTestFixer.UI.ViewModels {
 				Confirmed = true;
 			});
 			ChangedTests = testsService.SelectedState.ChangedTests;
+			var teams = ChangedTests.GroupBy(t => t.TeamName).Select(g => g.Key).ToList();
+			CommitCaption = $"Fix tests for {string.Join(", ", teams)} team{(teams.Count > 1 ? "s" : "")}";
 			if(ChangedTests.FirstOrDefault(x => x.Repository.ReadOnly) != null) {
 				CanChangeAutoCommit = false;
 				IsAutoCommit = false;
