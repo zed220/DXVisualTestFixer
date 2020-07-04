@@ -23,9 +23,9 @@ namespace DXVisualTestFixer.UI.Models {
 			OpenSolutionModels = OpenSolutionModelHelper.GetOpenSolutionModels(SolutionPath);
 		}
 
-		public string Version { get; }
-		public string Path { get; }
-		public List<OpenSolutionModel> OpenSolutionModels { get; }
+		[PublicAPI] public string Version { get; }
+		[PublicAPI] public string Path { get; }
+		[PublicAPI] public List<OpenSolutionModel> OpenSolutionModels { get; }
 		[UsedImplicitly] public bool IsEnabled => File.Exists(SolutionPath) && OpenSolutionModels.Count > 0;
 
 
