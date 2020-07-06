@@ -144,7 +144,7 @@ namespace DXVisualTestFixer.Common {
 		Task WaitIfObjectNotLoaded(string root, string child);
 		Task<bool> ExistsDir(string root, string child);
 		Task<bool> ExistsFile(string path);
-		Task<string[]> DetectUserPaths(string platform);
+		Task<string[]> DetectUserPaths(string platform, string forkFolderName);
 	}
 
 	public interface IPlatformInfo {
@@ -154,6 +154,7 @@ namespace DXVisualTestFixer.Common {
 		string LocalPath { get; }
 		string VersionsFileName { get; }
 		string FarmTaskName { get; }
+		string ForkFolderName { get; }
 	}
 
 	public interface IPlatformProvider {
