@@ -8,5 +8,6 @@ namespace DXVisualTestFixer {
 		public string LocalPath => "20{0}_VisualTests";
 		public string VersionsFileName => "versions_WPF.xml";
 		public string FarmTaskName => "Test.v{0} WPF VisualTests";
+		public string ForkFolderName => "Common";
 	}
 }

@@ -120,15 +120,15 @@ namespace DXVisualTestFixer.Minio {
 			var all = await Discover(path);
 			return all.Reverse().Skip(prevCount).FirstOrDefault();
 		}
-		public async Task<string[]> DetectUserPaths(string platform) {
-			var excludedPaths = new[] { "XPF/XPF/", "WinForms/WinForms/", "usedfiles/", "visualtestsscripts-2.0/", "visualtestsscripts-3.0/", "visualtestsscripts-4.0/" };
+		public async Task<string[]> DetectUserPaths(string platform, string forkFolderName) {
+			var excludedPaths = new[] { "XPF/XPF/", "WinForms/WinForms/", "Dashboard/Dashboard/", "usedfiles/", "visualtestsscripts-2.0/", "visualtestsscripts-3.0/", "visualtestsscripts-4.0/" };
 			
 			var rootPaths = await Discover(platform + "/");
 			rootPaths = rootPaths.Except(excludedPaths).ToArray();
 
 			var result = new List<string>();
 			foreach(var rootPath in rootPaths) {
-				foreach(var version in await Discover(rootPath + "Common/")) {
+				foreach(var version in await Discover($"{rootPath}{forkFolderName}/")) {
 					var last = await DiscoverLast(version);
 					if(last != null)
 						result.Add(last);

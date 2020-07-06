@@ -8,5 +8,6 @@ namespace DXVisualTestFixer {
 		public string LocalPath => "20{0}_VisualTests_Dashboard";
 		public string VersionsFileName => "versions_Dashboard.xml";
 		public string FarmTaskName => "Test.v{0} Dashboard VisualTests";
+		public string ForkFolderName => "Core";
 	}
 }
