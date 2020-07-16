@@ -76,7 +76,9 @@ namespace DXVisualTestFixer.UI.Models {
 				System.IO.Path.Combine(repositoryPath, "..", version, "Bin"),
 				System.IO.Path.Combine(repositoryPath, "..", $"20{version}", "Bin"),
 				System.IO.Path.Combine("c:\\Work", version, "Bin"),
-				System.IO.Path.Combine("c:\\Work", $"20{version}", "Bin")
+				System.IO.Path.Combine("c:\\Work", $"20{version}", "Bin"),
+				System.IO.Path.Combine("d:\\Work", version, "Bin"),
+				System.IO.Path.Combine("d:\\Work", $"20{version}", "Bin")
 			};
 			
 			if(!workPaths.Any(Directory.Exists))
