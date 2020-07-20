@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Threading;
@@ -79,25 +80,24 @@ namespace DXVisualTestFixer.UI.ViewModels {
 			);
 		}
 
-		public static async Task<HashSet<string>> GetUsedFilesByRepository(Repository repository, List<string> filesLinks, IMinioWorker minioWorker) {
+		public static async Task<HashSet<string>> GetUsedFilesByRepository(Repository repository, List<string> filesLinks, IMinioWorker minio) {
+			using var archive = new ZipArchive(await minio.GetBinary(repository.MinioPath + "usedfiles.zip"), ZipArchiveMode.Read);
+			var linksCache = new HashSet<string>(filesLinks);
+			
 			var usedFiles = new List<string>();
-			var lockObject = new object();
-
-			await Task.WhenAll(filesLinks.Select(async fileRelLink => {
-				var localUsedFiles = new List<string>();
-				var filesStr = await minioWorker.Download(repository.MinioPath + fileRelLink);
-				if(string.IsNullOrEmpty(filesStr))
-					return;
-				foreach(var fileRelPath in filesStr.Split(new[] {"\r\n"}, StringSplitOptions.RemoveEmptyEntries)) {
-					var localFilePath = Path.Combine(repository.Path, fileRelPath.ToLower().Replace(@"c:\builds\", ""));
+			
+			foreach(var entry in archive.Entries) {
+				if(!linksCache.Contains(entry.Name))
+					continue;
+				using var s = entry.Open();
+				using var reader = new StreamReader(s);
+				while(!reader.EndOfStream) {
+					var fileRelPath = await reader.ReadLineAsync();
+					var localFilePath = Path.Combine(repository.Path, fileRelPath.Replace(@"C:\builds\", ""));
 					if(File.Exists(localFilePath))
-						localUsedFiles.Add(localFilePath.ToLower());
+						usedFiles.Add(localFilePath.ToLower());
 				}
-
-				lock(lockObject) {
-					usedFiles.AddRange(localUsedFiles);
-				}
-			})).ConfigureAwait(false);
+			}
 			return new HashSet<string>(usedFiles);
 		}
 
