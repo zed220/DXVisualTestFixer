@@ -51,12 +51,20 @@ namespace DXVisualTestFixer.Core {
 		readonly ILoggingService loggingService;
 		readonly IMinioWorker minioWorker;
 		readonly INotificationService notificationService;
+		
+		static readonly ICache<byte[]> byteCache;
+		static readonly ICache<string> stringCache;
 
 		readonly Dictionary<PlatformAndVersion, TestInfoCached> MinioPathCache = new Dictionary<PlatformAndVersion, TestInfoCached>();
 
 		string _CurrentFilter;
 		string Platform;
 		string SelectedStateName;
+
+		static TestsService() {
+			byteCache = ServiceLocator.Current.GetInstance<ICache<byte[]>>();
+			stringCache = ServiceLocator.Current.GetInstance<ICache<string>>();
+		}
 
 		public TestsService(ILoadingProgressController loadingProgressController, IConfigSerializer configSerializer, ILoggingService loggingService, IMinioWorker minioWorker, INotificationService notificationService) {
 			this.loadingProgressController = loadingProgressController;
@@ -322,16 +330,16 @@ namespace DXVisualTestFixer.Core {
 
 			testInfo.PredefinedImageDiffsCount = corpDirTestInfo.DiffCount;
 
-			testInfo.TextBeforeLazy = new Lazy<string>(() => LoadTextFile(corpDirTestInfo.InstantTextEditPath));
 			testInfo.TextBeforeSha = corpDirTestInfo.InstantTextEditSHA ?? LoadBytes(corpDirTestInfo.InstantTextEditSHAPath);
-			testInfo.TextCurrentLazy = new Lazy<string>(() => LoadTextFile(corpDirTestInfo.CurrentTextEditPath));
+			testInfo.TextBeforeLazy = new Lazy<string>(() => stringCache.GetOrAdd(testInfo.TextBeforeSha, () => LoadTextFile(corpDirTestInfo.InstantTextEditPath)));
 			testInfo.TextCurrentSha = corpDirTestInfo.CurrentTextEditSHA ?? LoadBytes(corpDirTestInfo.CurrentTextEditSHAPath);
+			testInfo.TextCurrentLazy = new Lazy<string>(() => stringCache.GetOrAdd(testInfo.TextCurrentSha, () => LoadTextFile(corpDirTestInfo.CurrentTextEditPath)));
 			InitializeTextDiff(testInfo);
 
-			testInfo.ImageBeforeArrLazy = new Lazy<byte[]>(() => LoadBytes(corpDirTestInfo.InstantImagePath));
 			testInfo.ImageBeforeSha = corpDirTestInfo.InstantImageSHA ?? LoadBytes(corpDirTestInfo.InstantImageSHAPath);
-			testInfo.ImageCurrentArrLazy = new Lazy<byte[]>(() => LoadBytes(corpDirTestInfo.CurrentImagePath));
+			testInfo.ImageBeforeArrLazy = new Lazy<byte[]>(() => byteCache.GetOrAdd(testInfo.ImageBeforeSha, () => LoadBytes(corpDirTestInfo.InstantImagePath)));
 			testInfo.ImageCurrentSha = corpDirTestInfo.CurrentImageSHA ?? LoadBytes(corpDirTestInfo.CurrentImageSHAPath);
+			testInfo.ImageCurrentArrLazy = new Lazy<byte[]>(() => byteCache.GetOrAdd(testInfo.ImageCurrentSha, () => LoadBytes(corpDirTestInfo.CurrentImagePath)));
 
 			testInfo.ImageDiffArrLazy = new Lazy<byte[]>(() => LoadBytes(corpDirTestInfo.ImageDiffPath));
 			//if(TestValid(testInfo))

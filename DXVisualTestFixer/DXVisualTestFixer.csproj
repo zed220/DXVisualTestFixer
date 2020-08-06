@@ -340,6 +340,10 @@
       <Project>{6e5e8bc1-a7a3-4ded-ad5e-4c8a09870875}</Project>
       <Name>DXVisualTestFixer.UI</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DXVisualTestsFixer.Cache\DXVisualTestsFixer.Cache.csproj">
+      <Project>{8f187615-bc3f-4fca-bccc-1edfa75d1f74}</Project>
+      <Name>DXVisualTestsFixer.Cache</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="WhatsNew.txt" />

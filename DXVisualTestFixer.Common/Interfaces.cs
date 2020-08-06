@@ -168,4 +168,7 @@ namespace DXVisualTestFixer.Common {
 		string TestName { get; }
 		string Volunteer { get; }
 	}
+	public interface ICache<T> {
+		public T GetOrAdd(byte[] sha256, Func<T> getValue);
+	}
 }
