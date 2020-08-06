@@ -15,6 +15,7 @@ using DXVisualTestFixer.UI.PrismCommon;
 using DXVisualTestFixer.UI.Services;
 using DXVisualTestFixer.UI.ViewModels;
 using DXVisualTestFixer.UI.Views;
+using DXVisualTestsFixer.Cache;
 using Microsoft.Practices.Unity;
 using Prism.Regions;
 using Prism.Unity;
@@ -44,6 +45,8 @@ namespace DXVisualTestFixer {
 			RegisterTypeIfMissing(typeof(IDXNotification), typeof(DXNotification), false);
 			RegisterTypeIfMissing(typeof(IDXConfirmation), typeof(DXConfirmation), false);
 			RegisterTypeIfMissing(typeof(IActiveService), typeof(IsActiveService), true);
+			RegisterTypeIfMissing(typeof(ICache<string>), typeof(Cache<string>), true);
+			RegisterTypeIfMissing(typeof(ICache<byte[]>), typeof(Cache<byte[]>), true);
 		}
 
 		protected override RegionAdapterMappings ConfigureRegionAdapterMappings() {

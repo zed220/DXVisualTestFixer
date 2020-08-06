@@ -444,9 +444,33 @@ namespace DXVisualTestFixer.UI.ViewModels {
 			return true;
 		}
 
-		async Task<T> DoAsync<T>(Func<T> func) => await Task.Run(func);
-		async Task DoAsync(Action action) => await Task.Run(action);
-		async Task DoAsync(Func<Task> func) => await func();
+		async Task<T> DoAsync<T>(Func<T> func) {
+			try {
+				return await Task.Run(func);
+			}
+			catch(Exception e) {
+				Dispatcher.CurrentDispatcher.Invoke(() => throw e);
+			}
+			return default;
+		}
+
+		async Task DoAsync(Action action) {
+			try {
+				await Task.Run(action);
+			}
+			catch(Exception e) {
+				Dispatcher.CurrentDispatcher.Invoke(() => throw e);
+			}
+		}
+
+		async Task DoAsync(Func<Task> func) {
+			try {
+				await func();
+			}
+			catch(Exception e) {
+				Dispatcher.CurrentDispatcher.Invoke(() => throw e);
+			}
+		}
 
 		bool ValidateConfigCheckChanged() {
 			if(string.IsNullOrWhiteSpace(_config.DefaultPlatform)) {
