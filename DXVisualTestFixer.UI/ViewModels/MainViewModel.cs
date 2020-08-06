@@ -449,7 +449,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 				return await Task.Run(func);
 			}
 			catch(Exception e) {
-				Dispatcher.CurrentDispatcher.Invoke(() => throw e);
+				dispatcher.Invoke(() => throw e);
 			}
 			return default;
 		}
@@ -459,7 +459,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 				await Task.Run(action);
 			}
 			catch(Exception e) {
-				Dispatcher.CurrentDispatcher.Invoke(() => throw e);
+				dispatcher.Invoke(() => throw e);
 			}
 		}
 
@@ -468,7 +468,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 				await func();
 			}
 			catch(Exception e) {
-				Dispatcher.CurrentDispatcher.Invoke(() => throw e);
+				dispatcher.Invoke(() => throw e);
 			}
 		}
 
