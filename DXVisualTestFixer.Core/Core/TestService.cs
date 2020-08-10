@@ -571,7 +571,10 @@ namespace DXVisualTestFixer.Core {
 		}
 
 		string[] GetAllBlinkingSha(string testResourceName, string extension) {
-			return Directory.GetFiles(Path.GetDirectoryName(testResourceName), $"{Path.GetFileName(testResourceName)}--*{extension}.sha");
+			var dirName = Path.GetDirectoryName(testResourceName);
+			if(!Directory.Exists(dirName))
+				return new string[0];
+			return Directory.GetFiles(dirName, $"{Path.GetFileName(testResourceName)}--*{extension}.sha");
 		}
 		string GetTestResourceName(TestInfo test, bool checkDirectoryExists) {
 			if(!Directory.Exists(test.ResourcesFullPath)) {
