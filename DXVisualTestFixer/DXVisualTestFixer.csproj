@@ -111,111 +111,111 @@
     <Reference Include="DeltaCompressionDotNet.PatchApi, Version=1.1.0.0, Culture=neutral, PublicKeyToken=3e8888ee913ed789, processorArchitecture=MSIL">
       <HintPath>..\packages\DeltaCompressionDotNet.1.1.0\lib\net20\DeltaCompressionDotNet.PatchApi.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.CodeParser.v20.1, Version=20.1.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
-      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.20.1.0.3\lib\net472\DevExpress.CodeParser.v20.1.dll</HintPath>
+    <Reference Include="DevExpress.CodeParser.v20.1, Version=20.1.206.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
+      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.20.1.0.4\lib\net472\DevExpress.CodeParser.v20.1.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.Data.Desktop.v20.1, Version=20.1.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
-      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.20.1.0.3\lib\net472\DevExpress.Data.Desktop.v20.1.dll</HintPath>
+    <Reference Include="DevExpress.Data.Desktop.v20.1, Version=20.1.206.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
+      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.20.1.0.4\lib\net472\DevExpress.Data.Desktop.v20.1.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.Data.v20.1, Version=20.1.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
-      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.20.1.0.3\lib\net472\DevExpress.Data.v20.1.dll</HintPath>
+    <Reference Include="DevExpress.Data.v20.1, Version=20.1.206.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
+      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.20.1.0.4\lib\net472\DevExpress.Data.v20.1.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.Diagram.v20.1.Core, Version=20.1.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
-      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.20.1.0.3\lib\net472\DevExpress.Diagram.v20.1.Core.dll</HintPath>
+    <Reference Include="DevExpress.Diagram.v20.1.Core, Version=20.1.206.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
+      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.20.1.0.4\lib\net472\DevExpress.Diagram.v20.1.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.Dialogs.v20.1.Core, Version=20.1.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
-      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.20.1.0.3\lib\net472\DevExpress.Dialogs.v20.1.Core.dll</HintPath>
+    <Reference Include="DevExpress.Dialogs.v20.1.Core, Version=20.1.206.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
+      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.20.1.0.4\lib\net472\DevExpress.Dialogs.v20.1.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.Images.v20.1, Version=20.1.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
-      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.20.1.0.3\lib\net472\DevExpress.Images.v20.1.dll</HintPath>
+    <Reference Include="DevExpress.Images.v20.1, Version=20.1.206.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
+      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.20.1.0.4\lib\net472\DevExpress.Images.v20.1.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.Mvvm.v20.1, Version=20.1.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
-      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.20.1.0.3\lib\net472\DevExpress.Mvvm.v20.1.dll</HintPath>
+    <Reference Include="DevExpress.Mvvm.v20.1, Version=20.1.206.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
+      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.20.1.0.4\lib\net472\DevExpress.Mvvm.v20.1.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.Pdf.v20.1.Core, Version=20.1.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
-      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.20.1.0.3\lib\net472\DevExpress.Pdf.v20.1.Core.dll</HintPath>
+    <Reference Include="DevExpress.Pdf.v20.1.Core, Version=20.1.206.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
+      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.20.1.0.4\lib\net472\DevExpress.Pdf.v20.1.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.Printing.v20.1.Core, Version=20.1.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
-      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.20.1.0.3\lib\net472\DevExpress.Printing.v20.1.Core.dll</HintPath>
+    <Reference Include="DevExpress.Printing.v20.1.Core, Version=20.1.206.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
+      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.20.1.0.4\lib\net472\DevExpress.Printing.v20.1.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Accordion.v20.1, Version=20.1.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
-      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.20.1.0.3\lib\net472\DevExpress.Xpf.Accordion.v20.1.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Accordion.v20.1, Version=20.1.206.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
+      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.20.1.0.4\lib\net472\DevExpress.Xpf.Accordion.v20.1.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Controls.v20.1, Version=20.1.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
-      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.20.1.0.3\lib\net472\DevExpress.Xpf.Controls.v20.1.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Controls.v20.1, Version=20.1.206.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
+      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.20.1.0.4\lib\net472\DevExpress.Xpf.Controls.v20.1.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Core.v20.1, Version=20.1.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
-      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.20.1.0.3\lib\net472\DevExpress.Xpf.Core.v20.1.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Core.v20.1, Version=20.1.206.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
+      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.20.1.0.4\lib\net472\DevExpress.Xpf.Core.v20.1.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Diagram.v20.1, Version=20.1.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
-      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.20.1.0.3\lib\net472\DevExpress.Xpf.Diagram.v20.1.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Diagram.v20.1, Version=20.1.206.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
+      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.20.1.0.4\lib\net472\DevExpress.Xpf.Diagram.v20.1.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Dialogs.v20.1, Version=20.1.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
-      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.20.1.0.3\lib\net472\DevExpress.Xpf.Dialogs.v20.1.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Dialogs.v20.1, Version=20.1.206.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
+      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.20.1.0.4\lib\net472\DevExpress.Xpf.Dialogs.v20.1.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Docking.v20.1, Version=20.1.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
-      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.20.1.0.3\lib\net472\DevExpress.Xpf.Docking.v20.1.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Docking.v20.1, Version=20.1.206.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
+      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.20.1.0.4\lib\net472\DevExpress.Xpf.Docking.v20.1.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.Xpf.DocumentViewer.v20.1.Core, Version=20.1.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
-      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.20.1.0.3\lib\net472\DevExpress.Xpf.DocumentViewer.v20.1.Core.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.DocumentViewer.v20.1.Core, Version=20.1.206.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
+      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.20.1.0.4\lib\net472\DevExpress.Xpf.DocumentViewer.v20.1.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Grid.v20.1, Version=20.1.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
-      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.20.1.0.3\lib\net472\DevExpress.Xpf.Grid.v20.1.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Grid.v20.1, Version=20.1.206.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
+      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.20.1.0.4\lib\net472\DevExpress.Xpf.Grid.v20.1.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Grid.v20.1.Core, Version=20.1.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
-      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.20.1.0.3\lib\net472\DevExpress.Xpf.Grid.v20.1.Core.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Grid.v20.1.Core, Version=20.1.206.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
+      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.20.1.0.4\lib\net472\DevExpress.Xpf.Grid.v20.1.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Layout.v20.1.Core, Version=20.1.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
-      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.20.1.0.3\lib\net472\DevExpress.Xpf.Layout.v20.1.Core.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Layout.v20.1.Core, Version=20.1.206.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
+      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.20.1.0.4\lib\net472\DevExpress.Xpf.Layout.v20.1.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.Xpf.LayoutControl.v20.1, Version=20.1.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
-      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.20.1.0.3\lib\net472\DevExpress.Xpf.LayoutControl.v20.1.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.LayoutControl.v20.1, Version=20.1.206.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
+      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.20.1.0.4\lib\net472\DevExpress.Xpf.LayoutControl.v20.1.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.Xpf.NavBar.v20.1, Version=20.1.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
-      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.20.1.0.3\lib\net472\DevExpress.Xpf.NavBar.v20.1.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.NavBar.v20.1, Version=20.1.206.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
+      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.20.1.0.4\lib\net472\DevExpress.Xpf.NavBar.v20.1.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.Xpf.PropertyGrid.v20.1, Version=20.1.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
-      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.20.1.0.3\lib\net472\DevExpress.Xpf.PropertyGrid.v20.1.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.PropertyGrid.v20.1, Version=20.1.206.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
+      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.20.1.0.4\lib\net472\DevExpress.Xpf.PropertyGrid.v20.1.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Ribbon.v20.1, Version=20.1.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
-      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.20.1.0.3\lib\net472\DevExpress.Xpf.Ribbon.v20.1.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Ribbon.v20.1, Version=20.1.206.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
+      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.20.1.0.4\lib\net472\DevExpress.Xpf.Ribbon.v20.1.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.Xpf.Themes.Office2019Colorful.v20.1, Version=20.1.203.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
-      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.20.1.0.3\lib\net472\DevExpress.Xpf.Themes.Office2019Colorful.v20.1.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Themes.Office2019Colorful.v20.1, Version=20.1.206.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
+      <HintPath>..\packages\DXVisualTests_UI_Addin_Dependencies.20.1.0.4\lib\net472\DevExpress.Xpf.Themes.Office2019Colorful.v20.1.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
-    <Reference Include="Logify.Alert.Core, Version=1.0.53.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
-      <HintPath>..\packages\Logify.Alert.Core.1.0.53\lib\net45\Logify.Alert.Core.dll</HintPath>
+    <Reference Include="Logify.Alert.Core, Version=1.0.54.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
+      <HintPath>..\packages\Logify.Alert.Core.1.0.54\lib\net45\Logify.Alert.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Logify.Alert.Wpf, Version=1.0.53.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
-      <HintPath>..\packages\Logify.Alert.Wpf.1.0.53\lib\net45\Logify.Alert.Wpf.dll</HintPath>
+    <Reference Include="Logify.Alert.Wpf, Version=1.0.54.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
+      <HintPath>..\packages\Logify.Alert.Wpf.1.0.54\lib\net45\Logify.Alert.Wpf.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Expression.Interactions, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">

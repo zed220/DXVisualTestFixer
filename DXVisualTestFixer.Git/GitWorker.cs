@@ -12,6 +12,7 @@ using Repository = LibGit2Sharp.Repository;
 namespace DXVisualTestFixer.Git {
 	public class GitWorker : IGitWorker {
 		static readonly string remoteName = "origin_http";
+		readonly object pushLocker = new object();
 		
 		public bool SetHttpRepository(string serverPath, CommonRepository repository) {
 			if(!repository.IsDownloaded())
@@ -135,14 +136,16 @@ namespace DXVisualTestFixer.Git {
 		}
 
 		bool PushCore(CommonRepository repository) {
-			using var repo = new Repository(repository.Path);
-			var options = new PushOptions();
-			options.CredentialsProvider = CredentialsHandler;
-			var branch = repo.Branches.FirstOrDefault(b => b.FriendlyName == $"20{repository.Version}");
-			if(branch == null)
-				return false;
-			repo.Network.Push(branch, options);
-			return true;
+			lock(pushLocker) {
+				using var repo = new Repository(repository.Path);
+				var options = new PushOptions();
+				options.CredentialsProvider = CredentialsHandler;
+				var branch = repo.Branches.FirstOrDefault(b => b.FriendlyName == $"20{repository.Version}");
+				if(branch == null)
+					return false;
+				repo.Network.Push(branch, options);
+				return true;
+			}
 		}
 
 		bool CloneCore(string serverPath, CommonRepository repository) {
