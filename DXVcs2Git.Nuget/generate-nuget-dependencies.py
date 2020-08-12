@@ -28,7 +28,7 @@ def guess_version():
     
 major, minor = guess_version()
 #version = f'v{major}.{minor}'
-version = 'v20.1'
+version = 'v20.2'
 
 def expand_path(path):
     path = path.replace('{v}', version)
