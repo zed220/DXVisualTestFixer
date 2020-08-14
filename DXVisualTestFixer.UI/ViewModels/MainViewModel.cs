@@ -552,7 +552,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 
 		async Task<bool> PushTestsInRepository(string commitCaption) {
 			foreach(var group in testService.SelectedState.ChangedTests.GroupBy(t => t.Repository)) {
-				var commitResult = await gitWorker.Commit(group.Key, commitCaption);
+				var commitResult = await gitWorker.Commit(group.Key, commitCaption, _config.Volunteer);
 				if(commitResult != GitCommitResult.Error) continue;
 				dispatcher.Invoke(() => notificationService.DoNotification("Pushing failed", $"Can't push repository {group.Key.Version} that located at {group.Key.Path}", MessageBoxImage.Error));
 				return await Task.FromResult(false);
