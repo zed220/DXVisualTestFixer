@@ -131,7 +131,7 @@ namespace DXVisualTestFixer.Common {
 		bool SetHttpRepository(string serverPath, Repository repository);
 		Task<GitUpdateResult> Update(Repository repository);
 		Task<bool> IsOutdatedAsync(string serverPath, Repository repository);
-		Task<GitCommitResult> Commit(Repository repository, string commitCaption);
+		Task<GitCommitResult> Commit(Repository repository, string commitCaption, string author);
 		Task<bool> Clone(string serverPath, Repository repository);
 	}
 
