@@ -39,6 +39,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 		ObservableCollection<PlatformModel> _platformModels;
 		string _themeName;
 		string _volunteer;
+		string _email;
 		string _workingDirectory;
 		bool _isVolunteerLoading;
 		bool _isVolunteerValid = true;
@@ -71,6 +72,11 @@ namespace DXVisualTestFixer.UI.ViewModels {
 		public string Volunteer {
 			get => _volunteer;
 			set => SetProperty(ref _volunteer, value, UpdateVolunteer);
+		}
+		[PublicAPI]
+		public string Email {
+			get => _email;
+			set => SetProperty(ref _email, value, UpdateVolunteer);
 		}
 
 		[PublicAPI]
@@ -144,17 +150,20 @@ namespace DXVisualTestFixer.UI.ViewModels {
 		async void UpdateVolunteer() {
 			IsVolunteerLoading = true;
 			Config.Volunteer = Volunteer;
+			Config.Email = Email;
 			var volunteer = Volunteer;
-			if(volunteer == null) {
-				var login = await LoginExtractor.GetLoginAsync().ConfigureAwait(false);
+			var email = Email;
+			if(volunteer == null || email == null) {
+				var login = await LoginExtractor.GetLoginInfoAsync().ConfigureAwait(false);
 				_dispatcher.Invoke(() => {
-					Config.Volunteer = Volunteer = login;
+					Config.Volunteer = Volunteer = login.FullName;
+					Config.Email = Email = login.Email;
 					IsVolunteerLoading = false;
 					IsVolunteerValid = true;
 				}, DispatcherPriority.Background);
 			}
 			else {
-				var loginValid = await LoginExtractor.CheckLoginAsync(volunteer).ConfigureAwait(false);
+				var loginValid = await LoginExtractor.CheckLoginAsync(new LoginInfo(volunteer, email)).ConfigureAwait(false);
 				_dispatcher.Invoke(() => {
 					IsVolunteerValid = loginValid;
 					IsVolunteerLoading = false;

@@ -34,12 +34,12 @@ namespace DXVisualTestFixer.Git {
             catch { }
         }
 
-        void Commit(string repoPath, string comment, string author) { //, string date
+        void Commit(string repoPath, string comment, string author, string email) { //, string date
             try {
                 var args = new[] {
                     "commit",
                     "-m", Escape(EscapeDoubleQuotes(comment)),
-                    "--author", Escape(author),
+                    "--author", Escape(author + (string.IsNullOrEmpty(email) ? "" : $"<{email}>")),
                 };
                 //Environment.SetEnvironmentVariable("GIT_AUTHOR_DATE", date);
                 //Environment.SetEnvironmentVariable("GIT_COMMITTER_DATE", date);
@@ -109,7 +109,7 @@ namespace DXVisualTestFixer.Git {
             return !string.IsNullOrEmpty(DiffWithRemoteBranch(repository.Path, branch));
         }
 
-        public async Task<GitCommitResult> Commit(Repository repository, string commitCaption, string author) {
+        public async Task<GitCommitResult> Commit(Repository repository, string commitCaption, string author, string email) {
             await Task.Yield();
             if(!repository.IsDownloaded())
                 return GitCommitResult.Error;
@@ -117,7 +117,7 @@ namespace DXVisualTestFixer.Git {
                 Stage(repository.Path, "*.xml");
                 Stage(repository.Path, "*.png");
                 Stage(repository.Path, "*.sha");
-                Commit(repository.Path, commitCaption, author);
+                Commit(repository.Path, commitCaption, author, email);
                 Push(repository.Path);
             }
             catch {
