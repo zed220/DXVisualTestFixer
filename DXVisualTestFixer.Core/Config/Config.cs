@@ -13,6 +13,7 @@ namespace DXVisualTestFixer.Core.Configuration {
 		public Repository[] Repositories { get; set; } = new Repository[0];
 		public string ThemeName { get; set; } = "Office2016White";
 		public string Volunteer { get; set; }
+		public string Email { get; set; }
 		public string WorkingDirectory { get; set; } = @"C:\Work";
 		public string WhatsNewSeenForVersion { get; set; }
 		public string DefaultPlatform { get; set; }

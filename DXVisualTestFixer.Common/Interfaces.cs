@@ -85,6 +85,7 @@ namespace DXVisualTestFixer.Common {
 	public interface IConfig {
 		string ThemeName { get; set; }
 		string Volunteer { get; set; }
+		string Email { get; set; }
 		Repository[] Repositories { get; set; }
 		string WorkingDirectory { get; set; }
 		string WhatsNewSeenForVersion { get; set; }
@@ -131,7 +132,7 @@ namespace DXVisualTestFixer.Common {
 		bool SetHttpRepository(string serverPath, Repository repository);
 		Task<GitUpdateResult> Update(Repository repository);
 		Task<bool> IsOutdatedAsync(string serverPath, Repository repository);
-		Task<GitCommitResult> Commit(Repository repository, string commitCaption, string author);
+		Task<GitCommitResult> Commit(Repository repository, string commitCaption, string author, string email);
 		Task<bool> Clone(string serverPath, Repository repository);
 	}
 
