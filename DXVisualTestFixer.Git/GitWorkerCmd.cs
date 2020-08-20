@@ -8,14 +8,15 @@ using DXVisualTestFixer.Git;
 namespace DXVisualTestFixer.Git {
     public class GitWorkerCmd : IGitWorker {
         const string legacyRemoteName = "origin_http";
-        readonly string gitPath = Path.Combine(Environment.ExpandEnvironmentVariables("%ProgramW6432%"), @"Git\cmd\git.exe");
+        readonly string gitPath64 = Path.Combine(Environment.ExpandEnvironmentVariables("%ProgramW6432%"), @"Git\cmd\git.exe");
+        readonly string gitPath86 = Path.Combine(Environment.ExpandEnvironmentVariables("%ProgramFiles%"), @"Git\cmd\git.exe");
 
         string RunGitProcess(string workingDir, params string[] opt) {
-            var code = ProcessHelper.WaitForProcess(gitPath, workingDir, out var output, out var errors, opt);
+            var code = ProcessHelper.WaitForProcess(GetActualGitPath(), workingDir, out var output, out var errors, opt);
             ProcessHelper.CheckFail(code, output, errors);
             return output;
         }
-
+        string GetActualGitPath() => File.Exists(gitPath64) ? gitPath64 : gitPath86;
         static bool IsGitDir(string path) {
             if(!Directory.Exists(path))
                 return false;
