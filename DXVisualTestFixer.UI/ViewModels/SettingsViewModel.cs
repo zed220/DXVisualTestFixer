@@ -153,7 +153,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 			Config.Email = Email;
 			var volunteer = Volunteer;
 			var email = Email;
-			if(volunteer == null || email == null) {
+			if(volunteer == null) {
 				var login = await LoginExtractor.GetLoginInfoAsync().ConfigureAwait(false);
 				_dispatcher.Invoke(() => {
 					Config.Volunteer = Volunteer = login.FullName;
