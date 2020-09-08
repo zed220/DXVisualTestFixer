@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 
 namespace DXVisualTestFixer.UI.Native {
 	class LoginInfo {
+		public static readonly LoginInfo Empty = new LoginInfo(null, null);
+		
 		public readonly string FullName;
 		public readonly string Email;
 		public LoginInfo(string fullName, string email) {
@@ -30,13 +32,15 @@ namespace DXVisualTestFixer.UI.Native {
 					if(result.Sid.ToString() == userId.Value)
 						return new LoginInfo(result.SamAccountName, result.EmailAddress);
 				}
-				return null;
+				return LoginInfo.Empty;
 			}
 			catch {
-				return null;
+				return LoginInfo.Empty;
 			}
 		}
 		public static async Task<bool> CheckLoginAsync(LoginInfo login) {
+			if(login == null || string.IsNullOrEmpty(login.FullName) || string.IsNullOrEmpty(login.Email))
+				return false;
 			await Task.Delay(1).ConfigureAwait(false);
 			try {
 				using var context = new PrincipalContext(ContextType.Domain, "corp.devexpress.com");
