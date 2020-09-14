@@ -406,11 +406,11 @@ namespace DXVisualTestFixer.UI.ViewModels {
 			LoadingProgressController.Start();
 			await testService.SelectState(_defaultPlatform, SelectedStateName).ConfigureAwait(false);
 			var testInfoContainer = testService.SelectedState;
-			IsReadOnly = !testInfoContainer.AllowEditing;
 			var tests = testInfoContainer.TestList.Where(t => t != null).Select(t => new TestInfoModel(this, t)).Cast<ITestInfoModel>().ToList();
 			loggingService.SendMessage("");
 			await dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
 				Tests = tests;
+				IsReadOnly = !testInfoContainer.AllowEditing;
 				AvailableStates = testService.States.Keys.ToList();
 				TimingInfo = new List<TimingInfo>(testInfoContainer.Timings);
 				Status = ProgramStatus.Idle;
@@ -543,7 +543,8 @@ namespace DXVisualTestFixer.UI.ViewModels {
 				}
 
 				if(await gitWorker.Update(repo) != GitUpdateResult.Error) continue;
-				notificationService.DoNotification("Updating failed", $"Repository {repo.Version} in {repo.Path} can't update", MessageBoxImage.Error);
+				await dispatcher.InvokeAsync(() => 
+					notificationService.DoNotification("Updating failed", $"Repository {repo.Version} in {repo.Path} can't update", MessageBoxImage.Error));
 				return await Task.FromResult(false);
 			}
 
