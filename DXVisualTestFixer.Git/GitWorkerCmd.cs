@@ -39,7 +39,7 @@ namespace DXVisualTestFixer.Git {
                 var args = new[] {
                     "commit",
                     "-m", Escape(EscapeDoubleQuotes(comment)),
-                    "--author", Escape(author + (string.IsNullOrEmpty(email) ? "" : $"<{email}>")),
+                    "--author", Escape($"{author} <{(string.IsNullOrEmpty(email) ? "" : email)}>"),
                 };
                 //Environment.SetEnvironmentVariable("GIT_AUTHOR_DATE", date);
                 //Environment.SetEnvironmentVariable("GIT_COMMITTER_DATE", date);
