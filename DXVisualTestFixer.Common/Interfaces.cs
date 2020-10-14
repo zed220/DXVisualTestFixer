@@ -129,7 +129,7 @@ namespace DXVisualTestFixer.Common {
 	}
 
 	public interface IGitWorker {
-		bool SetHttpRepository(string serverPath, Repository repository);
+		bool SetSshRepository(string serverPath, Repository repository);
 		Task<GitUpdateResult> Update(Repository repository);
 		Task<bool> IsOutdatedAsync(string serverPath, Repository repository);
 		Task<GitCommitResult> Commit(Repository repository, string commitCaption, string author, string email);

@@ -150,7 +150,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 			set {
 				_selectedStateName = value;
 				RaisePropertyChanged();
-				RefreshTestList();
+				RefreshTestListAsync();
 			}
 		}
 
@@ -197,7 +197,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 			await dispatcher.InvokeAsync(() => {
 				return Status = ProgramStatus.Idle;
 			}).Task.ConfigureAwait(false);
-			RefreshTestList();
+			RefreshTestListAsync();
 		}
 
 		[UsedImplicitly]
@@ -274,7 +274,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 		}
 
 		[PublicAPI]
-		public async void RefreshTestList() {
+		public async void RefreshTestListAsync() {
 			if(Status == ProgramStatus.Loading)
 				return;
 			var preventUpdate = false;
@@ -291,7 +291,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 				return;
 			loggingService.SendMessage("Waiting response from minio");
 			try {
-				await ActualizeRepositories();
+				await ActualizeRepositoriesAsync();
 				await UpdateAllTests();
 			}
 			catch(Exception e) {
@@ -391,7 +391,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 			obsolescenceTracker.Start();
 			if(!CheckConfirmation(ConfirmationRequest, "Repositories outdated", "Repositories outdated. Refresh tests list?"))
 				return;
-			RefreshTestList();
+			RefreshTestListAsync();
 		}
 
 		void TestService_PropertyChanged(object sender, PropertyChangedEventArgs e) {
@@ -512,7 +512,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 
 		async Task ApplyChangesCore(bool commitIntoGitRepo, string commitCaption) {
 			await Task.Delay(1).ConfigureAwait(false);
-			if(commitIntoGitRepo && !await ActualizeRepositories()) {
+			if(commitIntoGitRepo && !await ActualizeRepositoriesAsync()) {
 				obsolescenceTracker.Start();
 				await dispatcher.InvokeAsync(() => Status = ProgramStatus.Idle, DispatcherPriority.Background).Task.ConfigureAwait(false);
 				return;
@@ -530,14 +530,14 @@ namespace DXVisualTestFixer.UI.ViewModels {
 				Status = ProgramStatus.Idle;
 			}, DispatcherPriority.Background).Task.ConfigureAwait(false);
 			
-			RefreshTestList();
+			RefreshTestListAsync();
 		}
 
-		async Task<bool> ActualizeRepositories() {
+		async Task<bool> ActualizeRepositoriesAsync() {
 			_defaultPlatform ??= _config.DefaultPlatform;
 
 			foreach(var repo in _config.GetLocalRepositories().Where(s => s.Platform == _defaultPlatform)) {
-				if(!gitWorker.SetHttpRepository(platformProvider.PlatformInfos.Single(p => p.Name == repo.Platform).GitRepository, repo)) {
+				if(!gitWorker.SetSshRepository(platformProvider.PlatformInfos.Single(p => p.Name == repo.Platform).GitRepository, repo)) {
 					notificationService.DoNotification("Updating repository source failed", $"Can't update source (origin or upstream) for repository {repo.Version} that located at {repo.Path}", MessageBoxImage.Error);
 					return await Task.FromResult(false);
 				}
