@@ -3,23 +3,27 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Threading;
 using DevExpress.Mvvm;
 using DXVisualTestFixer.Common;
 using DXVisualTestFixer.UI.Native;
 using JetBrains.Annotations;
 using Microsoft.Practices.ServiceLocation;
+using INotificationService = DXVisualTestFixer.Common.INotificationService;
 
 namespace DXVisualTestFixer.UI.Models {
 	public class RepositoryModel : BindableBase {
 		readonly Dispatcher _dispatcher;
 		readonly IPlatformInfo _platform;
+		readonly INotificationService _notificationService;
 		
 		public readonly Repository Repository;
 
-		public RepositoryModel(Repository source, IPlatformInfo platform) {
+		public RepositoryModel(Repository source, IPlatformInfo platform, INotificationService notificationService) {
 			Repository = source;
 			Version = Repository.Version;
+			_notificationService = notificationService;
 			Path = Repository.Path;
 			_dispatcher = Dispatcher.CurrentDispatcher;
 			var platformProvider = ServiceLocator.Current.GetInstance<IPlatformProvider>();
@@ -50,7 +54,7 @@ namespace DXVisualTestFixer.UI.Models {
 			Repository.Path = Path;
 		}
 
-		public static void ActualizeRepositories(IPlatformInfo platform, ICollection<RepositoryModel> repositories, string filePath) {
+		public static void ActualizeRepositories(IPlatformInfo platform, ICollection<RepositoryModel> repositories, INotificationService notificationService, string filePath) {
 			var savedVersions = repositories.Select(r => r.Version).ToList();
 			foreach(var ver in RepositoryLoader.GetVersions(platform).Where(v => !savedVersions.Contains(v)))
 			foreach(var directoryPath in Directory.GetDirectories(filePath)) {
@@ -59,7 +63,7 @@ namespace DXVisualTestFixer.UI.Models {
 				if(dirName != localPath) continue;
 				if(!File.Exists(directoryPath + "\\VisualTestsConfig.xml"))
 					continue;
-				var repository = new RepositoryModel(Repository.CreateRegular(platform.Name, ver, directoryPath + "\\"), platform); 
+				var repository = new RepositoryModel(Repository.CreateRegular(platform.Name, ver, directoryPath + "\\"), platform, notificationService); 
 				repositories.Add(repository);
 				InitializeBinIfNeed(repository.Path, repository.Version);
 			}
@@ -117,19 +121,29 @@ namespace DXVisualTestFixer.UI.Models {
 		}
 
 		[UsedImplicitly]
-		public void Download() {
-			if(DownloadState == DownloadState.ReadyToDownload) Task.Factory.StartNew(DownloadAsync);
+		public async void Download() {
+			if(DownloadState != DownloadState.ReadyToDownload) 
+				return;
+			try {
+				await DownloadAsync();					
+			}
+			catch(Exception e) {
+				_notificationService?.DoNotification("Error", e.Message, MessageBoxImage.Error);
+				throw e;
+			}
 		}
 
 		async Task DownloadAsync() {
-			await _dispatcher.BeginInvoke(new Action(() => { DownloadState = DownloadState.Downloading; }));
+			DownloadState = DownloadState.Downloading;
+			await Task.Delay(1).ConfigureAwait(false);
 			var git = ServiceLocator.Current.GetInstance<IGitWorker>();
 			if(!await git.Clone(_platform.GitRepository, Repository)) {
 				await _dispatcher.BeginInvoke(new Action(() => { DownloadState = DownloadState.CanNotDownload; }));
 				return;
 			}
 			InitializeBinIfNeed(Repository.Path, Repository.Version);
-			await _dispatcher.BeginInvoke(new Action(() => { DownloadState = DownloadState.Downloaded; }));
+			await _dispatcher.BeginInvoke(new Action(() => { DownloadState = DownloadState.Downloaded; }));	
+			
 		}
 	}
 

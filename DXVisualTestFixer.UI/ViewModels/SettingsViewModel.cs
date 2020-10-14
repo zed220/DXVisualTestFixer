@@ -17,6 +17,7 @@ using DXVisualTestFixer.UI.Native;
 using JetBrains.Annotations;
 using Microsoft.Practices.ServiceLocation;
 using Prism.Interactivity.InteractionRequest;
+using INotificationService = DXVisualTestFixer.Common.INotificationService;
 
 namespace DXVisualTestFixer.UI.ViewModels {
 	public class PlatformModel : BindableBase {
@@ -34,7 +35,9 @@ namespace DXVisualTestFixer.UI.ViewModels {
 		readonly IConfigSerializer _configSerializer;
 		readonly IPlatformProvider _platformProvider;
 		readonly Dispatcher _dispatcher;
-
+		readonly INotificationService _notificationService;
+		
+		
 		IConfig _config;
 		ObservableCollection<PlatformModel> _platformModels;
 		string _themeName;
@@ -45,10 +48,11 @@ namespace DXVisualTestFixer.UI.ViewModels {
 		bool _isVolunteerValid = true;
 		PlatformModel _defaultPlatform;
 
-		public SettingsViewModel(IConfigSerializer configSerializer) {
+		public SettingsViewModel(IConfigSerializer configSerializer, INotificationService notificationService) {
 			Title = "Settings";
 			_dispatcher = Dispatcher.CurrentDispatcher;
 			_configSerializer = configSerializer;
+			_notificationService = notificationService;
 			_platformProvider = ServiceLocator.Current.GetInstance<IPlatformProvider>();
 			Config = configSerializer.GetConfig();
 			Commands = UICommand.GenerateFromMessageButton(MessageButton.OKCancel, new DialogService(), MessageResult.OK, MessageResult.Cancel);
@@ -126,7 +130,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 			}
 
 			foreach(var platformModel in PlatformModels) {
-				RepositoryModel.ActualizeRepositories(platformModel.Platform, platformModel.Repositories, WorkingDirectory);
+				RepositoryModel.ActualizeRepositories(platformModel.Platform, platformModel.Repositories, _notificationService, WorkingDirectory);
 			}
 		}
 
@@ -177,7 +181,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 			PlatformModels = new ObservableCollection<PlatformModel>();
 			foreach(var platformAndRepo in (Config.Repositories ?? Enumerable.Empty<Repository>()).GroupBy(x => x.Platform)) {
 				var platform = GetPlatform(_platformProvider, platformAndRepo.Key);
-				PlatformModels.Add(new PlatformModel(platform, platformAndRepo.Select(r => new RepositoryModel(r, platform)).ToObservableCollection()));
+				PlatformModels.Add(new PlatformModel(platform, platformAndRepo.Select(r => new RepositoryModel(r, platform, _notificationService)).ToObservableCollection()));
 			}
 
 			PlatformModels.CollectionChanged += Repositories_CollectionChanged;

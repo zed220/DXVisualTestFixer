@@ -67,7 +67,7 @@ namespace DXVisualTestFixer.Git {
             RunGitProcess(".", args);
         }
 
-        public bool SetHttpRepository(string serverPath, Repository repository) {
+        public bool SetSshRepository(string serverPath, Repository repository) {
             if(!repository.IsDownloaded())
                 return false;
             if(GetAllRemotes(repository.Path).Contains(legacyRemoteName))
