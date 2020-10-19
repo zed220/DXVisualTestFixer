@@ -128,7 +128,7 @@ namespace DXVisualTestFixer.Minio {
 
 			var result = new List<string>();
 			foreach(var rootPath in rootPaths) {
-				foreach(var version in await Discover($"{rootPath}{forkFolderName}/")) {
+				foreach(var version in await Discover(rootPath)) {
 					var last = await DiscoverLast(version);
 					if(last != null)
 						result.Add(last);
