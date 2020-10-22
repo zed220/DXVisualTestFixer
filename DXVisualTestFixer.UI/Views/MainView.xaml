@@ -233,7 +233,7 @@
                                        Content="Reload Tests List"
                                        KeyGesture="F5"
                                        dxb:BarManager.KeyGestureWorkingMode="AllKeyGesture"
-                                       Command="{DXCommand Execute='RefreshTestList()'}"
+                                       Command="{DXCommand Execute='RefreshTestListAsync()'}"
                                        Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Refresh.svg}" />
                 </dxr:RibbonControl.ToolbarItems>
                 <dxr:RibbonDefaultPageCategory>
