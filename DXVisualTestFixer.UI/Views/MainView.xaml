@@ -545,6 +545,10 @@
                                                                Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Clear.svg}"
                                                                Command="{DXCommand Execute='@e(PART_View).DataContext.ClearCommits()'}" />
                                             <dxb:BarItemSeparator/>
+                                            <dxb:BarButtonItem Content="Take Volunteer For All Checked Tests"
+                                                               Glyph="{dx:DXImage SvgImages/XAF/Action_Grant_Set.svg}"
+                                                               IsVisible="{DXBinding Expr='@c.DataControl.DataContext.TestsToCommitCount gt 0'}"
+                                                               Command="{DXCommand Execute='@c.DataControl.DataContext.TakeVolunteerForSelectedTests()'}" />
                                             <dxb:BarButtonItem Content="Take Volunteer For All Tests In This Group"
                                                                Glyph="{dx:DXImage SvgImages/Business Objects/BO_Person.svg}"
                                                                Command="{DXCommand Execute='@e(PART_View).TakeVolunteerGroupRow(@c)'}" />
@@ -563,6 +567,10 @@
                                                                Glyph="{dx:DXImage SvgImages/Icon Builder/Actions_Clear.svg}"
                                                                Command="{DXCommand Execute='@e(PART_View).DataContext.ClearCommits()'}" />
                                             <dxb:BarItemSeparator/>
+                                            <dxb:BarButtonItem Content="Take Volunteer For All Checked Tests"
+                                                               Glyph="{dx:DXImage SvgImages/XAF/Action_Grant_Set.svg}"
+                                                               IsVisible="{DXBinding Expr='@c.DataControl.DataContext.TestsToCommitCount gt 0'}"
+                                                               Command="{DXCommand Execute='@c.DataControl.DataContext.TakeVolunteerForSelectedTests()'}" />
                                             <dxb:BarButtonItem Content="{DXBinding '`Take Volunteer For ` + @c.Row.Row.Name'}"
                                                                Glyph="{dx:DXImage SvgImages/Business Objects/BO_Person.svg}"
                                                                Command="{DXCommand Execute='@e(PART_View).DataContext.TakeVolunteer(@c.Row.Row)'}" />

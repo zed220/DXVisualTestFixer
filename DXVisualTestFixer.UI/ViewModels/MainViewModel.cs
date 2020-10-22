@@ -77,8 +77,8 @@ namespace DXVisualTestFixer.UI.ViewModels {
 		#region Fields
 
 		IConfig _config;
-		List<ITestInfoModel> _tests;
-		ITestInfoModel _currentTest;
+		List<TestInfoModel> _tests;
+		TestInfoModel _currentTest;
 		ProgramStatus _status;
 		string _currentLogLine;
 		int _testsToCommitCount;
@@ -97,13 +97,13 @@ namespace DXVisualTestFixer.UI.ViewModels {
 		[UsedImplicitly] public ILoadingProgressController LoadingProgressController { get; }
 
 		[UsedImplicitly]
-		public List<ITestInfoModel> Tests {
+		public List<TestInfoModel> Tests {
 			get => _tests;
 			set => SetProperty(ref _tests, value, OnTestsChanged);
 		}
 
 		[UsedImplicitly]
-		public ITestInfoModel CurrentTest {
+		public TestInfoModel CurrentTest {
 			get => _currentTest;
 			set => SetProperty(ref _currentTest, value);
 		}
@@ -331,8 +331,16 @@ namespace DXVisualTestFixer.UI.ViewModels {
 		}
 
 		[PublicAPI]
+		public void TakeVolunteerForSelectedTests() {
+			if(TestsToCommitCount == 0)
+				return;
+			TakeVolunteerForManyTests(Tests.Where(t => t.CommitChange).ToArray());
+		}
+
+		[PublicAPI]
 		public async void TakeVolunteerForManyTests(TestInfoModel[] testInfoModels) {
 			Status = ProgramStatus.Loading;
+			TestsToCommitCount = 0;
 			await Task.Delay(1).ConfigureAwait(false);
 			var ccnetTaskMask = platformProvider.PlatformInfos.Single(p => p.Name == _defaultPlatform).FarmTaskName;
 			foreach(var groupedByVersion in testInfoModels.GroupBy(t => t.Version)) {
@@ -406,7 +414,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 			LoadingProgressController.Start();
 			await testService.SelectState(_defaultPlatform, SelectedStateName).ConfigureAwait(false);
 			var testInfoContainer = testService.SelectedState;
-			var tests = testInfoContainer.TestList.Where(t => t != null).Select(t => new TestInfoModel(this, t)).Cast<ITestInfoModel>().ToList();
+			var tests = testInfoContainer.TestList.Where(t => t != null).Select(t => new TestInfoModel(this, t)).ToList();
 			loggingService.SendMessage("");
 			await dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
 				Tests = tests;
