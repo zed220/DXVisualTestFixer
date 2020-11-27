@@ -9,5 +9,6 @@ namespace DXVisualTestFixer {
 		public string VersionsFileName => "versions_WPF.xml";
 		public string FarmTaskName => "Test.v{0} WPF VisualTests";
 		public string ForkFolderName => "Common";
+		public string TestStartString => "Exception - NUnit.Framework.AssertionException";
 	}
 }
