@@ -156,6 +156,7 @@ namespace DXVisualTestFixer.Common {
 		string VersionsFileName { get; }
 		string FarmTaskName { get; }
 		string ForkFolderName { get; }
+		string TestStartString { get; }
 	}
 
 	public interface IPlatformProvider {

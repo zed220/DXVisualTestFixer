@@ -41,6 +41,8 @@ namespace DXVisualTestFixer.Core {
 
 	static class TestLoader {
 		public static async Task<CorpDirTestInfoContainer> LoadFromMinioZip(MinioRepository minioRepository) {
+			var platformProvider = ServiceLocator.Current.GetInstance<IPlatformProvider>();
+			var testStartString = platformProvider.PlatformInfos.Single(p => p.Name == minioRepository.Repository.Platform).TestStartString;
 			var minio = ServiceLocator.Current.GetInstance<IMinioWorker>();
 			
 			var failedTests = new ConcurrentBag<CorpDirTestInfo>();
@@ -77,7 +79,7 @@ namespace DXVisualTestFixer.Core {
 							var failureNode = testCaseXml.FindByName("failure");
 							var resultNode = failureNode.FindByName("message");
 							var stackTraceNode = failureNode.FindByName("stack-trace");
-							foreach(var test in ParseMessage(minioRepository.Repository, testNameAndNamespace, resultNode.InnerText, stackTraceNode.InnerText))
+							foreach(var test in ParseMessage(testStartString, minioRepository.Repository, testNameAndNamespace, resultNode.InnerText, stackTraceNode.InnerText))
 								failedTests.Add(test);
 						}
 
@@ -219,8 +221,8 @@ namespace DXVisualTestFixer.Core {
 					yield return node;
 		}
 
-		static IEnumerable<CorpDirTestInfo> ParseMessage(Repository repository, string testNameAndNamespace, string message, string stackTrace) {
-			if(!message.StartsWith("Exception - NUnit.Framework.AssertionException")) {
+		static IEnumerable<CorpDirTestInfo> ParseMessage(string testStartString, Repository repository, string testNameAndNamespace, string message, string stackTrace) {
+			if(!message.StartsWith(testStartString)) {
 				yield return CorpDirTestInfo.CreateError(repository, testNameAndNamespace, message, stackTrace);
 				yield break;
 			}
