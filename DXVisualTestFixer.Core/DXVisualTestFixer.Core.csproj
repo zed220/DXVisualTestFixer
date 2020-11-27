@@ -122,6 +122,7 @@
     <Compile Include="Core\Native\TestInfoCached.cs" />
     <Compile Include="Core\Native\TestInfoContainer.cs" />
     <Compile Include="Native\ImageComparer.cs" />
+    <Compile Include="Platforms\BlazorPlatformInfo.cs" />
     <Compile Include="Platforms\DashboardPlatformInfo.cs" />
     <Compile Include="Platforms\PlatformProvider.cs" />
     <Compile Include="Platforms\WinFormsPlatformInfo.cs" />
