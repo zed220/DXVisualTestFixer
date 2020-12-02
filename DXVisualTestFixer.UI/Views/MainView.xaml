@@ -476,6 +476,11 @@
                                                         <TextBlock Text="{Binding RowData.Row.Colorized}"
                                                                    Foreground="Black" FontSize="8" />
                                                     </Border>
+                                                    <Border Background="LightGray"
+                                                            Visibility="{Binding Path=RowData.Row.Browser, Converter={dxmvvm:StringToVisibilityConverter}}">
+                                                        <TextBlock Text="{Binding RowData.Row.Browser}"
+                                                                   Foreground="Black" FontSize="8" />
+                                                    </Border>
                                                     <Border Background="Gray">
                                                         <Border.Visibility>
                                                             <Binding Path="RowData.Row.Dpi">
