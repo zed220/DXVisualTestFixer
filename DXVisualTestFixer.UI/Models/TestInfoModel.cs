@@ -21,6 +21,7 @@ namespace DXVisualTestFixer.UI.ViewModels {
 		public string VersionAndFork => TestInfo.Repository.VersionAndFork;
 		public bool Optimized => TestInfo.Optimized;
 		public bool Colorized => TestInfo.Colorized;
+		public string Browser => TestInfo.Browser;
 		public string Volunteer => TestInfo.Volunteer;
 		public string VolunteerShort => Volunteer != null ? InitialsExtractor.Extract(Volunteer) : null;
 		public string Name => TestInfo.Name;
