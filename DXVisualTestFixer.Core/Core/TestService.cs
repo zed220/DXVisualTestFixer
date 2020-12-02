@@ -304,8 +304,15 @@ namespace DXVisualTestFixer.Core {
 			return testInfo;
 		}
 
+		static TestProperty GetTestParameter(CorpDirTestInfo corpDirTestInfo, string parameter) {
+			return corpDirTestInfo.AdditionalParameters.FirstOrDefault(x => x.Name == parameter);
+		}
+
 		static bool GetBoolTestParameter(CorpDirTestInfo corpDirTestInfo, string parameter) {
-			return corpDirTestInfo.AdditionalParameters.FirstOrDefault(x => x.Name == parameter && x.Value == "True") != null;
+			return GetTestParameter(corpDirTestInfo, parameter)?.Value == "True";
+		}
+		static string GetStringTestParameter(CorpDirTestInfo corpDirTestInfo, string parameter) {
+			return GetTestParameter(corpDirTestInfo, parameter)?.Value;
 		}
 		
 		static TestInfo TryCreateTestInfo(Repository repository, CorpDirTestInfo corpDirTestInfo) {
@@ -320,6 +327,7 @@ namespace DXVisualTestFixer.Core {
 			testInfo.Theme = corpDirTestInfo.ThemeName;
 			testInfo.Optimized = GetBoolTestParameter(corpDirTestInfo, "Optimized");
 			testInfo.Colorized = GetBoolTestParameter(corpDirTestInfo, "Colorized");
+			testInfo.Browser = GetStringTestParameter(corpDirTestInfo, nameof(TestInfo.Browser));
 			//todo: found new parameter error
 			if(corpDirTestInfo.TeamName == CorpDirTestInfo.ErrorName) {
 				testInfo.Valid = TestState.Error;

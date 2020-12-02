@@ -41,6 +41,7 @@ namespace DXVisualTestFixer.Common {
 		public byte[] TextCurrentSha { get; set; }
 		public bool Optimized { get; set; }
 		public bool Colorized { get; set; }
+		public string Browser { get; set; }
 		public Lazy<string> TextDiffLazy { get; set; }
 		public Lazy<string> TextDiffFullLazy { get; set; }
 		public TestState Valid { get; set; }

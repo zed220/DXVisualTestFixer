@@ -63,6 +63,7 @@ namespace DXVisualTestFixer.Common {
 		string Theme { get; }
 		bool Optimized { get; }
 		bool Colorized { get; }
+		string Browser { get; }
 		int Dpi { get; }
 		string Version { get; }
 		string Volunteer { get; }
