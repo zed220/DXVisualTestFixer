@@ -79,7 +79,7 @@ namespace DXVisualTestFixer.Core {
 							var failureNode = testCaseXml.FindByName("failure");
 							var resultNode = failureNode.FindByName("message");
 							var stackTraceNode = failureNode.FindByName("stack-trace");
-							foreach(var test in ParseMessage(testStartString, minioRepository.Repository, testNameAndNamespace, resultNode.InnerText, stackTraceNode.InnerText))
+							foreach(var test in ParseMessage(testStartString, minioRepository.Repository, testNameAndNamespace, resultNode.InnerText, stackTraceNode?.InnerText))
 								failedTests.Add(test);
 						}
 
