@@ -139,7 +139,7 @@ namespace DXVisualTestFixer.Core {
 				var userName = userPath.Split('/').Skip(1).First();
 				if(!result.TryGetValue(userName, out var repos))
 					result[userName] = repos = new List<Repository>();
-				var forkName = userPath.Split(new[] {platformInfo.ForkFolderName}, StringSplitOptions.RemoveEmptyEntries).Last().Split(new[] {"/"}, StringSplitOptions.RemoveEmptyEntries).First();
+				var forkName = userPath.Split(new[] {userName}, StringSplitOptions.RemoveEmptyEntries).Last().Split(new[] {"/"}, StringSplitOptions.RemoveEmptyEntries).First();
 				var version = await minioWorker.Download(fullUserPath + "version.txt");
 				version = version.Replace(Environment.NewLine, string.Empty);
 				repos.Add(Repository.CreateFork(platform, version, forkName, last, States[Platform].FirstOrDefault(r => r.Version == version)?.Path));
