@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -6,13 +7,23 @@ using DXVisualTestFixer.Common;
 using DXVisualTestFixer.Git;
 
 namespace DXVisualTestFixer.Git {
+    public sealed class GitException : Exception {
+        public GitException(string message) : base(message) { }
+    }
+
     public class GitWorkerCmd : IGitWorker {
+        static readonly Dictionary<int, string> Exceptions = new Dictionary<int, string> {
+            { 128, "Could not connect to http://gitserver. Check you Internet connection and VPN. After that, try to connect to the http://gitserver in the browser. If fail, contact gitserver team." }
+        };
+        
         const string legacyRemoteName = "origin_http";
         readonly string gitPath64 = Path.Combine(Environment.ExpandEnvironmentVariables("%ProgramW6432%"), @"Git\cmd\git.exe");
         readonly string gitPath86 = Path.Combine(Environment.ExpandEnvironmentVariables("%ProgramFiles%"), @"Git\cmd\git.exe");
 
         string RunGitProcess(string workingDir, params string[] opt) {
             var code = ProcessHelper.WaitForProcess(GetActualGitPath(), workingDir, out var output, out var errors, opt);
+            if(Exceptions.TryGetValue(code, out var error))
+                throw new GitException(error);
             ProcessHelper.CheckFail(code, output, errors);
             return output;
         }
