@@ -16,7 +16,6 @@ namespace DXVisualTestFixer.Services {
 				ApplicationThemeHelper.ApplicationThemeName = theme.Name;
 				return;
 			}
-
 			throw new ArgumentException($"Theme {themeName} with palette {palette} does not found. Contact Petr Zinovyev, please.");
 		}
 	}
