@@ -111,6 +111,9 @@
                     </MultiDataTrigger>
                 </Style.Triggers>
             </Style>
+            <Style TargetType="{x:Type dxdo:LayoutControlItem}">
+                <Setter Property="Visibility" Value="{Binding Content.FilterModel.FilterValues, RelativeSource={RelativeSource Self}, Converter={converters:IntToVisibilityConverter}}"/>
+            </Style>
         </ControlTemplate.Resources>
         <dxdo:LayoutGroup ShowCaption="False" AllowDrag="False" Orientation="Vertical">
             <dxdo:LayoutControlItem Caption="Volunteers">
