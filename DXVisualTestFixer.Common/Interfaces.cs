@@ -174,4 +174,9 @@ namespace DXVisualTestFixer.Common {
 	public interface ICache<T> {
 		public T GetOrAdd(byte[] sha256, Func<T> getValue);
 	}
+
+	public interface IExceptionService {
+		void Send(Exception exception);
+		void Send(Exception exception, IDictionary<string, string> additionalCustomData);
+	}
 }
