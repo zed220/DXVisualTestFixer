@@ -139,7 +139,8 @@
                             </Style>
                         </dxe:ButtonEdit.Style>
                     </dxe:ButtonEdit>
-                    <TextBlock Text="User not found on domain!" Foreground="Red" Margin="2" Visibility="{Binding IsVolunteerValid, Converter={dx:BooleanToVisibilityConverter Invert=True}}"/>
+                    <!-- <TextBlock Text="{Binding Email, StringFormat=Email:{0}}" Margin="2"/> -->
+                    <!-- <TextBlock Text="User not found on domain." Foreground="Black" Margin="2" Visibility="{Binding IsVolunteerValid, Converter={dx:BooleanToVisibilityConverter Invert=True}}"/> -->
                 </StackPanel>
                 <StackPanel Grid.Row="2" Orientation="Horizontal">
                     <TextBlock Text="Default Platform:" Margin="2" VerticalAlignment="Center"/>
