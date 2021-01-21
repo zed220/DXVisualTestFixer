@@ -29,6 +29,7 @@ namespace DXVisualTestFixer {
 
 		protected override void ConfigureContainer() {
 			base.ConfigureContainer();
+			RegisterTypeIfMissing(typeof(IExceptionService), typeof(ExceptionService), true);
 			RegisterTypeIfMissing(typeof(ICCNetProblemsLoader), typeof(CCNetProblemsLoader), true);
 			RegisterTypeIfMissing(typeof(IPlatformProvider), typeof(PlatformProvider), true);
 			RegisterTypeIfMissing(typeof(INotificationService), typeof(NotificationService), true);

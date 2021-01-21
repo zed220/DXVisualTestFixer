@@ -292,6 +292,7 @@
     </ApplicationDefinition>
     <Compile Include="Config\VersionInfo.cs" />
     <Compile Include="Services\AppearanceService.cs" />
+    <Compile Include="Services\ExceptionService.cs" />
     <Compile Include="Services\LoggingService.cs" />
     <Compile Include="Services\UpdateService.cs" />
     <Compile Include="Services\VersionService.cs" />
