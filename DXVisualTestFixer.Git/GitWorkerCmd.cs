@@ -27,7 +27,15 @@ namespace DXVisualTestFixer.Git {
             ProcessHelper.CheckFail(code, output, errors);
             return output;
         }
-        string GetActualGitPath() => File.Exists(gitPath64) ? gitPath64 : gitPath86;
+        string GetActualGitPath() {
+            if(CmdWhere.TryFind("git.exe", out var path))
+                return path;
+            if(File.Exists(gitPath64))
+                return gitPath64;
+            if(File.Exists(gitPath86))
+                return gitPath86;
+            throw new FileNotFoundException("git.exe not found");
+        }
         static bool IsGitDir(string path) {
             if(!Directory.Exists(path))
                 return false;
