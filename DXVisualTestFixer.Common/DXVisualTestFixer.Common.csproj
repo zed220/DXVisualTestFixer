@@ -78,6 +78,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CmdWhere.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="FileStringLoaderBase.cs" />
     <Compile Include="Interfaces.cs" />
