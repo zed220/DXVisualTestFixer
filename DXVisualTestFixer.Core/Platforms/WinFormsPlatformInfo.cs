@@ -10,5 +10,6 @@ namespace DXVisualTestFixer {
 		public string FarmTaskName => "Test.v{0} WinForms VisualTests";
 		public string ForkFolderName => "Common";
 		public string TestStartString => "Exception - NUnit.Framework.AssertionException";
+		public (string sourcePath, string targetPath)[] Links => new (string sourcePath, string targetPath)[0];
 	}
 }

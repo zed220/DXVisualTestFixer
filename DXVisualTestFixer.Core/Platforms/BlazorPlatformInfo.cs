@@ -10,5 +10,8 @@ namespace DXVisualTestFixer {
 		public string FarmTaskName => "Test.v{0} WPF VisualTests Blazor";
 		public string ForkFolderName => "Common";
 		public string TestStartString => "Exception - Xunit.Sdk.";
-	}
+		public (string sourcePath, string targetPath)[] Links => new [] {
+			(@"_VisualTests_WorkBinPath_\netcore", @"Bin\netcore\standard"),
+		};
+}
 }

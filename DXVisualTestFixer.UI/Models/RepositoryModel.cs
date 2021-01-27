@@ -65,27 +65,11 @@ namespace DXVisualTestFixer.UI.Models {
 					continue;
 				var repository = new RepositoryModel(Repository.CreateRegular(platform.Name, ver, directoryPath + "\\"), platform, notificationService); 
 				repositories.Add(repository);
-				InitializeBinIfNeed(repository.Path, repository.Version);
+				InitializeLinks(platform, repository.Path, repository.Version);
 			}
 		}
 
-		public static void InitializeBinIfNeed(string repositoryPath, string version) {
-			static bool TryCreateDirectoryLink(string workPath, string targetPath) {
-				if(!Directory.Exists(workPath)) return false;
-				try {
-					FileSystemHelper.Create(workPath, targetPath);
-				}
-				catch (Exception e) {
-					ServiceLocator.Current.GetInstance<IExceptionService>().Send(e, 
-						new Dictionary<string, string> {
-							{ "WorkPath", workPath },
-							{ "TargetPath", targetPath },
-					});
-					return false;
-				}
-				return true;
-			}
-
+		public static void InitializeLinks(IPlatformInfo platform, string repositoryPath, string version) {
 			var workPaths = new[] {
 				System.IO.Path.Combine(repositoryPath, "..", version, "Bin"),
 				System.IO.Path.Combine(repositoryPath, "..", $"20{version}", "Bin"),
@@ -95,30 +79,61 @@ namespace DXVisualTestFixer.UI.Models {
 				System.IO.Path.Combine("d:\\Work", $"20{version}", "Bin")
 			};
 			
-			if(!workPaths.Any(Directory.Exists))
+			var workPath = workPaths.Where(Directory.Exists).FirstOrDefault();
+			if(workPath == null)
 				return;
 			
-			var binPath = System.IO.Path.Combine(repositoryPath, "Bin");
-			if(Directory.Exists(binPath)) {
-				var pathInfo = new FileInfo(binPath);
-				if(pathInfo.Attributes.HasFlag(FileAttributes.ReparsePoint))
-					return;
-				var oldBinPath = System.IO.Path.Combine(repositoryPath, "Bin_old");
-				if(Directory.Exists(oldBinPath))
-					return;
-				try {
-					Directory.Move(binPath, oldBinPath);
-				}
-				catch {
-					return;
-				}
-			}
-
-			foreach(var workPath in workPaths)
-				if(TryCreateDirectoryLink(workPath, binPath)) return;	
+			InitializeBinIfNeed(workPath, repositoryPath);
+			InitializeAdditionalLinks(platform, workPath, repositoryPath);
 		}
-		
-		
+
+		static void InitializeAdditionalLinks(IPlatformInfo platform, string workPath, string repositoryPath) {
+			foreach(var link in platform.Links) {
+				var sourcePath = link.sourcePath.Replace("_VisualTests_WorkBinPath_", workPath);
+				if(!Directory.Exists(sourcePath))
+					continue;
+				var targetPath = System.IO.Path.Combine(repositoryPath, link.targetPath);
+				if(PrepareToLinkCreationAndCheck(targetPath))
+					CreateDirectoryLink(sourcePath, targetPath);
+			}
+		}
+
+		static void CreateDirectoryLink(string workPath, string targetPath) {
+			try {
+				FileSystemHelper.Create(workPath, targetPath);
+			}
+			catch (Exception e) {
+				ServiceLocator.Current.GetInstance<IExceptionService>().Send(e, 
+					new Dictionary<string, string> {
+						{ "WorkPath", workPath },
+						{ "TargetPath", targetPath },
+					});
+			}
+		}
+
+		static bool PrepareToLinkCreationAndCheck(string path) {
+			if(!Directory.Exists(path)) 
+				return true;
+			var pathInfo = new FileInfo(path);
+			if(pathInfo.Attributes.HasFlag(FileAttributes.ReparsePoint))
+				return false;
+			var oldBinPath = path + "_old";
+			if(Directory.Exists(oldBinPath))
+				return false;
+			try {
+				Directory.Move(path, oldBinPath);
+				return true;
+			}
+			catch {
+				return false;
+			}
+		}
+
+		static void InitializeBinIfNeed(string workPath, string repositoryPath) {
+			var binPath = System.IO.Path.Combine(repositoryPath, "Bin");
+			if(PrepareToLinkCreationAndCheck(binPath))
+				CreateDirectoryLink(workPath, binPath);
+		}
 
 		public void UpdateDownloadState() {
 			DownloadState = GetDownloadState();
@@ -151,7 +166,7 @@ namespace DXVisualTestFixer.UI.Models {
 				await _dispatcher.BeginInvoke(new Action(() => { DownloadState = DownloadState.CanNotDownload; }));
 				return;
 			}
-			InitializeBinIfNeed(Repository.Path, Repository.Version);
+			InitializeLinks(_platform, Repository.Path, Repository.Version);
 			await _dispatcher.BeginInvoke(new Action(() => { DownloadState = DownloadState.Downloaded; }));	
 			
 		}
