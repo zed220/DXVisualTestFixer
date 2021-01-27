@@ -435,9 +435,10 @@ namespace DXVisualTestFixer.UI.ViewModels {
 
 		List<SolutionModel> FillSolutionsCore() {
 			var actualSolutions = new List<SolutionModel>();
+			var platform = platformProvider.PlatformInfos.Single(p => p.Name == _defaultPlatform);
 			foreach(var repository in _config.GetLocalRepositories().Where(s => s.Platform == _defaultPlatform).OrderBy(x => x.Version)) {
 				actualSolutions.Add(new SolutionModel(repository.Version, repository.Path));
-				RepositoryModel.InitializeBinIfNeed(repository.Path, repository.Version);
+				RepositoryModel.InitializeLinks(platform, repository.Path, repository.Version);
 			}
 
 			return actualSolutions;
