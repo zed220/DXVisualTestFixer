@@ -292,11 +292,9 @@ namespace DXVisualTestFixer.Core {
 		static List<string> PatchPaths(List<string> resultPaths) {
 			var result = new List<string>();
 			foreach(var pathCandidate in resultPaths) {
-				if(!pathCandidate.Contains('\\'))
+				if(!pathCandidate.Contains(@"\builds"))
 					continue;
 				var cleanPath = @"\\corp" + pathCandidate.Replace("\r", string.Empty).Replace("\n", string.Empty).Replace(@"\\", @"\");
-				if(cleanPath.Contains(' '))
-					continue;
 				if(File.Exists(cleanPath)) {
 					result.Add(cleanPath);
 					continue;
